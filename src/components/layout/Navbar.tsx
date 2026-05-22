@@ -84,9 +84,9 @@ export default function Navbar() {
               <Image
                 src="/logo.png"
                 alt="Erasmus Vibe"
-                width={140}
-                height={36}
-                className="h-9 w-auto"
+                width={180}
+                height={48}
+                className="h-12 w-auto"
                 priority
               />
             </Link>

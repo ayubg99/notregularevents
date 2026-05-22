@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2 } from 'lucide-react'
 import DataTable from '@/components/admin/DataTable'
+import ImageUpload from '@/components/admin/ImageUpload'
 import { createTrip, updateTrip, deleteTrip } from '@/app/actions/admin'
 import type { TripRow, TripInsert, TripStatus } from '@/types/database'
 
@@ -227,15 +228,17 @@ export default function TripsManager({ initialTrips }: Props) {
                   <input type="number" min="0" step="0.01" value={form.price_group} onChange={e => setForm(f => ({ ...f, price_group: e.target.value }))} className={inputClass} placeholder="optional" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-white/50 text-xs mb-1.5 block">Capacity</label>
-                  <input type="number" min="1" value={form.capacity} onChange={e => setForm(f => ({ ...f, capacity: e.target.value }))} className={inputClass} />
-                </div>
-                <div>
-                  <label className="text-white/50 text-xs mb-1.5 block">Image URL</label>
-                  <input type="url" value={form.image_url} onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))} className={inputClass} placeholder="https://..." />
-                </div>
+              <div>
+                <label className="text-white/50 text-xs mb-1.5 block">Capacity</label>
+                <input type="number" min="1" value={form.capacity} onChange={e => setForm(f => ({ ...f, capacity: e.target.value }))} className={inputClass} />
+              </div>
+              <div>
+                <label className="text-white/50 text-xs mb-1.5 block">Cover Image</label>
+                <ImageUpload
+                  value={form.image_url}
+                  onChange={url => setForm(f => ({ ...f, image_url: url }))}
+                  folder="trips"
+                />
               </div>
               <div>
                 <label className="text-white/50 text-xs mb-1.5 block">Description</label>

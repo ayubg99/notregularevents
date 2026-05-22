@@ -65,9 +65,9 @@ export default function Footer() {
               <Image
                 src="/logo.png"
                 alt="Erasmus Vibe"
-                width={160}
-                height={40}
-                className="h-10 w-auto"
+                width={200}
+                height={52}
+                className="h-14 w-auto"
               />
             </Link>
 

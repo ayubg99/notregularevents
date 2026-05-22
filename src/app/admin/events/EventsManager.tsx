@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2 } from 'lucide-react'
 import DataTable from '@/components/admin/DataTable'
+import ImageUpload from '@/components/admin/ImageUpload'
 import { createEvent, updateEvent, deleteEvent } from '@/app/actions/admin'
 import type { EventRow, EventInsert, EventCategory, EventStatus } from '@/types/database'
 
@@ -243,8 +244,12 @@ export default function EventsManager({ initialEvents }: Props) {
                 <input type="text" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} className={inputClass} placeholder="Venue name or address" />
               </div>
               <div>
-                <label className="text-white/50 text-xs mb-1.5 block">Image URL</label>
-                <input type="url" value={form.image_url} onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))} className={inputClass} placeholder="https://..." />
+                <label className="text-white/50 text-xs mb-1.5 block">Cover Image</label>
+                <ImageUpload
+                  value={form.image_url}
+                  onChange={url => setForm(f => ({ ...f, image_url: url }))}
+                  folder="events"
+                />
               </div>
               <div>
                 <label className="text-white/50 text-xs mb-1.5 block">Description</label>
