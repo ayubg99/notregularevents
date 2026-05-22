@@ -76,6 +76,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       return
     }
 
+    // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
+    const { error: seatError } = await admin.rpc('increment_tickets_sold', {
+      p_event_id: itemId,
+      p_quantity:  Number(meta.quantity ?? 1),
+    })
+    if (seatError) console.error('❌ Seat update failed:', seatError)
+    else           console.log('✅ Seats updated:', itemId, Number(meta.quantity ?? 1))
+
     if (userId) {
       await admin.from('notifications').insert({
         user_id: userId,
@@ -123,6 +131,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       console.error('[webhook trip booking]', error.message)
       return
     }
+
+    // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
+    const { error: seatError } = await admin.rpc('increment_seats_sold', {
+      p_trip_id:  itemId,
+      p_quantity: 1,
+    })
+    if (seatError) console.error('❌ Seat update failed:', seatError)
+    else           console.log('✅ Seats updated:', itemId, 1)
 
     if (userId) {
       await admin.from('notifications').insert({
