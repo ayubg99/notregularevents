@@ -113,12 +113,12 @@ export default function PricingCards({ currentPlan }: Props) {
           return (
             <div
               key={plan.id}
-              className={`relative flex flex-col rounded-2xl border p-7 transition-all duration-300 ${
+              className={`relative flex flex-col rounded-3xl border p-7 transition-all duration-300 card-hover ${
                 plan.featured
-                  ? 'border-brand-primary bg-brand-primary/5 shadow-brand-md scale-[1.03]'
+                  ? 'border-brand-primary/50 bg-brand-primary/8 glow-primary scale-[1.03]'
                   : isCurrent
                   ? 'border-green-500/50 bg-green-500/5'
-                  : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8'
+                  : 'border-white/10 bg-white/5 hover:border-white/20'
               }`}
             >
               {/* Badge */}
@@ -136,7 +136,7 @@ export default function PricingCards({ currentPlan }: Props) {
               <div className="mb-5">
                 <h3 className="font-heading text-xl font-bold text-white mb-1">{plan.name}</h3>
                 <div className="flex items-end gap-2">
-                  <span className="font-heading text-4xl font-bold text-white">€{plan.price}</span>
+                  <span className={`font-heading text-4xl font-bold ${plan.featured ? 'text-gradient-primary' : 'text-white'}`}>€{plan.price}</span>
                   <span className="text-white/40 text-sm pb-1">/ {plan.period}</span>
                 </div>
                 <div className="flex items-center gap-2 mt-1.5">
@@ -168,10 +168,10 @@ export default function PricingCards({ currentPlan }: Props) {
                 <button
                   onClick={() => handleSubscribe(plan.id)}
                   disabled={anyLoading}
-                  className={`w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 ${
+                  className={`w-full py-3.5 rounded-full text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 ${
                     plan.featured
-                      ? 'bg-brand-primary hover:brightness-110 active:brightness-90 text-white shadow-brand-sm'
-                      : 'bg-white/10 hover:bg-white/15 active:bg-white/20 text-white'
+                      ? 'btn-primary'
+                      : 'btn-secondary'
                   }`}
                 >
                   {isLoading ? (

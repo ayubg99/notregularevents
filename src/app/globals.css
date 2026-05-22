@@ -57,17 +57,13 @@
   to   { opacity: 1; transform: translateY(0);    }
 }
 
-/* ── Semantic CSS variables (dark/light mode) ──────────────────────── */
-:root {
-  --bg-base:     #F7F3EE;
-  --bg-card:     #FFFFFF;
-  --bg-subtle:   #EDE8E1;
-  --text-base:   #1A1A2E;
-  --text-muted:  #6B7280;
-  --border-clr:  rgba(26, 26, 46, 0.10);
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.30); }
+  50%       { box-shadow: 0 0 40px rgba(255, 107, 53, 0.60); }
 }
 
-.dark {
+/* ── Semantic CSS variables (dark mode locked) ─────────────────────── */
+:root {
   --bg-base:     #1A1A2E;
   --bg-card:     #16213E;
   --bg-subtle:   #0F1626;
@@ -88,29 +84,43 @@ body {
 
 /* ── Glassmorphism utilities ───────────────────────────────────────── */
 .glass {
-  backdrop-filter:         blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter:         blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   background:              rgba(255, 255, 255, 0.10);
   border:                  1px solid rgba(255, 255, 255, 0.20);
 }
 
 .glass-dark {
-  backdrop-filter:         blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background:              rgba(26, 26, 46, 0.85);
+  backdrop-filter:         blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background:              rgba(26, 26, 46, 0.88);
   border:                  1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-card {
-  backdrop-filter:         blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background:              rgba(255, 255, 255, 0.06);
-  border:                  1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter:         blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background:              rgba(255, 255, 255, 0.055);
+  border:                  1px solid rgba(255, 255, 255, 0.11);
+  transition:              border-color 0.3s ease, box-shadow 0.3s ease;
 }
+.glass-card:hover { border-color: rgba(255, 107, 53, 0.20); }
 
-/* ── Gradient text utility ─────────────────────────────────────────── */
+/* ── Gradient text utilities ───────────────────────────────────────── */
 .text-gradient {
   background:              linear-gradient(135deg, #FF6B35, #4ECDC4);
+  -webkit-background-clip: text;
+  background-clip:         text;
+  -webkit-text-fill-color: transparent;
+}
+.text-gradient-primary {
+  background:              linear-gradient(135deg, #FF6B35, #FF8C5A);
+  -webkit-background-clip: text;
+  background-clip:         text;
+  -webkit-text-fill-color: transparent;
+}
+.text-gradient-accent {
+  background:              linear-gradient(135deg, #4ECDC4, #7EDAD5);
   -webkit-background-clip: text;
   background-clip:         text;
   -webkit-text-fill-color: transparent;
@@ -120,6 +130,55 @@ body {
 .bg-gradient-brand   { background: linear-gradient(135deg, #FF6B35, #FF8C5A); }
 .bg-gradient-vibrant { background: linear-gradient(135deg, #FF6B35, #4ECDC4); }
 .bg-gradient-dark    { background: linear-gradient(135deg, #1A1A2E, #16213E); }
+
+/* ── Premium button system ─────────────────────────────────────────── */
+.btn-primary {
+  background:   linear-gradient(135deg, #FF6B35 0%, #FF8C5A 100%);
+  box-shadow:   0 4px 24px rgba(255, 107, 53, 0.40);
+  border-radius: 9999px;
+  color:        white;
+  font-weight:  600;
+  transition:   all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.btn-primary:hover {
+  box-shadow:   0 8px 40px rgba(255, 107, 53, 0.55);
+  transform:    translateY(-2px) scale(1.02);
+}
+.btn-primary:active { transform: translateY(0) scale(0.99); }
+
+.btn-secondary {
+  backdrop-filter:  blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background:       rgba(255, 255, 255, 0.08);
+  border:           1px solid rgba(255, 255, 255, 0.18);
+  border-radius:    9999px;
+  color:            white;
+  font-weight:      600;
+  transition:       all 0.3s ease;
+}
+.btn-secondary:hover {
+  background:       rgba(255, 255, 255, 0.14);
+  border-color:     rgba(255, 107, 53, 0.45);
+  box-shadow:       0 0 24px rgba(255, 107, 53, 0.20);
+}
+
+/* ── Card premium hover ────────────────────────────────────────────── */
+.card-hover {
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.35s ease;
+}
+.card-hover:hover {
+  transform:  translateY(-8px) scale(1.015);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), 0 4px 24px rgba(255, 107, 53, 0.20);
+}
+
+/* ── Glow utilities ────────────────────────────────────────────────── */
+.glow-primary { box-shadow: 0 0 30px rgba(255, 107, 53, 0.45); }
+.glow-accent  { box-shadow: 0 0 30px rgba(78,  205, 196, 0.40); }
+
+/* ── Scrollbar hide ────────────────────────────────────────────────── */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ── Custom scrollbar ──────────────────────────────────────────────── */
 ::-webkit-scrollbar              { width: 6px; }

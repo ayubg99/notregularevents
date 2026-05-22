@@ -5,6 +5,13 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ChevronRight, ChevronDown } from 'lucide-react'
 
+const VIBE_PILLS = [
+  { emoji: '🎉', text: '500+ events',      delay: 0,   pos: 'top-[22%] left-[7%]'    },
+  { emoji: '✈️', text: 'Weekend trips',    delay: 0.6, pos: 'top-[18%] right-[9%]'   },
+  { emoji: '🌍', text: '50+ nationalities', delay: 1.2, pos: 'bottom-[32%] left-[5%]' },
+  { emoji: '💬', text: 'Active community',  delay: 1.8, pos: 'bottom-[28%] right-[7%]' },
+]
+
 export default function HeroSection() {
   const [videoError, setVideoError] = useState(false)
 
@@ -21,17 +28,40 @@ export default function HeroSection() {
             playsInline
             src="/videos/hero.mp4"
             poster="/videos/hero-poster.jpg"
-            className="w-full h-full object-cover opacity-40"
+            className="w-full h-full object-cover opacity-35"
             onError={() => setVideoError(true)}
           />
         )}
-        {/* Dark gradient overlay — always visible */}
-        <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/60 via-brand-dark/30 to-brand-dark/85" />
+        {/* Layered gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/70 via-brand-dark/25 to-brand-dark/90" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(255,107,53,0.12),transparent)]" />
       </div>
 
       {/* ── Decorative blur orbs ─────────────────────────────── */}
-      <div className="absolute top-1/4 left-1/6 w-96 h-96 rounded-full bg-brand-primary/15 blur-3xl pointer-events-none z-10" />
-      <div className="absolute bottom-1/3 right-1/6 w-80 h-80 rounded-full bg-brand-accent/15 blur-3xl pointer-events-none z-10" />
+      <div className="absolute top-1/4 left-1/6 w-[500px] h-[500px] rounded-full bg-brand-primary/12 blur-[120px] pointer-events-none z-10" />
+      <div className="absolute bottom-1/3 right-1/6 w-[400px] h-[400px] rounded-full bg-brand-accent/10 blur-[100px] pointer-events-none z-10" />
+
+      {/* ── Floating vibe pills (desktop only) ───────────────── */}
+      {VIBE_PILLS.map((pill) => (
+        <motion.div
+          key={pill.text}
+          className={`absolute ${pill.pos} z-20 hidden lg:flex items-center gap-2 px-4 py-2.5 glass rounded-full text-sm font-medium text-white/90`}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{
+            opacity: 1,
+            scale:   1,
+            y:       [0, -10, 0],
+          }}
+          transition={{
+            opacity:  { duration: 0.5, delay: pill.delay + 0.8 },
+            scale:    { duration: 0.5, delay: pill.delay + 0.8 },
+            y:        { duration: 3 + pill.delay * 0.3, repeat: Infinity, ease: 'easeInOut', delay: pill.delay },
+          }}
+        >
+          <span>{pill.emoji}</span>
+          <span>{pill.text}</span>
+        </motion.div>
+      ))}
 
       {/* ── Main content ─────────────────────────────────────── */}
       <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
@@ -50,7 +80,7 @@ export default function HeroSection() {
 
         {/* Headline */}
         <motion.h1
-          className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.05] tracking-tight"
+          className="font-heading text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white leading-[0.9] tracking-tight"
           initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -63,7 +93,7 @@ export default function HeroSection() {
 
         {/* Subheadline */}
         <motion.p
-          className="mt-6 text-lg sm:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed"
+          className="mt-8 text-lg sm:text-xl text-white/65 max-w-2xl mx-auto leading-relaxed"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.25, ease: 'easeOut' }}
@@ -81,14 +111,14 @@ export default function HeroSection() {
         >
           <Link
             href="/events"
-            className="flex items-center gap-2 px-8 py-4 bg-brand-primary hover:brightness-110 active:brightness-90 text-white font-semibold text-base rounded-full shadow-brand-md hover:shadow-brand-lg hover:-translate-y-px transition-all duration-200 w-full sm:w-auto justify-center"
+            className="flex items-center gap-2 px-8 py-4 btn-primary text-base w-full sm:w-auto justify-center"
           >
             Explore Events
             <ChevronRight size={18} strokeWidth={2.5} />
           </Link>
           <Link
             href="/trips"
-            className="flex items-center gap-2 px-8 py-4 glass border border-white/20 hover:bg-white/15 text-white font-semibold text-base rounded-full transition-all duration-200 w-full sm:w-auto justify-center"
+            className="flex items-center gap-2 px-8 py-4 btn-secondary text-base w-full sm:w-auto justify-center"
           >
             Explore Trips
             <ChevronRight size={18} strokeWidth={2.5} />
@@ -107,6 +137,9 @@ export default function HeroSection() {
         <span className="text-xs tracking-widest uppercase font-medium">Scroll</span>
         <ChevronDown size={20} />
       </motion.button>
+
+      {/* ── Bottom fade into next section ─────────────────────── */}
+      <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-brand-dark to-transparent pointer-events-none z-10" />
 
     </section>
   )

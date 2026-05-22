@@ -98,26 +98,20 @@ export default function EventsClient() {
           <div className="relative flex-1 max-w-md">
             <Search
               size={15}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"
             />
             <input
               type="text"
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search events by name or location…"
-              className="
-                w-full pl-10 pr-4 py-3 rounded-full text-sm
-                border border-[var(--border-clr)] bg-[var(--bg-card)]
-                text-[var(--text-base)] placeholder:text-[var(--text-muted)]
-                focus:outline-none focus:border-brand-primary/60
-                transition-all duration-200
-              "
+              className="w-full pl-10 pr-4 py-3 rounded-full text-sm glass-card text-white placeholder:text-white/30 focus:outline-none focus:border-brand-primary/60 transition-all duration-200"
             />
           </div>
 
           {/* Result count */}
           {!isLoading && !isError && (
-            <div className="flex items-center gap-1.5 text-[var(--text-muted)] text-sm self-center">
+            <div className="flex items-center gap-1.5 text-white/45 text-sm self-center">
               <SlidersHorizontal size={14} />
               <span>{filtered.length} event{filtered.length !== 1 ? 's' : ''}</span>
             </div>
@@ -125,16 +119,16 @@ export default function EventsClient() {
         </div>
 
         {/* Category pills */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2.5 overflow-x-auto scrollbar-hide pb-1">
           {CATEGORIES.map(cat => (
             <button
               key={cat.value}
               onClick={() => setActiveCategory(cat.value)}
               className={cn(
-                'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap',
+                'px-5 py-2.5 rounded-full text-sm whitespace-nowrap flex-shrink-0 transition-all duration-200',
                 activeCategory === cat.value
-                  ? 'bg-brand-primary text-white shadow-brand-sm'
-                  : 'bg-[var(--bg-card)] text-[var(--text-muted)] border border-[var(--border-clr)] hover:border-brand-primary/40 hover:text-[var(--text-base)]',
+                  ? 'btn-primary font-semibold'
+                  : 'glass-card border border-white/10 text-white/55 hover:text-white hover:border-white/25 font-medium',
               )}
             >
               {cat.label}

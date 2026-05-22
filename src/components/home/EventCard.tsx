@@ -55,8 +55,7 @@ export default function EventCard({ event, className }: EventCardProps) {
     <Link
       href={`/events/${event.slug}`}
       className={cn(
-        'group block rounded-2xl overflow-hidden glass-card',
-        'hover:shadow-brand-md hover:-translate-y-1 transition-all duration-300',
+        'group block rounded-3xl overflow-hidden glass-card card-hover border border-white/8 hover:border-brand-primary/25',
         className,
       )}
     >
@@ -74,8 +73,11 @@ export default function EventCard({ event, className }: EventCardProps) {
           <div className={cn('absolute inset-0 bg-gradient-to-br', gradient)} />
         )}
 
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:from-black/90 group-hover:via-black/35 transition-all duration-300" />
+
         {/* Category badge */}
-        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs font-semibold uppercase tracking-wide">
+        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full glass backdrop-blur-md text-white text-xs font-semibold uppercase tracking-wide">
           {categoryLabel}
         </span>
 
@@ -93,14 +95,14 @@ export default function EventCard({ event, className }: EventCardProps) {
           {event.title}
         </h3>
 
-        <div className="mt-3 flex flex-col gap-1.5 text-white/60 text-sm">
+        <div className="mt-3 flex flex-col gap-1.5 text-white/55 text-sm">
           <span className="flex items-center gap-1.5">
-            <Calendar size={13} className="flex-shrink-0" />
+            <Calendar size={13} className="flex-shrink-0 text-brand-primary" />
             {formattedDate}
           </span>
           {event.location && (
             <span className="flex items-center gap-1.5">
-              <MapPin size={13} className="flex-shrink-0" />
+              <MapPin size={13} className="flex-shrink-0 text-brand-accent" />
               {event.location}
             </span>
           )}
@@ -111,7 +113,7 @@ export default function EventCard({ event, className }: EventCardProps) {
         </div>
 
         <div className="mt-4 flex items-center justify-between">
-          <span className="font-bold text-brand-primary text-base">{formattedPrice}</span>
+          <span className="font-bold text-gradient-primary text-base">{formattedPrice}</span>
           <span className="text-xs text-white/40 group-hover:text-brand-accent transition-colors duration-200">
             View details →
           </span>

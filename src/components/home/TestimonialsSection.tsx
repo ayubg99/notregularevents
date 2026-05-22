@@ -99,21 +99,21 @@ export default function TestimonialsSection() {
           <AnimatePresence mode="wait">
             <motion.div
               key={testimonial.id}
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0  }}
-              exit={{    opacity: 0, x: -40 }}
+              initial={{ opacity: 0, x: 40,  scale: 0.97 }}
+              animate={{ opacity: 1, x: 0,   scale: 1    }}
+              exit={{    opacity: 0, x: -40, scale: 0.97 }}
               transition={{ duration: 0.35, ease: 'easeInOut' }}
-              className="glass-card rounded-2xl p-8 md:p-12 text-center"
+              className="glass-card glow-accent rounded-3xl p-8 md:p-12 text-center"
             >
               {/* Stars */}
               <div className="flex justify-center gap-1 mb-6">
                 {Array.from({ length: testimonial.rating }).map((_, i) => (
-                  <Star key={i} size={18} className="text-amber-400 fill-amber-400" />
+                  <Star key={i} size={20} className="text-amber-400 fill-amber-400" />
                 ))}
               </div>
 
               {/* Quote */}
-              <blockquote className="text-lg md:text-xl text-white/85 leading-relaxed italic mb-8">
+              <blockquote className="font-heading text-2xl md:text-3xl text-white/85 leading-snug italic mb-8">
                 &ldquo;{testimonial.text}&rdquo;
               </blockquote>
 

@@ -87,10 +87,10 @@ export default async function MembershipPage() {
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden pt-32 pb-24 px-4">
         {/* Gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/20 via-brand-dark to-brand-accent/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(255,107,53,0.15),transparent)] pointer-events-none" />
         {/* Orbs */}
-        <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-brand-primary/15 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 -right-32 w-80 h-80 rounded-full bg-brand-accent/15 blur-3xl pointer-events-none" />
+        <div className="absolute top-1/4 -left-40 w-[500px] h-[500px] rounded-full bg-brand-primary/12 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 -right-40 w-[420px] h-[420px] rounded-full bg-brand-accent/10 blur-[100px] pointer-events-none" />
 
         <div className="relative max-w-3xl mx-auto text-center">
           <span className="inline-block text-brand-accent text-xs font-bold tracking-widest uppercase mb-4">

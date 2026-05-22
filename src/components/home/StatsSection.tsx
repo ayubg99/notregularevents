@@ -2,19 +2,22 @@
 
 import { useRef, useEffect } from 'react'
 import { motion, useMotionValue, useTransform, animate, useInView } from 'framer-motion'
+import { Users, Globe, Calendar, MapPin } from 'lucide-react'
+import type { ElementType } from 'react'
 
 interface StatItem {
   end:    number
   suffix: string
   label:  string
   desc:   string
+  icon:   ElementType
 }
 
 const STATS: StatItem[] = [
-  { end: 500, suffix: '+', label: 'Members',        desc: 'From 50+ countries'       },
-  { end: 20,  suffix: '+', label: 'Nationalities',  desc: 'All in one community'     },
-  { end: 100, suffix: '+', label: 'Events Hosted',  desc: 'Parties, culture & more'  },
-  { end: 48,  suffix: '+', label: 'Trips Completed',desc: 'Across Europe & beyond'   },
+  { end: 500, suffix: '+', label: 'Members',         desc: 'From 50+ countries',      icon: Users    },
+  { end: 20,  suffix: '+', label: 'Nationalities',   desc: 'All in one community',    icon: Globe    },
+  { end: 100, suffix: '+', label: 'Events Hosted',   desc: 'Parties, culture & more', icon: Calendar },
+  { end: 48,  suffix: '+', label: 'Trips Completed', desc: 'Across Europe & beyond',  icon: MapPin   },
 ]
 
 function StatCard({ item }: { item: StatItem }) {
@@ -22,6 +25,7 @@ function StatCard({ item }: { item: StatItem }) {
   const count   = useMotionValue(0)
   const display = useTransform(count, (v) => Math.round(v).toLocaleString())
   const inView  = useInView(ref, { once: true, margin: '-80px' })
+  const Icon    = item.icon
 
   useEffect(() => {
     if (inView) {
@@ -33,12 +37,17 @@ function StatCard({ item }: { item: StatItem }) {
   return (
     <div
       ref={ref}
-      className="glass-card rounded-2xl p-8 text-center group hover:shadow-glow-teal transition-all duration-300"
+      className="glass-card card-hover rounded-2xl p-8 text-center"
     >
+      {/* Icon */}
+      <div className="mx-auto mb-4 w-11 h-11 rounded-full bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center">
+        <Icon size={20} className="text-brand-primary" />
+      </div>
+
       {/* Animated number */}
-      <div className="font-heading text-5xl font-bold text-white flex items-baseline justify-center gap-0.5">
-        <motion.span>{display}</motion.span>
-        <span className="text-brand-primary">{item.suffix}</span>
+      <div className="font-heading text-5xl font-bold flex items-baseline justify-center gap-0.5">
+        <motion.span className="text-gradient">{display}</motion.span>
+        <span className="text-gradient">{item.suffix}</span>
       </div>
 
       <p className="mt-2 text-base font-semibold text-white/90">{item.label}</p>

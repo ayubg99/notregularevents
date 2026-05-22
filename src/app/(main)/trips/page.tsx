@@ -38,14 +38,15 @@ export default async function TripsPage() {
       {/* ── Hero banner ── */}
       <section className="relative overflow-hidden pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         {/* Decorative orbs */}
-        <div className="absolute top-16 left-1/4 w-96 h-96 bg-brand-primary/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-32 right-1/4 w-72 h-72 bg-brand-accent/10  rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(255,107,53,0.12),transparent)] pointer-events-none" />
+        <div className="absolute top-16 left-1/4 w-[500px] h-[500px] bg-brand-primary/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-32 right-1/4 w-[400px] h-[400px] bg-brand-accent/8  rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto text-center">
           <p className="text-brand-accent text-sm font-semibold uppercase tracking-widest mb-4">
             Valencia Adventures
           </p>
-          <h1 className="font-heading text-5xl md:text-7xl font-bold leading-tight mb-6">
+          <h1 className="font-heading text-6xl md:text-7xl lg:text-8xl font-bold leading-[0.9] mb-6">
             <span className="text-gradient">Explore Spain</span>
             <br />
             <span className="text-white">&amp; Beyond</span>

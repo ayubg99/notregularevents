@@ -69,7 +69,7 @@ export default function TripCard({ trip }: Props) {
 
   return (
     <Link href={`/trips/${trip.slug}`} className="group block">
-      <article className="glass-card rounded-2xl overflow-hidden hover:scale-[1.02] transition-transform duration-300">
+      <article className="glass-card card-hover rounded-3xl overflow-hidden border border-white/8 hover:border-brand-primary/25">
 
         {/* Image / gradient hero */}
         <div className="relative h-52 overflow-hidden">
@@ -84,18 +84,19 @@ export default function TripCard({ trip }: Props) {
           ) : (
             <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/80 to-transparent" />
+          {/* Gradient overlay — deepens on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent group-hover:from-black/92 group-hover:via-black/35 transition-all duration-300" />
 
           {/* Category badge */}
           <div className="absolute top-3 left-3">
-            <span className={`inline-block px-2.5 py-0.5 rounded-full border text-xs font-semibold backdrop-blur-sm ${badge}`}>
+            <span className={`inline-block px-2.5 py-1 rounded-full border text-xs font-semibold glass backdrop-blur-md ${badge}`}>
               {label}
             </span>
           </div>
 
           {/* Duration badge */}
           <div className="absolute top-3 right-3">
-            <span className="inline-block px-2.5 py-0.5 rounded-full bg-black/40 backdrop-blur-sm text-white/80 text-xs border border-white/10">
+            <span className="inline-block px-2.5 py-1 rounded-full glass backdrop-blur-md text-white/80 text-xs border border-white/10">
               {durationLabel(trip.start_date, trip.end_date)}
             </span>
           </div>
@@ -139,16 +140,16 @@ export default function TripCard({ trip }: Props) {
           <div className="flex items-center justify-between pt-1">
             <div>
               {hasDiscount && (
-                <p className="text-xs text-brand-accent font-semibold">Early Bird</p>
+                <p className="text-xs text-brand-accent font-bold uppercase tracking-wide">Early Bird</p>
               )}
-              <p className="text-white font-bold">
+              <p className={`font-bold text-base ${hasDiscount ? 'text-gradient-primary' : 'text-white'}`}>
                 {lowestPrice === 0 ? 'Free' : `From €${lowestPrice}`}
               </p>
             </div>
-            <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+            <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 ${
               seatsLeft === 0
                 ? 'bg-white/10 text-white/40 cursor-not-allowed'
-                : 'bg-brand-primary text-brand-dark hover:bg-brand-primary/90'
+                : 'btn-primary px-5 py-2 text-sm'
             }`}>
               {seatsLeft === 0 ? 'Sold Out' : 'Book Trip'}
             </span>

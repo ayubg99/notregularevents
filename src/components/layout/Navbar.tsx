@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { Menu, X, Sun, Moon, ChevronRight, LogOut, LayoutDashboard } from 'lucide-react'
+import { useRouter, usePathname } from 'next/navigation'
+import { Menu, X, ChevronRight, LogOut, LayoutDashboard } from 'lucide-react'
 import type { User } from '@supabase/supabase-js'
 import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
@@ -23,12 +23,12 @@ function getInitials(name: string | null | undefined, email: string | null | und
 }
 
 export default function Navbar() {
-  const router = useRouter()
+  const router   = useRouter()
+  const pathname = usePathname()
   const t = useTranslations('nav')
   const [isScrolled,  setIsScrolled]  = useState(false)
   const [isMenuOpen,  setIsMenuOpen]  = useState(false)
   const [menuKey,     setMenuKey]     = useState(0)
-  const [isDark,      setIsDark]      = useState(false)
   const [authUser,    setAuthUser]    = useState<User | null>(null)
 
   useEffect(() => {
@@ -48,15 +48,6 @@ export default function Navbar() {
   }
 
   useEffect(() => {
-    const saved = localStorage.getItem('theme')
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    if (saved === 'dark' || (!saved && prefersDark)) {
-      setIsDark(true)
-      document.documentElement.classList.add('dark')
-    }
-  }, [])
-
-  useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 60)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -66,13 +57,6 @@ export default function Navbar() {
     document.body.style.overflow = isMenuOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [isMenuOpen])
-
-  const toggleTheme = useCallback(() => {
-    const next = !isDark
-    setIsDark(next)
-    document.documentElement.classList.toggle('dark', next)
-    localStorage.setItem('theme', next ? 'dark' : 'light')
-  }, [isDark])
 
   const openMenu = () => {
     setMenuKey(k => k + 1)
@@ -87,7 +71,7 @@ export default function Navbar() {
         className={`
           fixed top-0 left-0 right-0 z-50
           transition-all duration-300
-          ${isScrolled ? 'glass-dark shadow-brand-sm py-3' : 'bg-brand-dark/50 py-5'}
+          ${isScrolled ? 'backdrop-blur-2xl bg-brand-dark/80 border-b border-white/5 shadow-brand-sm py-3' : 'bg-brand-dark/50 py-5'}
         `}
         style={{ animation: 'navSlideDown 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) both' }}
       >
@@ -104,29 +88,23 @@ export default function Navbar() {
 
             {/* Desktop links */}
             <div className="hidden md:flex items-center gap-8">
-              {NAV_HREFS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="relative text-sm font-medium text-white/80 hover:text-white transition-colors duration-200 group"
-                >
-                  {t(link.key)}
-                  <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-brand-primary group-hover:w-full transition-all duration-300 rounded-full" />
-                </Link>
-              ))}
+              {NAV_HREFS.map((link) => {
+                const isActive = pathname === link.href
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`relative text-sm font-medium transition-colors duration-200 group ${isActive ? 'text-white' : 'text-white/70 hover:text-white'}`}
+                  >
+                    {t(link.key)}
+                    <span className={`absolute -bottom-0.5 left-0 h-px bg-brand-primary rounded-full transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+                  </Link>
+                )
+              })}
             </div>
 
             {/* Right-side controls */}
             <div className="flex items-center gap-2">
-
-              {/* Theme toggle — desktop */}
-              <button
-                onClick={toggleTheme}
-                className="hidden md:flex items-center justify-center w-9 h-9 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200"
-                aria-label={isDark ? t('lightMode') : t('darkMode')}
-              >
-                {isDark ? <Sun size={17} /> : <Moon size={17} />}
-              </button>
 
               {/* Auth controls — desktop */}
               {authUser ? (
@@ -157,7 +135,7 @@ export default function Navbar() {
               ) : (
                 <Link
                   href="/auth/register"
-                  className="hidden md:flex items-center gap-1.5 px-5 py-2.5 bg-brand-primary hover:brightness-110 active:brightness-90 text-white text-sm font-semibold rounded-full transition-all duration-200 shadow-brand-sm hover:shadow-brand-md hover:-translate-y-px"
+                  className="hidden md:inline-flex items-center gap-1.5 px-5 py-2.5 btn-primary text-sm"
                 >
                   {t('joinNow')}
                   <ChevronRight size={14} strokeWidth={2.5} />
@@ -239,20 +217,12 @@ export default function Navbar() {
             <Link
               href="/auth/register"
               onClick={closeMenu}
-              className="flex items-center gap-2 px-10 py-4 bg-brand-primary text-white font-semibold text-lg rounded-full shadow-brand-md active:brightness-90 transition-all"
+              className="flex items-center gap-2 px-10 py-4 btn-primary text-lg"
             >
               {t('joinNow')}
               <ChevronRight size={18} strokeWidth={2.5} />
             </Link>
           )}
-
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-2 text-white/50 hover:text-white/80 transition-colors text-sm"
-          >
-            {isDark ? <Sun size={16} /> : <Moon size={16} />}
-            <span>{isDark ? t('lightMode') : t('darkMode')}</span>
-          </button>
         </div>
 
         {/* Decorative gradient orbs */}

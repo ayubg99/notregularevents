@@ -68,7 +68,7 @@ export default function EventCard({ event, className }: Props) {
   const formattedPrice = isFree ? 'Free' : `€${event.price.toFixed(2)}`
 
   return (
-    <div className={cn('group rounded-2xl overflow-hidden glass-card flex flex-col', className)}>
+    <div className={cn('group rounded-3xl overflow-hidden glass-card card-hover flex flex-col border border-white/8 hover:border-brand-primary/25', className)}>
       {/* Image / gradient fallback */}
       <div className="relative h-52 overflow-hidden flex-shrink-0">
         {event.image_url ? (
@@ -83,16 +83,19 @@ export default function EventCard({ event, className }: Props) {
           <div className={cn('absolute inset-0 bg-gradient-to-br', GRADIENTS[event.category])} />
         )}
 
+        {/* Gradient overlay — deepens on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:from-black/90 group-hover:via-black/35 transition-all duration-300" />
+
         {/* Category badge */}
         <span className={cn(
-          'absolute top-3 left-3 px-2.5 py-1 rounded-full border text-xs font-semibold backdrop-blur-sm',
+          'absolute top-3 left-3 px-2.5 py-1 rounded-full border text-xs font-semibold glass backdrop-blur-md',
           BADGE_COLORS[event.category],
         )}>
           {LABELS[event.category]}
         </span>
 
         {/* Price badge */}
-        <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-brand-dark/80 backdrop-blur-sm text-white text-sm font-bold border border-white/10">
+        <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full bg-gradient-to-r from-brand-primary to-brand-primary-light text-white text-xs font-bold">
           {formattedPrice}
         </span>
 
@@ -105,11 +108,11 @@ export default function EventCard({ event, className }: Props) {
 
       {/* Body */}
       <div className="p-5 flex flex-col flex-1">
-        <h3 className="font-heading text-lg font-semibold text-[var(--text-base)] line-clamp-2 group-hover:text-brand-primary transition-colors duration-200">
+        <h3 className="font-heading text-lg font-semibold text-white line-clamp-2 group-hover:text-brand-primary transition-colors duration-200">
           {event.title}
         </h3>
 
-        <div className="mt-3 flex flex-col gap-1.5 text-[var(--text-muted)] text-sm">
+        <div className="mt-3 flex flex-col gap-1.5 text-white/55 text-sm">
           <span className="flex items-center gap-2">
             <Calendar size={13} className="flex-shrink-0 text-brand-primary" />
             {formattedDate}
@@ -142,7 +145,7 @@ export default function EventCard({ event, className }: Props) {
                 style={{ width: `${fillPct}%` }}
               />
             </div>
-            <p className="mt-1 text-[10px] text-[var(--text-muted)]">{fillPct}% filled</p>
+            <p className="mt-1 text-[10px] text-white/40">{fillPct}% filled</p>
           </div>
         )}
 
@@ -153,8 +156,8 @@ export default function EventCard({ event, className }: Props) {
             className={cn(
               'block w-full text-center py-2.5 rounded-full text-sm font-semibold transition-all duration-200',
               isSoldOut
-                ? 'bg-white/10 text-[var(--text-muted)] pointer-events-none'
-                : 'bg-brand-primary hover:brightness-110 text-white shadow-brand-sm hover:shadow-brand-md active:brightness-90',
+                ? 'bg-white/10 text-white/40 pointer-events-none'
+                : 'btn-primary',
             )}
           >
             {isSoldOut ? 'Sold Out' : isFree ? 'RSVP Free' : 'Book Now'}
