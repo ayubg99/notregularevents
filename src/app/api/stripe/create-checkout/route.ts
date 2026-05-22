@@ -26,6 +26,15 @@ function applyDiscount(price: number, type: 'percentage' | 'fixed', value: numbe
   return Math.max(0, discounted)
 }
 
+// Resolves the canonical app URL across local / Vercel preview / Vercel production
+function getBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL
+  if (process.env.NEXT_PUBLIC_APP_URL)  return process.env.NEXT_PUBLIC_APP_URL
+  // VERCEL_URL is set automatically by Vercel on every deployment (server-only, no HTTPS prefix)
+  if (process.env.VERCEL_URL)           return `https://${process.env.VERCEL_URL}`
+  return 'http://localhost:3000'
+}
+
 const MEMBERSHIP_PRICES: Record<MembershipPlan, string | undefined> = {
   basic:   process.env.STRIPE_PRICE_BASIC,
   premium: process.env.STRIPE_PRICE_PREMIUM,
@@ -33,13 +42,35 @@ const MEMBERSHIP_PRICES: Record<MembershipPlan, string | undefined> = {
 }
 
 export async function POST(request: NextRequest) {
+  // Fail fast with a clean JSON error rather than an HTML 500 that breaks res.json()
+  try {
+    return await handleCheckout(request)
+  } catch (err) {
+    console.error('[create-checkout] unhandled error:', err)
+    const message = err instanceof Error ? err.message : 'Checkout failed. Please try again.'
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
+
+async function handleCheckout(request: NextRequest): Promise<NextResponse> {
+  // Guard: Stripe key must exist before any Stripe call
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error('[create-checkout] STRIPE_SECRET_KEY is not set')
+    return NextResponse.json(
+      { error: 'Payment system not configured. Please contact support.' },
+      { status: 500 },
+    )
+  }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   const body: Body = await request.json()
   const { type, itemId, tier, quantity = 1, promoCode, guestName, guestEmail, guestPhone } = body
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  console.log('[create-checkout]', { type, itemId, tier, quantity, hasUser: !!user })
+
+  const baseUrl = getBaseUrl()
 
   // Membership still requires auth
   if (type === 'membership' && !user) {
@@ -286,15 +317,15 @@ export async function POST(request: NextRequest) {
       success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  cancelUrl,
       metadata: {
-        type:              'trip',
-        item_id:           trip.id,
-        user_id:           user?.id       ?? '',
-        tier:              tripTier,
-        guest_name:        guestName      ?? '',
-        guest_email:       guestEmail     ?? '',
-        guest_phone:       guestPhone     ?? '',
-        trip_date:         trip.start_date ?? '',
-        destination:       trip.destination ?? '',
+        type:               'trip',
+        item_id:            trip.id,
+        user_id:            user?.id        ?? '',
+        tier:               tripTier,
+        guest_name:         guestName       ?? '',
+        guest_email:        guestEmail      ?? '',
+        guest_phone:        guestPhone      ?? '',
+        trip_date:          trip.start_date ?? '',
+        destination:        trip.destination ?? '',
         whatsapp_group_url: trip.whatsapp_group_url ?? '',
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
@@ -305,21 +336,30 @@ export async function POST(request: NextRequest) {
 
   // ── Membership checkout ──────────────────────────────────────
   if (type === 'membership') {
-    const plan = itemId as MembershipPlan
+    const plan    = itemId as MembershipPlan
     const priceId = MEMBERSHIP_PRICES[plan]
+
+    console.log('[create-checkout membership]', {
+      plan,
+      priceId:        priceId ?? 'MISSING',
+      hasBasicEnv:    !!process.env.STRIPE_PRICE_BASIC,
+      hasPremiumEnv:  !!process.env.STRIPE_PRICE_PREMIUM,
+      hasVipEnv:      !!process.env.STRIPE_PRICE_VIP,
+    })
 
     if (!priceId) {
       return NextResponse.json(
-        { error: `Membership plan "${plan}" is not configured. Contact support.` },
+        { error: `Membership plan "${plan}" is not configured — STRIPE_PRICE_${plan.toUpperCase()} is missing. Contact support.` },
         { status: 400 },
       )
     }
 
     const session = await stripe.checkout.sessions.create({
-      mode:               'subscription',
-      line_items:         [{ price: priceId, quantity: 1 }],
-      success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:  `${baseUrl}/membership`,
+      mode:           'subscription',
+      customer_email: user!.email ?? undefined,
+      line_items:     [{ price: priceId, quantity: 1 }],
+      success_url:    `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url:     `${baseUrl}/membership`,
       metadata: {
         type:    'membership',
         item_id: plan,

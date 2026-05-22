@@ -88,7 +88,14 @@ export default function PricingCards({ currentPlan }: Props) {
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({ type: 'membership', itemId: planId }),
         })
-        const data = await res.json()
+        let data: { url?: string; error?: string }
+        try {
+          data = await res.json()
+        } catch {
+          setError(`Server error (${res.status}). Please try again.`)
+          setPendingId(null)
+          return
+        }
         if (data.url) {
           router.push(data.url)
         } else {
@@ -96,7 +103,7 @@ export default function PricingCards({ currentPlan }: Props) {
           setPendingId(null)
         }
       } catch {
-        setError('Network error. Please try again.')
+        setError('Could not reach the server. Check your connection and try again.')
         setPendingId(null)
       }
     })
