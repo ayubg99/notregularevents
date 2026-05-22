@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Copy, Check, Download, MessageCircle, LayoutDashboard } from 'lucide-react'
 import Link from 'next/link'
 
@@ -58,10 +59,13 @@ export default function BookingConfirmation({
       {qrCode && (
         <div className="glass-card rounded-2xl p-6 flex flex-col items-center gap-3">
           <p className="text-white/40 text-xs uppercase tracking-widest">Show this at the door</p>
-          <img
+          <Image
             src={qrCode}
             alt={`QR code for booking ${bookingRef}`}
-            className="w-48 h-48 rounded-xl"
+            width={192}
+            height={192}
+            className="rounded-xl"
+            unoptimized
           />
         </div>
       )}

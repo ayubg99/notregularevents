@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { Calendar, MapPin, Download, ExternalLink } from 'lucide-react'
 import type { EventTicketRow, TripBookingRow } from '@/types/database'
@@ -47,9 +47,7 @@ function downloadQR(qrCode: string, ref: string) {
 
 export default function BookingTabs({ eventTickets, tripBookings }: Props) {
   const [tab, setTab] = useState<'upcoming' | 'past'>('upcoming')
-  // Use a stable "now" that's set once after mount so server and client agree
-  const [now, setNow] = useState(0)
-  useEffect(() => { setNow(Date.now()) }, [])
+  const [now] = useState(() => Date.now())
 
   const upcomingEvents = eventTickets.filter(t =>
     isUpcoming(t.events?.date, now) && t.status !== 'cancelled' && t.status !== 'refunded'

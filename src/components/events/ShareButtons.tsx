@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Copy, CheckCircle, MessageCircle } from 'lucide-react'
 
 interface Props {
@@ -10,12 +10,9 @@ interface Props {
 
 export default function ShareButtons({ title, slug }: Props) {
   const [copied, setCopied] = useState(false)
-  // Stable fallback on server; updated to actual URL after mount
-  const [url, setUrl] = useState(`https://erasmusvibe.com/${slug}`)
-
-  useEffect(() => {
-    setUrl(window.location.href)
-  }, [])
+  const [url] = useState(() =>
+    typeof window !== 'undefined' ? window.location.href : `https://erasmusvibe.com/${slug}`
+  )
 
   const waText = encodeURIComponent(`Check out this event: ${title} — ${url}`)
 

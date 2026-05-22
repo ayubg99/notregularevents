@@ -30,7 +30,7 @@ async function migrate() {
   }
 
   // Verify by reading the current enum values
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('events')
     .select('category')
     .limit(1)

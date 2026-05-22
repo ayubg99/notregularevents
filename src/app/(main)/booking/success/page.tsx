@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { stripe } from '@/lib/stripe'
 import BookingConfirmation from './BookingConfirmation'
 import BookingPolling from './BookingPolling'
 

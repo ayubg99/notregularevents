@@ -17,10 +17,11 @@ function groupByDate(rows: { created_at: string }[]): { date: string; bookings: 
   return Object.entries(counts).map(([date, bookings]) => ({ date, bookings }))
 }
 
+const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+
 export default async function AdminPage() {
-  const admin          = getAdminClient()
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-  const now            = new Date().toISOString()
+  const admin = getAdminClient()
+  const now   = new Date().toISOString()
 
   const [
     { count: totalTickets },

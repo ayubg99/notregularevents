@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { MessageCircle, Briefcase, Home, Languages, Utensils, UmbrellaOff, Mail } from 'lucide-react'
+import { MessageCircle, Briefcase, Home, Languages, Mail } from 'lucide-react'
 import FeaturedEvents from '@/components/home/FeaturedEvents'
 
 export const metadata: Metadata = {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useSyncExternalStore } from 'react'
 
 interface Props { targetDate: string }
 
@@ -22,19 +22,20 @@ function calc(target: string): Remaining | null {
   }
 }
 
+const subscribe = () => () => {}
+
 export default function CountdownTimer({ targetDate }: Props) {
-  // null on the server — computed only after mount to avoid hydration mismatch
-  const [remaining, setRemaining] = useState<Remaining | null>(null)
-  const [mounted, setMounted] = useState(false)
+  const isMounted = useSyncExternalStore(subscribe, () => true, () => false)
+  const [remaining, setRemaining] = useState<Remaining | null>(() =>
+    typeof window !== 'undefined' ? calc(targetDate) : null
+  )
 
   useEffect(() => {
-    setMounted(true)
-    setRemaining(calc(targetDate))
     const id = setInterval(() => setRemaining(calc(targetDate)), 1_000)
     return () => clearInterval(id)
   }, [targetDate])
 
-  if (!mounted) {
+  if (!isMounted) {
     // Render a stable skeleton that matches between server and client
     return (
       <div className="flex gap-2 flex-wrap">
