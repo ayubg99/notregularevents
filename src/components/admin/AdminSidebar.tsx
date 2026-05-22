@@ -9,7 +9,7 @@ const NAV = [
   { href: '/admin',          label: 'Overview',  icon: <LayoutDashboard size={16} /> },
   { href: '/admin/events',   label: 'Events',    icon: <Calendar size={16} />        },
   { href: '/admin/trips',    label: 'Trips',     icon: <MapPin size={16} />          },
-  { href: '/admin/users',    label: 'Users',     icon: <Users size={16} />           },
+  { href: '/admin/users',    label: 'Members',   icon: <Users size={16} />           },
   { href: '/admin/bookings', label: 'Bookings',  icon: <Ticket size={16} />          },
 ]
 

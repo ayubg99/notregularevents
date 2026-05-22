@@ -44,8 +44,8 @@ export default async function AdminUsersPage() {
     <>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-white">Users</h1>
-          <p className="text-white/40 text-sm mt-0.5">{rows.length} registered users</p>
+          <h1 className="font-heading text-2xl font-bold text-white">Members</h1>
+          <p className="text-white/40 text-sm mt-0.5">{rows.length} registered members</p>
         </div>
       </div>
 
