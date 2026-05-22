@@ -1,0 +1,91 @@
+import type { Metadata } from 'next'
+import TripsClient from '@/components/trips/TripsClient'
+import { getPublishedTrips } from '@/lib/supabase/queries'
+
+export const metadata: Metadata = {
+  title:       'Trips | Erasmus Vibe Valencia',
+  description: 'Explore Spain and beyond with Erasmus Vibe. Weekend getaways, beach trips, festivals and adventures — all organised for Erasmus students.',
+  openGraph: {
+    title:       'Trips | Erasmus Vibe Valencia',
+    description: 'Explore Spain and beyond with Erasmus Vibe. Weekend getaways, beach trips, festivals and more.',
+    images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
+    type:        'website',
+  },
+  twitter: {
+    card:        'summary_large_image',
+    title:       'Trips | Erasmus Vibe Valencia',
+    description: 'Explore Spain and beyond with Erasmus Vibe.',
+  },
+}
+
+export default async function TripsPage() {
+  const trips = await getPublishedTrips({ limit: 3 })
+
+  const tripCount  = trips.length
+  const destCount  = new Set(trips.map(t => t.destination)).size
+  const lowestPrice = trips.length
+    ? Math.min(
+        ...trips.flatMap(t =>
+          [t.price_early_bird, t.price_standard, t.price_vip, t.price_group]
+            .filter((p): p is number => p != null),
+        ),
+      )
+    : null
+
+  return (
+    <main className="min-h-screen bg-brand-dark">
+
+      {/* ── Hero banner ── */}
+      <section className="relative overflow-hidden pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        {/* Decorative orbs */}
+        <div className="absolute top-16 left-1/4 w-96 h-96 bg-brand-primary/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-32 right-1/4 w-72 h-72 bg-brand-accent/10  rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative max-w-7xl mx-auto text-center">
+          <p className="text-brand-accent text-sm font-semibold uppercase tracking-widest mb-4">
+            Erasmus Adventures
+          </p>
+          <h1 className="font-heading text-5xl md:text-7xl font-bold leading-tight mb-6">
+            <span className="text-gradient">Explore Spain</span>
+            <br />
+            <span className="text-white">&amp; Beyond</span>
+          </h1>
+          <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
+            Weekend beach trips, mountain hikes, city breaks and festival adventures —
+            all organised for Erasmus students.
+          </p>
+
+          {/* Quick stats */}
+          <div className="inline-flex items-center gap-6 flex-wrap justify-center">
+            {tripCount > 0 && (
+              <div className="glass-card rounded-2xl px-5 py-3 text-center">
+                <p className="font-heading text-2xl font-bold text-brand-primary">{tripCount}+</p>
+                <p className="text-white/50 text-xs uppercase tracking-wide">Upcoming Trips</p>
+              </div>
+            )}
+            {destCount > 0 && (
+              <div className="glass-card rounded-2xl px-5 py-3 text-center">
+                <p className="font-heading text-2xl font-bold text-brand-accent">{destCount}</p>
+                <p className="text-white/50 text-xs uppercase tracking-wide">Destinations</p>
+              </div>
+            )}
+            {lowestPrice != null && (
+              <div className="glass-card rounded-2xl px-5 py-3 text-center">
+                <p className="font-heading text-2xl font-bold text-white">
+                  {lowestPrice === 0 ? 'Free' : `€${lowestPrice}`}
+                </p>
+                <p className="text-white/50 text-xs uppercase tracking-wide">From</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Trip listing ── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+        <TripsClient />
+      </section>
+
+    </main>
+  )
+}

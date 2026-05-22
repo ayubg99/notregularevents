@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "events": "Eventos",
+    "trips": "Viajes",
+    "membership": "Membresía",
+    "about": "Nosotros",
+    "dashboard": "Mi cuenta",
+    "signIn": "Iniciar sesión",
+    "joinNow": "Únete",
+    "signOut": "Cerrar sesión",
+    "lightMode": "Modo claro",
+    "darkMode": "Modo oscuro"
+  },
+  "hero": {
+    "headline": "Tu Experiencia Erasmus Empieza Aquí",
+    "subline": "Eventos, viajes y una comunidad para estudiantes internacionales en Valencia.",
+    "cta": "Ver Eventos",
+    "ctaSecondary": "Ver Viajes"
+  },
+  "common": {
+    "bookNow": "Reservar",
+    "learnMore": "Saber más",
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "retry": "Intentar de nuevo",
+    "noResults": "Sin resultados",
+    "cancel": "Cancelar",
+    "save": "Guardar cambios",
+    "close": "Cerrar"
+  }
+}

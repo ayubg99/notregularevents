@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "events": "Events",
+    "trips": "Trips",
+    "membership": "Membership",
+    "about": "About",
+    "dashboard": "Dashboard",
+    "signIn": "Sign In",
+    "joinNow": "Join Now",
+    "signOut": "Sign Out",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode"
+  },
+  "hero": {
+    "headline": "Your Erasmus Experience Starts Here",
+    "subline": "Events, trips, and a community built for international students in Valencia.",
+    "cta": "Explore Events",
+    "ctaSecondary": "View Trips"
+  },
+  "common": {
+    "bookNow": "Book Now",
+    "learnMore": "Learn More",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "noResults": "No results found",
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "close": "Close"
+  }
+}
