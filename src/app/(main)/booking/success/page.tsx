@@ -195,17 +195,20 @@ function membershipEndDate(plan: MembershipPlan): string {
 }
 
 async function MembershipSuccess({ session }: { session: Stripe.Checkout.Session }) {
-  const admin      = getAdminClient()
-  const userId     = session.metadata?.user_id
-  const plan       = session.metadata?.item_id as MembershipPlan | undefined
-  const validPlan  = plan && plan in PLAN_INFO ? plan : null
+  const admin     = getAdminClient()
+  const userId    = session.metadata?.user_id || null
+  const plan      = (session.metadata?.item_id ?? '') as MembershipPlan
+  const validPlan = plan in PLAN_INFO ? plan : null
+
+  console.log('[booking-success membership]', { userId, plan, validPlan, sessionId: session.id })
+
+  let activated = false
 
   if (userId && validPlan) {
     const subscriptionId = typeof session.subscription === 'string'
       ? session.subscription
       : (session.subscription as Stripe.Subscription | null)?.id ?? null
 
-    // Idempotent upsert — activates the membership immediately even if webhook is delayed
     const { error } = await admin.from('memberships').upsert(
       {
         user_id:                userId,
@@ -219,10 +222,14 @@ async function MembershipSuccess({ session }: { session: Stripe.Checkout.Session
     )
 
     if (error) {
-      console.error('[booking-success membership] upsert failed:', error.message)
+      console.error('[booking-success membership] upsert failed:', error.message, error.code, error.details)
     } else {
+      activated = true
+      console.log('[booking-success membership] upsert succeeded for user', userId)
       await admin.from('profiles').update({ membership_status: 'active' }).eq('user_id', userId)
     }
+  } else {
+    console.error('[booking-success membership] missing userId or plan — skipping upsert', { userId, plan })
   }
 
   const info = validPlan ? PLAN_INFO[validPlan] : null
@@ -234,9 +241,13 @@ async function MembershipSuccess({ session }: { session: Stripe.Checkout.Session
         <div className="w-16 h-16 rounded-full bg-brand-primary/20 border border-brand-primary/40 flex items-center justify-center">
           <Crown size={28} className="text-brand-primary" />
         </div>
-        <h1 className="font-heading text-3xl font-bold text-white">Membership Activated!</h1>
+        <h1 className="font-heading text-3xl font-bold text-white">
+          {activated ? 'Membership Activated!' : 'Payment Received!'}
+        </h1>
         <p className="text-white/50 text-center max-w-xs">
-          Welcome to Erasmus Vibe{info ? ` — ${info.name} plan` : ''}.
+          {activated
+            ? `Welcome to Erasmus Vibe${info ? ` — ${info.name} plan` : ''}.`
+            : 'Your membership is being set up. Check your email or refresh in a moment.'}
         </p>
       </div>
 

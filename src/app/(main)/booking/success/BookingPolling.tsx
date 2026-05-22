@@ -12,23 +12,29 @@ interface Booking {
   guest_email: string | null
 }
 
+interface PollingResult {
+  found: boolean
+  type?: 'event' | 'trip' | 'membership'
+  booking?: Booking
+}
+
 interface Props {
   sessionId: string
 }
 
 export default function BookingPolling({ sessionId }: Props) {
-  const [booking,  setBooking]  = useState<Booking | null>(null)
+  const [result,   setResult]   = useState<PollingResult | null>(null)
   const [attempts, setAttempts] = useState(0)
 
   useEffect(() => {
-    if (booking || attempts >= 10) return
+    if (result || attempts >= 10) return
 
     const id = setInterval(async () => {
       try {
-        const res = await fetch(`/api/stripe/booking-status?session_id=${encodeURIComponent(sessionId)}`)
-        const json = await res.json()
+        const res  = await fetch(`/api/stripe/booking-status?session_id=${encodeURIComponent(sessionId)}`)
+        const json = await res.json() as PollingResult
         if (json.found) {
-          setBooking(json.booking)
+          setResult(json)
           clearInterval(id)
         } else {
           setAttempts(a => a + 1)
@@ -39,9 +45,19 @@ export default function BookingPolling({ sessionId }: Props) {
     }, 3000)
 
     return () => clearInterval(id)
-  }, [sessionId, booking, attempts])
+  }, [sessionId, result, attempts])
 
-  if (booking) {
+  if (result?.type === 'membership') {
+    return (
+      <div className="flex flex-col items-center gap-6 py-16 text-center">
+        <p className="text-white/70 text-lg font-medium">Membership activated!</p>
+        <p className="text-white/40 text-sm">Your 15% discount is now applied on all bookings.</p>
+      </div>
+    )
+  }
+
+  if (result?.booking) {
+    const booking = result.booking
     const isGuest = !booking.user_id
     return (
       <BookingConfirmation

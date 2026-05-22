@@ -77,18 +77,30 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Please log in to purchase a membership.' }, { status: 401 })
   }
 
-  // Membership discount: status=active AND (end_date is null OR end_date > now)
+  // Membership discount: check memberships table + profiles fallback
   let memberDiscount = false
   if (user) {
-    const now = new Date().toISOString()
-    const { data: mem } = await supabase
-      .from('memberships')
-      .select('status')
-      .eq('user_id', user.id)
-      .eq('status', 'active')
-      .or(`end_date.is.null,end_date.gt.${now}`)
-      .maybeSingle()
-    memberDiscount = !!mem
+    const [{ data: mem, error: memErr }, { data: profile }] = await Promise.all([
+      supabase
+        .from('memberships')
+        .select('status')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .maybeSingle(),
+      supabase
+        .from('profiles')
+        .select('membership_status')
+        .eq('user_id', user.id)
+        .maybeSingle(),
+    ])
+    if (memErr) console.error('[create-checkout] membership check error:', memErr.message)
+    memberDiscount = !!(mem || profile?.membership_status === 'active')
+    console.log('[create-checkout] membership check:', {
+      userId: user.id,
+      memberDiscount,
+      memFound:       !!mem,
+      profileStatus:  profile?.membership_status,
+    })
   }
 
   // ── Validate promo code ──────────────────────────────────────

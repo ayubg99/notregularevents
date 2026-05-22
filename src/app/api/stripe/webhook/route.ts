@@ -287,17 +287,15 @@ async function handleSubscriptionChange(
     return
   }
 
-  // Sync membership_status on profiles table
-  if (status !== 'active' && status !== 'trialing') {
-    const { data: mem } = await admin
-      .from('memberships')
-      .select('user_id')
-      .eq('stripe_subscription_id', subscription.id)
-      .maybeSingle()
+  // Sync membership_status on profiles table for ALL status changes
+  const { data: mem } = await admin
+    .from('memberships')
+    .select('user_id')
+    .eq('stripe_subscription_id', subscription.id)
+    .maybeSingle()
 
-    if (mem?.user_id) {
-      await admin.from('profiles').update({ membership_status: status }).eq('user_id', mem.user_id)
-    }
+  if (mem?.user_id) {
+    await admin.from('profiles').update({ membership_status: status }).eq('user_id', mem.user_id)
   }
 
   console.log('[webhook subscription change] updated status to', status, 'for subscription', subscription.id)
@@ -330,6 +328,7 @@ export async function POST(request: NextRequest) {
         await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session)
         break
 
+      case 'customer.subscription.created':
       case 'customer.subscription.updated':
         await handleSubscriptionChange(event.data.object as Stripe.Subscription)
         break

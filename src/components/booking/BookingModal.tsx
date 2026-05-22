@@ -86,16 +86,21 @@ export default function BookingModal(props: Props) {
       if (user.email && !email) setEmail(user.email)
       if (user.user_metadata?.full_name && !name) setName(user.user_metadata.full_name)
 
-      // Membership is valid only when status=active AND (end_date is null OR end_date > now)
-      const now = new Date().toISOString()
-      const { data } = await supabase
-        .from('memberships')
-        .select('status')
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .or(`end_date.is.null,end_date.gt.${now}`)
-        .maybeSingle()
-      if (data) setIsMember(true)
+      // Check membership — status column is source of truth for subscriptions
+      const [{ data: mem }, { data: profile }] = await Promise.all([
+        supabase
+          .from('memberships')
+          .select('status')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .maybeSingle(),
+        supabase
+          .from('profiles')
+          .select('membership_status')
+          .eq('user_id', user.id)
+          .maybeSingle(),
+      ])
+      if (mem || profile?.membership_status === 'active') setIsMember(true)
       setAuthLoaded(true)
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
