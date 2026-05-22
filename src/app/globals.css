@@ -2,18 +2,18 @@
 
 /* ── Tailwind v4 Design Tokens (CSS-first config) ─────────────────── */
 @theme {
-  /* Brand Colors */
-  --color-brand-primary: #FF6B35;
-  --color-brand-accent:  #4ECDC4;
-  --color-brand-dark:    #1A1A2E;
-  --color-brand-light:   #F7F3EE;
-  --color-brand-success: #2ECC71;
+  /* Brand Colors — warm Mediterranean sun palette */
+  --color-brand-primary: #F5A623;
+  --color-brand-accent:  #E8A87C;
+  --color-brand-dark:    #1A1209;
+  --color-brand-light:   #FFF8EE;
+  --color-brand-success: #4CAF50;
 
   /* Extended palette */
-  --color-brand-primary-light: #FF8C5A;
-  --color-brand-primary-dark:  #E55A20;
-  --color-brand-accent-light:  #7EDAD5;
-  --color-brand-accent-dark:   #2BB5AB;
+  --color-brand-primary-light: #F7B84B;
+  --color-brand-primary-dark:  #D4880F;
+  --color-brand-accent-light:  #F5C9A0;
+  --color-brand-accent-dark:   #C4784A;
 
   /* Font Families — Clash Display loaded via CDN in layout.tsx */
   --font-heading: "Clash Display", Inter, ui-sans-serif, system-ui, sans-serif;
@@ -25,10 +25,10 @@
   --animate-float:    float   3s   ease-in-out infinite;
 
   /* Shadows */
-  --shadow-brand-sm:  0 2px  12px rgb(255 107  53 / 0.25);
-  --shadow-brand-md:  0 4px  24px rgb(255 107  53 / 0.35);
-  --shadow-brand-lg:  0 8px  40px rgb(255 107  53 / 0.45);
-  --shadow-glow-teal: 0 0    20px rgb( 78 205 196 / 0.40);
+  --shadow-brand-sm:  0 2px  12px rgb(245 166  35 / 0.25);
+  --shadow-brand-md:  0 4px  24px rgb(245 166  35 / 0.35);
+  --shadow-brand-lg:  0 8px  40px rgb(245 166  35 / 0.45);
+  --shadow-glow-sand: 0 0    20px rgb(232 168 124 / 0.40);
 }
 
 /* ── Keyframes ─────────────────────────────────────────────────────── */
@@ -58,18 +58,24 @@
 }
 
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.30); }
-  50%       { box-shadow: 0 0 40px rgba(255, 107, 53, 0.60); }
+  0%, 100% { box-shadow: 0 0 20px rgba(245, 166, 35, 0.30); }
+  50%       { box-shadow: 0 0 40px rgba(245, 166, 35, 0.60); }
 }
 
-/* ── Semantic CSS variables (dark mode locked) ─────────────────────── */
+@keyframes palmSway {
+  0%, 100% { transform: rotate(0deg) translateY(0px);   }
+  33%       { transform: rotate(0.8deg) translateY(-4px); }
+  66%       { transform: rotate(-0.4deg) translateY(-2px); }
+}
+
+/* ── Semantic CSS variables (dark mode — warm tones) ───────────────── */
 :root {
-  --bg-base:     #1A1A2E;
-  --bg-card:     #16213E;
-  --bg-subtle:   #0F1626;
-  --text-base:   #F7F3EE;
-  --text-muted:  #9CA3AF;
-  --border-clr:  rgba(247, 243, 238, 0.10);
+  --bg-base:    #1A1209;
+  --bg-card:    #221608;
+  --bg-subtle:  #150E05;
+  --text-base:  #FFF8EE;
+  --text-muted: #B8A090;
+  --border-clr: rgba(255, 248, 238, 0.10);
 }
 
 /* ── Base ──────────────────────────────────────────────────────────── */
@@ -86,80 +92,81 @@ body {
 .glass {
   backdrop-filter:         blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  background:              rgba(255, 255, 255, 0.10);
-  border:                  1px solid rgba(255, 255, 255, 0.20);
+  background:              rgba(255, 248, 238, 0.08);
+  border:                  1px solid rgba(255, 248, 238, 0.16);
 }
 
 .glass-dark {
   backdrop-filter:         blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  background:              rgba(26, 26, 46, 0.88);
-  border:                  1px solid rgba(255, 255, 255, 0.08);
+  background:              rgba(26, 18, 9, 0.88);
+  border:                  1px solid rgba(255, 248, 238, 0.08);
 }
 
 .glass-card {
   backdrop-filter:         blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  background:              rgba(255, 255, 255, 0.055);
-  border:                  1px solid rgba(255, 255, 255, 0.11);
+  background:              rgba(255, 248, 238, 0.045);
+  border:                  1px solid rgba(255, 248, 238, 0.09);
   transition:              border-color 0.3s ease, box-shadow 0.3s ease;
 }
-.glass-card:hover { border-color: rgba(255, 107, 53, 0.20); }
+.glass-card:hover { border-color: rgba(245, 166, 35, 0.22); }
 
 /* ── Gradient text utilities ───────────────────────────────────────── */
 .text-gradient {
-  background:              linear-gradient(135deg, #FF6B35, #4ECDC4);
+  background:              linear-gradient(135deg, #F5A623, #E8A87C);
   -webkit-background-clip: text;
   background-clip:         text;
   -webkit-text-fill-color: transparent;
 }
 .text-gradient-primary {
-  background:              linear-gradient(135deg, #FF6B35, #FF8C5A);
+  background:              linear-gradient(135deg, #F5A623, #F7B84B);
   -webkit-background-clip: text;
   background-clip:         text;
   -webkit-text-fill-color: transparent;
 }
 .text-gradient-accent {
-  background:              linear-gradient(135deg, #4ECDC4, #7EDAD5);
+  background:              linear-gradient(135deg, #E8A87C, #F5C9A0);
   -webkit-background-clip: text;
   background-clip:         text;
   -webkit-text-fill-color: transparent;
 }
 
 /* ── Gradient backgrounds ──────────────────────────────────────────── */
-.bg-gradient-brand   { background: linear-gradient(135deg, #FF6B35, #FF8C5A); }
-.bg-gradient-vibrant { background: linear-gradient(135deg, #FF6B35, #4ECDC4); }
-.bg-gradient-dark    { background: linear-gradient(135deg, #1A1A2E, #16213E); }
+.bg-gradient-brand   { background: linear-gradient(135deg, #F5A623, #F7B84B); }
+.bg-gradient-vibrant { background: linear-gradient(135deg, #F5A623, #E8A87C); }
+.bg-gradient-dark    { background: linear-gradient(135deg, #1A1209, #221608); }
+.bg-gradient-sunset  { background: linear-gradient(160deg, #1A1209 0%, #2A1A08 40%, #1A1209 100%); }
 
 /* ── Premium button system ─────────────────────────────────────────── */
 .btn-primary {
-  background:   linear-gradient(135deg, #FF6B35 0%, #FF8C5A 100%);
-  box-shadow:   0 4px 24px rgba(255, 107, 53, 0.40);
+  background:    linear-gradient(135deg, #F5A623 0%, #F7B84B 100%);
+  box-shadow:    0 4px 24px rgba(245, 166, 35, 0.40);
   border-radius: 9999px;
-  color:        white;
-  font-weight:  600;
-  transition:   all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  color:         #1A1209;
+  font-weight:   700;
+  transition:    all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .btn-primary:hover {
-  box-shadow:   0 8px 40px rgba(255, 107, 53, 0.55);
-  transform:    translateY(-2px) scale(1.02);
+  box-shadow:    0 8px 40px rgba(245, 166, 35, 0.55);
+  transform:     translateY(-2px) scale(1.02);
 }
 .btn-primary:active { transform: translateY(0) scale(0.99); }
 
 .btn-secondary {
-  backdrop-filter:  blur(16px);
+  backdrop-filter:         blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  background:       rgba(255, 255, 255, 0.08);
-  border:           1px solid rgba(255, 255, 255, 0.18);
-  border-radius:    9999px;
-  color:            white;
-  font-weight:      600;
-  transition:       all 0.3s ease;
+  background:              rgba(255, 248, 238, 0.08);
+  border:                  1px solid rgba(255, 248, 238, 0.18);
+  border-radius:           9999px;
+  color:                   #FFF8EE;
+  font-weight:             600;
+  transition:              all 0.3s ease;
 }
 .btn-secondary:hover {
-  background:       rgba(255, 255, 255, 0.14);
-  border-color:     rgba(255, 107, 53, 0.45);
-  box-shadow:       0 0 24px rgba(255, 107, 53, 0.20);
+  background:    rgba(255, 248, 238, 0.13);
+  border-color:  rgba(245, 166, 35, 0.45);
+  box-shadow:    0 0 24px rgba(245, 166, 35, 0.18);
 }
 
 /* ── Card premium hover ────────────────────────────────────────────── */
@@ -169,12 +176,30 @@ body {
 }
 .card-hover:hover {
   transform:  translateY(-8px) scale(1.015);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), 0 4px 24px rgba(255, 107, 53, 0.20);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.40), 0 4px 24px rgba(245, 166, 35, 0.22);
 }
 
 /* ── Glow utilities ────────────────────────────────────────────────── */
-.glow-primary { box-shadow: 0 0 30px rgba(255, 107, 53, 0.45); }
-.glow-accent  { box-shadow: 0 0 30px rgba(78,  205, 196, 0.40); }
+.glow-primary { box-shadow: 0 0 30px rgba(245, 166, 35, 0.45); }
+.glow-accent  { box-shadow: 0 0 30px rgba(232, 168, 124, 0.40); }
+
+/* ── Palm tree & Mediterranean decorative utilities ────────────────── */
+.palm-sway {
+  animation: palmSway 6s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* Subtle sun-burst overlay — apply to section backgrounds */
+.bg-sunburst {
+  background-image: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(245, 166, 35, 0.10) 0%, transparent 70%);
+}
+
+/* Warm sand grain texture (very subtle) */
+.bg-warm-grain {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(245, 166, 35, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 80% 80%, rgba(232, 168, 124, 0.06) 0%, transparent 50%);
+}
 
 /* ── Scrollbar hide ────────────────────────────────────────────────── */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
@@ -183,5 +208,5 @@ body {
 /* ── Custom scrollbar ──────────────────────────────────────────────── */
 ::-webkit-scrollbar              { width: 6px; }
 ::-webkit-scrollbar-track        { background: transparent; }
-::-webkit-scrollbar-thumb        { background: #FF6B35; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover  { background: #E55A20; }
+::-webkit-scrollbar-thumb        { background: #F5A623; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover  { background: #D4880F; }

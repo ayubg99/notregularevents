@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { createClient } from '@/lib/supabase/server'
+import { getPublicClient } from '@/lib/supabase/public'
 import type { TripRow } from '@/types/database'
 import TripCard from './TripCard'
 
 async function getPublishedTrips(): Promise<TripRow[]> {
   try {
-    const supabase = await createClient()
+    const supabase = getPublicClient()
     const { data, error } = await supabase
       .from('trips')
       .select('*')

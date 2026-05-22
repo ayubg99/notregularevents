@@ -1,12 +1,12 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { createClient } from '@/lib/supabase/server'
+import { getPublicClient } from '@/lib/supabase/public'
 import type { EventRow } from '@/types/database'
 import EventCard from './EventCard'
 
 async function getPublishedEvents(): Promise<EventRow[]> {
   try {
-    const supabase = await createClient()
+    const supabase = getPublicClient()
     const { data, error } = await supabase
       .from('events')
       .select('*')

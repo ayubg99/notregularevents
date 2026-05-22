@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { Menu, X, ChevronRight, LogOut, LayoutDashboard } from 'lucide-react'
 import type { User } from '@supabase/supabase-js'
@@ -79,11 +80,15 @@ export default function Navbar() {
           <div className="flex items-center justify-between">
 
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-1 group flex-shrink-0">
-              <span className="font-heading text-xl font-bold text-white tracking-tight">
-                Erasmus Vibe
-              </span>
-              <span className="w-2 h-2 rounded-full bg-brand-primary group-hover:scale-150 transition-transform duration-200" />
+            <Link href="/" className="flex-shrink-0">
+              <Image
+                src="/logo.png"
+                alt="Erasmus Vibe"
+                width={140}
+                height={36}
+                className="h-9 w-auto"
+                priority
+              />
             </Link>
 
             {/* Desktop links */}

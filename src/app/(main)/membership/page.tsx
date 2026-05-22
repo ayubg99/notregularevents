@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { createClient } from '@/lib/supabase/server'
 import PricingCards from './PricingCards'
 import type { MembershipPlan, MembershipRow } from '@/types/database'
@@ -87,7 +89,7 @@ export default async function MembershipPage() {
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden pt-32 pb-24 px-4">
         {/* Gradient background */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(255,107,53,0.15),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(245,166,35,0.15),transparent)] pointer-events-none" />
         {/* Orbs */}
         <div className="absolute top-1/4 -left-40 w-[500px] h-[500px] rounded-full bg-brand-primary/12 blur-[120px] pointer-events-none" />
         <div className="absolute bottom-0 -right-40 w-[420px] h-[420px] rounded-full bg-brand-accent/10 blur-[100px] pointer-events-none" />

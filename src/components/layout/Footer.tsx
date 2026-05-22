@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Camera, MessageCircle, Music2, MapPin } from 'lucide-react'
 import FooterNewsletter from './FooterNewsletter'
 // lucide-react v1+ dropped brand icons; Camera ≈ Instagram, MessageCircle ≈ WhatsApp, Music2 ≈ TikTok
@@ -60,11 +61,14 @@ export default function Footer() {
           {/* Brand column */}
           <div className="lg:col-span-2 flex flex-col gap-6">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-1 group w-fit">
-              <span className="font-heading text-2xl font-bold text-white">
-                Erasmus Vibe
-              </span>
-              <span className="w-2 h-2 rounded-full bg-brand-primary group-hover:scale-125 transition-transform duration-200" />
+            <Link href="/" className="w-fit">
+              <Image
+                src="/logo.png"
+                alt="Erasmus Vibe"
+                width={160}
+                height={40}
+                className="h-10 w-auto"
+              />
             </Link>
 
             {/* Tagline */}

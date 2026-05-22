@@ -24,19 +24,24 @@ export const metadata: Metadata = {
     'Valencia networking', 'Erasmus Valencia',
   ],
   authors:  [{ name: 'Erasmus Vibe Valencia' }],
+  icons: {
+    icon:     '/logo.png',
+    shortcut: '/logo.png',
+    apple:    '/logo.png',
+  },
   openGraph: {
     type:        'website',
     locale:      'en_US',
     siteName:    'Erasmus Vibe Valencia',
     title:       'Erasmus Vibe Valencia',
     description: 'The international community in Valencia, Spain. Events, trips and connections for expats, students and professionals.',
-    images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
+    images:      [{ url: '/logo.png' }],
   },
   twitter: {
-    card:        'summary_large_image',
+    card:        'summary',
     title:       'Erasmus Vibe Valencia',
     description: 'The international community in Valencia — events, trips and connections for expats, students and professionals.',
-    images:      ['/og-default.png'],
+    images:      ['/logo.png'],
   },
 }
 
