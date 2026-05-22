@@ -35,6 +35,64 @@ const TIER_LABELS: Record<TripTier, string> = {
   group:      'Group',
 }
 
+function MembershipBanner({
+  authLoaded,
+  isLoggedIn,
+  isMember,
+}: {
+  authLoaded: boolean
+  isLoggedIn: boolean
+  isMember:   boolean
+}) {
+  if (!authLoaded) return null
+
+  if (isMember) {
+    return (
+      <div className="flex items-center gap-2.5 rounded-xl bg-brand-primary/10 border border-brand-primary/25 px-4 py-3">
+        <Crown size={15} className="text-brand-primary flex-shrink-0" />
+        <p className="text-brand-primary text-sm font-semibold">
+          15% member discount applied
+        </p>
+      </div>
+    )
+  }
+
+  if (isLoggedIn) {
+    return (
+      <a
+        href="/membership"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-start gap-2.5 rounded-xl bg-white/5 border border-white/10 px-4 py-3 hover:border-brand-primary/30 transition-colors group"
+      >
+        <Crown size={15} className="text-brand-primary/50 group-hover:text-brand-primary flex-shrink-0 mt-0.5 transition-colors" />
+        <p className="text-white/50 group-hover:text-white/70 text-sm transition-colors">
+          Join membership for <span className="font-semibold text-white/70">€9.99/month</span> and save 15% on every booking
+        </p>
+      </a>
+    )
+  }
+
+  return (
+    <div className="flex items-start gap-2.5 rounded-xl bg-white/5 border border-white/10 px-4 py-3">
+      <Crown size={15} className="text-brand-primary/50 flex-shrink-0 mt-0.5" />
+      <div>
+        <p className="text-white/50 text-sm">
+          Members save 15% —{' '}
+          <a href="/auth/login" className="text-brand-primary hover:underline font-medium">
+            <LogIn size={11} className="inline mb-0.5 mr-0.5" />Log in
+          </a>
+          {' '}or{' '}
+          <a href="/membership" target="_blank" rel="noopener noreferrer" className="text-brand-primary hover:underline font-medium">
+            join
+          </a>
+          {' '}to get the discount
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export default function BookingModal(props: Props) {
   const { open, onClose } = props
   const router = useRouter()
@@ -50,7 +108,6 @@ export default function BookingModal(props: Props) {
   const [authLoaded, setAuthLoaded] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isMember,   setIsMember]   = useState(false)
-  const [userId,     setUserId]     = useState<string | null>(null)
 
   // Quantity (events)
   const [quantity, setQuantity] = useState(1)
@@ -81,7 +138,6 @@ export default function BookingModal(props: Props) {
         return
       }
       setIsLoggedIn(true)
-      setUserId(user.id)
       setAuthEmail(user.email ?? null)
       if (user.email && !email) setEmail(user.email)
       if (user.user_metadata?.full_name && !name) setName(user.user_metadata.full_name)
@@ -210,60 +266,6 @@ export default function BookingModal(props: Props) {
 
   const title = props.type === 'event' ? props.title : props.trip.title
 
-  // ── Membership banner ────────────────────────────────────────
-  function MembershipBanner() {
-    // Don't flash anything until auth check resolves
-    if (!authLoaded) return null
-
-    if (isMember) {
-      return (
-        <div className="flex items-center gap-2.5 rounded-xl bg-brand-primary/10 border border-brand-primary/25 px-4 py-3">
-          <Crown size={15} className="text-brand-primary flex-shrink-0" />
-          <p className="text-brand-primary text-sm font-semibold">
-            15% member discount applied
-          </p>
-        </div>
-      )
-    }
-
-    if (isLoggedIn) {
-      // Logged in but no active membership
-      return (
-        <a
-          href="/membership"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-start gap-2.5 rounded-xl bg-white/5 border border-white/10 px-4 py-3 hover:border-brand-primary/30 transition-colors group"
-        >
-          <Crown size={15} className="text-brand-primary/50 group-hover:text-brand-primary flex-shrink-0 mt-0.5 transition-colors" />
-          <p className="text-white/50 group-hover:text-white/70 text-sm transition-colors">
-            Join membership for <span className="font-semibold text-white/70">€9.99/month</span> and save 15% on every booking
-          </p>
-        </a>
-      )
-    }
-
-    // Not logged in (guest)
-    return (
-      <div className="flex items-start gap-2.5 rounded-xl bg-white/5 border border-white/10 px-4 py-3">
-        <Crown size={15} className="text-brand-primary/50 flex-shrink-0 mt-0.5" />
-        <div>
-          <p className="text-white/50 text-sm">
-            Members save 15% —{' '}
-            <a href="/auth/login" className="text-brand-primary hover:underline font-medium">
-              <LogIn size={11} className="inline mb-0.5 mr-0.5" />Log in
-            </a>
-            {' '}or{' '}
-            <a href="/membership" target="_blank" rel="noopener noreferrer" className="text-brand-primary hover:underline font-medium">
-              join
-            </a>
-            {' '}to get the discount
-          </p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
@@ -295,7 +297,7 @@ export default function BookingModal(props: Props) {
 
         <div className="px-6 pb-8 pt-5 flex flex-col gap-5">
 
-          <MembershipBanner />
+          <MembershipBanner authLoaded={authLoaded} isLoggedIn={isLoggedIn} isMember={isMember} />
 
           {/* Tier selector (trips) */}
           {props.type === 'trip' && (

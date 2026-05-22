@@ -165,13 +165,18 @@ async function StripeSuccessContent({ sessionId }: { sessionId: string }) {
   }
 
   // Not an event or trip booking — check if this is a membership payment
+  let membershipSession: Stripe.Checkout.Session | null = null
   try {
     const stripeSession = await stripe.checkout.sessions.retrieve(sessionId)
     if (stripeSession.mode === 'subscription' && stripeSession.metadata?.type === 'membership') {
-      return <MembershipSuccess session={stripeSession} />
+      membershipSession = stripeSession
     }
   } catch (err) {
     console.error('[booking-success] Stripe session retrieve error:', err)
+  }
+
+  if (membershipSession) {
+    return <MembershipSuccess session={membershipSession} />
   }
 
   // Webhook hasn't fired yet — poll for event/trip booking
