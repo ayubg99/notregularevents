@@ -366,17 +366,23 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       )
     }
 
+    const membershipMeta = {
+      type:    'membership',
+      item_id: plan,
+      plan,              // explicit duplicate so subscription object also carries it
+      user_id: user!.id,
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode:           'subscription',
       customer_email: user!.email ?? undefined,
       line_items:     [{ price: priceId, quantity: 1 }],
-      success_url:    `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:     `${baseUrl}/membership`,
-      metadata: {
-        type:    'membership',
-        item_id: plan,
-        user_id: user!.id,
-      },
+      // subscription_data.metadata copies onto the subscription object itself,
+      // making user_id + plan available in customer.subscription.* events.
+      subscription_data: { metadata: membershipMeta },
+      success_url:       `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url:        `${baseUrl}/membership`,
+      metadata:          membershipMeta,
     })
 
     return NextResponse.json({ url: session.url })

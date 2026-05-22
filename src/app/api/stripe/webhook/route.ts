@@ -271,13 +271,14 @@ async function handleSubscriptionChange(
     endDate,
   })
 
-  const { error } = await admin
+  const { error, data: updatedRows } = await admin
     .from('memberships')
     .update({
       status,
       ...(endDate ? { end_date: endDate } : {}),
     })
     .eq('stripe_subscription_id', subscription.id)
+    .select('user_id')
 
   if (error) {
     console.error('[webhook subscription change] update failed:', {
@@ -287,15 +288,49 @@ async function handleSubscriptionChange(
     return
   }
 
-  // Sync membership_status on profiles table for ALL status changes
-  const { data: mem } = await admin
-    .from('memberships')
-    .select('user_id')
-    .eq('stripe_subscription_id', subscription.id)
-    .maybeSingle()
+  const count = updatedRows?.length ?? 0
+  console.log('[webhook subscription change] rows updated:', count)
 
-  if (mem?.user_id) {
-    await admin.from('profiles').update({ membership_status: status }).eq('user_id', mem.user_id)
+  // If 0 rows updated and subscription is active/trialing → no row exists yet.
+  // This happens when customer.subscription.created fires before
+  // checkout.session.completed, OR when checkout.session.completed was missed.
+  // Stripe copies subscription_data.metadata onto the subscription object,
+  // so user_id and plan are available here.
+  if ((count ?? 0) === 0 && (status === 'active' || status === 'trialing')) {
+    const subMeta  = (subscription.metadata ?? {}) as Record<string, string>
+    const userId   = subMeta.user_id || null
+    const plan     = (subMeta.plan || subMeta.item_id) as MembershipPlan | undefined
+
+    console.log('[webhook subscription change] no existing row — attempting upsert', { userId, plan, subscriptionId: subscription.id })
+
+    if (userId && plan) {
+      const { error: upsertErr } = await admin.from('memberships').upsert(
+        {
+          user_id:                userId,
+          plan,
+          status,
+          stripe_subscription_id: subscription.id,
+          start_date:             new Date().toISOString(),
+          end_date:               membershipEndDate(plan),
+        },
+        { onConflict: 'user_id' },
+      )
+      if (upsertErr) {
+        console.error('[webhook subscription change] fallback upsert failed:', upsertErr.message, upsertErr.code)
+      } else {
+        console.log('[webhook subscription change] fallback upsert succeeded for user', userId)
+        await admin.from('profiles').update({ membership_status: status }).eq('user_id', userId)
+      }
+      return
+    } else {
+      console.error('[webhook subscription change] no metadata on subscription — cannot create row', subMeta)
+    }
+  }
+
+  // Sync profiles for the updated row (use updatedRows to avoid a second query)
+  const updatedUserId = updatedRows?.[0]?.user_id
+  if (updatedUserId) {
+    await admin.from('profiles').update({ membership_status: status }).eq('user_id', updatedUserId)
   }
 
   console.log('[webhook subscription change] updated status to', status, 'for subscription', subscription.id)
