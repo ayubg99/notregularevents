@@ -138,6 +138,7 @@ export type MembershipRow = {
   plan:                   MembershipPlan
   status:                 MembershipStatus
   stripe_subscription_id: string | null
+  stripe_customer_id:     string | null
   start_date:             string
   end_date:               string | null
   created_at:             string
