@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "^9.6.0",
-    "@supabase/auth-helpers-nextjs": "^0.15.0",
+    "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.1",
     "@tanstack/react-query": "^5.100.11",
     "@types/qrcode": "^1.5.6",

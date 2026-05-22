@@ -1,6 +1,5 @@
-// @supabase/auth-helpers-nextjs 0.15 re-exports @supabase/ssr under the hood.
 // cookies() is async in Next.js 15+ — all server client factories are async.
-import { createServerClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { Database } from '@/types/database'
 
