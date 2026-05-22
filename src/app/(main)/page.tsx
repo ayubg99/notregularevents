@@ -16,15 +16,13 @@ export const metadata: Metadata = {
     description: 'The ultimate Erasmus student community in Valencia, Spain.',
   },
 }
-import dynamic from 'next/dynamic'
 import HeroSection from '@/components/home/HeroSection'
 import FeaturedEvents from '@/components/home/FeaturedEvents'
 import FeaturedTrips from '@/components/home/FeaturedTrips'
 import CommunitySection from '@/components/home/CommunitySection'
-
-const StatsSection       = dynamic(() => import('@/components/home/StatsSection'),       { ssr: false })
-const TestimonialsSection = dynamic(() => import('@/components/home/TestimonialsSection'), { ssr: false })
-const NewsletterSection  = dynamic(() => import('@/components/home/NewsletterSection'),  { ssr: false })
+import StatsSection from '@/components/home/StatsSection'
+import TestimonialsSection from '@/components/home/TestimonialsSection'
+import NewsletterSection from '@/components/home/NewsletterSection'
 
 // ─── Skeleton fallbacks shown while Supabase data loads ────────
 

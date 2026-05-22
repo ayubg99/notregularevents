@@ -6,7 +6,8 @@
       "Bash(npx tsc *)",
       "Bash(node *)",
       "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
-      "Bash(npm uninstall *)"
+      "Bash(npm uninstall *)",
+      "Bash(npm run *)"
     ]
   }
 }
