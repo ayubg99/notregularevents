@@ -4,7 +4,7 @@ import type Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
 import { generateQR } from '@/lib/qr'
 import { nanoid } from 'nanoid'
-import { sendBookingConfirmation } from '@/lib/email'
+import { sendBookingConfirmation, sendMembershipWelcomeEmail } from '@/lib/email'
 import type { Database, MembershipPlan, MembershipStatus, TripTier } from '@/types/database'
 
 export const runtime = 'nodejs'
@@ -213,6 +213,15 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
 
     console.log('[webhook membership] upsert succeeded for user', userId)
+
+    // Send welcome email
+    const toEmail = session.customer_details?.email
+      ?? (userId ? await getUserEmail(admin, userId) : null)
+    const toName  = session.customer_details?.name ?? 'there'
+    console.log('[webhook membership] sending welcome email to:', toEmail, 'plan:', plan)
+    if (toEmail) {
+      await sendMembershipWelcomeEmail({ to: toEmail, name: toName, plan, endDate })
+    }
 
     // Store customer ID separately — non-blocking; column may not exist on older deployments
     if (customerId) {
