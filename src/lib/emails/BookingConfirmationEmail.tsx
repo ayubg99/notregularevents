@@ -1,7 +1,6 @@
 interface Props {
   name:        string
   bookingRef:  string
-  qrCode:      string
   title:       string
   type:        'event' | 'trip'
   date?:       string
@@ -11,7 +10,7 @@ interface Props {
 }
 
 export function BookingConfirmationEmail({
-  name, bookingRef, qrCode, title, type, date, location, whatsappUrl, baseUrl,
+  name, bookingRef, title, type, date, location, whatsappUrl, baseUrl,
 }: Props): string {
   const formattedDate = date
     ? new Date(date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
@@ -72,7 +71,7 @@ export function BookingConfirmationEmail({
               <p style="margin:0 0 16px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">
                 Show this at the door
               </p>
-              <img src="${qrCode}" alt="QR Code" width="180" height="180"
+              <img src="cid:qr-code" alt="QR Code" width="180" height="180"
                    style="display:block;border-radius:12px;background:#fff;padding:8px;" />
             </td>
           </tr>
