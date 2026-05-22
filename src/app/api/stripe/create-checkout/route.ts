@@ -3,16 +3,20 @@ import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe'
 import { generateQR } from '@/lib/qr'
 import { nanoid } from 'nanoid'
+import { sendBookingConfirmation } from '@/lib/email'
 import type { MembershipPlan, TripTier } from '@/types/database'
 
 type CheckoutType = 'event' | 'trip' | 'membership'
 
 interface Body {
-  type:       CheckoutType
-  itemId:     string
-  tier?:      TripTier
-  quantity?:  number
-  promoCode?: string
+  type:        CheckoutType
+  itemId:      string
+  tier?:       TripTier
+  quantity?:   number
+  promoCode?:  string
+  guestName?:  string
+  guestEmail?: string
+  guestPhone?: string
 }
 
 function applyDiscount(price: number, type: 'percentage' | 'fixed', value: number): number {
@@ -32,14 +36,29 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
-  }
-
   const body: Body = await request.json()
-  const { type, itemId, tier, quantity = 1, promoCode } = body
+  const { type, itemId, tier, quantity = 1, promoCode, guestName, guestEmail, guestPhone } = body
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+
+  // Membership still requires auth
+  if (type === 'membership' && !user) {
+    return NextResponse.json({ error: 'Please log in to purchase a membership.' }, { status: 401 })
+  }
+
+  // Membership discount: status=active AND (end_date is null OR end_date > now)
+  let memberDiscount = false
+  if (user) {
+    const now = new Date().toISOString()
+    const { data: mem } = await supabase
+      .from('memberships')
+      .select('status')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .or(`end_date.is.null,end_date.gt.${now}`)
+      .maybeSingle()
+    memberDiscount = !!mem
+  }
 
   // ── Validate promo code ──────────────────────────────────────
   let promoCodeId: string | undefined
@@ -66,7 +85,7 @@ export async function POST(request: NextRequest) {
   if (type === 'event') {
     const { data: event } = await supabase
       .from('events')
-      .select('id, title, price, capacity, tickets_sold, slug, image_url')
+      .select('id, title, price, capacity, tickets_sold, slug, image_url, date, location')
       .eq('id', itemId)
       .eq('status', 'published')
       .single()
@@ -80,11 +99,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `Only ${spotsLeft} spot${spotsLeft === 1 ? '' : 's'} remaining.` }, { status: 409 })
     }
 
-    const unitPrice = discountType
+    let unitPrice = discountType
       ? applyDiscount(event.price, discountType, discountValue)
       : event.price
+    if (memberDiscount) {
+      unitPrice = applyDiscount(unitPrice, 'percentage', 15)
+    }
 
     const cancelUrl = `${baseUrl}/events/${event.slug}`
+    const toEmail = guestEmail ?? user?.email
+    const toName  = guestName  ?? user?.user_metadata?.full_name ?? 'there'
 
     // Free path — insert directly
     if (unitPrice === 0) {
@@ -92,10 +116,13 @@ export async function POST(request: NextRequest) {
       const qrCode = await generateQR(bookingRef)
       const tickets = Array.from({ length: quantity }, () => ({
         event_id:          event.id,
-        user_id:           user.id,
+        user_id:           user?.id ?? null,
         booking_ref:       bookingRef,
         qr_code:           qrCode,
         stripe_payment_id: null,
+        guest_name:        guestName  ?? null,
+        guest_email:       guestEmail ?? null,
+        guest_phone:       guestPhone ?? null,
         status:            'active' as const,
       }))
       const { error } = await supabase.from('event_tickets').insert(tickets)
@@ -103,17 +130,32 @@ export async function POST(request: NextRequest) {
         console.error('[create-checkout free event]', error.message)
         return NextResponse.json({ error: 'Failed to create your ticket.' }, { status: 500 })
       }
-      await supabase.from('notifications').insert({
-        user_id: user.id,
-        type:    'booking_confirmed',
-        message: `Your ticket for ${event.title} is confirmed. Ref: ${bookingRef}`,
-        read:    false,
-      })
+      if (user?.id) {
+        await supabase.from('notifications').insert({
+          user_id: user.id,
+          type:    'booking_confirmed',
+          message: `Your ticket for ${event.title} is confirmed. Ref: ${bookingRef}`,
+          read:    false,
+        })
+      }
+      if (toEmail) {
+        await sendBookingConfirmation({
+          to:         toEmail,
+          name:       toName,
+          bookingRef,
+          qrCode,
+          title:      event.title,
+          type:       'event',
+          date:       event.date ?? undefined,
+          location:   event.location ?? undefined,
+        })
+      }
       return NextResponse.json({ url: `${baseUrl}/booking/success?ref=${bookingRef}` })
     }
 
     const session = await stripe.checkout.sessions.create({
-      mode:       'payment',
+      mode:           'payment',
+      customer_email: toEmail ?? undefined,
       line_items: [{
         quantity,
         price_data: {
@@ -128,10 +170,15 @@ export async function POST(request: NextRequest) {
       success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  cancelUrl,
       metadata: {
-        type:           'event',
-        item_id:        event.id,
-        user_id:        user.id,
-        quantity:       String(quantity),
+        type:        'event',
+        item_id:     event.id,
+        user_id:     user?.id     ?? '',
+        quantity:    String(quantity),
+        guest_name:  guestName    ?? '',
+        guest_email: guestEmail   ?? '',
+        guest_phone: guestPhone   ?? '',
+        event_date:  event.date   ?? '',
+        location:    event.location ?? '',
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
     })
@@ -145,7 +192,7 @@ export async function POST(request: NextRequest) {
 
     const { data: trip } = await supabase
       .from('trips')
-      .select('id, title, price_early_bird, price_standard, price_vip, price_group, capacity, seats_sold, slug, image_url')
+      .select('id, title, price_early_bird, price_standard, price_vip, price_group, capacity, seats_sold, slug, image_url, start_date, destination, whatsapp_group_url')
       .eq('id', itemId)
       .eq('status', 'published')
       .single()
@@ -166,11 +213,16 @@ export async function POST(request: NextRequest) {
       group:      trip.price_group      ?? trip.price_standard,
     }
     const basePrice = tierPrices[tripTier]
-    const unitPrice = discountType
+    let unitPrice = discountType
       ? applyDiscount(basePrice, discountType, discountValue)
       : basePrice
+    if (memberDiscount) {
+      unitPrice = applyDiscount(unitPrice, 'percentage', 15)
+    }
 
     const cancelUrl = `${baseUrl}/trips/${trip.slug}`
+    const toEmail = guestEmail ?? user?.email
+    const toName  = guestName  ?? user?.user_metadata?.full_name ?? 'there'
 
     // Free path
     if (unitPrice === 0) {
@@ -178,11 +230,14 @@ export async function POST(request: NextRequest) {
       const qrCode = await generateQR(bookingRef)
       const { error } = await supabase.from('trip_bookings').insert({
         trip_id:           trip.id,
-        user_id:           user.id,
+        user_id:           user?.id ?? null,
         tier:              tripTier,
         booking_ref:       bookingRef,
         qr_code:           qrCode,
         stripe_payment_id: null,
+        guest_name:        guestName  ?? null,
+        guest_email:       guestEmail ?? null,
+        guest_phone:       guestPhone ?? null,
         status:            'confirmed' as const,
         deposit_paid:      true,
       })
@@ -190,17 +245,33 @@ export async function POST(request: NextRequest) {
         console.error('[create-checkout free trip]', error.message)
         return NextResponse.json({ error: 'Failed to create your booking.' }, { status: 500 })
       }
-      await supabase.from('notifications').insert({
-        user_id: user.id,
-        type:    'booking_confirmed',
-        message: `Your booking for ${trip.title} is confirmed. Ref: ${bookingRef}`,
-        read:    false,
-      })
+      if (user?.id) {
+        await supabase.from('notifications').insert({
+          user_id: user.id,
+          type:    'booking_confirmed',
+          message: `Your booking for ${trip.title} is confirmed. Ref: ${bookingRef}`,
+          read:    false,
+        })
+      }
+      if (toEmail) {
+        await sendBookingConfirmation({
+          to:           toEmail,
+          name:         toName,
+          bookingRef,
+          qrCode,
+          title:        trip.title,
+          type:         'trip',
+          date:         trip.start_date ?? undefined,
+          location:     trip.destination ?? undefined,
+          whatsappUrl:  trip.whatsapp_group_url ?? undefined,
+        })
+      }
       return NextResponse.json({ url: `${baseUrl}/booking/success?ref=${bookingRef}` })
     }
 
     const session = await stripe.checkout.sessions.create({
-      mode:       'payment',
+      mode:           'payment',
+      customer_email: toEmail ?? undefined,
       line_items: [{
         quantity: 1,
         price_data: {
@@ -215,10 +286,16 @@ export async function POST(request: NextRequest) {
       success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  cancelUrl,
       metadata: {
-        type:      'trip',
-        item_id:   trip.id,
-        user_id:   user.id,
-        tier:      tripTier,
+        type:              'trip',
+        item_id:           trip.id,
+        user_id:           user?.id       ?? '',
+        tier:              tripTier,
+        guest_name:        guestName      ?? '',
+        guest_email:       guestEmail     ?? '',
+        guest_phone:       guestPhone     ?? '',
+        trip_date:         trip.start_date ?? '',
+        destination:       trip.destination ?? '',
+        whatsapp_group_url: trip.whatsapp_group_url ?? '',
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
     })
@@ -246,7 +323,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         type:    'membership',
         item_id: plan,
-        user_id: user.id,
+        user_id: user!.id,
       },
     })
 

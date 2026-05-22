@@ -1,55 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/database'
+
+function getAdminClient() {
+  return createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+}
 
 export async function GET(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    return NextResponse.json({ found: false }, { status: 401 })
-  }
-
   const sessionId = request.nextUrl.searchParams.get('session_id')
   if (!sessionId) {
     return NextResponse.json({ found: false }, { status: 400 })
   }
 
-  // Check event_tickets first
-  const { data: ticket } = await supabase
+  // Use admin client — session IDs are Stripe-generated secrets, safe as lookup keys
+  const admin = getAdminClient()
+
+  const { data: ticket } = await admin
     .from('event_tickets')
-    .select('id, booking_ref, qr_code, status, event_id')
+    .select('id, booking_ref, qr_code, status, event_id, guest_email, user_id')
     .eq('stripe_payment_id', sessionId)
-    .eq('user_id', user.id)
-    .single()
+    .maybeSingle()
 
   if (ticket) {
     return NextResponse.json({ found: true, type: 'event', booking: ticket })
   }
 
-  // Then trip_bookings
-  const { data: tripBooking } = await supabase
+  const { data: tripBooking } = await admin
     .from('trip_bookings')
-    .select('id, booking_ref, qr_code, status, trip_id, tier')
+    .select('id, booking_ref, qr_code, status, trip_id, tier, guest_email, user_id')
     .eq('stripe_payment_id', sessionId)
-    .eq('user_id', user.id)
-    .single()
+    .maybeSingle()
 
   if (tripBooking) {
     return NextResponse.json({ found: true, type: 'trip', booking: tripBooking })
-  }
-
-  // Membership
-  const { data: membership } = await supabase
-    .from('memberships')
-    .select('id, plan, status, start_date')
-    .eq('user_id', user.id)
-    .eq('status', 'active')
-    .order('start_date', { ascending: false })
-    .limit(1)
-    .single()
-
-  if (membership) {
-    return NextResponse.json({ found: true, type: 'membership', booking: membership })
   }
 
   return NextResponse.json({ found: false })

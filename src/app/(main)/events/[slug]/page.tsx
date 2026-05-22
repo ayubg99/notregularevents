@@ -211,6 +211,7 @@ export default async function EventDetailPage({ params }: Props) {
               capacity={event.capacity}
               sold={event.tickets_sold}
               slug={event.slug}
+              title={event.title}
             />
 
             {/* Capacity summary */}

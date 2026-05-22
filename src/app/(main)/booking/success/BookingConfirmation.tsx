@@ -2,15 +2,16 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { Copy, Check, Download, MessageCircle, LayoutDashboard } from 'lucide-react'
+import { Copy, Check, Download, MessageCircle, LayoutDashboard, Crown } from 'lucide-react'
 import Link from 'next/link'
 
 interface Props {
-  bookingRef:     string
-  qrCode:         string | null
-  icsContent?:    string
-  whatsappUrl?:   string
-  title?:         string
+  bookingRef:       string
+  qrCode:           string | null
+  icsContent?:      string
+  whatsappUrl?:     string
+  title?:           string
+  showMemberUpsell?: boolean
 }
 
 export default function BookingConfirmation({
@@ -19,6 +20,7 @@ export default function BookingConfirmation({
   icsContent,
   whatsappUrl,
   title = 'Your Booking',
+  showMemberUpsell = false,
 }: Props) {
   const [copied, setCopied] = useState(false)
 
@@ -103,6 +105,24 @@ export default function BookingConfirmation({
           My Dashboard
         </Link>
       </div>
+
+      {/* Member upsell (shown to guests) */}
+      {showMemberUpsell && (
+        <Link
+          href="/membership"
+          className="w-full max-w-sm flex items-center gap-3 rounded-2xl bg-brand-primary/8 border border-brand-primary/20 px-5 py-4 hover:border-brand-primary/40 hover:bg-brand-primary/12 transition-all group"
+        >
+          <Crown size={20} className="text-brand-primary flex-shrink-0" />
+          <div>
+            <p className="text-white text-sm font-semibold group-hover:text-brand-primary transition-colors">
+              Save 15% on every future booking
+            </p>
+            <p className="text-white/40 text-xs mt-0.5">
+              Join Erasmus Vibe for €9.99/month →
+            </p>
+          </div>
+        </Link>
+      )}
     </div>
   )
 }

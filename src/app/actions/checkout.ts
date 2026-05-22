@@ -1,9 +1,9 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { stripe } from '@/lib/stripe'
 import { generateQR } from '@/lib/qr'
 import { nanoid } from 'nanoid'
+import { sendBookingConfirmation } from '@/lib/email'
 import type { TripTier } from '@/types/database'
 
 type Result =
@@ -13,20 +13,19 @@ type Result =
 // ─── Event checkout (free path only; paid path → /api/stripe/create-checkout) ─
 
 export async function createCheckoutSession(input: {
-  eventId:  string
-  quantity: number
-  slug:     string
+  eventId:    string
+  quantity:   number
+  slug:       string
+  guestName?: string
+  guestEmail?: string
+  guestPhone?: string
 }): Promise<Result> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) {
-    return { success: false, error: 'Please log in to book tickets.' }
-  }
-
   const { data: event } = await supabase
     .from('events')
-    .select('id, title, price, capacity, tickets_sold, slug, image_url')
+    .select('id, title, price, capacity, tickets_sold, slug, image_url, date, location')
     .eq('id', input.eventId)
     .eq('status', 'published')
     .single()
@@ -45,16 +44,18 @@ export async function createCheckoutSession(input: {
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
-  // Free event — insert tickets directly
   if (event.price === 0) {
     const bookingRef = nanoid(8).toUpperCase()
     const qrCode     = await generateQR(bookingRef)
     const tickets = Array.from({ length: input.quantity }, () => ({
       event_id:          event.id,
-      user_id:           user.id,
+      user_id:           user?.id ?? null,
       booking_ref:       bookingRef,
       qr_code:           qrCode,
       stripe_payment_id: null,
+      guest_name:        input.guestName  ?? null,
+      guest_email:       input.guestEmail ?? null,
+      guest_phone:       input.guestPhone ?? null,
       status:            'active' as const,
     }))
     const { error } = await supabase.from('event_tickets').insert(tickets)
@@ -62,61 +63,42 @@ export async function createCheckoutSession(input: {
       console.error('[checkout free event]', error.message)
       return { success: false, error: 'Failed to create your ticket. Please try again.' }
     }
+    const toEmail = input.guestEmail ?? user?.email
+    const toName  = input.guestName  ?? user?.user_metadata?.full_name ?? 'there'
+    if (toEmail) {
+      await sendBookingConfirmation({
+        to:       toEmail,
+        name:     toName,
+        bookingRef,
+        qrCode,
+        title:    event.title,
+        type:     'event',
+        date:     event.date     ?? undefined,
+        location: event.location ?? undefined,
+      })
+    }
     return { success: true, url: `${baseUrl}/booking/success?ref=${bookingRef}` }
   }
 
-  // Paid event — create Stripe session
-  try {
-    const session = await stripe.checkout.sessions.create({
-      mode:       'payment',
-      line_items: [{
-        quantity: input.quantity,
-        price_data: {
-          currency:     'eur',
-          unit_amount:  Math.round(event.price * 100),
-          product_data: {
-            name:   event.title,
-            images: event.image_url ? [event.image_url] : [],
-          },
-        },
-      }],
-      success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:  `${baseUrl}/events/${event.slug}`,
-      metadata: {
-        type:     'event',
-        item_id:  event.id,
-        user_id:  user.id,
-        quantity: String(input.quantity),
-      },
-    })
-
-    if (!session.url) {
-      return { success: false, error: 'Failed to create checkout session.' }
-    }
-    return { success: true, url: session.url }
-  } catch (err) {
-    console.error('[checkout stripe event]', err)
-    return { success: false, error: 'Payment setup failed. Please try again.' }
-  }
+  return { success: false, error: 'Paid events must go through the checkout API.' }
 }
 
 // ─── Trip checkout (free path only; paid path → /api/stripe/create-checkout) ─
 
 export async function createTripBooking(input: {
-  tripId: string
-  tier:   TripTier
-  slug:   string
+  tripId:      string
+  tier:        TripTier
+  slug:        string
+  guestName?:  string
+  guestEmail?: string
+  guestPhone?: string
 }): Promise<Result> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) {
-    return { success: false, error: 'Please log in to book a trip.' }
-  }
-
   const { data: trip } = await supabase
     .from('trips')
-    .select('id, title, price_early_bird, price_standard, price_vip, price_group, capacity, seats_sold, slug, image_url')
+    .select('id, title, price_early_bird, price_standard, price_vip, price_group, capacity, seats_sold, slug, image_url, start_date, destination, whatsapp_group_url')
     .eq('id', input.tripId)
     .eq('status', 'published')
     .single()
@@ -140,17 +122,19 @@ export async function createTripBooking(input: {
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
-  // Free trip
   if (price === 0) {
     const bookingRef = nanoid(8).toUpperCase()
     const qrCode     = await generateQR(bookingRef)
     const { error } = await supabase.from('trip_bookings').insert({
       trip_id:           trip.id,
-      user_id:           user.id,
+      user_id:           user?.id ?? null,
       tier:              input.tier,
       booking_ref:       bookingRef,
       qr_code:           qrCode,
       stripe_payment_id: null,
+      guest_name:        input.guestName  ?? null,
+      guest_email:       input.guestEmail ?? null,
+      guest_phone:       input.guestPhone ?? null,
       status:            'confirmed' as const,
       deposit_paid:      true,
     })
@@ -158,40 +142,23 @@ export async function createTripBooking(input: {
       console.error('[checkout free trip]', error.message)
       return { success: false, error: 'Failed to create your booking. Please try again.' }
     }
+    const toEmail = input.guestEmail ?? user?.email
+    const toName  = input.guestName  ?? user?.user_metadata?.full_name ?? 'there'
+    if (toEmail) {
+      await sendBookingConfirmation({
+        to:          toEmail,
+        name:        toName,
+        bookingRef,
+        qrCode,
+        title:       trip.title,
+        type:        'trip',
+        date:        trip.start_date ?? undefined,
+        location:    trip.destination ?? undefined,
+        whatsappUrl: trip.whatsapp_group_url ?? undefined,
+      })
+    }
     return { success: true, url: `${baseUrl}/booking/success?ref=${bookingRef}` }
   }
 
-  // Paid trip — create Stripe session
-  try {
-    const session = await stripe.checkout.sessions.create({
-      mode:       'payment',
-      line_items: [{
-        quantity: 1,
-        price_data: {
-          currency:     'eur',
-          unit_amount:  Math.round(price * 100),
-          product_data: {
-            name:   `${trip.title} — ${input.tier.replace('_', ' ')}`,
-            images: trip.image_url ? [trip.image_url] : [],
-          },
-        },
-      }],
-      success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:  `${baseUrl}/trips/${trip.slug}`,
-      metadata: {
-        type:    'trip',
-        item_id: trip.id,
-        user_id: user.id,
-        tier:    input.tier,
-      },
-    })
-
-    if (!session.url) {
-      return { success: false, error: 'Failed to create checkout session.' }
-    }
-    return { success: true, url: session.url }
-  } catch (err) {
-    console.error('[checkout stripe trip]', err)
-    return { success: false, error: 'Payment setup failed. Please try again.' }
-  }
+  return { success: false, error: 'Paid trips must go through the checkout API.' }
 }

@@ -73,11 +73,14 @@ export type EventRow = {
 export type EventTicketRow = {
   id:                string
   event_id:          string
-  user_id:           string
+  user_id:           string | null
   booking_ref:       string
   qr_code:           string | null
   status:            TicketStatus
   stripe_payment_id: string | null
+  guest_name:        string | null
+  guest_email:       string | null
+  guest_phone:       string | null
   created_at:        string
   updated_at:        string
 }
@@ -115,13 +118,16 @@ export type TripRow = {
 export type TripBookingRow = {
   id:                string
   trip_id:           string
-  user_id:           string
+  user_id:           string | null
   tier:              TripTier
   booking_ref:       string
   qr_code:           string | null
   status:            BookingStatus
   stripe_payment_id: string | null
   deposit_paid:      boolean
+  guest_name:        string | null
+  guest_email:       string | null
+  guest_phone:       string | null
   created_at:        string
   updated_at:        string
 }
@@ -317,21 +323,28 @@ export interface Database {
       create_event_ticket: {
         Args: {
           p_event_id:          string
-          p_user_id:           string
           p_booking_ref:       string
           p_qr_code:           string
           p_stripe_payment_id: string
+          p_quantity?:         number
+          p_user_id?:          string | null
+          p_guest_name?:       string | null
+          p_guest_email?:      string | null
+          p_guest_phone?:      string | null
         }
         Returns: string
       }
       create_trip_booking: {
         Args: {
           p_trip_id:           string
-          p_user_id:           string
           p_tier:              TripTier
           p_booking_ref:       string
           p_qr_code:           string
           p_stripe_payment_id: string
+          p_user_id?:          string | null
+          p_guest_name?:       string | null
+          p_guest_email?:      string | null
+          p_guest_phone?:      string | null
         }
         Returns: string
       }

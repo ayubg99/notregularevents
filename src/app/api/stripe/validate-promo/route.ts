@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/database'
+
+function getAnonClient() {
+  return createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
+}
 
 export async function GET(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    return NextResponse.json({ valid: false, error: 'Please log in to apply a promo code.' }, { status: 401 })
-  }
+  const supabase = getAnonClient()
 
   const { searchParams } = request.nextUrl
   const code     = searchParams.get('code')

@@ -4,11 +4,11 @@ import type Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
 import { generateQR } from '@/lib/qr'
 import { nanoid } from 'nanoid'
+import { sendBookingConfirmation } from '@/lib/email'
 import type { Database, MembershipPlan, MembershipStatus, TripTier } from '@/types/database'
 
 export const runtime = 'nodejs'
 
-// Service-role client — bypasses RLS (no user session in webhook context)
 function getAdminClient() {
   return createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,14 +16,22 @@ function getAdminClient() {
   )
 }
 
+async function getUserEmail(admin: ReturnType<typeof getAdminClient>, userId: string): Promise<string | null> {
+  const { data } = await admin.from('users').select('email').eq('id', userId).single()
+  return data?.email ?? null
+}
+
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const admin = getAdminClient()
   const meta  = session.metadata ?? {}
   const type    = meta.type    as 'event' | 'trip' | 'membership' | undefined
-  const userId  = meta.user_id as string | undefined
+  const userId  = meta.user_id  || null
   const itemId  = meta.item_id as string | undefined
+  const guestName  = meta.guest_name  || null
+  const guestEmail = meta.guest_email || null
+  const guestPhone = meta.guest_phone || null
 
-  if (!type || !userId || !itemId) return
+  if (!type || !itemId) return
 
   // ── Event ────────────────────────────────────────────────────
   if (type === 'event') {
@@ -32,10 +40,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     const { error } = await admin.rpc('create_event_ticket', {
       p_event_id:          itemId,
-      p_user_id:           userId,
       p_booking_ref:       bookingRef,
       p_qr_code:           qrCode,
       p_stripe_payment_id: session.id,
+      p_quantity:          Number(meta.quantity ?? 1),
+      p_user_id:           userId || undefined,
+      p_guest_name:        guestName  || undefined,
+      p_guest_email:       guestEmail || undefined,
+      p_guest_phone:       guestPhone || undefined,
     })
 
     if (error) {
@@ -43,12 +55,29 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       return
     }
 
-    await admin.from('notifications').insert({
-      user_id: userId,
-      type:    'booking_confirmed',
-      message: `Your ticket is confirmed. Ref: ${bookingRef}`,
-      read:    false,
-    })
+    if (userId) {
+      await admin.from('notifications').insert({
+        user_id: userId,
+        type:    'booking_confirmed',
+        message: `Your ticket is confirmed. Ref: ${bookingRef}`,
+        read:    false,
+      })
+    }
+
+    const toEmail = guestEmail ?? (userId ? await getUserEmail(admin, userId) : null)
+    const toName  = guestName ?? 'there'
+    if (toEmail) {
+      await sendBookingConfirmation({
+        to:       toEmail,
+        name:     toName,
+        bookingRef,
+        qrCode,
+        title:    meta.event_title ?? 'your event',
+        type:     'event',
+        date:     meta.event_date  || undefined,
+        location: meta.location    || undefined,
+      })
+    }
   }
 
   // ── Trip ─────────────────────────────────────────────────────
@@ -59,11 +88,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     const { error } = await admin.rpc('create_trip_booking', {
       p_trip_id:           itemId,
-      p_user_id:           userId,
       p_tier:              tier,
       p_booking_ref:       bookingRef,
       p_qr_code:           qrCode,
       p_stripe_payment_id: session.id,
+      p_user_id:           userId || undefined,
+      p_guest_name:        guestName  || undefined,
+      p_guest_email:       guestEmail || undefined,
+      p_guest_phone:       guestPhone || undefined,
     })
 
     if (error) {
@@ -71,16 +103,35 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       return
     }
 
-    await admin.from('notifications').insert({
-      user_id: userId,
-      type:    'booking_confirmed',
-      message: `Your trip booking is confirmed. Ref: ${bookingRef}`,
-      read:    false,
-    })
+    if (userId) {
+      await admin.from('notifications').insert({
+        user_id: userId,
+        type:    'booking_confirmed',
+        message: `Your trip booking is confirmed. Ref: ${bookingRef}`,
+        read:    false,
+      })
+    }
+
+    const toEmail = guestEmail ?? (userId ? await getUserEmail(admin, userId) : null)
+    const toName  = guestName ?? 'there'
+    if (toEmail) {
+      await sendBookingConfirmation({
+        to:          toEmail,
+        name:        toName,
+        bookingRef,
+        qrCode,
+        title:       meta.trip_title ?? 'your trip',
+        type:        'trip',
+        date:        meta.trip_date   || undefined,
+        location:    meta.destination || undefined,
+        whatsappUrl: meta.whatsapp_group_url || undefined,
+      })
+    }
   }
 
   // ── Membership ───────────────────────────────────────────────
   if (type === 'membership') {
+    if (!userId) return
     const plan              = itemId as MembershipPlan
     const subscriptionId    = typeof session.subscription === 'string'
       ? session.subscription
@@ -178,6 +229,5 @@ export async function POST(request: NextRequest) {
     console.error('[webhook handler]', err)
   }
 
-  // Always return 200 so Stripe doesn't retry
   return NextResponse.json({ received: true })
 }

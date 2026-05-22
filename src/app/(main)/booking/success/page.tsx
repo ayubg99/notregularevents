@@ -3,7 +3,9 @@ export const dynamic = 'force-dynamic'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/server'
+import type { Database } from '@/types/database'
 import BookingConfirmation from './BookingConfirmation'
 import BookingPolling from './BookingPolling'
 
@@ -13,6 +15,13 @@ export const metadata: Metadata = {
 
 type Props = {
   searchParams: Promise<{ session_id?: string; ref?: string }>
+}
+
+function getAdminClient() {
+  return createAdminClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
 }
 
 function buildIcs(params: {
@@ -47,7 +56,6 @@ export default async function BookingSuccessPage({ searchParams }: Props) {
     <main className="min-h-screen bg-brand-dark pt-28 pb-24">
       <div className="max-w-lg mx-auto px-4 sm:px-6">
 
-        {/* Back link */}
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-white/50 hover:text-white text-sm mb-8 transition-colors group"
@@ -76,37 +84,26 @@ export default async function BookingSuccessPage({ searchParams }: Props) {
 // ── Paid booking (Stripe session_id) ─────────────────────────────
 
 async function StripeSuccessContent({ sessionId }: { sessionId: string }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const admin = getAdminClient()
 
-  if (!user) {
-    return (
-      <div className="text-center py-16">
-        <p className="text-white/60">Please log in to view your booking.</p>
-      </div>
-    )
-  }
-
-  // Try to find the booking (webhook may have already fired)
   const [ticketResult, tripResult] = await Promise.all([
-    supabase
+    admin
       .from('event_tickets')
-      .select('booking_ref, qr_code, event_id')
+      .select('booking_ref, qr_code, event_id, user_id, guest_email')
       .eq('stripe_payment_id', sessionId)
-      .eq('user_id', user.id)
-      .single(),
-    supabase
+      .maybeSingle(),
+    admin
       .from('trip_bookings')
-      .select('booking_ref, qr_code, trip_id')
+      .select('booking_ref, qr_code, trip_id, user_id, guest_email')
       .eq('stripe_payment_id', sessionId)
-      .eq('user_id', user.id)
-      .single(),
+      .maybeSingle(),
   ])
 
   // Event booking found
   if (ticketResult.data) {
     const booking = ticketResult.data
-    const { data: event } = await supabase
+    const isGuest = !booking.user_id
+    const { data: event } = await admin
       .from('events')
       .select('title, date, location')
       .eq('id', booking.event_id)
@@ -128,6 +125,7 @@ async function StripeSuccessContent({ sessionId }: { sessionId: string }) {
         qrCode={booking.qr_code}
         icsContent={icsContent}
         title={event?.title}
+        showMemberUpsell={isGuest}
       />
     )
   }
@@ -135,7 +133,8 @@ async function StripeSuccessContent({ sessionId }: { sessionId: string }) {
   // Trip booking found
   if (tripResult.data) {
     const booking = tripResult.data
-    const { data: trip } = await supabase
+    const isGuest = !booking.user_id
+    const { data: trip } = await admin
       .from('trips')
       .select('title, start_date, end_date, destination, whatsapp_group_url')
       .eq('id', booking.trip_id)
@@ -158,6 +157,7 @@ async function StripeSuccessContent({ sessionId }: { sessionId: string }) {
         icsContent={icsContent}
         whatsappUrl={trip?.whatsapp_group_url ?? undefined}
         title={trip?.title}
+        showMemberUpsell={isGuest}
       />
     )
   }
@@ -169,16 +169,19 @@ async function StripeSuccessContent({ sessionId }: { sessionId: string }) {
 // ── Free booking (ref query param) ───────────────────────────────
 
 async function FreeBookingContent({ bookingRef }: { bookingRef: string }) {
+  // Use server client (may be authed or not) — RLS allows reading own bookings
+  // Fall back to admin for guest bookings
   const supabase = await createClient()
+  const admin    = getAdminClient()
 
-  // Try event_tickets first
-  const { data: ticket } = await supabase
+  const { data: ticket } = await admin
     .from('event_tickets')
-    .select('booking_ref, qr_code, event_id')
+    .select('booking_ref, qr_code, event_id, user_id, guest_email')
     .eq('booking_ref', bookingRef)
-    .single()
+    .maybeSingle()
 
   if (ticket) {
+    const isGuest = !ticket.user_id
     const { data: event } = await supabase
       .from('events')
       .select('title, date, location')
@@ -201,18 +204,19 @@ async function FreeBookingContent({ bookingRef }: { bookingRef: string }) {
         qrCode={ticket.qr_code}
         icsContent={icsContent}
         title={event?.title}
+        showMemberUpsell={isGuest}
       />
     )
   }
 
-  // Try trip_bookings
-  const { data: tripBooking } = await supabase
+  const { data: tripBooking } = await admin
     .from('trip_bookings')
-    .select('booking_ref, qr_code, trip_id')
+    .select('booking_ref, qr_code, trip_id, user_id, guest_email')
     .eq('booking_ref', bookingRef)
-    .single()
+    .maybeSingle()
 
   if (tripBooking) {
+    const isGuest = !tripBooking.user_id
     const { data: trip } = await supabase
       .from('trips')
       .select('title, start_date, end_date, destination, whatsapp_group_url')
@@ -236,6 +240,7 @@ async function FreeBookingContent({ bookingRef }: { bookingRef: string }) {
         icsContent={icsContent}
         whatsappUrl={trip?.whatsapp_group_url ?? undefined}
         title={trip?.title}
+        showMemberUpsell={isGuest}
       />
     )
   }

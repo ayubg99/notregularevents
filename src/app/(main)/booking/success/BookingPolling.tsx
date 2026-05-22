@@ -8,6 +8,8 @@ interface Booking {
   booking_ref: string
   qr_code:     string | null
   status:      string
+  user_id:     string | null
+  guest_email: string | null
 }
 
 interface Props {
@@ -15,7 +17,7 @@ interface Props {
 }
 
 export default function BookingPolling({ sessionId }: Props) {
-  const [booking, setBooking] = useState<Booking | null>(null)
+  const [booking,  setBooking]  = useState<Booking | null>(null)
   const [attempts, setAttempts] = useState(0)
 
   useEffect(() => {
@@ -40,10 +42,12 @@ export default function BookingPolling({ sessionId }: Props) {
   }, [sessionId, booking, attempts])
 
   if (booking) {
+    const isGuest = !booking.user_id
     return (
       <BookingConfirmation
         bookingRef={booking.booking_ref}
         qrCode={booking.qr_code}
+        showMemberUpsell={isGuest}
       />
     )
   }
