@@ -16,21 +16,26 @@ export const metadata: Metadata = {
     template: '%s | Erasmus Vibe Valencia',
   },
   description:
-    'The ultimate Erasmus student community in Valencia, Spain. Discover events, trips, memberships and unforgettable experiences.',
-  keywords: ['Erasmus', 'Valencia', 'student', 'events', 'trips', 'community', 'Spain'],
+    'The international community in Valencia, Spain. Events, trips and connections for expats, students, digital nomads and young professionals.',
+  keywords: [
+    'Valencia expats', 'international community Valencia', 'things to do Valencia expats',
+    'meet people Valencia', 'Valencia digital nomads', 'international students Valencia',
+    'English speaking events Valencia', 'expat events Valencia',
+    'Valencia networking', 'Erasmus Valencia',
+  ],
   authors:  [{ name: 'Erasmus Vibe Valencia' }],
   openGraph: {
     type:        'website',
     locale:      'en_US',
     siteName:    'Erasmus Vibe Valencia',
     title:       'Erasmus Vibe Valencia',
-    description: 'The ultimate Erasmus student community in Valencia, Spain.',
+    description: 'The international community in Valencia, Spain. Events, trips and connections for expats, students and professionals.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
   },
   twitter: {
     card:        'summary_large_image',
     title:       'Erasmus Vibe Valencia',
-    description: 'The ultimate Erasmus student community in Valencia, Spain.',
+    description: 'The international community in Valencia — events, trips and connections for expats, students and professionals.',
     images:      ['/og-default.png'],
   },
 }

@@ -11,10 +11,10 @@ interface StatItem {
 }
 
 const STATS: StatItem[] = [
-  { end: 2500, suffix: '+', label: 'Students Joined',  desc: 'From 50+ countries'      },
-  { end: 120,  suffix: '+', label: 'Events Hosted',    desc: 'Parties, culture & more'  },
-  { end: 48,   suffix: '+', label: 'Trips Completed',  desc: 'Across Europe'            },
-  { end: 99,   suffix: '%', label: 'Happy Memories',   desc: 'Would recommend us'       },
+  { end: 500, suffix: '+', label: 'Members',        desc: 'From 50+ countries'       },
+  { end: 20,  suffix: '+', label: 'Nationalities',  desc: 'All in one community'     },
+  { end: 100, suffix: '+', label: 'Events Hosted',  desc: 'Parties, culture & more'  },
+  { end: 48,  suffix: '+', label: 'Trips Completed',desc: 'Across Europe & beyond'   },
 ]
 
 function StatCard({ item }: { item: StatItem }) {

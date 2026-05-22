@@ -4,6 +4,7 @@
 export type UserRole         = 'student' | 'admin' | 'ambassador'
 export type EventStatus      = 'draft' | 'published' | 'cancelled' | 'completed'
 export type EventCategory    = 'party' | 'cultural' | 'sport' | 'networking' | 'trip' | 'other'
+  | 'language_exchange' | 'food_wine' | 'hiking' | 'yoga' | 'art' | 'international_dinner'
 export type TicketStatus     = 'active' | 'used' | 'cancelled' | 'refunded'
 export type TripStatus       = 'draft' | 'published' | 'cancelled' | 'completed'
 export type TripTier         = 'early_bird' | 'standard' | 'vip' | 'group'

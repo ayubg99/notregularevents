@@ -3,17 +3,17 @@ import EventsClient from '@/components/events/EventsClient'
 
 export const metadata: Metadata = {
   title:       'Events | Erasmus Vibe Valencia',
-  description: 'Browse and book unforgettable events for Erasmus students in Valencia. Parties, cultural nights, sports, networking and more.',
+  description: 'Browse and book events for internationals in Valencia. Parties, networking, language exchange, food tours, hiking, yoga and more.',
   openGraph: {
     title:       'Events | Erasmus Vibe Valencia',
-    description: 'Browse and book unforgettable events for Erasmus students in Valencia.',
+    description: 'Browse and book events for internationals in Valencia — parties, networking, cultural nights and more.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
     title:       'Events | Erasmus Vibe Valencia',
-    description: 'Browse and book unforgettable events for Erasmus students in Valencia.',
+    description: 'Browse and book events for internationals in Valencia — parties, networking, cultural nights and more.',
   },
 }
 
@@ -30,7 +30,7 @@ export default function EventsPage() {
             Upcoming Events
           </h1>
           <p className="mt-3 text-[var(--text-muted)] max-w-xl leading-relaxed">
-            From beach parties to cultural nights — there&apos;s always something happening in Valencia for Erasmus students.
+            From beach parties to language exchanges — there&apos;s always something happening in Valencia for internationals.
           </p>
         </div>
 

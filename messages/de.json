@@ -1,0 +1,32 @@
+{
+  "nav": {
+    "events": "Events",
+    "trips": "Reisen",
+    "community": "Community",
+    "membership": "Mitgliedschaft",
+    "about": "Über uns",
+    "dashboard": "Dashboard",
+    "signIn": "Anmelden",
+    "joinNow": "Jetzt beitreten",
+    "signOut": "Abmelden",
+    "lightMode": "Heller Modus",
+    "darkMode": "Dunkler Modus"
+  },
+  "hero": {
+    "headline": "Leben. Erkunden. Verbinden in Valencia.",
+    "subline": "Events, Reisen und Community für Internationals in Valencia. Werde Teil von 500+ Mitgliedern aus 50+ Ländern.",
+    "cta": "Events entdecken",
+    "ctaSecondary": "Reisen entdecken"
+  },
+  "common": {
+    "bookNow": "Jetzt buchen",
+    "learnMore": "Mehr erfahren",
+    "loading": "Lädt...",
+    "error": "Etwas ist schiefgelaufen",
+    "retry": "Erneut versuchen",
+    "noResults": "Keine Ergebnisse",
+    "cancel": "Abbrechen",
+    "save": "Änderungen speichern",
+    "close": "Schließen"
+  }
+}

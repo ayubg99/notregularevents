@@ -6,21 +6,33 @@ import { cn } from '@/lib/utils/cn'
 
 // Full static strings required — Tailwind v4 content scan won't detect interpolated classes
 const CATEGORY_GRADIENTS: Record<EventCategory, string> = {
-  party:      'from-purple-600 to-pink-500',
-  cultural:   'from-amber-500 to-orange-400',
-  sport:      'from-green-600 to-teal-500',
-  networking: 'from-blue-600 to-indigo-500',
-  trip:       'from-orange-500 to-teal-400',
-  other:      'from-slate-600 to-slate-500',
+  party:                'from-purple-600 to-pink-500',
+  cultural:             'from-amber-500 to-orange-400',
+  sport:                'from-green-600 to-teal-500',
+  networking:           'from-blue-600 to-indigo-500',
+  trip:                 'from-orange-500 to-teal-400',
+  other:                'from-slate-600 to-slate-500',
+  language_exchange:    'from-yellow-500 to-amber-400',
+  food_wine:            'from-rose-500 to-orange-400',
+  hiking:               'from-green-500 to-lime-400',
+  yoga:                 'from-purple-400 to-pink-400',
+  art:                  'from-fuchsia-500 to-violet-400',
+  international_dinner: 'from-teal-500 to-cyan-400',
 }
 
 const CATEGORY_LABELS: Record<EventCategory, string> = {
-  party:      'Party',
-  cultural:   'Cultural',
-  sport:      'Sport',
-  networking: 'Networking',
-  trip:       'Trip',
-  other:      'Event',
+  party:                'Party',
+  cultural:             'Cultural',
+  sport:                'Sport',
+  networking:           'Networking',
+  trip:                 'Trip',
+  other:                'Event',
+  language_exchange:    'Language Exchange',
+  food_wine:            'Food & Wine',
+  hiking:               'Hiking',
+  yoga:                 'Yoga & Wellness',
+  art:                  'Art & Culture',
+  international_dinner: 'International Dinner',
 }
 
 interface EventCardProps {

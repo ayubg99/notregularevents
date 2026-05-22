@@ -4,7 +4,8 @@ import { headers } from 'next/headers'
 export default getRequestConfig(async () => {
   const headersList = await headers()
   const acceptLanguage = headersList.get('accept-language') ?? ''
-  const locale = acceptLanguage.toLowerCase().startsWith('es') ? 'es' : 'en'
+  const lang = acceptLanguage.toLowerCase()
+  const locale = (['es', 'fr', 'de', 'it'] as const).find(l => lang.startsWith(l)) ?? 'en'
 
   return {
     locale,

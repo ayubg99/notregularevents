@@ -11,6 +11,7 @@ import { createClient } from '@/lib/supabase/client'
 const NAV_HREFS = [
   { href: '/events',     key: 'events'     },
   { href: '/trips',      key: 'trips'      },
+  { href: '/community',  key: 'community'  },
   { href: '/membership', key: 'membership' },
   { href: '/about',      key: 'about'      },
 ] as const

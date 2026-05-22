@@ -4,17 +4,17 @@ import { getPublishedTrips } from '@/lib/supabase/queries'
 
 export const metadata: Metadata = {
   title:       'Trips | Erasmus Vibe Valencia',
-  description: 'Explore Spain and beyond with Erasmus Vibe. Weekend getaways, beach trips, festivals and adventures — all organised for Erasmus students.',
+  description: 'Explore Spain and beyond with Erasmus Vibe. Weekend getaways, cultural road trips, wine tours and international group travel — organised for Valencia\'s international community.',
   openGraph: {
     title:       'Trips | Erasmus Vibe Valencia',
-    description: 'Explore Spain and beyond with Erasmus Vibe. Weekend getaways, beach trips, festivals and more.',
+    description: 'Weekend getaways, cultural road trips, wine tours and adventures — organised for Valencia\'s international community.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
     title:       'Trips | Erasmus Vibe Valencia',
-    description: 'Explore Spain and beyond with Erasmus Vibe.',
+    description: 'Weekend getaways, cultural road trips and wine tours — organised for Valencia\'s international community.',
   },
 }
 
@@ -43,7 +43,7 @@ export default async function TripsPage() {
 
         <div className="relative max-w-7xl mx-auto text-center">
           <p className="text-brand-accent text-sm font-semibold uppercase tracking-widest mb-4">
-            Erasmus Adventures
+            Valencia Adventures
           </p>
           <h1 className="font-heading text-5xl md:text-7xl font-bold leading-tight mb-6">
             <span className="text-gradient">Explore Spain</span>
@@ -51,8 +51,8 @@ export default async function TripsPage() {
             <span className="text-white">&amp; Beyond</span>
           </h1>
           <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
-            Weekend beach trips, mountain hikes, city breaks and festival adventures —
-            all organised for Erasmus students.
+            Weekend getaways, cultural road trips, wine tours and international group travel —
+            all organised for Valencia&apos;s international community.
           </p>
 
           {/* Quick stats */}

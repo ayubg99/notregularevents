@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export const metadata = {
   title:       'My Dashboard — Erasmus Vibe',
-  description: 'Manage your bookings, membership, and profile for Erasmus Vibe Valencia.',
+  description: 'Manage your bookings, membership, and profile on Erasmus Vibe Valencia.',
 }
 import ProfileForm from './ProfileForm'
 import BookingTabs from './BookingTabs'

@@ -1,0 +1,32 @@
+{
+  "nav": {
+    "events": "Eventi",
+    "trips": "Viaggi",
+    "community": "Comunità",
+    "membership": "Abbonamento",
+    "about": "Chi siamo",
+    "dashboard": "Dashboard",
+    "signIn": "Accedi",
+    "joinNow": "Unisciti",
+    "signOut": "Esci",
+    "lightMode": "Modalità chiara",
+    "darkMode": "Modalità scura"
+  },
+  "hero": {
+    "headline": "Vivi. Esplora. Connettiti a Valencia.",
+    "subline": "Eventi, viaggi e comunità per gli internazionali a Valencia. Unisciti a 500+ membri da 50+ paesi.",
+    "cta": "Scopri gli eventi",
+    "ctaSecondary": "Scopri i viaggi"
+  },
+  "common": {
+    "bookNow": "Prenota ora",
+    "learnMore": "Scopri di più",
+    "loading": "Caricamento...",
+    "error": "Qualcosa è andato storto",
+    "retry": "Riprova",
+    "noResults": "Nessun risultato",
+    "cancel": "Annulla",
+    "save": "Salva modifiche",
+    "close": "Chiudi"
+  }
+}

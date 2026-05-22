@@ -44,7 +44,7 @@ export default function HeroSection() {
         >
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-white/20 text-white/80 text-sm font-medium mb-8">
             <span className="w-2 h-2 rounded-full bg-brand-success animate-pulse flex-shrink-0" />
-            Valencia&apos;s #1 Erasmus Community
+            Valencia&apos;s International Community
           </span>
         </motion.div>
 
@@ -55,10 +55,10 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          Live the{' '}
-          <span className="text-gradient">Erasmus</span>
+          Live. Explore.{' '}
+          <span className="text-gradient">Connect</span>
           <br />
-          Experience
+          in Valencia.
         </motion.h1>
 
         {/* Subheadline */}
@@ -68,8 +68,8 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.25, ease: 'easeOut' }}
         >
-          Events, trips &amp; unforgettable memories in Valencia.
-          Join 2,500+ students from 50+ countries.
+          Events, trips and community for internationals in Valencia.
+          Join 500+ members from 50+ countries.
         </motion.p>
 
         {/* CTA buttons */}

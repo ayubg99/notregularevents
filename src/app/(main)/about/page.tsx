@@ -1,16 +1,16 @@
 export const metadata = {
   title:       'About — Erasmus Vibe',
-  description: 'We started as Erasmus students in Valencia. Now we help thousands make the most of their semester abroad.',
+  description: 'Founded for internationals in Valencia. We bring together expats, students, digital nomads and young professionals into one community.',
   openGraph: {
     title:       'About — Erasmus Vibe Valencia',
-    description: 'We started as Erasmus students in Valencia. Now we help thousands make the most of their semester abroad.',
+    description: 'Founded for internationals in Valencia. We bring together expats, students, digital nomads and young professionals into one community.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
     title:       'About — Erasmus Vibe',
-    description: 'We started as Erasmus students in Valencia.',
+    description: 'Founded for internationals in Valencia — expats, students, digital nomads and young professionals.',
   },
 }
 
@@ -48,7 +48,7 @@ export default function AboutPage() {
             We Are Erasmus Vibe
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto">
-            Born in Valencia, built for students who refuse to spend their Erasmus watching Netflix alone.
+            Born in Valencia, built for every international who calls this city home.
           </p>
         </div>
 
@@ -67,19 +67,20 @@ export default function AboutPage() {
           <p>
             It started in September 2023 when two Erasmus students — Alex from Berlin and Sofia from Madrid — landed
             in Valencia with two suitcases and zero plans. They found a city bursting with energy but no real hub
-            for international students to connect. WhatsApp groups, scattered Facebook posts, and missed opportunities
+            for internationals to connect. WhatsApp groups, scattered Facebook posts, and missed opportunities
             were the norm.
           </p>
           <p>
-            So they built one. Erasmus Vibe started as a simple events newsletter that grew into the go-to platform
-            for Erasmus students across Valencia. With Luca joining to lead trips and Mia building the community
-            side, the team organised over 50 events in the first semester alone — beach parties, hiking trips to
-            the Sierra Nevada, city tours, and paella nights that turned strangers into lifelong friends.
+            So they built one. Erasmus Vibe started as a simple events newsletter and quickly became the go-to
+            platform for internationals in Valencia. With Luca joining to lead trips and Mia building the community
+            side, the team organised over 50 events in the first semester alone — beach parties, hiking trips,
+            city tours, and paella nights that turned strangers into lifelong friends.
           </p>
           <p>
-            Today, Erasmus Vibe is home to over 3,000 students from 60+ nationalities. We&apos;re still run by
-            former Erasmus students who know exactly what it feels like to land in a new city and want to make
-            every single day count. That&apos;s the mission. That&apos;s the vibe.
+            Today, Erasmus Vibe is home to 500+ members from 50+ nationalities — Erasmus students, expats,
+            digital nomads, au pairs, and young professionals who all chose Valencia and want to make every
+            single day count. We&apos;ve grown beyond one audience because Valencia&apos;s international
+            community is bigger than any one label. That&apos;s the mission. That&apos;s the vibe.
           </p>
         </div>
       </section>
@@ -88,7 +89,7 @@ export default function AboutPage() {
       <section className="max-w-2xl mx-auto px-4 pb-20">
         <blockquote className="border-l-4 border-brand-primary pl-6">
           <p className="font-heading text-2xl sm:text-3xl font-bold italic text-white leading-snug">
-            &ldquo;To make every Erasmus student&apos;s semester unforgettable — one experience at a time.&rdquo;
+            &ldquo;To make Valencia feel like home for every international — one experience at a time.&rdquo;
           </p>
         </blockquote>
       </section>

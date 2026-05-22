@@ -1,0 +1,32 @@
+{
+  "nav": {
+    "events": "Événements",
+    "trips": "Voyages",
+    "community": "Communauté",
+    "membership": "Adhésion",
+    "about": "À propos",
+    "dashboard": "Tableau de bord",
+    "signIn": "Se connecter",
+    "joinNow": "Rejoindre",
+    "signOut": "Se déconnecter",
+    "lightMode": "Mode clair",
+    "darkMode": "Mode sombre"
+  },
+  "hero": {
+    "headline": "Vivez. Explorez. Connectez-vous à Valence.",
+    "subline": "Événements, voyages et communauté pour les internationaux à Valence. Rejoignez 500+ membres de 50+ pays.",
+    "cta": "Voir les événements",
+    "ctaSecondary": "Voir les voyages"
+  },
+  "common": {
+    "bookNow": "Réserver",
+    "learnMore": "En savoir plus",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "retry": "Réessayer",
+    "noResults": "Aucun résultat",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "close": "Fermer"
+  }
+}

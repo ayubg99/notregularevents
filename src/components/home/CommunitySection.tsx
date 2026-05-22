@@ -23,14 +23,14 @@ export default function CommunitySection() {
 
         {/* Headline */}
         <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-          2,500+ Students.
+          500+ Internationals.
           <br />
           <span className="text-gradient">One Vibe.</span>
         </h2>
 
         <p className="text-white/60 text-lg max-w-xl mx-auto mb-12 leading-relaxed">
-          Join the fastest-growing Erasmus community in Valencia.
-          Connect before you arrive, plan together, and make memories that last a lifetime.
+          Join Valencia&apos;s fastest-growing international community.
+          Expats, students, nomads, and professionals — connect, explore, and belong.
         </p>
 
         {/* Feature pills */}

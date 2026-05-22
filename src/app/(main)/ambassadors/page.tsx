@@ -2,17 +2,17 @@ import ApplicationForm from './ApplicationForm'
 
 export const metadata = {
   title:       'Ambassadors — Erasmus Vibe',
-  description: 'Become an Erasmus Vibe ambassador. Earn commissions, get free trips, and help other students have the best semester of their lives.',
+  description: 'Become an Erasmus Vibe ambassador. Earn commissions, get free trips, and help internationals in Valencia make the most of their time here.',
   openGraph: {
     title:       'Become an Ambassador — Erasmus Vibe Valencia',
-    description: 'Earn commissions, get free trips, and help other students have the best semester.',
+    description: 'Earn commissions, get free trips, and help internationals in Valencia make the most of their experience.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
     title:       'Ambassadors — Erasmus Vibe',
-    description: 'Earn commissions, get free trips, and help other students.',
+    description: 'Earn commissions, get free trips, and help internationals in Valencia.',
   },
 }
 
@@ -119,7 +119,7 @@ export default function AmbassadorsPage() {
       <section className="max-w-2xl mx-auto px-4 pb-24">
         <div className="text-center mb-8">
           <h2 className="font-heading text-3xl font-bold text-white mb-2">Ready to Join?</h2>
-          <p className="text-white/45 text-sm">We&apos;re looking for motivated students who love their city and want to share it.</p>
+          <p className="text-white/45 text-sm">We&apos;re looking for motivated internationals who love Valencia and want to share it.</p>
         </div>
         <ApplicationForm />
       </section>

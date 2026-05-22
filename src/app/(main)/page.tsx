@@ -2,18 +2,18 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
 export const metadata: Metadata = {
-  title:       'Erasmus Vibe Valencia | Events, Trips & Community for Erasmus Students',
-  description: 'The ultimate Erasmus student community in Valencia, Spain. Discover events, trips, memberships and unforgettable experiences.',
+  title:       'Erasmus Vibe Valencia | Events, Trips & Community for Internationals',
+  description: 'Your international community in Valencia, Spain. Events, trips and connections for expats, students, digital nomads and young professionals.',
   openGraph: {
     title:       'Erasmus Vibe Valencia | Events, Trips & Community',
-    description: 'The ultimate Erasmus student community in Valencia, Spain.',
+    description: 'Your international community in Valencia, Spain. Events, trips and connections for expats, students and professionals.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
     title:       'Erasmus Vibe Valencia',
-    description: 'The ultimate Erasmus student community in Valencia, Spain.',
+    description: 'Your international community in Valencia — events, trips and connections for expats and students.',
   },
 }
 import HeroSection from '@/components/home/HeroSection'

@@ -2,6 +2,7 @@
   "nav": {
     "events": "Eventos",
     "trips": "Viajes",
+    "community": "Comunidad",
     "membership": "Membresía",
     "about": "Nosotros",
     "dashboard": "Mi cuenta",
@@ -12,8 +13,8 @@
     "darkMode": "Modo oscuro"
   },
   "hero": {
-    "headline": "Tu Experiencia Erasmus Empieza Aquí",
-    "subline": "Eventos, viajes y una comunidad para estudiantes internacionales en Valencia.",
+    "headline": "Vive. Explora. Conéctate en Valencia.",
+    "subline": "Eventos, viajes y comunidad para internacionales en Valencia. Únete a 500+ miembros de 50+ países.",
     "cta": "Ver Eventos",
     "ctaSecondary": "Ver Viajes"
   },

@@ -10,13 +10,19 @@ import { cn } from '@/lib/utils/cn'
 // ─── Category tabs ──────────────────────────────────────────────
 
 const CATEGORIES: { value: EventCategory | 'all'; label: string }[] = [
-  { value: 'all',        label: 'All Events' },
-  { value: 'party',      label: 'Party Night' },
-  { value: 'cultural',   label: 'Cultural' },
-  { value: 'sport',      label: 'Sport' },
-  { value: 'networking', label: 'Networking' },
-  { value: 'trip',       label: 'Trip' },
-  { value: 'other',      label: 'Other' },
+  { value: 'all',                  label: 'All Events'          },
+  { value: 'party',                label: 'Party Night'         },
+  { value: 'networking',           label: 'Networking'          },
+  { value: 'language_exchange',    label: 'Language Exchange'   },
+  { value: 'international_dinner', label: 'International Dinner'},
+  { value: 'food_wine',            label: 'Food & Wine'         },
+  { value: 'cultural',             label: 'Cultural'            },
+  { value: 'art',                  label: 'Art & Culture'       },
+  { value: 'hiking',               label: 'Hiking'              },
+  { value: 'yoga',                 label: 'Yoga & Wellness'     },
+  { value: 'sport',                label: 'Sport'               },
+  { value: 'trip',                 label: 'Trip'                },
+  { value: 'other',                label: 'Other'               },
 ]
 
 // ─── Data fetching ──────────────────────────────────────────────

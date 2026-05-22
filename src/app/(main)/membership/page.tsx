@@ -5,17 +5,17 @@ import { CheckCircle, ShieldCheck, Zap } from 'lucide-react'
 
 export const metadata = {
   title:       'Membership — Erasmus Vibe',
-  description: 'Unlock the full Erasmus experience with exclusive access, discounts, and a community that feels like home.',
+  description: 'Unlock your Valencia experience. Exclusive events, trip discounts, international dinners, and a professional network — open to all internationals.',
   openGraph: {
     title:       'Membership — Erasmus Vibe Valencia',
-    description: 'Unlock the full Erasmus experience with exclusive access, discounts, and a community.',
+    description: 'Unlock your Valencia experience with exclusive access, trip discounts, and a professional network.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
     title:       'Membership — Erasmus Vibe',
-    description: 'Unlock the full Erasmus experience.',
+    description: 'Unlock your Valencia experience — exclusive events, trip discounts, and a professional network.',
   },
 }
 
@@ -23,39 +23,39 @@ const BENEFITS = [
   {
     icon:  '🎟️',
     title: 'Priority Event Access',
-    desc:  'Get early access to tickets before they sell out to the general public.',
+    desc:  'Get early access before tickets sell out to the general public.',
   },
   {
     icon:  '✈️',
     title: 'Trip Discounts',
-    desc:  'Save on every trip booking with exclusive member-only pricing tiers.',
+    desc:  'Save on every trip with exclusive member-only pricing tiers.',
   },
   {
-    icon:  '🎉',
-    title: 'Members-Only Parties',
-    desc:  'Access secret events and exclusive parties not listed publicly.',
+    icon:  '🌍',
+    title: 'Meet People from 50+ Countries',
+    desc:  'Join an exclusive international community right here in Valencia.',
+  },
+  {
+    icon:  '🍽️',
+    title: 'Monthly International Dinners',
+    desc:  'Exclusive sit-down dinners for members only — new cuisines, new friends.',
+  },
+  {
+    icon:  '💼',
+    title: 'Professional Network in Valencia',
+    desc:  'Connect with expats, entrepreneurs and professionals building careers here.',
   },
   {
     icon:  '💬',
     title: 'Private WhatsApp Groups',
-    desc:  'Join curated WhatsApp communities by nationality, interest, and city.',
-  },
-  {
-    icon:  '🤝',
-    title: 'Student Partner Discounts',
-    desc:  'Unlock deals at Valencia bars, restaurants, and shops via our partners.',
-  },
-  {
-    icon:  '🏆',
-    title: 'VIP Treatment',
-    desc:  'Skip queues, get reserved spots, and receive priority service at events.',
+    desc:  'Curated communities by nationality, interest and city area.',
   },
 ]
 
 const TRUST = [
   { icon: <Zap size={16} />,         label: 'Instant activation' },
   { icon: <CheckCircle size={16} />, label: 'Cancel anytime'     },
-  { icon: <ShieldCheck size={16} />, label: 'Student-verified platform' },
+  { icon: <ShieldCheck size={16} />, label: 'Open to all internationals' },
 ]
 
 const PLAN_LABELS: Record<MembershipPlan, string> = {
@@ -97,7 +97,7 @@ export default async function MembershipPage() {
             Membership
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-gradient mb-5 leading-tight">
-            Unlock the Full<br />Erasmus Experience
+            Unlock Your<br />Valencia Experience
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto">
             Exclusive access, discounts, and a community that feels like home.

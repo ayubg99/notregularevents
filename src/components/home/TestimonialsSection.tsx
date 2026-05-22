@@ -23,7 +23,7 @@ const TESTIMONIALS: Testimonial[] = [
     country:    'Germany',
     flag:       '🇩🇪',
     university: 'TU Munich',
-    text:       'Erasmus Vibe Valencia completely transformed my Erasmus experience. The events were incredible and I made friends for life. Absolutely worth every euro!',
+    text:       'Erasmus Vibe completely transformed my time in Valencia. The events were incredible and I made friends for life. Absolutely worth every euro!',
     rating:     5,
     avatar:     'SM',
   },
@@ -43,7 +43,7 @@ const TESTIMONIALS: Testimonial[] = [
     country:    'Poland',
     flag:       '🇵🇱',
     university: 'Warsaw School of Economics',
-    text:       'I was nervous about Erasmus alone, but from day one Erasmus Vibe Valencia made me feel at home. The WhatsApp group alone is a lifeline!',
+    text:       'I was nervous about moving to Valencia alone, but from day one Erasmus Vibe made me feel at home. The WhatsApp group alone is a lifeline!',
     rating:     5,
     avatar:     'AK',
   },
@@ -83,7 +83,7 @@ export default function TestimonialsSection() {
         {/* Section header */}
         <div className="text-center mb-12">
           <p className="text-brand-primary text-sm font-semibold uppercase tracking-widest mb-2">
-            What Students Say
+            What Our Community Says
           </p>
           <h2 className="font-heading text-4xl md:text-5xl font-bold text-white">
             Real Experiences

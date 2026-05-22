@@ -7,6 +7,7 @@ const FOOTER_LINKS = {
   Explore: [
     { href: '/events',     label: 'Events'      },
     { href: '/trips',      label: 'Trips'        },
+    { href: '/community',  label: 'Community'    },
     { href: '/membership', label: 'Membership'   },
     { href: '/ambassadors', label: 'Ambassadors' },
   ],
@@ -68,7 +69,7 @@ export default function Footer() {
 
             {/* Tagline */}
             <p className="text-white/60 text-sm leading-relaxed max-w-xs">
-              The student community redefining the Erasmus experience in Valencia — events, trips, friendships, and unforgettable memories.
+              Your community in Valencia — events, trips, and connections for internationals, expats, and students.
             </p>
 
             {/* Location */}
@@ -143,7 +144,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Erasmus Vibe Valencia. All rights reserved.
           </p>
           <p className="text-white/20 text-xs">
-            Made with ♥ for Erasmus students everywhere
+            Made with ♥ for internationals in Valencia
           </p>
         </div>
       </div>

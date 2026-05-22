@@ -2,6 +2,7 @@
   "nav": {
     "events": "Events",
     "trips": "Trips",
+    "community": "Community",
     "membership": "Membership",
     "about": "About",
     "dashboard": "Dashboard",
@@ -12,10 +13,10 @@
     "darkMode": "Dark mode"
   },
   "hero": {
-    "headline": "Your Erasmus Experience Starts Here",
-    "subline": "Events, trips, and a community built for international students in Valencia.",
+    "headline": "Live. Explore. Connect in Valencia.",
+    "subline": "Events, trips and community for internationals in Valencia. Join 500+ members from 50+ countries.",
     "cta": "Explore Events",
-    "ctaSecondary": "View Trips"
+    "ctaSecondary": "Explore Trips"
   },
   "common": {
     "bookNow": "Book Now",
