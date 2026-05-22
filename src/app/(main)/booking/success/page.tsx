@@ -2,10 +2,12 @@ export const dynamic = 'force-dynamic'
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Crown, Check } from 'lucide-react'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/server'
-import type { Database } from '@/types/database'
+import type { Database, MembershipPlan } from '@/types/database'
+import type Stripe from 'stripe'
+import { stripe } from '@/lib/stripe'
 import BookingConfirmation from './BookingConfirmation'
 import BookingPolling from './BookingPolling'
 
@@ -162,8 +164,109 @@ async function StripeSuccessContent({ sessionId }: { sessionId: string }) {
     )
   }
 
-  // Webhook hasn't fired yet — poll
+  // Not an event or trip booking — check if this is a membership payment
+  try {
+    const stripeSession = await stripe.checkout.sessions.retrieve(sessionId)
+    if (stripeSession.mode === 'subscription' && stripeSession.metadata?.type === 'membership') {
+      return <MembershipSuccess session={stripeSession} />
+    }
+  } catch (err) {
+    console.error('[booking-success] Stripe session retrieve error:', err)
+  }
+
+  // Webhook hasn't fired yet — poll for event/trip booking
   return <BookingPolling sessionId={sessionId} />
+}
+
+// ── Membership success ───────────────────────────────────────────
+
+const PLAN_INFO: Record<MembershipPlan, { name: string; duration: string; perMonth: string }> = {
+  basic:   { name: 'Monthly',  duration: '30 days',  perMonth: '€9.99/mo'    },
+  premium: { name: 'Semester', duration: '6 months', perMonth: '≈€4.17/mo'   },
+  vip:     { name: 'Annual',   duration: '1 year',   perMonth: '≈€3.33/mo'   },
+}
+
+function membershipEndDate(plan: MembershipPlan): string {
+  const d = new Date()
+  if (plan === 'basic')   d.setDate(d.getDate() + 30)
+  if (plan === 'premium') d.setDate(d.getDate() + 180)
+  if (plan === 'vip')     d.setDate(d.getDate() + 365)
+  return d.toISOString()
+}
+
+async function MembershipSuccess({ session }: { session: Stripe.Checkout.Session }) {
+  const admin      = getAdminClient()
+  const userId     = session.metadata?.user_id
+  const plan       = session.metadata?.item_id as MembershipPlan | undefined
+  const validPlan  = plan && plan in PLAN_INFO ? plan : null
+
+  if (userId && validPlan) {
+    const subscriptionId = typeof session.subscription === 'string'
+      ? session.subscription
+      : (session.subscription as Stripe.Subscription | null)?.id ?? null
+
+    // Idempotent upsert — activates the membership immediately even if webhook is delayed
+    const { error } = await admin.from('memberships').upsert(
+      {
+        user_id:                userId,
+        plan:                   validPlan,
+        status:                 'active',
+        stripe_subscription_id: subscriptionId,
+        start_date:             new Date().toISOString(),
+        end_date:               membershipEndDate(validPlan),
+      },
+      { onConflict: 'user_id' },
+    )
+
+    if (error) {
+      console.error('[booking-success membership] upsert failed:', error.message)
+    } else {
+      await admin.from('profiles').update({ membership_status: 'active' }).eq('user_id', userId)
+    }
+  }
+
+  const info = validPlan ? PLAN_INFO[validPlan] : null
+
+  return (
+    <div className="flex flex-col items-center gap-8 py-8">
+      {/* Success badge */}
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-16 h-16 rounded-full bg-brand-primary/20 border border-brand-primary/40 flex items-center justify-center">
+          <Crown size={28} className="text-brand-primary" />
+        </div>
+        <h1 className="font-heading text-3xl font-bold text-white">Membership Activated!</h1>
+        <p className="text-white/50 text-center max-w-xs">
+          Welcome to Erasmus Vibe{info ? ` — ${info.name} plan` : ''}.
+        </p>
+      </div>
+
+      {/* Plan details card */}
+      <div className="glass-card rounded-2xl px-8 py-6 w-full max-w-sm flex flex-col gap-3">
+        {(['15% off all events and trips', 'Priority access and member perks', ...(info ? [`Valid for ${info.duration} (${info.perMonth})`] : [])] as string[]).map((text) => (
+          <div key={text} className="flex items-center gap-3 text-sm text-white/70">
+            <Check size={14} className="text-brand-primary flex-shrink-0" />
+            {text}
+          </div>
+        ))}
+      </div>
+
+      {/* CTA buttons */}
+      <div className="flex flex-wrap gap-3 justify-center">
+        <Link
+          href="/events"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-primary text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+        >
+          Browse Events
+        </Link>
+        <Link
+          href="/trips"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/20 text-white/70 hover:border-brand-primary/50 hover:text-white text-sm font-medium transition-colors"
+        >
+          Browse Trips
+        </Link>
+      </div>
+    </div>
+  )
 }
 
 // ── Free booking (ref query param) ───────────────────────────────

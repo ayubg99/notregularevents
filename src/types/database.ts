@@ -215,8 +215,9 @@ export type TripBookingInsert = Omit<TripBookingRow, 'id' | 'created_at' | 'upda
   deposit_paid?: boolean
 }
 
-export type MembershipInsert = Omit<MembershipRow, 'id' | 'created_at' | 'updated_at'> & {
-  status?: MembershipStatus
+export type MembershipInsert = Omit<MembershipRow, 'id' | 'created_at' | 'updated_at' | 'stripe_customer_id'> & {
+  status?:             MembershipStatus
+  stripe_customer_id?: string | null
 }
 
 export type PromoCodeInsert = Omit<PromoCodeRow, 'id' | 'created_at' | 'updated_at'>

@@ -196,7 +196,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         plan,
         status:                 'active' as MembershipStatus,
         stripe_subscription_id: subscriptionId,
-        stripe_customer_id:     customerId,
         start_date:             startDate,
         end_date:               endDate,
       },
@@ -214,6 +213,16 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
 
     console.log('[webhook membership] upsert succeeded for user', userId)
+
+    // Store customer ID separately — non-blocking; column may not exist on older deployments
+    if (customerId) {
+      admin.from('memberships')
+        .update({ stripe_customer_id: customerId })
+        .eq('user_id', userId)
+        .then(({ error: e }) => {
+          if (e) console.warn('[webhook membership] stripe_customer_id update skipped:', e.message)
+        })
+    }
 
     // Also sync membership_status on the profiles table for fast lookups
     await admin.from('profiles').update({ membership_status: 'active' }).eq('user_id', userId)
