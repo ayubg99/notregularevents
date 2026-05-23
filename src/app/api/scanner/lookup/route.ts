@@ -11,8 +11,8 @@ export async function GET(req: Request) {
   const normalized = ref.toUpperCase().trim()
 
   const [{ data: eventTicket }, { data: tripBooking }] = await Promise.all([
-    admin.from('event_tickets').select('*, events(title)').eq('booking_ref', normalized).maybeSingle(),
-    admin.from('trip_bookings').select('*, trips(title)').eq('booking_ref', normalized).maybeSingle(),
+    admin.from('event_tickets').select('*, events!inner(title, date, location)').eq('booking_ref', normalized).maybeSingle(),
+    admin.from('trip_bookings').select('*, trips!inner(title, start_date, destination)').eq('booking_ref', normalized).maybeSingle(),
   ])
 
   const booking   = eventTicket || tripBooking
@@ -23,8 +23,8 @@ export async function GET(req: Request) {
   }
 
   const title = isEvent
-    ? (eventTicket as { events: { title: string } | null }).events?.title
-    : (tripBooking  as { trips:  { title: string } | null }).trips?.title
+    ? (eventTicket as unknown as { events: { title: string } | null }).events?.title
+    : (tripBooking  as unknown as { trips:  { title: string } | null }).trips?.title
 
   const payload = { ...booking, type: isEvent ? 'event' : 'trip', title }
 
