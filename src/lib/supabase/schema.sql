@@ -273,9 +273,15 @@ BEGIN
   )
   ON CONFLICT (id) DO NOTHING;
 
-  INSERT INTO public.profiles (user_id)
-  VALUES (NEW.id)
-  ON CONFLICT (user_id) DO NOTHING;
+  INSERT INTO public.profiles (user_id, nationality, university)
+  VALUES (
+    NEW.id,
+    NEW.raw_user_meta_data ->> 'nationality',
+    NEW.raw_user_meta_data ->> 'university'
+  )
+  ON CONFLICT (user_id) DO UPDATE SET
+    nationality = COALESCE(EXCLUDED.nationality, profiles.nationality),
+    university  = COALESCE(EXCLUDED.university,  profiles.university);
 
   RETURN NEW;
 END;

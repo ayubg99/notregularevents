@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Loader2, Mail, Lock, User, Globe, GraduationCap } from 'lucide-react'
 import { NATIONALITIES } from '@/lib/constants/nationalities'
+import { saveRegistrationProfile } from '@/app/actions/profile'
 
 function RegisterForm() {
   const router = useRouter()
@@ -28,16 +29,19 @@ function RegisterForm() {
 
     startTransition(async () => {
       const supabase = createClient()
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { full_name: fullName },
+          data: { full_name: fullName, nationality, university },
         },
       })
       if (signUpError) {
         setError(signUpError.message)
       } else {
+        if (signUpData.user && (nationality || university)) {
+          await saveRegistrationProfile(signUpData.user.id, { nationality, university })
+        }
         router.push('/dashboard')
         router.refresh()
       }
