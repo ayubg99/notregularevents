@@ -86,6 +86,26 @@ export default function ScannerPage() {
     }
   }, [scanning])
 
+  async function handlePinSubmit() {
+    setPinError('')
+    try {
+      const res  = await fetch('/api/scanner/validate-pin', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ pin }),
+      })
+      const data = await res.json()
+      if (data.valid) {
+        setUnlocked(true)
+      } else {
+        setPinError('Wrong PIN. Try again.')
+        setPin('')
+      }
+    } catch {
+      setPinError('Connection error. Try again.')
+    }
+  }
+
   // ── PIN screen ──────────────────────────────────────────────────
   if (!unlocked) {
     return (
@@ -107,7 +127,7 @@ export default function ScannerPage() {
             maxLength={6}
             value={pin}
             onChange={e => setPin(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && attemptUnlock()}
+            onKeyDown={e => e.key === 'Enter' && handlePinSubmit()}
             placeholder="••••"
             className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white text-2xl text-center tracking-widest mb-4 outline-none focus:border-[#F5A623] transition-colors"
           />
@@ -117,7 +137,7 @@ export default function ScannerPage() {
           )}
 
           <button
-            onClick={attemptUnlock}
+            onClick={handlePinSubmit}
             className="w-full py-3.5 bg-[#F5A623] text-[#1A1A2E] rounded-full font-bold text-base hover:bg-[#e59920] transition-colors"
           >
             Unlock Scanner
@@ -125,16 +145,6 @@ export default function ScannerPage() {
         </div>
       </div>
     )
-
-    function attemptUnlock() {
-      if (pin === process.env.NEXT_PUBLIC_SCANNER_PIN) {
-        setUnlocked(true)
-        setPinError('')
-      } else {
-        setPinError('Wrong PIN. Try again.')
-        setPin('')
-      }
-    }
   }
 
   // ── Scanner screen ───────────────────────────────────────────────
