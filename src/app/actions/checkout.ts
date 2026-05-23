@@ -115,7 +115,6 @@ export async function createTripBooking(input: {
   const priceMap: Record<TripTier, number> = {
     early_bird: trip.price_early_bird ?? trip.price_standard,
     standard:   trip.price_standard,
-    vip:        trip.price_vip        ?? trip.price_standard,
     group:      trip.price_group      ?? trip.price_standard,
   }
   const price = priceMap[input.tier]

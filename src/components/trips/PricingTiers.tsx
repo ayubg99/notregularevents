@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, Zap, Star, Users, Tag, Loader2, X } from 'lucide-react'
+import { Check, Zap, Users, Tag, Loader2, X, Minus, Plus } from 'lucide-react'
 import type { TripRow, TripTier } from '@/types/database'
 
 interface Props {
   trip:            TripRow
-  onBook:          (tier: TripTier) => void
+  onBook:          (tier: TripTier, groupSize?: number) => void
   isPending:       boolean
   seatsLeft:       number
   promoCode?:      string
@@ -15,75 +15,50 @@ interface Props {
   onPromoClear?:   () => void
 }
 
-interface TierDef {
-  key:         TripTier
-  label:       string
-  price:       number
-  badge?:      string
-  badgeColor?: string
-  icon:        React.ReactNode
-  perks:       string[]
+function getUrgency(deadline: string | null, seatsLeft: number): string | null {
+  if (!deadline) return null
+  const hoursLeft = (new Date(deadline).getTime() - Date.now()) / 3_600_000
+  if (seatsLeft < 10) return `⚡ Only ${seatsLeft} early bird spot${seatsLeft === 1 ? '' : 's'} left!`
+  if (hoursLeft < 48) return `⏰ Early bird ends in ${Math.ceil(hoursLeft)}h!`
+  return null
 }
 
 export default function PricingTiers({
   trip, onBook, isPending, seatsLeft,
   promoCode, promoLabel, onPromoApplied, onPromoClear,
 }: Props) {
-  const [selected, setSelected]        = useState<TripTier>('standard')
+  const ebSeatsLeft = trip.early_bird_seats - trip.early_bird_seats_sold
+  const isEarlyBirdValid =
+    !!trip.price_early_bird &&
+    !!trip.early_bird_deadline &&
+    new Date(trip.early_bird_deadline) > new Date() &&
+    ebSeatsLeft > 0
+
+  const [selected, setSelected] = useState<TripTier>(
+    isEarlyBirdValid ? 'early_bird' : 'standard',
+  )
+  const [groupSize, setGroupSize]      = useState(4)
   const [promoOpen, setPromoOpen]      = useState(false)
   const [promoInput, setPromoInput]    = useState('')
   const [promoLoading, setPromoLoading] = useState(false)
   const [promoError, setPromoError]    = useState('')
 
-  const tiers: TierDef[] = [
-    ...(trip.price_early_bird != null ? [{
-      key:        'early_bird' as TripTier,
-      label:      'Early Bird',
-      price:      trip.price_early_bird,
-      badge:      'Best Value',
-      badgeColor: 'bg-brand-accent/20 text-brand-accent border-brand-accent/30',
-      icon:       <Zap size={16} />,
-      perks:      ['Limited availability', 'Full trip included', 'Save vs standard'],
-    }] : []),
-    {
-      key:   'standard',
-      label: 'Standard',
-      price: trip.price_standard,
-      icon:  <Check size={16} />,
-      perks: ['Full trip included', 'Group activities', 'Accommodation'],
-    },
-    ...(trip.price_vip != null ? [{
-      key:        'vip' as TripTier,
-      label:      'VIP',
-      price:      trip.price_vip,
-      badge:      'Premium',
-      badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
-      icon:       <Star size={16} />,
-      perks:      ['Priority boarding', 'Upgraded room', 'Exclusive experiences'],
-    }] : []),
-    ...(trip.price_group != null ? [{
-      key:        'group' as TripTier,
-      label:      'Group',
-      price:      trip.price_group,
-      badge:      'Group Deal',
-      badgeColor: 'bg-green-500/20 text-green-300 border-green-500/30',
-      icon:       <Users size={16} />,
-      perks:      ['4+ people', 'Group discount', 'Shared accommodation'],
-    }] : []),
-  ]
-
   const soldOut = seatsLeft === 0
+  const urgency = isEarlyBirdValid
+    ? getUrgency(trip.early_bird_deadline, ebSeatsLeft)
+    : null
+
+  function currentBasePrice(): number {
+    if (selected === 'early_bird') return trip.price_early_bird ?? trip.price_standard
+    if (selected === 'group')      return trip.price_group      ?? trip.price_standard
+    return trip.price_standard
+  }
 
   async function applyPromo() {
     if (!promoInput.trim() || !onPromoApplied) return
-    const selectedTier = tiers.find(t => t.key === selected)
-    const basePrice = selectedTier?.price ?? trip.price_standard
-    setPromoLoading(true)
-    setPromoError('')
+    setPromoLoading(true); setPromoError('')
     try {
-      const res = await fetch(
-        `/api/stripe/validate-promo?code=${encodeURIComponent(promoInput)}&price=${basePrice}&quantity=1`,
-      )
+      const res  = await fetch(`/api/stripe/validate-promo?code=${encodeURIComponent(promoInput)}&price=${currentBasePrice()}&quantity=1`)
       const data = await res.json()
       if (data.valid) {
         onPromoApplied(promoInput.trim(), data.discountLabel, data.discountedUnit)
@@ -98,49 +73,140 @@ export default function PricingTiers({
     }
   }
 
+  function handleBook() {
+    onBook(selected, selected === 'group' ? groupSize : undefined)
+  }
+
   return (
     <div className="glass-card rounded-2xl p-5 flex flex-col gap-4">
       <h2 className="font-heading text-lg font-bold text-white">Choose Your Tier</h2>
 
+      {urgency && (
+        <div className="rounded-xl bg-amber-500/10 border border-amber-500/25 px-3 py-2 text-amber-400 text-xs font-semibold">
+          {urgency}
+        </div>
+      )}
+
       <div className="flex flex-col gap-2">
-        {tiers.map((tier) => (
+        {/* ── Early Bird ── */}
+        {isEarlyBirdValid && (
           <button
-            key={tier.key}
-            onClick={() => setSelected(tier.key)}
+            onClick={() => setSelected('early_bird')}
             disabled={soldOut || isPending}
             className={`w-full text-left rounded-xl border p-4 transition-all duration-200 ${
-              selected === tier.key
+              selected === 'early_bird'
                 ? 'border-brand-primary bg-brand-primary/10'
                 : 'border-white/10 bg-white/5 hover:border-white/20'
             } ${soldOut || isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-2.5">
-                <span className={`${selected === tier.key ? 'text-brand-primary' : 'text-white/40'}`}>
-                  {tier.icon}
-                </span>
+                <Zap size={16} className={selected === 'early_bird' ? 'text-brand-primary' : 'text-white/40'} />
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-white font-semibold text-sm">{tier.label}</span>
-                    {tier.badge && (
-                      <span className={`inline-block px-2 py-0.5 rounded-full border text-xs font-semibold ${tier.badgeColor}`}>
-                        {tier.badge}
-                      </span>
-                    )}
+                    <span className="text-white font-semibold text-sm">Early Bird</span>
+                    <span className="inline-block px-2 py-0.5 rounded-full border text-xs font-semibold bg-brand-accent/20 text-brand-accent border-brand-accent/30">
+                      🔥 Best Value
+                    </span>
                   </div>
                   <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
-                    {tier.perks.map((perk) => (
-                      <li key={perk} className="text-white/40 text-xs">{perk}</li>
-                    ))}
+                    <li className="text-white/40 text-xs">Limited availability</li>
+                    <li className="text-white/40 text-xs">Save vs standard</li>
                   </ul>
                 </div>
               </div>
               <span className="text-white font-bold text-lg flex-shrink-0">
-                {tier.price === 0 ? 'Free' : `€${tier.price}`}
+                €{trip.price_early_bird}
               </span>
             </div>
           </button>
-        ))}
+        )}
+
+        {/* ── Standard ── */}
+        <button
+          onClick={() => setSelected('standard')}
+          disabled={soldOut || isPending}
+          className={`w-full text-left rounded-xl border p-4 transition-all duration-200 ${
+            selected === 'standard'
+              ? 'border-brand-primary bg-brand-primary/10'
+              : 'border-white/10 bg-white/5 hover:border-white/20'
+          } ${soldOut || isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <Check size={16} className={selected === 'standard' ? 'text-brand-primary' : 'text-white/40'} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-white font-semibold text-sm">Standard</span>
+                  {!isEarlyBirdValid && (
+                    <span className="inline-block px-2 py-0.5 rounded-full border text-xs font-semibold bg-brand-primary/15 text-brand-primary border-brand-primary/25">
+                      Most Popular
+                    </span>
+                  )}
+                </div>
+                <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
+                  <li className="text-white/40 text-xs">Full trip included</li>
+                  <li className="text-white/40 text-xs">Group activities</li>
+                </ul>
+              </div>
+            </div>
+            <span className="text-white font-bold text-lg flex-shrink-0">
+              €{trip.price_standard}
+            </span>
+          </div>
+        </button>
+
+        {/* ── Group (4+) ── */}
+        {trip.price_group != null && (
+          <div
+            onClick={() => !soldOut && !isPending && setSelected('group')}
+            className={`w-full rounded-xl border p-4 transition-all duration-200 ${
+              selected === 'group'
+                ? 'border-brand-primary bg-brand-primary/10'
+                : 'border-white/10 bg-white/5 hover:border-white/20'
+            } ${soldOut || isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                <Users size={16} className={selected === 'group' ? 'text-brand-primary' : 'text-white/40'} />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-white font-semibold text-sm">Group (4+)</span>
+                    <span className="inline-block px-2 py-0.5 rounded-full border text-xs font-semibold bg-green-500/20 text-green-300 border-green-500/30">
+                      Group Deal
+                    </span>
+                  </div>
+                  {selected === 'group' && (
+                    <div className="mt-3 flex flex-col gap-2">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={e => { e.stopPropagation(); setGroupSize(s => Math.max(4, s - 1)) }}
+                          className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:border-brand-primary transition-colors"
+                        >
+                          <Minus size={13} />
+                        </button>
+                        <span className="font-bold text-white tabular-nums">{groupSize} people</span>
+                        <button
+                          onClick={e => { e.stopPropagation(); setGroupSize(s => Math.min(20, s + 1)) }}
+                          className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:border-brand-primary transition-colors"
+                        >
+                          <Plus size={13} />
+                        </button>
+                      </div>
+                      <p className="text-white/50 text-xs">
+                        {groupSize} × €{trip.price_group} ={' '}
+                        <span className="text-white font-bold">€{(groupSize * trip.price_group).toFixed(0)} total</span>
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <span className="text-white font-bold text-lg flex-shrink-0">
+                €{trip.price_group}<span className="text-white/40 text-xs font-normal">/person</span>
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Promo code */}
@@ -163,13 +229,7 @@ export default function PricingTiers({
                     onChange={e => setPromoInput(e.target.value.toUpperCase())}
                     onKeyDown={e => e.key === 'Enter' && applyPromo()}
                     placeholder="PROMO CODE"
-                    className="
-                      flex-1 px-3 py-2 rounded-xl text-sm uppercase
-                      border border-white/10 bg-white/5
-                      text-white placeholder:text-white/25 tracking-widest
-                      focus:outline-none focus:border-brand-primary/50
-                      transition-colors
-                    "
+                    className="flex-1 px-3 py-2 rounded-xl text-sm uppercase border border-white/10 bg-white/5 text-white placeholder:text-white/25 tracking-widest focus:outline-none focus:border-brand-primary/50 transition-colors"
                   />
                   <button
                     onClick={applyPromo}
@@ -197,7 +257,7 @@ export default function PricingTiers({
       )}
 
       <button
-        onClick={() => onBook(selected)}
+        onClick={handleBook}
         disabled={soldOut || isPending}
         className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all duration-200 ${
           soldOut

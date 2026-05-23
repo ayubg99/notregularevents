@@ -7,7 +7,7 @@ export type EventCategory    = 'party' | 'cultural' | 'sport' | 'networking' | '
   | 'language_exchange' | 'food_wine' | 'hiking' | 'yoga' | 'art' | 'international_dinner'
 export type TicketStatus     = 'active' | 'used' | 'cancelled' | 'refunded'
 export type TripStatus       = 'draft' | 'published' | 'cancelled' | 'completed'
-export type TripTier         = 'early_bird' | 'standard' | 'vip' | 'group'
+export type TripTier         = 'early_bird' | 'standard' | 'group'
 export type BookingStatus    = 'pending' | 'confirmed' | 'cancelled' | 'refunded'
 export type MembershipPlan   = 'basic' | 'premium' | 'vip'
 export type MembershipStatus = 'active' | 'cancelled' | 'expired' | 'trialing'
@@ -53,21 +53,26 @@ export type ProfileRow = {
 }
 
 export type EventRow = {
-  id:           string
-  title:        string
-  slug:         string
-  description:  string | null
-  category:     EventCategory
-  date:         string
-  location:     string | null
-  image_url:    string | null
-  price:        number
-  capacity:     number
-  tickets_sold: number
-  status:       EventStatus
-  created_by:   string | null
-  created_at:   string
-  updated_at:   string
+  id:                    string
+  title:                 string
+  slug:                  string
+  description:           string | null
+  category:              EventCategory
+  date:                  string
+  location:              string | null
+  image_url:             string | null
+  price:                 number
+  price_early_bird:      number | null
+  price_group:           number | null
+  early_bird_deadline:   string | null
+  early_bird_seats:      number
+  early_bird_seats_sold: number
+  capacity:              number
+  tickets_sold:          number
+  status:                EventStatus
+  created_by:            string | null
+  created_at:            string
+  updated_at:            string
 }
 
 export type EventTicketRow = {
@@ -96,12 +101,15 @@ export type TripRow = {
   destination:        string
   start_date:         string
   end_date:           string
-  price_early_bird:   number | null
-  price_standard:     number
-  price_vip:          number | null
-  price_group:        number | null
-  capacity:           number
-  seats_sold:         number
+  price_early_bird:      number | null
+  price_standard:        number
+  price_vip:             number | null
+  price_group:           number | null
+  early_bird_deadline:   string | null
+  early_bird_seats:      number
+  early_bird_seats_sold: number
+  capacity:              number
+  seats_sold:            number
   image_url:          string | null
   status:             TripStatus
   created_by:         string | null
@@ -196,18 +204,27 @@ export type UserInsert = Omit<UserRow, 'created_at' | 'updated_at'> & {
 
 export type ProfileInsert = Omit<ProfileRow, 'id' | 'created_at' | 'updated_at'>
 
-export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 'updated_at'> & {
-  tickets_sold?: number
-  status?: EventStatus
+export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 'updated_at' | 'price_early_bird' | 'price_group' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold'> & {
+  tickets_sold?:         number
+  status?:               EventStatus
+  price_early_bird?:     number | null
+  price_group?:          number | null
+  early_bird_deadline?:  string | null
+  early_bird_seats?:     number
+  early_bird_seats_sold?: number
 }
 
 export type EventTicketInsert = Omit<EventTicketRow, 'id' | 'created_at' | 'updated_at'> & {
   status?: TicketStatus
 }
 
-export type TripInsert = Omit<TripRow, 'id' | 'seats_sold' | 'created_at' | 'updated_at'> & {
-  seats_sold?: number
-  status?: TripStatus
+export type TripInsert = Omit<TripRow, 'id' | 'seats_sold' | 'created_at' | 'updated_at' | 'price_vip' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold'> & {
+  seats_sold?:            number
+  status?:                TripStatus
+  price_vip?:             number | null
+  early_bird_deadline?:   string | null
+  early_bird_seats?:      number
+  early_bird_seats_sold?: number
 }
 
 export type TripBookingInsert = Omit<TripBookingRow, 'id' | 'created_at' | 'updated_at'> & {

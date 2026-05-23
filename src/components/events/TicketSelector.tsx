@@ -4,23 +4,38 @@ import { useState } from 'react'
 import BookingModal from '@/components/booking/BookingModal'
 
 interface Props {
-  eventId:  string
-  price:    number
-  capacity: number
-  sold:     number
-  slug:     string
-  title:    string
+  eventId:              string
+  price:                number
+  capacity:             number
+  sold:                 number
+  slug:                 string
+  title:                string
+  priceEarlyBird?:      number | null
+  priceGroup?:          number | null
+  earlyBirdDeadline?:   string | null
+  earlyBirdSeats?:      number
+  earlyBirdSeatsSold?:  number
 }
 
-export default function TicketSelector({ eventId, price, capacity, sold, slug, title }: Props) {
+export default function TicketSelector({
+  eventId, price, capacity, sold, slug, title,
+  priceEarlyBird, priceGroup, earlyBirdDeadline, earlyBirdSeats, earlyBirdSeatsSold,
+}: Props) {
   const [modalOpen, setModalOpen] = useState(false)
 
-  // Suppress unused variable warning — slug kept for possible future use
   void slug
 
   const spotsLeft = capacity - sold
   const isSoldOut = spotsLeft <= 0
   const isFree    = price === 0
+
+  const isEarlyBirdValid =
+    !!priceEarlyBird &&
+    !!earlyBirdDeadline &&
+    new Date(earlyBirdDeadline) > new Date() &&
+    ((earlyBirdSeats ?? 0) - (earlyBirdSeatsSold ?? 0)) > 0
+
+  const displayPrice = isEarlyBirdValid ? priceEarlyBird! : price
 
   if (isSoldOut) {
     return (
@@ -34,11 +49,10 @@ export default function TicketSelector({ eventId, price, capacity, sold, slug, t
   return (
     <>
       <div className="glass-card rounded-2xl p-6 flex flex-col gap-5">
-        {/* Price */}
         <div className="flex items-baseline justify-between">
           <div>
             <p className="font-heading text-2xl font-bold text-white">
-              {isFree ? 'Free Entry' : `€${price.toFixed(2)}`}
+              {isFree ? 'Free Entry' : `€${displayPrice.toFixed(2)}`}
               {!isFree && <span className="text-white/40 text-sm font-normal ml-1">/ ticket</span>}
             </p>
             <p className="text-white/50 text-xs mt-0.5">
@@ -47,12 +61,11 @@ export default function TicketSelector({ eventId, price, capacity, sold, slug, t
           </div>
           {!isFree && (
             <span className="text-xs text-white/30 bg-white/5 border border-white/10 px-2 py-1 rounded-lg">
-              Standard
+              {isEarlyBirdValid ? '🔥 Early Bird' : 'Standard'}
             </span>
           )}
         </div>
 
-        {/* Book button */}
         <button
           onClick={() => setModalOpen(true)}
           className="w-full py-3.5 rounded-full btn-primary font-semibold text-sm shadow-brand-sm hover:brightness-105 transition-all"
@@ -73,6 +86,11 @@ export default function TicketSelector({ eventId, price, capacity, sold, slug, t
         sold={sold}
         slug={slug}
         title={title}
+        priceEarlyBird={priceEarlyBird}
+        priceGroup={priceGroup}
+        earlyBirdDeadline={earlyBirdDeadline}
+        earlyBirdSeats={earlyBirdSeats}
+        earlyBirdSeatsSold={earlyBirdSeatsSold}
         open={modalOpen}
         onClose={() => setModalOpen(false)}
       />

@@ -20,25 +20,27 @@ function toSlug(s: string) {
 }
 
 interface FormState {
-  title:            string
-  slug:             string
-  description:      string
-  destination:      string
-  start_date:       string
-  end_date:         string
-  price_standard:   string
-  price_early_bird: string
-  price_vip:        string
-  price_group:      string
-  capacity:         string
-  image_url:        string
-  status:           TripStatus
+  title:                string
+  slug:                 string
+  description:          string
+  destination:          string
+  start_date:           string
+  end_date:             string
+  price_standard:       string
+  price_early_bird:     string
+  price_group:          string
+  early_bird_deadline:  string
+  early_bird_seats:     string
+  capacity:             string
+  image_url:            string
+  status:               TripStatus
 }
 
 const defaultForm = (): FormState => ({
   title: '', slug: '', description: '', destination: '',
   start_date: '', end_date: '',
-  price_standard: '', price_early_bird: '', price_vip: '', price_group: '',
+  price_standard: '', price_early_bird: '', price_group: '',
+  early_bird_deadline: '', early_bird_seats: '20',
   capacity: '50', image_url: '', status: 'draft',
 })
 
@@ -65,10 +67,11 @@ export default function TripsManager({ initialTrips }: Props) {
       destination:      trip.destination,
       start_date:       trip.start_date.slice(0, 10),
       end_date:         trip.end_date.slice(0, 10),
-      price_standard:   String(trip.price_standard),
-      price_early_bird: trip.price_early_bird != null ? String(trip.price_early_bird) : '',
-      price_vip:        trip.price_vip != null ? String(trip.price_vip) : '',
-      price_group:      trip.price_group != null ? String(trip.price_group) : '',
+      price_standard:      String(trip.price_standard),
+      price_early_bird:    trip.price_early_bird != null ? String(trip.price_early_bird) : '',
+      price_group:         trip.price_group != null ? String(trip.price_group) : '',
+      early_bird_deadline: trip.early_bird_deadline ? trip.early_bird_deadline.slice(0, 16) : '',
+      early_bird_seats:    String(trip.early_bird_seats ?? 20),
       capacity:         String(trip.capacity),
       image_url:        trip.image_url ?? '',
       status:           trip.status,
@@ -90,10 +93,11 @@ export default function TripsManager({ initialTrips }: Props) {
         destination:      form.destination,
         start_date:       form.start_date,
         end_date:         form.end_date,
-        price_standard:   parseFloat(form.price_standard) || 0,
-        price_early_bird: parseOptional(form.price_early_bird),
-        price_vip:        parseOptional(form.price_vip),
-        price_group:      parseOptional(form.price_group),
+        price_standard:       parseFloat(form.price_standard) || 0,
+        price_early_bird:     parseOptional(form.price_early_bird),
+        price_group:          parseOptional(form.price_group),
+        early_bird_deadline:  form.early_bird_deadline ? new Date(form.early_bird_deadline).toISOString() : null,
+        early_bird_seats:     parseInt(form.early_bird_seats) || 20,
         capacity:         parseInt(form.capacity) || 50,
         image_url:        form.image_url || null,
         status:           form.status,
@@ -220,13 +224,17 @@ export default function TripsManager({ initialTrips }: Props) {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-white/50 text-xs mb-1.5 block">VIP Price (€)</label>
-                  <input type="number" min="0" step="0.01" value={form.price_vip} onChange={e => setForm(f => ({ ...f, price_vip: e.target.value }))} className={inputClass} placeholder="optional" />
+                  <label className="text-white/50 text-xs mb-1.5 block">Group Price (€/person)</label>
+                  <input type="number" min="0" step="0.01" value={form.price_group} onChange={e => setForm(f => ({ ...f, price_group: e.target.value }))} className={inputClass} placeholder="optional (4+ people)" />
                 </div>
                 <div>
-                  <label className="text-white/50 text-xs mb-1.5 block">Group Price (€)</label>
-                  <input type="number" min="0" step="0.01" value={form.price_group} onChange={e => setForm(f => ({ ...f, price_group: e.target.value }))} className={inputClass} placeholder="optional" />
+                  <label className="text-white/50 text-xs mb-1.5 block">Early Bird Seats</label>
+                  <input type="number" min="0" value={form.early_bird_seats} onChange={e => setForm(f => ({ ...f, early_bird_seats: e.target.value }))} className={inputClass} />
                 </div>
+              </div>
+              <div>
+                <label className="text-white/50 text-xs mb-1.5 block">Early Bird Deadline</label>
+                <input type="datetime-local" value={form.early_bird_deadline} onChange={e => setForm(f => ({ ...f, early_bird_deadline: e.target.value }))} className={inputClass} />
               </div>
               <div>
                 <label className="text-white/50 text-xs mb-1.5 block">Capacity</label>

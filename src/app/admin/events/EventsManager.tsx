@@ -23,21 +23,28 @@ function toSlug(s: string) {
 type ModalMode = 'create' | 'edit'
 
 interface FormState {
-  title:       string
-  slug:        string
-  description: string
-  category:    EventCategory
-  date:        string
-  location:    string
-  image_url:   string
-  price:       string
-  capacity:    string
-  status:      EventStatus
+  title:                string
+  slug:                 string
+  description:          string
+  category:             EventCategory
+  date:                 string
+  location:             string
+  image_url:            string
+  price:                string
+  price_early_bird:     string
+  price_group:          string
+  early_bird_deadline:  string
+  early_bird_seats:     string
+  capacity:             string
+  status:               EventStatus
 }
 
 const defaultForm = (): FormState => ({
   title: '', slug: '', description: '', category: 'party',
-  date: '', location: '', image_url: '', price: '', capacity: '100', status: 'draft',
+  date: '', location: '', image_url: '',
+  price: '', price_early_bird: '', price_group: '',
+  early_bird_deadline: '', early_bird_seats: '20',
+  capacity: '100', status: 'draft',
 })
 
 interface Props { initialEvents: EventRow[] }
@@ -60,16 +67,20 @@ export default function EventsManager({ initialEvents }: Props) {
   function openEdit(event: EventRow) {
     setEditing(event)
     setForm({
-      title:       event.title,
-      slug:        event.slug,
-      description: event.description ?? '',
-      category:    event.category,
-      date:        event.date.slice(0, 16),
-      location:    event.location ?? '',
-      image_url:   event.image_url ?? '',
-      price:       String(event.price),
-      capacity:    String(event.capacity),
-      status:      event.status,
+      title:               event.title,
+      slug:                event.slug,
+      description:         event.description ?? '',
+      category:            event.category,
+      date:                event.date.slice(0, 16),
+      location:            event.location ?? '',
+      image_url:           event.image_url ?? '',
+      price:               String(event.price),
+      price_early_bird:    event.price_early_bird != null ? String(event.price_early_bird) : '',
+      price_group:         event.price_group != null ? String(event.price_group) : '',
+      early_bird_deadline: event.early_bird_deadline ? event.early_bird_deadline.slice(0, 16) : '',
+      early_bird_seats:    String(event.early_bird_seats ?? 20),
+      capacity:            String(event.capacity),
+      status:              event.status,
     })
     setError('')
     setModal('edit')
@@ -79,22 +90,30 @@ export default function EventsManager({ initialEvents }: Props) {
     setForm(f => ({ ...f, title, slug: toSlug(title) }))
   }
 
+  function parseOptional(val: string): number | null {
+    return val.trim() ? parseFloat(val) : null
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
     startTransition(async () => {
       const data: EventInsert = {
-        title:       form.title,
-        slug:        form.slug,
-        description: form.description || null,
-        category:    form.category,
-        date:        form.date,
-        location:    form.location || null,
-        image_url:   form.image_url || null,
-        price:       parseFloat(form.price) || 0,
-        capacity:    parseInt(form.capacity) || 100,
-        status:      form.status,
-        created_by:  null,  // server action injects the actual userId
+        title:               form.title,
+        slug:                form.slug,
+        description:         form.description || null,
+        category:            form.category,
+        date:                form.date,
+        location:            form.location || null,
+        image_url:           form.image_url || null,
+        price:               parseFloat(form.price) || 0,
+        price_early_bird:    parseOptional(form.price_early_bird),
+        price_group:         parseOptional(form.price_group),
+        early_bird_deadline: form.early_bird_deadline ? new Date(form.early_bird_deadline).toISOString() : null,
+        early_bird_seats:    parseInt(form.early_bird_seats) || 20,
+        capacity:            parseInt(form.capacity) || 100,
+        status:              form.status,
+        created_by:          null,  // server action injects the actual userId
       }
       const result = modal === 'edit' && editing
         ? await updateEvent(editing.id, data)
@@ -231,13 +250,31 @@ export default function EventsManager({ initialEvents }: Props) {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-white/50 text-xs mb-1.5 block">Price (€)</label>
+                  <label className="text-white/50 text-xs mb-1.5 block">Standard Price (€)</label>
                   <input type="number" min="0" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} className={inputClass} placeholder="0" />
                 </div>
                 <div>
-                  <label className="text-white/50 text-xs mb-1.5 block">Capacity</label>
-                  <input type="number" min="1" value={form.capacity} onChange={e => setForm(f => ({ ...f, capacity: e.target.value }))} className={inputClass} />
+                  <label className="text-white/50 text-xs mb-1.5 block">Early Bird Price (€)</label>
+                  <input type="number" min="0" step="0.01" value={form.price_early_bird} onChange={e => setForm(f => ({ ...f, price_early_bird: e.target.value }))} className={inputClass} placeholder="optional" />
                 </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-white/50 text-xs mb-1.5 block">Group Price (€/person)</label>
+                  <input type="number" min="0" step="0.01" value={form.price_group} onChange={e => setForm(f => ({ ...f, price_group: e.target.value }))} className={inputClass} placeholder="optional (4+ people)" />
+                </div>
+                <div>
+                  <label className="text-white/50 text-xs mb-1.5 block">Early Bird Seats</label>
+                  <input type="number" min="0" value={form.early_bird_seats} onChange={e => setForm(f => ({ ...f, early_bird_seats: e.target.value }))} className={inputClass} />
+                </div>
+              </div>
+              <div>
+                <label className="text-white/50 text-xs mb-1.5 block">Early Bird Deadline</label>
+                <input type="datetime-local" value={form.early_bird_deadline} onChange={e => setForm(f => ({ ...f, early_bird_deadline: e.target.value }))} className={inputClass} />
+              </div>
+              <div>
+                <label className="text-white/50 text-xs mb-1.5 block">Capacity</label>
+                <input type="number" min="1" value={form.capacity} onChange={e => setForm(f => ({ ...f, capacity: e.target.value }))} className={inputClass} />
               </div>
               <div>
                 <label className="text-white/50 text-xs mb-1.5 block">Location</label>

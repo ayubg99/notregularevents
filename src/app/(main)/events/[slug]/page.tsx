@@ -212,6 +212,11 @@ export default async function EventDetailPage({ params }: Props) {
               sold={event.tickets_sold}
               slug={event.slug}
               title={event.title}
+              priceEarlyBird={event.price_early_bird}
+              priceGroup={event.price_group}
+              earlyBirdDeadline={event.early_bird_deadline}
+              earlyBirdSeats={event.early_bird_seats}
+              earlyBirdSeatsSold={event.early_bird_seats_sold}
             />
 
             {/* Capacity summary */}

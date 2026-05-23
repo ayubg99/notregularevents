@@ -13,6 +13,7 @@ interface Body {
   itemId:      string
   tier?:       TripTier
   quantity?:   number
+  groupSize?:  number
   promoCode?:  string
   guestName?:  string
   guestEmail?: string
@@ -66,7 +67,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
   const { data: { user } } = await supabase.auth.getUser()
 
   const body: Body = await request.json()
-  const { type, itemId, tier, quantity = 1, promoCode, guestName, guestEmail, guestPhone } = body
+  const { type, itemId, tier, quantity = 1, groupSize, promoCode, guestName, guestEmail, guestPhone } = body
 
   console.log('[create-checkout]', { type, itemId, tier, quantity, hasUser: !!user })
 
@@ -128,7 +129,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
   if (type === 'event') {
     const { data: event } = await supabase
       .from('events')
-      .select('id, title, price, capacity, tickets_sold, slug, image_url, date, location')
+      .select('id, title, price, price_early_bird, price_group, early_bird_deadline, early_bird_seats, early_bird_seats_sold, capacity, tickets_sold, slug, image_url, date, location')
       .eq('id', itemId)
       .eq('status', 'published')
       .single()
@@ -142,9 +143,22 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: `Only ${spotsLeft} spot${spotsLeft === 1 ? '' : 's'} remaining.` }, { status: 409 })
     }
 
-    let unitPrice = discountType
-      ? applyDiscount(event.price, discountType, discountValue)
+    // Resolve tier-based price for events
+    const isEbValid =
+      tier === 'early_bird' &&
+      event.price_early_bird != null &&
+      event.early_bird_deadline != null &&
+      new Date(event.early_bird_deadline) > new Date() &&
+      (event.early_bird_seats - event.early_bird_seats_sold) > 0
+
+    const baseEventPrice =
+      isEbValid                              ? (event.price_early_bird ?? event.price)
+      : tier === 'group' && event.price_group != null ? event.price_group
       : event.price
+
+    let unitPrice = discountType
+      ? applyDiscount(baseEventPrice, discountType, discountValue)
+      : baseEventPrice
     if (memberDiscount) {
       unitPrice = applyDiscount(unitPrice, 'percentage', 15)
     }
@@ -253,7 +267,6 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
     const tierPrices: Record<TripTier, number> = {
       early_bird: trip.price_early_bird ?? trip.price_standard,
       standard:   trip.price_standard,
-      vip:        trip.price_vip        ?? trip.price_standard,
       group:      trip.price_group      ?? trip.price_standard,
     }
     const basePrice = tierPrices[tripTier]
@@ -313,11 +326,13 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ url: `${baseUrl}/booking/success?ref=${bookingRef}` })
     }
 
+    const tripGroupSize = tripTier === 'group' ? (groupSize ?? 1) : 1
+
     const session = await stripe.checkout.sessions.create({
       mode:           'payment',
       customer_email: toEmail ?? undefined,
       line_items: [{
-        quantity: 1,
+        quantity: tripGroupSize,
         price_data: {
           currency:     'eur',
           unit_amount:  Math.round(unitPrice * 100),
@@ -334,6 +349,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
         item_id:            trip.id,
         user_id:            user?.id        ?? '',
         tier:               tripTier,
+        quantity:           String(tripGroupSize),
         guest_name:         guestName       ?? '',
         guest_email:        guestEmail      ?? '',
         guest_phone:        guestPhone      ?? '',
