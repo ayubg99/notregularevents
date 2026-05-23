@@ -1,4 +1,4 @@
-import { BarChart2, Ticket, TrendingUp, DollarSign, Calendar, MapPin, Users, Euro } from 'lucide-react'
+import { BarChart2, Ticket, TrendingUp, DollarSign, Calendar, MapPin, Users } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
 import StatsCard from '@/components/admin/StatsCard'
 import RevenueChart, { type MonthData } from '@/components/admin/RevenueChart'
@@ -168,10 +168,6 @@ export default async function AnalyticsPage() {
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
     .slice(0, 10)
 
-  // ── Earnings ──
-  const earnings10 = totalRevenue * 0.1
-  const earnings10ThisMonth = thisMonthRevenue * 0.1
-
   const badgeColor = (type: string) => {
     if (type === 'Event') return 'bg-brand-primary/20 text-brand-primary'
     if (type === 'Trip')  return 'bg-teal-500/20 text-teal-400'
@@ -331,60 +327,27 @@ export default async function AnalyticsPage() {
         </div>
       </div>
 
-      {/* G + H — Recent transactions + Earnings */}
-      <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
-        {/* Recent transactions */}
-        <div className="xl:col-span-3 glass-card rounded-2xl p-6">
-          <h3 className="font-heading font-bold text-white text-base mb-4 flex items-center gap-2">
-            <TrendingUp size={15} className="text-brand-primary" />
-            Recent Transactions
-          </h3>
-          <div className="flex flex-col gap-2">
-            {recentTx.length === 0 ? (
-              <p className="text-white/30 text-sm text-center py-6">No transactions yet</p>
-            ) : recentTx.map((tx, i) => (
-              <div key={i} className="flex items-center gap-3 py-2 border-b border-white/5 last:border-0">
-                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${badgeColor(tx.type)}`}>
-                  {tx.type}
-                </span>
-                <p className="flex-1 text-white text-xs font-medium truncate">{tx.title}</p>
-                <span className="text-white font-semibold text-xs flex-shrink-0">€{fmt(tx.amount)}</span>
-                <span className="text-white/30 text-xs flex-shrink-0 tabular-nums">
-                  {new Date(tx.created_at).toLocaleDateString('en-IE', { day: 'numeric', month: 'short' })}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* H — Earnings */}
-        <div className="xl:col-span-2 flex flex-col gap-4">
-          <div className="glass-card rounded-2xl p-6 flex flex-col gap-4">
-            <h3 className="font-heading font-bold text-white text-base flex items-center gap-2">
-              <Euro size={15} className="text-green-400" />
-              Your Earnings (10%)
-            </h3>
-            <div className="flex flex-col gap-3">
-              <div className="flex justify-between items-center">
-                <span className="text-white/40 text-sm">Platform revenue</span>
-                <span className="text-white font-semibold">€{fmt(totalRevenue)}</span>
-              </div>
-              <div className="border-t border-white/8" />
-              <div className="flex justify-between items-center">
-                <span className="text-white/40 text-sm">Your 10% cut</span>
-                <span className="text-green-400 font-bold text-xl font-heading">€{fmt(earnings10)}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-white/40 text-sm">This month</span>
-                <span className="text-green-300 font-semibold">€{fmt(earnings10ThisMonth)}</span>
-              </div>
+      {/* G — Recent transactions */}
+      <div className="glass-card rounded-2xl p-6">
+        <h3 className="font-heading font-bold text-white text-base mb-4 flex items-center gap-2">
+          <TrendingUp size={15} className="text-brand-primary" />
+          Recent Transactions
+        </h3>
+        <div className="flex flex-col gap-2">
+          {recentTx.length === 0 ? (
+            <p className="text-white/30 text-sm text-center py-6">No transactions yet</p>
+          ) : recentTx.map((tx, i) => (
+            <div key={i} className="flex items-center gap-3 py-2 border-b border-white/5 last:border-0">
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${badgeColor(tx.type)}`}>
+                {tx.type}
+              </span>
+              <p className="flex-1 text-white text-xs font-medium truncate">{tx.title}</p>
+              <span className="text-white font-semibold text-xs flex-shrink-0">€{fmt(tx.amount)}</span>
+              <span className="text-white/30 text-xs flex-shrink-0 tabular-nums">
+                {new Date(tx.created_at).toLocaleDateString('en-IE', { day: 'numeric', month: 'short' })}
+              </span>
             </div>
-            <div className="bg-green-500/8 border border-green-500/15 rounded-xl p-3 mt-1">
-              <p className="text-green-400/80 text-xs text-center">
-                Based on {totalBookings} confirmed bookings + {mb.length} active memberships
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
