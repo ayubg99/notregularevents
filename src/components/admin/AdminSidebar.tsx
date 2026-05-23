@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { LayoutDashboard, Calendar, MapPin, Users, Ticket, LogOut, ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -27,8 +28,15 @@ export default function AdminSidebar() {
   return (
     <aside className="fixed top-0 left-0 bottom-0 w-60 bg-brand-dark border-r border-white/10 flex flex-col z-40">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-white/10 flex items-center gap-2">
-        <span className="font-heading text-base font-bold text-white tracking-tight">Erasmus Vibe</span>
+      <div className="px-5 py-4 border-b border-white/10 flex items-center gap-2">
+        <Image
+          src="/logo-transparent.png"
+          alt="Erasmus Vibe"
+          width={120}
+          height={36}
+          className="h-9 w-auto object-contain"
+          priority
+        />
         <span className="text-xs font-bold text-brand-accent bg-brand-accent/15 border border-brand-accent/30 px-1.5 py-0.5 rounded-md">
           Admin
         </span>
