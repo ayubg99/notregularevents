@@ -114,6 +114,7 @@ export default function PricingCards({ currentPlan }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
         {PLANS.map((plan) => {
           const isCurrent  = currentPlan === plan.id
+          const isUpgrade  = !!currentPlan && !isCurrent
           const isLoading  = isPending && pendingId === plan.id
           const anyLoading = isPending
 
@@ -167,6 +168,20 @@ export default function PricingCards({ currentPlan }: Props) {
               </ul>
 
               {/* CTA button */}
+              {isUpgrade && (
+                <div style={{
+                  background:    'rgba(245,166,35,0.1)',
+                  border:        '1px solid rgba(245,166,35,0.4)',
+                  borderRadius:  '10px',
+                  padding:       '10px 12px',
+                  marginBottom:  '12px',
+                  textAlign:     'center',
+                }}>
+                  <p style={{ color: '#F5A623', margin: 0, fontSize: '12px', lineHeight: 1.4 }}>
+                    Upgrading will cancel your current <strong>{currentPlan}</strong> plan.
+                  </p>
+                </div>
+              )}
               {isCurrent ? (
                 <div className="w-full py-3 rounded-xl text-center text-sm font-semibold bg-green-500/15 border border-green-500/30 text-green-400">
                   Current Plan ✓
@@ -183,6 +198,8 @@ export default function PricingCards({ currentPlan }: Props) {
                 >
                   {isLoading ? (
                     <><Loader2 size={14} className="animate-spin" /> Redirecting…</>
+                  ) : isUpgrade ? (
+                    `Upgrade to ${plan.name} →`
                   ) : (
                     `Get ${plan.name}`
                   )}

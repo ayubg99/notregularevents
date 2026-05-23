@@ -218,10 +218,11 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         plan,
         status:                 'active' as MembershipStatus,
         stripe_subscription_id: subscriptionId,
+        stripe_customer_id:     customerId,
         start_date:             startDate,
         end_date:               endDate,
       },
-      { onConflict: 'user_id' },
+      { onConflict: 'user_id', ignoreDuplicates: false },
     )
 
     if (error) {
@@ -243,16 +244,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     console.log('[webhook membership] sending welcome email to:', toEmail, 'plan:', plan)
     if (toEmail) {
       await sendMembershipWelcomeEmail({ to: toEmail, name: toName, plan, endDate })
-    }
-
-    // Store customer ID separately — non-blocking; column may not exist on older deployments
-    if (customerId) {
-      admin.from('memberships')
-        .update({ stripe_customer_id: customerId })
-        .eq('user_id', userId)
-        .then(({ error: e }) => {
-          if (e) console.warn('[webhook membership] stripe_customer_id update skipped:', e.message)
-        })
     }
 
     // Also sync membership_status on the profiles table for fast lookups

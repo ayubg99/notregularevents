@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getAdminClient } from '@/lib/supabase/admin'
 import { stripe } from '@/lib/stripe'
 import { generateQR } from '@/lib/qr'
 import { nanoid } from 'nanoid'
@@ -382,6 +383,28 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
         { error: `Membership plan "${plan}" is not configured — STRIPE_PRICE_${plan.toUpperCase()} is missing. Contact support.` },
         { status: 400 },
       )
+    }
+
+    // Cancel any existing active subscription so the user is never billed twice
+    const adminClient = getAdminClient()
+    const { data: existingMembership } = await adminClient
+      .from('memberships')
+      .select('stripe_subscription_id')
+      .eq('user_id', user!.id)
+      .eq('status', 'active')
+      .maybeSingle()
+
+    if (existingMembership?.stripe_subscription_id) {
+      try {
+        await stripe.subscriptions.cancel(existingMembership.stripe_subscription_id)
+        console.log('[create-checkout membership] cancelled old subscription:', existingMembership.stripe_subscription_id)
+      } catch (e) {
+        console.warn('[create-checkout membership] failed to cancel old subscription:', e)
+      }
+      await adminClient
+        .from('memberships')
+        .update({ status: 'cancelled' })
+        .eq('user_id', user!.id)
     }
 
     const membershipMeta = {
