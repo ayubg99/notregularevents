@@ -1,7 +1,8 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import type { ProfileUpdate } from '@/types/database'
+import { getAdminClient } from '@/lib/supabase/admin'
+import type { ProfileInsert, ProfileUpdate } from '@/types/database'
 
 interface ProfileInput {
   fullName?:    string
@@ -36,10 +37,13 @@ export async function updateProfile(input: ProfileInput): Promise<{ success: boo
   if (input.whatsapp    !== undefined) profileFields.whatsapp    = input.whatsapp
 
   if (Object.keys(profileFields).length > 0) {
-    const { error } = await supabase
+    const admin = getAdminClient()
+    const { error } = await admin
       .from('profiles')
-      .update(profileFields)
-      .eq('user_id', user.id)
+      .upsert(
+        { user_id: user.id, ...profileFields } as ProfileInsert,
+        { onConflict: 'user_id' }
+      )
     if (error) return { success: false, error: error.message }
   }
 
