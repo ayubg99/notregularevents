@@ -60,12 +60,19 @@ export default function EventCard({ event, className }: Props) {
   const isSoldOut    = spotsLeft <= 0
   const fillPct      = Math.round((event.tickets_sold / event.capacity) * 100)
   const isAlmostGone = !isSoldOut && spotsLeft <= Math.max(1, Math.ceil(event.capacity * 0.1))
-  const isFree       = event.price === 0
+  const now = new Date()
+  const earlyBirdActive =
+    !!event.price_early_bird &&
+    event.price_early_bird > 0 &&
+    (!event.early_bird_deadline || new Date(event.early_bird_deadline) > now) &&
+    (!event.early_bird_seats || event.early_bird_seats - (event.early_bird_seats_sold ?? 0) > 0)
+  const displayPrice   = earlyBirdActive ? event.price_early_bird! : event.price
+  const isFree         = displayPrice === 0
 
   const formattedDate  = new Date(event.date).toLocaleDateString('en-GB', {
     weekday: 'short', day: 'numeric', month: 'short',
   })
-  const formattedPrice = isFree ? 'Free' : `€${event.price.toFixed(2)}`
+  const formattedPrice = isFree ? 'Free' : `€${displayPrice.toFixed(2)}`
 
   return (
     <div className={cn('group rounded-3xl overflow-hidden glass-card card-hover flex flex-col border border-white/8 hover:border-brand-primary/25', className)}>
@@ -94,10 +101,16 @@ export default function EventCard({ event, className }: Props) {
           {LABELS[event.category]}
         </span>
 
-        {/* Price badge */}
-        <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full bg-gradient-to-r from-brand-primary to-brand-primary-light text-white text-xs font-bold">
-          {formattedPrice}
-        </span>
+        {/* Price / Early Bird badge */}
+        {earlyBirdActive ? (
+          <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: '#F5A623', color: '#1A1A2E' }}>
+            🔥 Early Bird {formattedPrice}
+          </span>
+        ) : (
+          <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full bg-gradient-to-r from-brand-primary to-brand-primary-light text-white text-xs font-bold">
+            {formattedPrice}
+          </span>
+        )}
 
         {isSoldOut && (
           <div className="absolute inset-0 bg-brand-dark/75 flex items-center justify-center">

@@ -61,11 +61,13 @@ export default function TripCard({ trip }: Props) {
     day: 'numeric', month: 'short', year: 'numeric',
   })
 
-  const lowestPrice = Math.min(
-    ...[trip.price_early_bird, trip.price_standard, trip.price_vip, trip.price_group]
-      .filter((p): p is number => p != null),
-  )
-  const hasDiscount = trip.price_early_bird != null && trip.price_early_bird < trip.price_standard
+  const now = new Date()
+  const earlyBirdActive =
+    !!trip.price_early_bird &&
+    trip.price_early_bird > 0 &&
+    (!trip.early_bird_deadline || new Date(trip.early_bird_deadline) > now) &&
+    (!trip.early_bird_seats || trip.early_bird_seats - (trip.early_bird_seats_sold ?? 0) > 0)
+  const displayPrice = earlyBirdActive ? trip.price_early_bird! : trip.price_standard
 
   return (
     <Link href={`/trips/${trip.slug}`} className="group block">
@@ -139,11 +141,11 @@ export default function TripCard({ trip }: Props) {
           {/* Footer */}
           <div className="flex items-center justify-between pt-1">
             <div>
-              {hasDiscount && (
+              {earlyBirdActive && (
                 <p className="text-xs text-brand-accent font-bold uppercase tracking-wide">Early Bird</p>
               )}
-              <p className={`font-bold text-base ${hasDiscount ? 'text-gradient-primary' : 'text-white'}`}>
-                {lowestPrice === 0 ? 'Free' : `From €${lowestPrice}`}
+              <p className={`font-bold text-base ${earlyBirdActive ? 'text-gradient-primary' : 'text-white'}`}>
+                {displayPrice === 0 ? 'Free' : `From €${displayPrice}`}
               </p>
             </div>
             <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 ${
