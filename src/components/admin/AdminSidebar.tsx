@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Calendar, MapPin, Users, Ticket, LogOut, ArrowLeft } from 'lucide-react'
+import { LayoutDashboard, Calendar, MapPin, Users, Ticket, Tag, LogOut, ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 const NAV = [
@@ -11,7 +11,8 @@ const NAV = [
   { href: '/admin/events',   label: 'Events',    icon: <Calendar size={16} />        },
   { href: '/admin/trips',    label: 'Trips',     icon: <MapPin size={16} />          },
   { href: '/admin/users',    label: 'Members',   icon: <Users size={16} />           },
-  { href: '/admin/bookings', label: 'Bookings',  icon: <Ticket size={16} />          },
+  { href: '/admin/bookings',     label: 'Bookings',     icon: <Ticket size={16} /> },
+  { href: '/admin/promo-codes', label: 'Promo Codes',  icon: <Tag    size={16} /> },
 ]
 
 export default function AdminSidebar() {
