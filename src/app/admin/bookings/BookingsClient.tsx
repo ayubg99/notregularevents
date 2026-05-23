@@ -22,6 +22,7 @@ export interface Booking {
   price:             number | null
   location:          string | null
   tier:              string | null
+  quantity:          number
 }
 
 type BookingRow = Booking & Record<string, unknown>
@@ -136,6 +137,22 @@ export default function BookingsClient({ bookings }: Props) {
         : '—',
     },
     {
+      key: 'tier', header: 'Tier',
+      render: (r) => r.tier ? (
+        <span style={{
+          padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700,
+          background: r.tier === 'early_bird' ? '#F5A623' : r.tier === 'group' ? '#2ECC71' : 'rgba(255,255,255,0.1)',
+          color: r.tier === 'early_bird' || r.tier === 'group' ? '#1A1A2E' : '#ffffff',
+        }}>
+          {r.tier === 'early_bird' ? '🔥 Early Bird' : r.tier === 'group' ? '👥 Group' : '💰 Standard'}
+        </span>
+      ) : '—',
+    },
+    {
+      key: 'quantity', header: 'Qty',
+      render: (r) => r.quantity > 1 ? `${r.quantity} people` : '1',
+    },
+    {
       key: 'status', header: 'Status',
       render: (r) => (
         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_COLORS[r.status] ?? 'bg-white/10 text-white/40'}`}>
@@ -146,7 +163,7 @@ export default function BookingsClient({ bookings }: Props) {
     {
       key: 'price', header: 'Amount',
       render: (r) => r.price != null ? (
-        <span className="font-mono text-sm text-white/70">€{r.price}</span>
+        <span className="font-mono text-sm font-semibold text-green-400">€{r.price.toFixed(2)}</span>
       ) : '—',
     },
     {

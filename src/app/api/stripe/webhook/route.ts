@@ -39,6 +39,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const guestName  = meta.guest_name  || null
   const guestEmail = meta.guest_email || null
   const guestPhone = meta.guest_phone || null
+  const amountPaid = (session.amount_total ?? 0) / 100
+  const quantity   = Number(meta.quantity ?? 1)
 
   console.log('[webhook checkout.session.completed]', {
     sessionId:    session.id,
@@ -75,6 +77,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       console.error('[webhook event ticket]', error.message)
       return
     }
+
+    await admin.from('event_tickets').update({ amount_paid: amountPaid }).eq('booking_ref', bookingRef)
 
     // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
     const { error: seatError } = await admin.rpc('increment_tickets_sold', {
@@ -131,6 +135,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       console.error('[webhook trip booking]', error.message)
       return
     }
+
+    await admin.from('trip_bookings').update({ amount_paid: amountPaid, quantity }).eq('booking_ref', bookingRef)
 
     // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
     const { error: seatError } = await admin.rpc('increment_seats_sold', {

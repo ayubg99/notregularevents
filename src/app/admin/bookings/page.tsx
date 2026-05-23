@@ -10,11 +10,11 @@ export default async function AdminBookingsPage() {
   ] = await Promise.all([
     admin
       .from('event_tickets')
-      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, events(title, date, price, location)')
+      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, amount_paid, events(title, date, location)')
       .order('created_at', { ascending: false }),
     admin
       .from('trip_bookings')
-      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, tier, trips(title, start_date, price_standard, destination)')
+      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, tier, amount_paid, quantity, trips(title, start_date, destination)')
       .order('created_at', { ascending: false }),
   ])
 
@@ -34,9 +34,10 @@ export default async function AdminBookingsPage() {
       stripe_payment_id: b.stripe_payment_id,
       title:    (b.events as unknown as { title: string } | null)?.title    ?? 'Unknown Event',
       date:     (b.events as unknown as { date: string }  | null)?.date     ?? null,
-      price:    (b.events as unknown as { price: number } | null)?.price    ?? null,
+      price:    b.amount_paid ?? null,
       location: (b.events as unknown as { location: string } | null)?.location ?? null,
       tier:     null as string | null,
+      quantity: 1,
     })),
     ...(tripBookings ?? []).map(b => ({
       id:                b.id,
@@ -48,11 +49,12 @@ export default async function AdminBookingsPage() {
       guest_email:       b.guest_email,
       guest_phone:       b.guest_phone,
       stripe_payment_id: b.stripe_payment_id,
-      title:    (b.trips as unknown as { title: string }          | null)?.title          ?? 'Unknown Trip',
-      date:     (b.trips as unknown as { start_date: string }     | null)?.start_date     ?? null,
-      price:    (b.trips as unknown as { price_standard: number } | null)?.price_standard ?? null,
-      location: (b.trips as unknown as { destination: string }    | null)?.destination    ?? null,
+      title:    (b.trips as unknown as { title: string }       | null)?.title       ?? 'Unknown Trip',
+      date:     (b.trips as unknown as { start_date: string }  | null)?.start_date  ?? null,
+      price:    b.amount_paid ?? null,
+      location: (b.trips as unknown as { destination: string } | null)?.destination ?? null,
       tier:     b.tier as string | null,
+      quantity: b.quantity ?? 1,
     })),
   ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
