@@ -5,23 +5,56 @@ export default async function AdminBookingsPage() {
   const admin = getAdminClient()
 
   const [
-    { data: eventTickets },
-    { data: tripBookings },
+    { data: eventTickets, error: eventError },
+    { data: tripBookings, error: tripError },
   ] = await Promise.all([
     admin
       .from('event_tickets')
-      .select('*, events(title, date), users(email, full_name)')
+      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, events(title, date, price, location)')
       .order('created_at', { ascending: false }),
     admin
       .from('trip_bookings')
-      .select('*, trips(title, start_date), users(email, full_name)')
+      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, tier, trips(title, start_date, price_standard, destination)')
       .order('created_at', { ascending: false }),
   ])
 
-  return (
-    <BookingsClient
-      eventTickets={eventTickets as never ?? []}
-      tripBookings={tripBookings as never ?? []}
-    />
-  )
+  console.log('Event tickets:', eventTickets?.length, eventError)
+  console.log('Trip bookings:', tripBookings?.length, tripError)
+
+  const allBookings = [
+    ...(eventTickets ?? []).map(b => ({
+      id:                b.id,
+      type:              'Event' as const,
+      booking_ref:       b.booking_ref,
+      status:            b.status,
+      created_at:        b.created_at,
+      guest_name:        b.guest_name,
+      guest_email:       b.guest_email,
+      guest_phone:       b.guest_phone,
+      stripe_payment_id: b.stripe_payment_id,
+      title:    (b.events as unknown as { title: string } | null)?.title    ?? 'Unknown Event',
+      date:     (b.events as unknown as { date: string }  | null)?.date     ?? null,
+      price:    (b.events as unknown as { price: number } | null)?.price    ?? null,
+      location: (b.events as unknown as { location: string } | null)?.location ?? null,
+      tier:     null as string | null,
+    })),
+    ...(tripBookings ?? []).map(b => ({
+      id:                b.id,
+      type:              'Trip' as const,
+      booking_ref:       b.booking_ref,
+      status:            b.status,
+      created_at:        b.created_at,
+      guest_name:        b.guest_name,
+      guest_email:       b.guest_email,
+      guest_phone:       b.guest_phone,
+      stripe_payment_id: b.stripe_payment_id,
+      title:    (b.trips as unknown as { title: string }          | null)?.title          ?? 'Unknown Trip',
+      date:     (b.trips as unknown as { start_date: string }     | null)?.start_date     ?? null,
+      price:    (b.trips as unknown as { price_standard: number } | null)?.price_standard ?? null,
+      location: (b.trips as unknown as { destination: string }    | null)?.destination    ?? null,
+      tier:     b.tier as string | null,
+    })),
+  ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
+  return <BookingsClient bookings={allBookings} />
 }
