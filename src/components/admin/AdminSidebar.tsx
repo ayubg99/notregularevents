@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Calendar, MapPin, Users, Ticket, Tag, LogOut, ArrowLeft, BarChart2 } from 'lucide-react'
+import { LayoutDashboard, Calendar, MapPin, Users, Ticket, Tag, LogOut, ArrowLeft, BarChart2, QrCode } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 const NAV = [
@@ -65,6 +65,20 @@ export default function AdminSidebar() {
             </Link>
           )
         })}
+        <a
+          href="/scanner"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150"
+          style={{
+            background: 'rgba(245,166,35,0.1)',
+            color:      '#F5A623',
+            border:     '1px solid rgba(245,166,35,0.2)',
+          }}
+        >
+          <QrCode size={16} />
+          Scanner
+        </a>
       </nav>
 
       {/* Bottom actions */}
