@@ -54,14 +54,17 @@ export async function saveRegistrationProfile(
   userId: string,
   input: { nationality?: string; university?: string }
 ): Promise<{ success: boolean; error?: string }> {
-  const fields: ProfileInsert = { user_id: userId }
-  if (input.nationality) fields.nationality = input.nationality
-  if (input.university)  fields.university  = input.university
-
   const admin = getAdminClient()
   const { error } = await admin
     .from('profiles')
-    .upsert(fields, { onConflict: 'user_id' })
+    .upsert(
+      {
+        user_id:     userId,
+        nationality: input.nationality ?? null,
+        university:  input.university  ?? null,
+      } as ProfileInsert,
+      { onConflict: 'user_id' }
+    )
 
   if (error) return { success: false, error: error.message }
   return { success: true }
