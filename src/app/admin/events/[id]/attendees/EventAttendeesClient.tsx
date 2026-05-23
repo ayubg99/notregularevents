@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Download, Search, CheckCircle, Clock } from 'lucide-react'
+import { ArrowLeft, Download, FileText, Search, CheckCircle, Clock } from 'lucide-react'
 import Link from 'next/link'
 
 type Ticket = {
@@ -13,6 +13,7 @@ type Ticket = {
   guest_email:   string | null
   guest_phone:   string | null
   amount_paid:   number | null
+  qr_code:       string | null
   created_at:    string
   checked_in:    boolean | null
   checked_in_at: string | null
@@ -40,7 +41,7 @@ const STATUS_COLORS: Record<string, string> = {
 }
 
 function buildCSV(event: EventInfo, rows: Ticket[]): string {
-  const headers = ['#', 'Name', 'Email', 'Phone', 'Booking Ref', 'Status', 'Amount', 'Checked In', 'Check-in Time', 'Booked At']
+  const headers = ['#', 'Name', 'Email', 'Phone', 'Booking Ref', 'QR Code', 'Status', 'Amount', 'Checked In', 'Check-in Time', 'Booked At']
   const lines = [
     headers.join(','),
     ...rows.map((t, i) => [
@@ -49,6 +50,7 @@ function buildCSV(event: EventInfo, rows: Ticket[]): string {
       t.guest_email ?? '',
       t.guest_phone ?? '',
       t.booking_ref,
+      t.qr_code    ?? '',
       t.status,
       t.amount_paid != null ? `€${t.amount_paid.toFixed(2)}` : '',
       t.checked_in ? 'Yes' : 'No',
@@ -143,13 +145,24 @@ export default function EventAttendeesClient({ event, tickets }: Props) {
             {event.location && ` · ${event.location}`}
           </p>
         </div>
-        <button
-          onClick={() => downloadCSV(buildCSV(event, tickets), `attendees-${event.id}.csv`)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-all"
-        >
-          <Download size={14} />
-          Export CSV
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => downloadCSV(buildCSV(event, tickets), `attendees-${event.id}.csv`)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-all"
+          >
+            <Download size={14} />
+            Export CSV
+          </button>
+          <a
+            href={`/api/admin/pdf/events/${event.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-primary/15 hover:bg-brand-primary/25 text-brand-primary text-sm font-medium transition-all"
+          >
+            <FileText size={14} />
+            Export PDF with QR Codes
+          </a>
+        </div>
       </div>
 
       {/* Capacity progress bar */}

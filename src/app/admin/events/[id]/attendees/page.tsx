@@ -18,7 +18,7 @@ export default async function EventAttendeesPage({
       .single(),
     admin
       .from('event_tickets')
-      .select('id, booking_ref, status, guest_name, guest_email, guest_phone, amount_paid, created_at, checked_in, checked_in_at')
+      .select('id, booking_ref, status, guest_name, guest_email, guest_phone, amount_paid, qr_code, created_at, checked_in, checked_in_at')
       .eq('event_id', id)
       .order('created_at', { ascending: true }),
   ])
@@ -43,6 +43,7 @@ export default async function EventAttendeesPage({
         guest_email: string | null
         guest_phone: string | null
         amount_paid: number | null
+        qr_code:     string | null
         created_at: string
         checked_in: boolean | null
         checked_in_at: string | null

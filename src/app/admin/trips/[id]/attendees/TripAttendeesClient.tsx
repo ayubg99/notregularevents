@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Download, Search, CheckCircle, Clock } from 'lucide-react'
+import { ArrowLeft, Download, FileText, Search, CheckCircle, Clock } from 'lucide-react'
 import Link from 'next/link'
 
 type TripBooking = {
@@ -15,6 +15,7 @@ type TripBooking = {
   guest_phone:   string | null
   amount_paid:   number | null
   quantity:      number
+  qr_code:       string | null
   created_at:    string
   checked_in:    boolean | null
   checked_in_at: string | null
@@ -52,7 +53,7 @@ function TierBadge({ tier }: { tier: string }) {
 }
 
 function buildCSV(trip: TripInfo, rows: TripBooking[]): string {
-  const headers = ['#', 'Name', 'Email', 'Phone', 'Tier', 'Qty', 'Booking Ref', 'Status', 'Amount', 'Checked In', 'Check-in Time', 'Booked At']
+  const headers = ['#', 'Name', 'Email', 'Phone', 'Tier', 'Qty', 'Booking Ref', 'QR Code', 'Status', 'Amount', 'Checked In', 'Check-in Time', 'Booked At']
   const lines = [
     headers.join(','),
     ...rows.map((b, i) => [
@@ -63,6 +64,7 @@ function buildCSV(trip: TripInfo, rows: TripBooking[]): string {
       b.tier,
       b.quantity,
       b.booking_ref,
+      b.qr_code    ?? '',
       b.status,
       b.amount_paid != null ? `€${b.amount_paid.toFixed(2)}` : '',
       b.checked_in ? 'Yes' : 'No',
@@ -165,13 +167,24 @@ export default function TripAttendeesClient({ trip, bookings }: Props) {
             {` · ${trip.destination}`}
           </p>
         </div>
-        <button
-          onClick={() => downloadCSV(buildCSV(trip, bookings), `attendees-trip-${trip.id}.csv`)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-all"
-        >
-          <Download size={14} />
-          Export CSV
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => downloadCSV(buildCSV(trip, bookings), `attendees-trip-${trip.id}.csv`)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-all"
+          >
+            <Download size={14} />
+            Export CSV
+          </button>
+          <a
+            href={`/api/admin/pdf/trips/${trip.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-primary/15 hover:bg-brand-primary/25 text-brand-primary text-sm font-medium transition-all"
+          >
+            <FileText size={14} />
+            Export PDF with QR Codes
+          </a>
+        </div>
       </div>
 
       {/* Capacity progress bar */}

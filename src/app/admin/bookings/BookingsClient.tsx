@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { Download, QrCode, Ticket, X, QrCode as QrIcon } from 'lucide-react'
+import { Download, QrCode, Ticket, X, QrCode as QrIcon, Printer } from 'lucide-react'
 import DataTable from '@/components/admin/DataTable'
 import type { Column } from '@/components/admin/DataTable'
 
@@ -255,6 +255,15 @@ function BookingDetailModal({
               </div>
             )}
             <p className="text-white/30 text-xs font-mono">{booking.booking_ref}</p>
+            <a
+              href={`/api/admin/pdf/ticket/${booking.id}?type=${booking.type === 'Event' ? 'event' : 'trip'}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 text-white/50 hover:text-white hover:border-white/30 text-xs font-medium transition-all"
+            >
+              <Printer size={12} />
+              Reprint Ticket
+            </a>
           </div>
         </div>
       </div>

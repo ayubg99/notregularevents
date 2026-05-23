@@ -18,7 +18,7 @@ export default async function TripAttendeesPage({
       .single(),
     admin
       .from('trip_bookings')
-      .select('id, booking_ref, status, tier, guest_name, guest_email, guest_phone, amount_paid, quantity, created_at, checked_in, checked_in_at')
+      .select('id, booking_ref, status, tier, guest_name, guest_email, guest_phone, amount_paid, quantity, qr_code, created_at, checked_in, checked_in_at')
       .eq('trip_id', id)
       .order('created_at', { ascending: true }),
   ])
@@ -44,9 +44,10 @@ export default async function TripAttendeesPage({
         guest_email: string | null
         guest_phone: string | null
         amount_paid: number | null
-        quantity: number
-        created_at: string
-        checked_in: boolean | null
+        quantity:    number
+        qr_code:     string | null
+        created_at:  string
+        checked_in:  boolean | null
         checked_in_at: string | null
       }[]}
     />
