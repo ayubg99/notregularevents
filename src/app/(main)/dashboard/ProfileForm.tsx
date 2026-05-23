@@ -3,17 +3,7 @@
 import { useState, useTransition } from 'react'
 import { updateProfile } from '@/app/actions/profile'
 import type { ProfileRow, UserRow } from '@/types/database'
-
-const NATIONALITIES = [
-  'German', 'French', 'Italian', 'Spanish', 'Polish', 'Turkish', 'Romanian',
-  'Czech', 'Hungarian', 'Slovak', 'Dutch', 'Belgian', 'Austrian', 'Swedish',
-  'Finnish', 'Danish', 'Norwegian', 'Portuguese', 'Greek', 'Ukrainian',
-  'Bulgarian', 'Croatian', 'Serbian', 'Lithuanian', 'Latvian', 'Estonian',
-  'Slovenian', 'Swiss', 'British', 'Irish', 'American', 'Brazilian', 'Mexican',
-  'Argentinian', 'Colombian', 'Peruvian', 'Chilean', 'Moroccan', 'Tunisian',
-  'Algerian', 'Egyptian', 'South Korean', 'Japanese', 'Chinese', 'Indian',
-  'Indonesian', 'Vietnamese', 'Thai', 'Canadian', 'Australian',
-]
+import { NATIONALITIES } from '@/lib/constants/nationalities'
 
 interface Props {
   user:    Pick<UserRow, 'full_name'>
@@ -85,7 +75,7 @@ export default function ProfileForm({ user, profile }: Props) {
             >
               <option value="">Select…</option>
               {NATIONALITIES.map(n => (
-                <option key={n} value={n}>{n}</option>
+                <option key={n.value} value={n.value}>{n.label}</option>
               ))}
             </select>
           </div>

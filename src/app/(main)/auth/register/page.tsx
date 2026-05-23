@@ -5,17 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Loader2, Mail, Lock, User, Globe, GraduationCap } from 'lucide-react'
-
-const NATIONALITIES = [
-  'German', 'French', 'Italian', 'Spanish', 'Polish', 'Turkish', 'Romanian',
-  'Czech', 'Hungarian', 'Slovak', 'Dutch', 'Belgian', 'Austrian', 'Swedish',
-  'Finnish', 'Danish', 'Norwegian', 'Portuguese', 'Greek', 'Ukrainian',
-  'Bulgarian', 'Croatian', 'Serbian', 'Lithuanian', 'Latvian', 'Estonian',
-  'Slovenian', 'Swiss', 'British', 'Irish', 'American', 'Brazilian', 'Mexican',
-  'Argentinian', 'Colombian', 'Peruvian', 'Chilean', 'Moroccan', 'Tunisian',
-  'Algerian', 'Egyptian', 'South Korean', 'Japanese', 'Chinese', 'Indian',
-  'Indonesian', 'Vietnamese', 'Thai', 'Canadian', 'Australian',
-]
+import { NATIONALITIES } from '@/lib/constants/nationalities'
 
 function RegisterForm() {
   const router = useRouter()
@@ -118,7 +108,7 @@ function RegisterForm() {
               >
                 <option value="" disabled>Nationality (optional)</option>
                 {NATIONALITIES.map(n => (
-                  <option key={n} value={n}>{n}</option>
+                  <option key={n.value} value={n.value} style={{ background: '#1A1A2E' }}>{n.label}</option>
                 ))}
               </select>
             </div>

@@ -2,6 +2,7 @@
 
 import DataTable from '@/components/admin/DataTable'
 import UserRoleSelect from './UserRoleSelect'
+import { getNationalityLabel } from '@/lib/constants/nationalities'
 
 export type MemberRow = {
   id: string
@@ -34,7 +35,7 @@ export default function MembersClient({ rows }: { rows: MemberRow[] }) {
         </span>
       )},
     { key: 'nationality', header: 'Nationality',
-      render: (row: MemberRow) => row.nationality ?? '—' },
+      render: (row: MemberRow) => row.nationality ? getNationalityLabel(row.nationality) : '—' },
     { key: 'university', header: 'University',
       render: (row: MemberRow) => row.university ?? '—' },
     { key: 'membership_status', header: 'Membership',
