@@ -55,13 +55,12 @@ export async function GET(
     }
   }
 
+  const element = React.createElement(TicketDocument, {
+    tickets:  [ticket],
+    docTitle: `Ticket — ${ticket.bookingRef}`,
+  })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const buffer = await renderToBuffer(
-    React.createElement(TicketDocument, {
-      tickets:  [ticket],
-      docTitle: `Ticket — ${ticket.bookingRef}`,
-    }) as any
-  )
+  const buffer = await renderToBuffer(element as any)
 
   return new Response(new Uint8Array(buffer), {
     headers: {

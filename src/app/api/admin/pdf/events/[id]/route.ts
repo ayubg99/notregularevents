@@ -39,10 +39,9 @@ export async function GET(
   }))
 
   const docTitle = `${event.title} — Attendees`
+  const element  = React.createElement(TicketDocument, { tickets: pdfTickets, docTitle })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const buffer   = await renderToBuffer(
-    React.createElement(TicketDocument, { tickets: pdfTickets, docTitle }) as any
-  )
+  const buffer   = await renderToBuffer(element as any)
 
   const slug = event.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)
   return new Response(new Uint8Array(buffer), {

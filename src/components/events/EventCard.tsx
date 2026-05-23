@@ -6,12 +6,12 @@ import { cn } from '@/lib/utils/cn'
 
 // Full static strings — Tailwind v4 content scan requires no interpolation
 const GRADIENTS: Record<EventCategory, string> = {
-  party:                'from-purple-600 to-pink-500',
-  cultural:             'from-amber-500 to-orange-400',
-  sport:                'from-green-600 to-teal-500',
-  networking:           'from-blue-600 to-indigo-500',
-  trip:                 'from-orange-500 to-teal-400',
-  other:                'from-slate-600 to-slate-500',
+  party:                'from-orange-500 to-red-400',
+  cultural:             'from-teal-500 to-cyan-400',
+  sport:                'from-green-500 to-emerald-400',
+  networking:           'from-blue-500 to-indigo-400',
+  trip:                 'from-purple-500 to-violet-400',
+  other:                'from-slate-500 to-slate-400',
   language_exchange:    'from-yellow-500 to-amber-400',
   food_wine:            'from-rose-500 to-orange-400',
   hiking:               'from-green-500 to-lime-400',
@@ -21,18 +21,18 @@ const GRADIENTS: Record<EventCategory, string> = {
 }
 
 const BADGE_COLORS: Record<EventCategory, string> = {
-  party:                'bg-purple-500/20 text-purple-300 border-purple-500/30',
-  cultural:             'bg-amber-500/20  text-amber-300  border-amber-500/30',
-  sport:                'bg-green-500/20  text-green-300  border-green-500/30',
-  networking:           'bg-blue-500/20   text-blue-300   border-blue-500/30',
-  trip:                 'bg-orange-500/20 text-orange-300 border-orange-500/30',
-  other:                'bg-slate-500/20  text-slate-300  border-slate-500/30',
-  language_exchange:    'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
-  food_wine:            'bg-rose-500/20   text-rose-300   border-rose-500/30',
-  hiking:               'bg-lime-500/20   text-lime-300   border-lime-500/30',
-  yoga:                 'bg-pink-500/20   text-pink-300   border-pink-500/30',
+  party:                'bg-orange-500/20  text-orange-400  border-orange-500/30',
+  cultural:             'bg-teal-400/20    text-teal-300    border-teal-400/30',
+  sport:                'bg-green-500/20   text-green-400   border-green-500/30',
+  networking:           'bg-blue-500/20    text-blue-400    border-blue-500/30',
+  trip:                 'bg-purple-500/20  text-purple-400  border-purple-500/30',
+  other:                'bg-slate-500/20   text-slate-400   border-slate-500/30',
+  language_exchange:    'bg-yellow-500/20  text-yellow-300  border-yellow-500/30',
+  food_wine:            'bg-rose-500/20    text-rose-300    border-rose-500/30',
+  hiking:               'bg-lime-500/20    text-lime-300    border-lime-500/30',
+  yoga:                 'bg-pink-500/20    text-pink-300    border-pink-500/30',
   art:                  'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30',
-  international_dinner: 'bg-teal-500/20   text-teal-300   border-teal-500/30',
+  international_dinner: 'bg-teal-500/20    text-teal-300    border-teal-500/30',
 }
 
 const LABELS: Record<EventCategory, string> = {
