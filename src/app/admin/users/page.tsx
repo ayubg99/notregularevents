@@ -9,10 +9,18 @@ type UserWithProfile = UserRow & {
 
 export default async function AdminUsersPage() {
   const admin = getAdminClient()
-  const { data: users } = await admin
+  const { data: users, error } = await admin
     .from('users')
     .select('*, profiles(nationality, university)')
     .order('created_at', { ascending: false })
+
+  if (error) {
+    return (
+      <div className="p-10 text-red-400">
+        Error loading members: {error.message}
+      </div>
+    )
+  }
 
   const rows = (users ?? []) as unknown as UserWithProfile[]
 
