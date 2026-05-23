@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useState, useTransition } from 'react'
+import { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -16,46 +16,50 @@ function RegisterForm() {
   const [password,    setPassword]    = useState('')
   const [nationality, setNationality] = useState('')
   const [university,  setUniversity]  = useState('')
-  const [agreed,      setAgreed]      = useState(false)
-  const [error,       setError]       = useState('')
-  const [isPending,   startTransition] = useTransition()
+  const [agreed,      setAgreed]    = useState(false)
+  const [error,       setError]     = useState('')
+  const [isLoading,   setIsLoading] = useState(false)
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!agreed) { setError('Please accept the terms to continue.'); return }
     if (password.length < 8) { setError('Password must be at least 8 characters.'); return }
     if (!nationality) { setError('Please select your nationality.'); return }
-    setError('')
 
-    startTransition(async () => {
-      const supabase = createClient()
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { full_name: fullName, nationality, university },
-        },
-      })
-      if (signUpError) {
-        setError(signUpError.message)
-      } else {
-        if (signUpData.user?.identities?.length === 0) {
-          setError('An account with this email already exists. Please sign in.')
-          return
-        }
-        if (signUpData.user && (nationality || university)) {
-          await saveRegistrationProfile(signUpData.user.id, { nationality, university })
-        }
-        if (signUpData.session) {
-          router.push('/dashboard')
-          router.refresh()
-          return
-        }
-        if (signUpData.user && !signUpData.session) {
-          router.push('/auth/login?message=check-email')
-        }
-      }
+    setError('')
+    setIsLoading(true)
+
+    const supabase = createClient()
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: fullName, nationality, university },
+      },
     })
+
+    if (signUpError) {
+      setError(signUpError.message)
+      setIsLoading(false)
+      return
+    }
+
+    if (signUpData.user?.identities?.length === 0) {
+      setError('An account with this email already exists. Please sign in.')
+      setIsLoading(false)
+      return
+    }
+
+    // Fire and forget — don't block the redirect on this round-trip
+    if (signUpData.user && (nationality || university)) {
+      saveRegistrationProfile(signUpData.user.id, { nationality, university })
+    }
+
+    if (signUpData.session) {
+      router.push('/dashboard')
+    } else {
+      router.push('/auth/login?message=check-email')
+    }
   }
 
   return (
@@ -174,10 +178,10 @@ function RegisterForm() {
 
             <button
               type="submit"
-              disabled={isPending}
+              disabled={isLoading}
               className="w-full py-3.5 mt-1 rounded-xl bg-brand-primary hover:brightness-110 active:brightness-90 text-white font-semibold text-sm transition-all duration-200 disabled:opacity-70 flex items-center justify-center gap-2"
             >
-              {isPending ? <><Loader2 size={15} className="animate-spin" /> Creating account…</> : 'Create Account'}
+              {isLoading ? <><Loader2 size={15} className="animate-spin" /> Creating account…</> : 'Create Account'}
             </button>
           </form>
         </div>
