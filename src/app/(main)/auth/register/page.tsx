@@ -16,9 +16,10 @@ function RegisterForm() {
   const [password,    setPassword]    = useState('')
   const [nationality, setNationality] = useState('')
   const [university,  setUniversity]  = useState('')
-  const [agreed,      setAgreed]      = useState(false)
-  const [error,       setError]       = useState('')
-  const [isPending,   startTransition] = useTransition()
+  const [agreed,            setAgreed]            = useState(false)
+  const [error,             setError]             = useState('')
+  const [showConfirmation,  setShowConfirmation]  = useState(false)
+  const [isPending,         startTransition]      = useTransition()
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -39,11 +40,19 @@ function RegisterForm() {
       if (signUpError) {
         setError(signUpError.message)
       } else {
+        if (signUpData.user?.identities?.length === 0) {
+          setError('An account with this email already exists. Please sign in.')
+          return
+        }
         if (signUpData.user && (nationality || university)) {
           await saveRegistrationProfile(signUpData.user.id, { nationality, university })
         }
-        router.push('/dashboard')
-        router.refresh()
+        if (signUpData.session) {
+          router.push('/dashboard')
+          router.refresh()
+        } else {
+          setShowConfirmation(true)
+        }
       }
     })
   }
@@ -61,6 +70,26 @@ function RegisterForm() {
           <p className="text-white/50 text-sm">Join thousands of internationals in Valencia</p>
         </div>
 
+        {showConfirmation ? (
+          <div className="glass-card rounded-2xl p-8 text-center flex flex-col gap-4">
+            <div className="w-12 h-12 rounded-full bg-green-500/15 flex items-center justify-center mx-auto">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M5 13l4 4L19 7" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h2 className="font-heading text-xl font-bold text-white">Check your email</h2>
+            <p className="text-white/50 text-sm">
+              We sent a confirmation link to <span className="text-white">{email}</span>.
+              Click it to activate your account.
+            </p>
+            <Link
+              href="/auth/login"
+              className="mt-2 text-brand-primary hover:brightness-110 transition-colors text-sm font-medium"
+            >
+              Go to login →
+            </Link>
+          </div>
+        ) : (
         <div className="glass-card rounded-2xl p-8">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* Full name */}
@@ -171,6 +200,7 @@ function RegisterForm() {
             </button>
           </form>
         </div>
+        )}
 
         <p className="text-center text-white/40 text-sm mt-6">
           Already have an account?{' '}
