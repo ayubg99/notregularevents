@@ -23,6 +23,7 @@ function RegisterForm() {
     e.preventDefault()
     if (!agreed) { setError('Please accept the terms to continue.'); return }
     if (password.length < 8) { setError('Password must be at least 8 characters.'); return }
+    if (!nationality) { setError('Please select your nationality.'); return }
     setError('')
 
     startTransition(async () => {
@@ -104,9 +105,10 @@ function RegisterForm() {
               <select
                 value={nationality}
                 onChange={e => setNationality(e.target.value)}
+                required
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:border-brand-primary/50 transition-colors appearance-none [&>option]:bg-brand-dark"
               >
-                <option value="" disabled>Nationality (optional)</option>
+                <option value="" disabled>Select your nationality</option>
                 {NATIONALITIES.map(n => (
                   <option key={n.value} value={n.value} style={{ background: '#1A1A2E' }}>{n.label}</option>
                 ))}

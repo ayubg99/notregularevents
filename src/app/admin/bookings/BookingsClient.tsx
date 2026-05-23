@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Download, QrCode, Ticket, X, QrCode as QrIcon, Printer } from 'lucide-react'
 import DataTable from '@/components/admin/DataTable'
 import type { Column } from '@/components/admin/DataTable'
@@ -377,11 +378,13 @@ export default function BookingsClient({ bookings }: Props) {
             <Download size={14} />
             Export CSV
           </button>
-          <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 text-white/40 text-sm cursor-default">
+          <Link
+            href="/scanner"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-all"
+          >
             <QrCode size={14} />
             <span>QR Scanner</span>
-            <span className="text-xs bg-white/5 px-1.5 py-0.5 rounded text-white/25">soon</span>
-          </div>
+          </Link>
         </div>
       </div>
 
