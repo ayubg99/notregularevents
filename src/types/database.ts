@@ -88,6 +88,8 @@ export type EventTicketRow = {
   guest_name:        string | null
   guest_email:       string | null
   guest_phone:       string | null
+  checked_in:        boolean | null
+  checked_in_at:     string  | null
   created_at:        string
   updated_at:        string
 }
@@ -141,6 +143,8 @@ export type TripBookingRow = {
   guest_name:        string | null
   guest_email:       string | null
   guest_phone:       string | null
+  checked_in:        boolean | null
+  checked_in_at:     string  | null
   created_at:        string
   updated_at:        string
 }
@@ -220,9 +224,11 @@ export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 
   group_min_size?:       number | null
 }
 
-export type EventTicketInsert = Omit<EventTicketRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid'> & {
-  status?:       TicketStatus
-  amount_paid?:  number | null
+export type EventTicketInsert = Omit<EventTicketRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid' | 'checked_in' | 'checked_in_at'> & {
+  status?:        TicketStatus
+  amount_paid?:   number | null
+  checked_in?:    boolean | null
+  checked_in_at?: string  | null
 }
 
 export type TripInsert = Omit<TripRow, 'id' | 'seats_sold' | 'created_at' | 'updated_at' | 'price_vip' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold' | 'group_min_size'> & {
@@ -235,11 +241,13 @@ export type TripInsert = Omit<TripRow, 'id' | 'seats_sold' | 'created_at' | 'upd
   group_min_size?:        number | null
 }
 
-export type TripBookingInsert = Omit<TripBookingRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid' | 'quantity'> & {
-  status?:       BookingStatus
-  deposit_paid?: boolean
-  amount_paid?:  number | null
-  quantity?:     number
+export type TripBookingInsert = Omit<TripBookingRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid' | 'quantity' | 'checked_in' | 'checked_in_at'> & {
+  status?:        BookingStatus
+  deposit_paid?:  boolean
+  amount_paid?:   number | null
+  quantity?:      number
+  checked_in?:    boolean | null
+  checked_in_at?: string  | null
 }
 
 export type MembershipInsert = Omit<MembershipRow, 'id' | 'created_at' | 'updated_at' | 'stripe_customer_id'> & {

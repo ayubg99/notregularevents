@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2, ChevronDown } from 'lucide-react'
+import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2, ChevronDown, Users } from 'lucide-react'
+import Link from 'next/link'
 import DataTable from '@/components/admin/DataTable'
 import ImageUpload from '@/components/admin/ImageUpload'
 import { createEvent, updateEvent, deleteEvent } from '@/app/actions/admin'
@@ -227,6 +228,13 @@ export default function EventsManager({ initialEvents }: Props) {
         searchKeys={['title', 'category', 'status'] as (keyof EventTableRow)[]}
         actions={(row) => (
           <div className="flex items-center justify-end gap-1.5">
+            <Link
+              href={`/admin/events/${row.id as string}/attendees`}
+              className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 transition-all"
+            >
+              <Users size={12} />
+              Attendees
+            </Link>
             <button
               onClick={() => handleToggleStatus(row as unknown as EventRow)}
               className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors"

@@ -11,14 +11,15 @@ export interface Column<T extends Record<string, unknown>> {
 }
 
 interface Props<T extends Record<string, unknown>> {
-  data:        T[]
-  columns:     Column<T>[]
-  searchKeys?: (keyof T)[]
-  actions?:    (row: T) => React.ReactNode
+  data:         T[]
+  columns:      Column<T>[]
+  searchKeys?:  (keyof T)[]
+  actions?:     (row: T) => React.ReactNode
+  onRowClick?:  (row: T) => void
 }
 
 export default function DataTable<T extends Record<string, unknown>>({
-  data, columns, searchKeys, actions,
+  data, columns, searchKeys, actions, onRowClick,
 }: Props<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null)
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
@@ -107,14 +108,18 @@ export default function DataTable<T extends Record<string, unknown>>({
               </tr>
             ) : (
               filtered.map((row, i) => (
-                <tr key={i} className="border-b border-white/5 hover:bg-white/[0.03] transition-colors">
+                <tr
+                  key={i}
+                  onClick={() => onRowClick?.(row)}
+                  className={`border-b border-white/5 hover:bg-white/[0.03] transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
+                >
                   {columns.map(col => (
                     <td key={col.key} className="px-4 py-3 text-sm text-white/80">
                       {col.render ? col.render(row) : String(row[col.key] ?? '—')}
                     </td>
                   ))}
                   {actions && (
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right" onClick={e => e.stopPropagation()}>
                       {actions(row)}
                     </td>
                   )}

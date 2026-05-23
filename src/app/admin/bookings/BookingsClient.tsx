@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Download, QrCode, Ticket } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Download, QrCode, Ticket, X, QrCode as QrIcon } from 'lucide-react'
 import DataTable from '@/components/admin/DataTable'
 import type { Column } from '@/components/admin/DataTable'
 
@@ -23,6 +24,7 @@ export interface Booking {
   location:          string | null
   tier:              string | null
   quantity:          number
+  qr_code:           string | null
 }
 
 type BookingRow = Booking & Record<string, unknown>
@@ -77,8 +79,193 @@ const TABS: { key: FilterTab; label: string }[] = [
   { key: 'week',   label: 'This Week'    },
 ]
 
+const EVENT_STATUSES  = ['active', 'used', 'cancelled', 'refunded']
+const TRIP_STATUSES   = ['pending', 'confirmed', 'cancelled', 'refunded']
+
+function TierBadge({ tier }: { tier: string }) {
+  const label = tier === 'early_bird' ? '🔥 Early Bird' : tier === 'group' ? '👥 Group' : '💰 Standard'
+  const style = {
+    padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700,
+    background: tier === 'early_bird' ? '#F5A623' : tier === 'group' ? '#2ECC71' : 'rgba(255,255,255,0.1)',
+    color: tier === 'early_bird' || tier === 'group' ? '#1A1A2E' : '#ffffff',
+  }
+  return <span style={style}>{label}</span>
+}
+
+function BookingDetailModal({
+  booking,
+  onClose,
+  onStatusChange,
+}: {
+  booking: Booking
+  onClose: () => void
+  onStatusChange: (status: string) => void
+}) {
+  const [changing, setChanging] = useState(false)
+  const [currentStatus, setCurrentStatus] = useState(booking.status)
+  const statuses = booking.type === 'Event' ? EVENT_STATUSES : TRIP_STATUSES
+
+  async function changeStatus(newStatus: string) {
+    if (newStatus === currentStatus) return
+    setChanging(true)
+    const res = await fetch(`/api/admin/bookings/${booking.id}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: booking.type === 'Event' ? 'event' : 'trip', status: newStatus }),
+    })
+    setChanging(false)
+    if (res.ok) {
+      setCurrentStatus(newStatus)
+      onStatusChange(newStatus)
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-card rounded-2xl p-6"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+              booking.type === 'Event'
+                ? 'bg-brand-primary/15 text-brand-primary'
+                : 'bg-cyan-500/15 text-cyan-400'
+            }`}>
+              {booking.type}
+            </span>
+            <h2 className="font-heading text-xl font-bold text-white mt-2">{booking.title}</h2>
+            {booking.location && (
+              <p className="text-white/40 text-sm">{booking.location}</p>
+            )}
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-xl hover:bg-white/10 text-white/40 hover:text-white transition-all"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left column — details */}
+          <div className="flex flex-col gap-5">
+            {/* Guest */}
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-2">Guest</p>
+              <div className="flex flex-col gap-1">
+                <p className="text-white font-medium">{booking.guest_name ?? 'Member (logged in)'}</p>
+                {booking.guest_email && (
+                  <p className="text-white/50 text-sm">{booking.guest_email}</p>
+                )}
+                {booking.guest_phone && (
+                  <p className="text-white/50 text-sm">{booking.guest_phone}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Event / Trip */}
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-2">Event / Trip</p>
+              <div className="flex flex-col gap-1">
+                <p className="text-white/80 text-sm">{booking.title}</p>
+                {booking.date && (
+                  <p className="text-white/50 text-sm">
+                    {new Date(booking.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Booking details */}
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-2">Booking</p>
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between">
+                  <span className="text-white/40 text-sm">Reference</span>
+                  <span className="font-mono text-sm tracking-widest text-white/70">{booking.booking_ref}</span>
+                </div>
+                {booking.tier && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/40 text-sm">Tier</span>
+                    <TierBadge tier={booking.tier} />
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-white/40 text-sm">Quantity</span>
+                  <span className="text-white/80 text-sm">{booking.quantity > 1 ? `${booking.quantity} people` : '1 person'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/40 text-sm">Amount paid</span>
+                  <span className="font-mono font-semibold text-green-400">
+                    {booking.price != null ? `€${booking.price.toFixed(2)}` : '—'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/40 text-sm">Booked at</span>
+                  <span className="text-white/60 text-sm">
+                    {new Date(booking.created_at).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Status */}
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-2">Status</p>
+              <div className="flex flex-wrap gap-2">
+                {statuses.map(s => (
+                  <button
+                    key={s}
+                    disabled={changing}
+                    onClick={() => changeStatus(s)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all border ${
+                      currentStatus === s
+                        ? `${STATUS_COLORS[s] ?? 'bg-white/10 text-white/40'} border-current`
+                        : 'bg-transparent text-white/30 border-white/10 hover:border-white/30 hover:text-white/60'
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right column — QR code */}
+          <div className="flex flex-col items-center justify-start gap-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-white/30 self-start">QR Code</p>
+            {booking.qr_code ? (
+              <div className="bg-white p-3 rounded-xl">
+                <img
+                  src={booking.qr_code}
+                  alt={`QR code for ${booking.booking_ref}`}
+                  className="w-48 h-48 object-contain"
+                />
+              </div>
+            ) : (
+              <div className="w-48 h-48 rounded-xl border border-white/10 bg-white/5 flex flex-col items-center justify-center gap-2 text-white/20">
+                <QrIcon size={48} />
+                <p className="text-xs">No QR code</p>
+              </div>
+            )}
+            <p className="text-white/30 text-xs font-mono">{booking.booking_ref}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function BookingsClient({ bookings }: Props) {
-  const [tab, setTab] = useState<FilterTab>('all')
+  const router = useRouter()
+  const [tab,      setTab]      = useState<FilterTab>('all')
+  const [selected, setSelected] = useState<Booking | null>(null)
 
   const filtered = useMemo(() => {
     const now   = new Date()
@@ -138,15 +325,7 @@ export default function BookingsClient({ bookings }: Props) {
     },
     {
       key: 'tier', header: 'Tier',
-      render: (r) => r.tier ? (
-        <span style={{
-          padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700,
-          background: r.tier === 'early_bird' ? '#F5A623' : r.tier === 'group' ? '#2ECC71' : 'rgba(255,255,255,0.1)',
-          color: r.tier === 'early_bird' || r.tier === 'group' ? '#1A1A2E' : '#ffffff',
-        }}>
-          {r.tier === 'early_bird' ? '🔥 Early Bird' : r.tier === 'group' ? '👥 Group' : '💰 Standard'}
-        </span>
-      ) : '—',
+      render: (r) => r.tier ? <TierBadge tier={r.tier} /> : '—',
     },
     {
       key: 'quantity', header: 'Qty',
@@ -225,6 +404,18 @@ export default function BookingsClient({ bookings }: Props) {
           data={filtered as unknown as BookingRow[]}
           columns={columns}
           searchKeys={['booking_ref', 'title', 'guest_name', 'guest_email'] as (keyof BookingRow)[]}
+          onRowClick={(row) => setSelected(row as unknown as Booking)}
+        />
+      )}
+
+      {selected && (
+        <BookingDetailModal
+          booking={selected}
+          onClose={() => setSelected(null)}
+          onStatusChange={(status) => {
+            setSelected(prev => prev ? { ...prev, status } : null)
+            router.refresh()
+          }}
         />
       )}
     </>

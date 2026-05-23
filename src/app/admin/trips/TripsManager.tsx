@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2, ChevronDown, PlusCircle, MinusCircle } from 'lucide-react'
+import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2, ChevronDown, PlusCircle, MinusCircle, Users } from 'lucide-react'
+import Link from 'next/link'
 import DataTable from '@/components/admin/DataTable'
 import ImageUpload from '@/components/admin/ImageUpload'
 import { createTrip, updateTrip, deleteTrip } from '@/app/actions/admin'
@@ -238,6 +239,13 @@ export default function TripsManager({ initialTrips }: Props) {
         searchKeys={['title', 'destination', 'status'] as (keyof TripTableRow)[]}
         actions={(row) => (
           <div className="flex items-center justify-end gap-1.5">
+            <Link
+              href={`/admin/trips/${row.id as string}/attendees`}
+              className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 transition-all"
+            >
+              <Users size={12} />
+              Attendees
+            </Link>
             <button onClick={() => handleToggleStatus(row as unknown as TripRow)} className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors" title={row.status === 'published' ? 'Unpublish' : 'Publish'}>
               {row.status === 'published' ? <ToggleRight size={15} className="text-green-400" /> : <ToggleLeft size={15} />}
             </button>
