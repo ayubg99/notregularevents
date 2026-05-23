@@ -7,14 +7,15 @@ import { LayoutDashboard, Calendar, MapPin, Users, Ticket, Tag, LogOut, ArrowLef
 import { createClient } from '@/lib/supabase/client'
 
 const NAV = [
-  { href: '/admin',          label: 'Overview',  icon: <LayoutDashboard size={16} /> },
-  { href: '/admin/events',   label: 'Events',    icon: <Calendar size={16} />        },
-  { href: '/admin/trips',    label: 'Trips',     icon: <MapPin size={16} />          },
-  { href: '/admin/users',    label: 'Members',   icon: <Users size={16} />           },
-  { href: '/admin/bookings',     label: 'Bookings',     icon: <Ticket size={16} /> },
-  { href: '/admin/promo-codes', label: 'Promo Codes',  icon: <Tag      size={16} /> },
-  { href: '/admin/analytics',  label: 'Analytics',    icon: <BarChart2 size={16} /> },
-]
+  { href: '/admin',             label: 'Overview',    icon: <LayoutDashboard size={16} /> },
+  { href: '/admin/events',      label: 'Events',      icon: <Calendar size={16} />        },
+  { href: '/admin/trips',       label: 'Trips',       icon: <MapPin size={16} />          },
+  { href: '/admin/users',       label: 'Members',     icon: <Users size={16} />           },
+  { href: '/admin/bookings',    label: 'Bookings',    icon: <Ticket size={16} />          },
+  { href: '/admin/promo-codes', label: 'Promo Codes', icon: <Tag size={16} />             },
+  { href: '/admin/analytics',   label: 'Analytics',   icon: <BarChart2 size={16} />       },
+  { href: '/scanner',           label: 'Scanner',     icon: <QrCode size={16} />, external: true, neverActive: true },
+] as const
 
 export default function AdminSidebar() {
   const pathname = usePathname()
@@ -46,39 +47,51 @@ export default function AdminSidebar() {
 
       {/* Nav links */}
       <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
-        {NAV.map(({ href, label, icon }) => {
-          const isActive = href === '/admin'
-            ? pathname === '/admin'
-            : pathname.startsWith(href)
+        {NAV.map(({ href, label, icon, ...rest }) => {
+          const external   = 'external'   in rest && rest.external
+          const neverActive = 'neverActive' in rest && rest.neverActive
+          const isActive   = neverActive
+            ? false
+            : href === '/admin'
+              ? pathname === '/admin'
+              : pathname.startsWith(href)
+
+          const baseClass = 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150'
+          const activeClass = isActive
+            ? 'bg-brand-primary/15 text-brand-primary border border-brand-primary/25'
+            : 'text-white/50 hover:text-white hover:bg-white/5'
+
+          if (external) {
+            return (
+              <a
+                key={href}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${baseClass} border`}
+                style={{
+                  background: 'rgba(245,166,35,0.1)',
+                  color:      '#F5A623',
+                  borderColor: 'rgba(245,166,35,0.2)',
+                }}
+              >
+                {icon}
+                {label}
+              </a>
+            )
+          }
+
           return (
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
-                isActive
-                  ? 'bg-brand-primary/15 text-brand-primary border border-brand-primary/25'
-                  : 'text-white/50 hover:text-white hover:bg-white/5'
-              }`}
+              className={`${baseClass} ${activeClass}`}
             >
               {icon}
               {label}
             </Link>
           )
         })}
-        <a
-          href="/scanner"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150"
-          style={{
-            background: 'rgba(245,166,35,0.1)',
-            color:      '#F5A623',
-            border:     '1px solid rgba(245,166,35,0.2)',
-          }}
-        >
-          <QrCode size={16} />
-          Scanner
-        </a>
       </nav>
 
       {/* Bottom actions */}
