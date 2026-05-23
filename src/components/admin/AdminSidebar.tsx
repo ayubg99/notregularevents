@@ -30,7 +30,7 @@ export default function AdminSidebar() {
       {/* Logo */}
       <div className="px-5 py-4 border-b border-white/10 flex items-center gap-2">
         <Image
-          src="/logo-transparent.png"
+          src="/logo.png"
           alt="Erasmus Vibe"
           width={120}
           height={36}
