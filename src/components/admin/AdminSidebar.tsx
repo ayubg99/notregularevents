@@ -68,12 +68,7 @@ export default function AdminSidebar() {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${baseClass} border`}
-                style={{
-                  background: 'rgba(245,166,35,0.1)',
-                  color:      '#F5A623',
-                  borderColor: 'rgba(245,166,35,0.2)',
-                }}
+                className={`${baseClass} text-white/50 hover:text-white hover:bg-white/5`}
               >
                 {icon}
                 {label}
