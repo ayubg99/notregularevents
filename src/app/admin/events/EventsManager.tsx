@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2 } from 'lucide-react'
+import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2, ChevronDown } from 'lucide-react'
 import DataTable from '@/components/admin/DataTable'
 import ImageUpload from '@/components/admin/ImageUpload'
 import { createEvent, updateEvent, deleteEvent } from '@/app/actions/admin'
@@ -20,30 +20,41 @@ function toSlug(s: string) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 }
 
-type ModalMode = 'create' | 'edit'
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-3">
+        <span className="text-xs font-semibold uppercase tracking-widest text-white/30">{title}</span>
+        <div className="flex-1 h-px bg-white/8" />
+      </div>
+      {children}
+    </div>
+  )
+}
 
 interface FormState {
-  title:                string
-  slug:                 string
-  description:          string
-  category:             EventCategory
-  date:                 string
-  location:             string
-  image_url:            string
-  price:                string
-  price_early_bird:     string
-  price_group:          string
-  early_bird_deadline:  string
-  early_bird_seats:     string
-  capacity:             string
-  status:               EventStatus
+  title:               string
+  slug:                string
+  description:         string
+  category:            EventCategory
+  date:                string
+  location:            string
+  image_url:           string
+  price:               string
+  price_early_bird:    string
+  price_group:         string
+  early_bird_deadline: string
+  early_bird_seats:    string
+  group_min_size:      string
+  capacity:            string
+  status:              EventStatus
 }
 
 const defaultForm = (): FormState => ({
   title: '', slug: '', description: '', category: 'party',
   date: '', location: '', image_url: '',
   price: '', price_early_bird: '', price_group: '',
-  early_bird_deadline: '', early_bird_seats: '20',
+  early_bird_deadline: '', early_bird_seats: '20', group_min_size: '4',
   capacity: '100', status: 'draft',
 })
 
@@ -51,21 +62,29 @@ interface Props { initialEvents: EventRow[] }
 
 export default function EventsManager({ initialEvents }: Props) {
   const router = useRouter()
-  const [modal,   setModal]   = useState<ModalMode | null>(null)
+  const [modal,   setModal]   = useState<'create' | 'edit' | null>(null)
   const [editing, setEditing] = useState<EventRow | null>(null)
   const [form,    setForm]    = useState<FormState>(defaultForm())
-  const [error,   setError]   = useState('')
+  const [toast,   setToast]   = useState('')
   const [isPending, startTransition] = useTransition()
+  const [groupEnabled, setGroupEnabled] = useState(false)
+
+  function showToast(msg: string) {
+    setToast(msg)
+    setTimeout(() => setToast(''), 3500)
+  }
 
   function openCreate() {
     setEditing(null)
     setForm(defaultForm())
-    setError('')
+    setGroupEnabled(false)
+    setToast('')
     setModal('create')
   }
 
   function openEdit(event: EventRow) {
     setEditing(event)
+    setGroupEnabled(event.price_group != null)
     setForm({
       title:               event.title,
       slug:                event.slug,
@@ -79,10 +98,11 @@ export default function EventsManager({ initialEvents }: Props) {
       price_group:         event.price_group != null ? String(event.price_group) : '',
       early_bird_deadline: event.early_bird_deadline ? event.early_bird_deadline.slice(0, 16) : '',
       early_bird_seats:    String(event.early_bird_seats ?? 20),
+      group_min_size:      String(event.group_min_size ?? 4),
       capacity:            String(event.capacity),
       status:              event.status,
     })
-    setError('')
+    setToast('')
     setModal('edit')
   }
 
@@ -96,7 +116,21 @@ export default function EventsManager({ initialEvents }: Props) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError('')
+
+    // Validation
+    const stdPrice = parseFloat(form.price) || 0
+    const ebPrice  = parseOptional(form.price_early_bird)
+    if (ebPrice !== null && ebPrice >= stdPrice) {
+      showToast('Early bird price must be less than the standard price.')
+      return
+    }
+    if (ebPrice !== null && form.early_bird_deadline && form.date) {
+      if (new Date(form.early_bird_deadline) >= new Date(form.date)) {
+        showToast('Early bird deadline must be before the event date.')
+        return
+      }
+    }
+
     startTransition(async () => {
       const data: EventInsert = {
         title:               form.title,
@@ -106,14 +140,15 @@ export default function EventsManager({ initialEvents }: Props) {
         date:                form.date,
         location:            form.location || null,
         image_url:           form.image_url || null,
-        price:               parseFloat(form.price) || 0,
-        price_early_bird:    parseOptional(form.price_early_bird),
-        price_group:         parseOptional(form.price_group),
+        price:               stdPrice,
+        price_early_bird:    ebPrice,
+        price_group:         groupEnabled ? parseOptional(form.price_group) : null,
         early_bird_deadline: form.early_bird_deadline ? new Date(form.early_bird_deadline).toISOString() : null,
         early_bird_seats:    parseInt(form.early_bird_seats) || 20,
+        group_min_size:      groupEnabled ? (parseInt(form.group_min_size) || 4) : null,
         capacity:            parseInt(form.capacity) || 100,
         status:              form.status,
-        created_by:          null,  // server action injects the actual userId
+        created_by:          null,
       }
       const result = modal === 'edit' && editing
         ? await updateEvent(editing.id, data)
@@ -123,7 +158,7 @@ export default function EventsManager({ initialEvents }: Props) {
         setModal(null)
         router.refresh()
       } else {
-        setError(result.error ?? 'Failed to save event.')
+        showToast(result.error ?? 'Failed to save event.')
       }
     })
   }
@@ -145,6 +180,11 @@ export default function EventsManager({ initialEvents }: Props) {
     })
   }
 
+  // Pricing preview values
+  const stdNum = parseFloat(form.price) || 0
+  const ebNum  = parseOptional(form.price_early_bird)
+  const grpNum = groupEnabled ? parseOptional(form.price_group) : null
+
   type EventTableRow = EventRow & Record<string, unknown>
 
   const columns = [
@@ -163,6 +203,7 @@ export default function EventsManager({ initialEvents }: Props) {
   ]
 
   const inputClass = 'w-full px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
+  const labelClass = 'text-white/50 text-xs mb-1.5 block'
 
   return (
     <>
@@ -212,7 +253,7 @@ export default function EventsManager({ initialEvents }: Props) {
       {/* Modal */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-xl bg-brand-dark border border-white/15 rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
+          <div className="w-full max-w-2xl bg-brand-dark border border-white/15 rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
             <div className="flex items-center justify-between p-6 border-b border-white/10">
               <h2 className="font-heading font-bold text-white text-lg">
                 {modal === 'create' ? 'New Event' : 'Edit Event'}
@@ -221,78 +262,151 @@ export default function EventsManager({ initialEvents }: Props) {
                 <X size={20} />
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
-              <div>
-                <label className="text-white/50 text-xs mb-1.5 block">Title *</label>
-                <input type="text" value={form.title} onChange={e => handleTitleChange(e.target.value)} required className={inputClass} />
-              </div>
-              <div>
-                <label className="text-white/50 text-xs mb-1.5 block">Slug</label>
-                <input type="text" value={form.slug} onChange={e => setForm(f => ({ ...f, slug: e.target.value }))} className={inputClass} />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+
+            <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-6">
+
+              {/* Basic Info */}
+              <Section title="Basic Info">
                 <div>
-                  <label className="text-white/50 text-xs mb-1.5 block">Category</label>
-                  <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value as EventCategory }))} className={`${inputClass} appearance-none [&>option]:bg-brand-dark capitalize`}>
-                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
+                  <label className={labelClass}>Title *</label>
+                  <input type="text" value={form.title} onChange={e => handleTitleChange(e.target.value)} required className={inputClass} />
                 </div>
                 <div>
-                  <label className="text-white/50 text-xs mb-1.5 block">Status</label>
-                  <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value as EventStatus }))} className={`${inputClass} appearance-none [&>option]:bg-brand-dark`}>
-                    {['draft','published','cancelled','completed'].map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
+                  <label className={labelClass}>Slug</label>
+                  <input type="text" value={form.slug} onChange={e => setForm(f => ({ ...f, slug: e.target.value }))} className={inputClass} />
                 </div>
-              </div>
-              <div>
-                <label className="text-white/50 text-xs mb-1.5 block">Date & Time *</label>
-                <input type="datetime-local" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} required className={inputClass} />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className={labelClass}>Category</label>
+                    <div className="relative">
+                      <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value as EventCategory }))} className={`${inputClass} appearance-none pr-8 [&>option]:bg-brand-dark capitalize`}>
+                        {CATEGORIES.map(c => <option key={c} value={c}>{c.replace('_', ' ')}</option>)}
+                      </select>
+                      <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Status</label>
+                    <div className="relative">
+                      <select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value as EventStatus }))} className={`${inputClass} appearance-none pr-8 [&>option]:bg-brand-dark`}>
+                        {['draft','published','cancelled','completed'].map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                      <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
+                    </div>
+                  </div>
+                </div>
+              </Section>
+
+              {/* Date & Location */}
+              <Section title="Date & Location">
                 <div>
-                  <label className="text-white/50 text-xs mb-1.5 block">Standard Price (€)</label>
-                  <input type="number" min="0" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} className={inputClass} placeholder="0" />
+                  <label className={labelClass}>Date & Time *</label>
+                  <input type="datetime-local" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} required className={inputClass} />
                 </div>
                 <div>
-                  <label className="text-white/50 text-xs mb-1.5 block">Early Bird Price (€)</label>
-                  <input type="number" min="0" step="0.01" value={form.price_early_bird} onChange={e => setForm(f => ({ ...f, price_early_bird: e.target.value }))} className={inputClass} placeholder="optional" />
+                  <label className={labelClass}>Location</label>
+                  <input type="text" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} className={inputClass} placeholder="Venue name or address" />
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-white/50 text-xs mb-1.5 block">Group Price (€/person)</label>
-                  <input type="number" min="0" step="0.01" value={form.price_group} onChange={e => setForm(f => ({ ...f, price_group: e.target.value }))} className={inputClass} placeholder="optional (4+ people)" />
+              </Section>
+
+              {/* Capacity */}
+              <Section title="Capacity">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className={labelClass}>Max Capacity</label>
+                    <input type="number" min="1" value={form.capacity} onChange={e => setForm(f => ({ ...f, capacity: e.target.value }))} className={inputClass} />
+                  </div>
+                  {editing && (
+                    <div>
+                      <label className={labelClass}>Sold / Remaining</label>
+                      <div className="px-3 py-2.5 rounded-xl border border-white/10 bg-white/3 text-white/50 text-sm">
+                        {editing.tickets_sold} sold · {Math.max(0, editing.capacity - editing.tickets_sold)} left
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <label className="text-white/50 text-xs mb-1.5 block">Early Bird Seats</label>
-                  <input type="number" min="0" value={form.early_bird_seats} onChange={e => setForm(f => ({ ...f, early_bird_seats: e.target.value }))} className={inputClass} />
+              </Section>
+
+              {/* Pricing */}
+              <Section title="Pricing">
+                <div className="grid grid-cols-3 gap-3">
+                  {/* Early Bird */}
+                  <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 flex flex-col gap-2">
+                    <span className="text-xs font-semibold text-amber-400">🔥 Early Bird</span>
+                    <div>
+                      <label className={labelClass}>Price (€)</label>
+                      <input type="number" min="0" step="0.01" value={form.price_early_bird} onChange={e => setForm(f => ({ ...f, price_early_bird: e.target.value }))} className={inputClass} placeholder="optional" />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Deadline</label>
+                      <input type="datetime-local" value={form.early_bird_deadline} onChange={e => setForm(f => ({ ...f, early_bird_deadline: e.target.value }))} className={inputClass} />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Seats</label>
+                      <input type="number" min="0" value={form.early_bird_seats} onChange={e => setForm(f => ({ ...f, early_bird_seats: e.target.value }))} className={inputClass} />
+                    </div>
+                  </div>
+
+                  {/* Standard */}
+                  <div className="rounded-xl border border-brand-primary/40 bg-brand-primary/5 p-3 flex flex-col gap-2">
+                    <span className="text-xs font-semibold text-brand-primary">💰 Standard</span>
+                    <div>
+                      <label className={labelClass}>Price (€) *</label>
+                      <input type="number" min="0" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} className={inputClass} placeholder="0" />
+                    </div>
+                  </div>
+
+                  {/* Group */}
+                  <div className={`rounded-xl border p-3 flex flex-col gap-2 transition-colors ${groupEnabled ? 'border-green-500/40 bg-green-500/5' : 'border-white/10 bg-white/3'}`}>
+                    <div className="flex items-center justify-between">
+                      <span className={`text-xs font-semibold ${groupEnabled ? 'text-green-400' : 'text-white/30'}`}>👥 Group</span>
+                      <button
+                        type="button"
+                        onClick={() => setGroupEnabled(v => !v)}
+                        className={`w-8 h-4.5 rounded-full transition-colors relative ${groupEnabled ? 'bg-green-500' : 'bg-white/15'}`}
+                        style={{ height: '18px', width: '32px' }}
+                      >
+                        <span className={`absolute top-0.5 w-3.5 h-3.5 rounded-full bg-white transition-all ${groupEnabled ? 'left-[14px]' : 'left-0.5'}`} />
+                      </button>
+                    </div>
+                    <div>
+                      <label className={labelClass}>Price/person (€)</label>
+                      <input type="number" min="0" step="0.01" value={form.price_group} onChange={e => setForm(f => ({ ...f, price_group: e.target.value }))} disabled={!groupEnabled} className={`${inputClass} disabled:opacity-30`} placeholder="optional" />
+                    </div>
+                    <div>
+                      <label className={labelClass}>Min group size</label>
+                      <input type="number" min="2" max="20" value={form.group_min_size} onChange={e => setForm(f => ({ ...f, group_min_size: e.target.value }))} disabled={!groupEnabled} className={`${inputClass} disabled:opacity-30`} />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <label className="text-white/50 text-xs mb-1.5 block">Early Bird Deadline</label>
-                <input type="datetime-local" value={form.early_bird_deadline} onChange={e => setForm(f => ({ ...f, early_bird_deadline: e.target.value }))} className={inputClass} />
-              </div>
-              <div>
-                <label className="text-white/50 text-xs mb-1.5 block">Capacity</label>
-                <input type="number" min="1" value={form.capacity} onChange={e => setForm(f => ({ ...f, capacity: e.target.value }))} className={inputClass} />
-              </div>
-              <div>
-                <label className="text-white/50 text-xs mb-1.5 block">Location</label>
-                <input type="text" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} className={inputClass} placeholder="Venue name or address" />
-              </div>
-              <div>
-                <label className="text-white/50 text-xs mb-1.5 block">Cover Image</label>
+
+                {/* Live pricing preview */}
+                {(stdNum > 0 || ebNum || grpNum) && (
+                  <div className="rounded-xl bg-white/5 border border-white/10 p-3 text-xs text-white/60 flex flex-col gap-1">
+                    <span className="text-white/30 font-semibold uppercase tracking-wider text-[10px]">Preview</span>
+                    <div className="flex gap-4 flex-wrap">
+                      {ebNum !== null && <span>🔥 Early Bird: <strong className="text-amber-400">€{ebNum.toFixed(2)}</strong> <span className="text-white/30">/ €{(ebNum * 0.85).toFixed(2)} members</span></span>}
+                      {stdNum > 0 && <span>💰 Standard: <strong className="text-white/80">€{stdNum.toFixed(2)}</strong> <span className="text-white/30">/ €{(stdNum * 0.85).toFixed(2)} members</span></span>}
+                      {grpNum !== null && <span>👥 Group: <strong className="text-green-400">€{grpNum!.toFixed(2)}/pp</strong> <span className="text-white/30">min {form.group_min_size}</span></span>}
+                    </div>
+                  </div>
+                )}
+              </Section>
+
+              {/* Media */}
+              <Section title="Media">
                 <ImageUpload
                   value={form.image_url}
                   onChange={url => setForm(f => ({ ...f, image_url: url }))}
                   folder="events"
                 />
-              </div>
-              <div>
-                <label className="text-white/50 text-xs mb-1.5 block">Description</label>
-                <textarea rows={3} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className={`${inputClass} resize-none`} />
-              </div>
-              {error && <p className="text-red-400 text-sm">{error}</p>}
+              </Section>
+
+              {/* Description */}
+              <Section title="Description">
+                <textarea rows={4} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className={`${inputClass} resize-none`} placeholder="Describe the event…" />
+              </Section>
+
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setModal(null)} className="flex-1 py-2.5 rounded-xl border border-white/15 text-white/60 hover:text-white text-sm font-medium transition-colors">
                   Cancel
@@ -303,6 +417,13 @@ export default function EventsManager({ initialEvents }: Props) {
               </div>
             </form>
           </div>
+        </div>
+      )}
+
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-[60] px-4 py-3 rounded-xl bg-red-500/90 text-white text-sm font-medium shadow-xl">
+          {toast}
         </div>
       )}
     </>

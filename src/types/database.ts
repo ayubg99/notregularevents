@@ -69,6 +69,7 @@ export type EventRow = {
   early_bird_seats_sold: number
   capacity:              number
   tickets_sold:          number
+  group_min_size:        number | null
   status:                EventStatus
   created_by:            string | null
   created_at:            string
@@ -110,6 +111,7 @@ export type TripRow = {
   early_bird_seats_sold: number
   capacity:              number
   seats_sold:            number
+  group_min_size:        number | null
   image_url:          string | null
   status:             TripStatus
   created_by:         string | null
@@ -204,7 +206,7 @@ export type UserInsert = Omit<UserRow, 'created_at' | 'updated_at'> & {
 
 export type ProfileInsert = Omit<ProfileRow, 'id' | 'created_at' | 'updated_at'>
 
-export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 'updated_at' | 'price_early_bird' | 'price_group' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold'> & {
+export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 'updated_at' | 'price_early_bird' | 'price_group' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold' | 'group_min_size'> & {
   tickets_sold?:         number
   status?:               EventStatus
   price_early_bird?:     number | null
@@ -212,19 +214,21 @@ export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 
   early_bird_deadline?:  string | null
   early_bird_seats?:     number
   early_bird_seats_sold?: number
+  group_min_size?:       number | null
 }
 
 export type EventTicketInsert = Omit<EventTicketRow, 'id' | 'created_at' | 'updated_at'> & {
   status?: TicketStatus
 }
 
-export type TripInsert = Omit<TripRow, 'id' | 'seats_sold' | 'created_at' | 'updated_at' | 'price_vip' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold'> & {
+export type TripInsert = Omit<TripRow, 'id' | 'seats_sold' | 'created_at' | 'updated_at' | 'price_vip' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold' | 'group_min_size'> & {
   seats_sold?:            number
   status?:                TripStatus
   price_vip?:             number | null
   early_bird_deadline?:   string | null
   early_bird_seats?:      number
   early_bird_seats_sold?: number
+  group_min_size?:        number | null
 }
 
 export type TripBookingInsert = Omit<TripBookingRow, 'id' | 'created_at' | 'updated_at'> & {
