@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2, ChevronDown, PlusCircle, MinusCircle, Users } from 'lucide-react'
+import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2, ChevronDown, PlusCircle, MinusCircle, Users, Ban } from 'lucide-react'
 import Link from 'next/link'
 import DataTable from '@/components/admin/DataTable'
 import ImageUpload from '@/components/admin/ImageUpload'
@@ -69,6 +69,10 @@ export default function TripsManager({ initialTrips }: Props) {
   const [toast,   setToast]   = useState('')
   const [isPending, startTransition] = useTransition()
   const [groupEnabled, setGroupEnabled] = useState(false)
+
+  const [cancelTarget,  setCancelTarget]  = useState<TripRow | null>(null)
+  const [cancelPreview, setCancelPreview] = useState<{ count: number; total: number } | null>(null)
+  const [cancelLoading, setCancelLoading] = useState(false)
 
   // Array-field state (parallel to FormState)
   const [meetingPoints, setMeetingPoints] = useState<string[]>([])
@@ -194,6 +198,39 @@ export default function TripsManager({ initialTrips }: Props) {
     startTransition(async () => { await deleteTrip(trip.id); router.refresh() })
   }
 
+  async function handleCancelTrip(trip: TripRow) {
+    setCancelTarget(trip)
+    setCancelPreview(null)
+    try {
+      const res  = await fetch(`/api/admin/cancel-trip?tripId=${trip.id}`)
+      const data = await res.json() as { count: number; total: number }
+      setCancelPreview(data)
+    } catch {
+      // Preview is optional — modal still shows without counts
+    }
+  }
+
+  async function confirmCancelTrip() {
+    if (!cancelTarget) return
+    setCancelLoading(true)
+    try {
+      const res = await fetch('/api/admin/cancel-trip', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ tripId: cancelTarget.id }),
+      })
+      const data = await res.json() as { refunded: number; failed: number }
+      setCancelTarget(null)
+      setCancelPreview(null)
+      showToast(`Trip cancelled. ${data.refunded} refund${data.refunded !== 1 ? 's' : ''} issued${data.failed ? `, ${data.failed} failed` : ''}.`)
+      router.refresh()
+    } catch {
+      showToast('Failed to cancel trip. Please try again.')
+    } finally {
+      setCancelLoading(false)
+    }
+  }
+
   // Pricing preview
   const stdNum = parseFloat(form.price_standard) || 0
   const ebNum  = parseOptional(form.price_early_bird)
@@ -250,6 +287,14 @@ export default function TripsManager({ initialTrips }: Props) {
               {row.status === 'published' ? <ToggleRight size={15} className="text-green-400" /> : <ToggleLeft size={15} />}
             </button>
             <button onClick={() => openEdit(row as unknown as TripRow)} className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors"><Pencil size={14} /></button>
+            <button
+              onClick={() => handleCancelTrip(row as unknown as TripRow)}
+              disabled={(row.status as string) === 'cancelled'}
+              className="p-1.5 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              title="Cancel Trip & Refund All"
+            >
+              <Ban size={14} />
+            </button>
             <button onClick={() => handleDelete(row as unknown as TripRow)} className="p-1.5 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-500/10 transition-colors"><Trash2 size={14} /></button>
           </div>
         )}
@@ -528,6 +573,45 @@ export default function TripsManager({ initialTrips }: Props) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Trip Confirmation Modal */}
+      {cancelTarget && (
+        <div className="fixed inset-0 z-[55] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="w-full max-w-md bg-brand-dark border border-red-500/30 rounded-2xl p-6 flex flex-col gap-4">
+            <h2 className="font-heading font-bold text-white text-lg">Cancel Trip & Refund All?</h2>
+            <p className="text-white/60 text-sm">
+              Cancel <strong className="text-white">{cancelTarget.title}</strong> and refund all confirmed bookings?
+            </p>
+            {cancelPreview ? (
+              <div className="rounded-xl bg-red-500/10 border border-red-500/20 p-4 flex flex-col gap-1">
+                <p className="text-white/40 text-xs">Bookings to refund</p>
+                <p className="text-white font-semibold">{cancelPreview.count} booking{cancelPreview.count !== 1 ? 's' : ''}</p>
+                <p className="text-red-400 font-mono font-bold text-lg">€{cancelPreview.total.toFixed(2)} total</p>
+              </div>
+            ) : (
+              <div className="rounded-xl bg-white/5 border border-white/10 p-4">
+                <p className="text-white/30 text-sm">Loading booking details…</p>
+              </div>
+            )}
+            <p className="text-white/30 text-xs">This cannot be undone. All students will receive a refund email.</p>
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => { setCancelTarget(null); setCancelPreview(null) }}
+                className="flex-1 py-2.5 rounded-xl border border-white/15 text-white/60 hover:text-white text-sm font-medium transition-colors"
+              >
+                Keep Trip
+              </button>
+              <button
+                onClick={confirmCancelTrip}
+                disabled={cancelLoading}
+                className="flex-1 py-2.5 rounded-xl bg-red-500 hover:brightness-110 text-white text-sm font-semibold transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+              >
+                {cancelLoading ? <><Loader2 size={14} className="animate-spin" /> Cancelling…</> : 'Cancel Trip + Refund All'}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -121,6 +121,20 @@ function BookingDetailModal({
     }
   }
 
+  async function handleRefund() {
+    setChanging(true)
+    const res = await fetch('/api/admin/refund-booking', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ bookingId: booking.id, type: booking.type === 'Event' ? 'event' : 'trip' }),
+    })
+    setChanging(false)
+    if (res.ok) {
+      setCurrentStatus('refunded')
+      onStatusChange('refunded')
+    }
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
@@ -236,6 +250,20 @@ function BookingDetailModal({
                 ))}
               </div>
             </div>
+
+            {/* Issue Refund */}
+            {(currentStatus === 'confirmed' || currentStatus === 'active') && (
+              <div className="pt-4 border-t border-white/10">
+                <button
+                  onClick={handleRefund}
+                  disabled={changing}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 text-sm font-medium transition-all disabled:opacity-50"
+                >
+                  Issue Refund
+                </button>
+                <p className="text-white/30 text-xs mt-2">Processes a full Stripe refund and sends the student a refund email.</p>
+              </div>
+            )}
           </div>
 
           {/* Right column — QR code */}
