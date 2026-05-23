@@ -65,8 +65,8 @@ export default function TripCard({ trip }: Props) {
   const earlyBirdActive =
     !!trip.price_early_bird &&
     trip.price_early_bird > 0 &&
-    (!trip.early_bird_deadline || new Date(trip.early_bird_deadline) > now) &&
-    (!trip.early_bird_seats || trip.early_bird_seats - (trip.early_bird_seats_sold ?? 0) > 0)
+    !!trip.early_bird_deadline &&
+    new Date(trip.early_bird_deadline) > now
   const displayPrice = earlyBirdActive ? trip.price_early_bird! : trip.price_standard
 
   return (

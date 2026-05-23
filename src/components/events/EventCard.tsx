@@ -64,8 +64,8 @@ export default function EventCard({ event, className }: Props) {
   const earlyBirdActive =
     !!event.price_early_bird &&
     event.price_early_bird > 0 &&
-    (!event.early_bird_deadline || new Date(event.early_bird_deadline) > now) &&
-    (!event.early_bird_seats || event.early_bird_seats - (event.early_bird_seats_sold ?? 0) > 0)
+    !!event.early_bird_deadline &&
+    new Date(event.early_bird_deadline) > now
   const displayPrice   = earlyBirdActive ? event.price_early_bird! : event.price
   const isFree         = displayPrice === 0
 
