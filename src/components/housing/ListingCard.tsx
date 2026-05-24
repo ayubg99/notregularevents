@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import type { HousingListingRow } from '@/types/database'
 
 const NATIONALITY_FLAGS: Record<string, string> = {
@@ -132,37 +131,82 @@ export default function ListingCard({ listing, hasMembership }: Props) {
           </div>
         )}
 
-        {/* Pricing box */}
-        <div className="border-t border-white/10 pt-3 mb-4 space-y-1">
-          {isRoom && listing.price && (
-            <div className="flex justify-between text-sm">
-              <span className="text-white/50">Monthly rent</span>
-              <span className="text-white font-medium">€{listing.price}</span>
-            </div>
-          )}
-          <div className="flex justify-between text-sm">
-            <span className="text-white/50">Contact</span>
-            <span className={`text-xs font-semibold ${hasMembership ? 'text-green-400' : 'text-amber-400'}`}>
-              {hasMembership ? '✅ Visible' : '👑 Members only'}
-            </span>
-          </div>
-        </div>
+        {/* View Details button — all users */}
+        <a
+          href={`/housing/listings/${listing.id}`}
+          style={{
+            display: 'block',
+            padding: '10px',
+            background: '#F5A623',
+            color: '#1A1A2E',
+            border: 'none',
+            borderRadius: '50px',
+            fontWeight: 700,
+            fontSize: '14px',
+            textAlign: 'center',
+            textDecoration: 'none',
+            marginBottom: '8px',
+            cursor: 'pointer',
+          }}
+        >
+          View Details →
+        </a>
 
-        {/* CTA */}
+        {/* Contact section */}
         {hasMembership ? (
-          <Link
-            href={`/housing/listings/${listing.id}`}
-            className="block w-full text-center py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-teal-400 to-green-400 text-brand-dark hover:opacity-90 transition-opacity"
-          >
-            View Details & Contact →
-          </Link>
+          <div>
+            <a
+              href={`https://wa.me/${listing.contact_whatsapp}`}
+              style={{
+                display: 'block',
+                background: '#25D366',
+                color: '#fff',
+                padding: '10px',
+                borderRadius: '50px',
+                textAlign: 'center',
+                textDecoration: 'none',
+                fontWeight: 700,
+                marginBottom: '8px',
+              }}
+            >
+              💬 WhatsApp {listing.contact_name}
+            </a>
+            {listing.contact_email && (
+              <a
+                href={`mailto:${listing.contact_email}`}
+                style={{
+                  display: 'block',
+                  background: 'rgba(255,255,255,0.05)',
+                  color: '#888',
+                  padding: '10px',
+                  borderRadius: '50px',
+                  textAlign: 'center',
+                  textDecoration: 'none',
+                  fontSize: '13px',
+                }}
+              >
+                ✉️ Send Email
+              </a>
+            )}
+          </div>
         ) : (
-          <Link
+          <a
             href="/membership"
-            className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold border border-amber-400/30 text-amber-400 bg-amber-400/5 hover:bg-amber-400/10 transition-colors"
+            style={{
+              display: 'block',
+              background: 'rgba(245,166,35,0.1)',
+              border: '1px solid rgba(245,166,35,0.3)',
+              color: '#F5A623',
+              padding: '10px',
+              borderRadius: '50px',
+              textAlign: 'center',
+              textDecoration: 'none',
+              fontSize: '13px',
+              fontWeight: 600,
+            }}
           >
-            👑 Join to Contact
-          </Link>
+            👑 Join to see contact
+          </a>
         )}
       </div>
     </div>

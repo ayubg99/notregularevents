@@ -11,7 +11,7 @@ const NAV = [
   { href: '/admin/events',      label: 'Events',      icon: <Calendar size={16} />        },
   { href: '/admin/trips',       label: 'Trips',       icon: <MapPin size={16} />          },
   { href: '/admin/housing',          label: 'Housing',  icon: <Home size={16} />      },
-  { href: '/admin/housing-partners', label: 'Partners', icon: <Building2 size={16} /> },
+  { href: '/admin/housing-partners', label: 'Partner Rooms', icon: <Building2 size={16} /> },
   { href: '/admin/users',       label: 'Members',     icon: <Users size={16} />           },
   { href: '/admin/bookings',    label: 'Bookings',    icon: <Ticket size={16} />          },
   { href: '/admin/promo-codes', label: 'Promo Codes', icon: <Tag size={16} />             },
@@ -60,7 +60,7 @@ export default function AdminSidebar() {
 
           const baseClass = 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150'
           const activeClass = isActive
-            ? 'bg-brand-primary/15 text-brand-primary border border-brand-primary/25'
+            ? 'bg-amber-500/20 text-amber-400 border border-amber-400/25'
             : 'text-white/50 hover:text-white hover:bg-white/5'
 
           if (external) {

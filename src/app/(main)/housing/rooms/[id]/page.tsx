@@ -62,8 +62,6 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
     .update({ views: room.views + 1 })
     .eq('id', id)
 
-  const partner = room.housing_partners as unknown as Record<string, string> | null
-
   return (
     <main className="min-h-screen pt-24 pb-20 px-4">
       <div className="max-w-6xl mx-auto">
@@ -198,22 +196,6 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
           {/* ── Right column (sticky sidebar) ─ */}
           <div className="w-full lg:w-80 xl:w-96 flex-shrink-0">
             <RoomBookingSidebar room={room} />
-            {partner && (
-              <div className="glass-card rounded-2xl p-4 mt-4 flex items-center gap-3">
-                {partner.logo_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={partner.logo_url} alt={partner.name} className="w-10 h-10 rounded-xl object-cover" />
-                ) : (
-                  <div className="w-10 h-10 rounded-xl bg-brand-primary/20 flex items-center justify-center text-brand-primary font-bold text-sm">
-                    {partner.name?.[0]}
-                  </div>
-                )}
-                <div>
-                  <p className="text-white text-sm font-medium">{partner.name}</p>
-                  <p className="text-white/40 text-xs">Verified partner</p>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

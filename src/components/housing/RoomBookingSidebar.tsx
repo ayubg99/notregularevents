@@ -9,7 +9,7 @@ export default function RoomBookingSidebar({ room }: { room: PartnerRoomRow }) {
 
   return (
     <>
-      <div className="glass-card rounded-2xl p-6 sticky top-28">
+      <div className="glass-card rounded-2xl p-6">
         {/* Header */}
         <div className="flex items-center gap-2 mb-4">
           <span className="text-amber-400 text-sm">⭐</span>

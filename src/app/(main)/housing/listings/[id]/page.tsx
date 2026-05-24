@@ -83,11 +83,11 @@ export default async function ListingDetailPage({
     <main className="min-h-screen pt-24 pb-20 px-4">
       <div className="max-w-6xl mx-auto">
 
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-white/40 mb-6">
-          <Link href="/housing" className="hover:text-white transition-colors">Housing</Link>
-          <span>/</span>
-          <span className="text-white/60 line-clamp-1">{listing.title}</span>
+        {/* Back link */}
+        <div className="mb-6">
+          <Link href="/housing" className="text-sm text-white/40 hover:text-white transition-colors">
+            ← Back to all listings
+          </Link>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">

@@ -8,7 +8,7 @@ import type { PartnerRoomRow, HousingListingRow } from '@/types/database'
 
 const TABS = [
   { id: 'partner', label: '⭐ Verified Rooms',   description: 'Verified by Erasmus Vibe' },
-  { id: 'student', label: '👥 Student Listings', description: 'Posted by students'        },
+  { id: 'student', label: '👥 Members Listings', description: 'Posted by members'        },
 ] as const
 
 type TabId = typeof TABS[number]['id']
