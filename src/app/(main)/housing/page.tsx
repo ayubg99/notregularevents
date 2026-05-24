@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
-import HousingBoard from './HousingBoard'
-import PartnerRoomCard from '@/components/housing/PartnerRoomCard'
+import HousingTabs from './HousingTabs'
+import type { PartnerRoomRow } from '@/types/database'
 
 export const metadata: Metadata = {
   title: 'Housing Board | Erasmus Vibe',
@@ -41,10 +40,10 @@ export default async function HousingPage() {
     .select('*, housing_partners(name, logo_url)')
     .eq('status', 'available')
     .order('featured', { ascending: false })
-    .order('created_at', { ascending: false }) as unknown as { data: Parameters<typeof PartnerRoomCard>[0]['room'][] | null }
+    .order('created_at', { ascending: false }) as unknown as { data: PartnerRoomRow[] | null }
 
   return (
-    <main className="min-h-screen pt-24 pb-20 px-4">
+    <main className="min-h-screen pt-24 pb-28 px-4">
       <div className="max-w-6xl mx-auto">
 
         {/* Hero */}
@@ -52,58 +51,13 @@ export default async function HousingPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Find Your Home in Valencia 🏠
           </h1>
-          <p className="text-white/60 text-lg mb-8 max-w-xl mx-auto">
-            Connect with other students for rooms and roommates
+          <p className="text-white/60 text-lg max-w-xl mx-auto">
+            Verified partner rooms and student listings — all in one place
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Link
-              href="/housing/post?type=room_available"
-              className="btn-primary px-6 py-3 rounded-full font-semibold text-sm"
-            >
-              + Post a Room
-            </Link>
-            <Link
-              href="/housing/post?type=looking_for_room"
-              className="bg-white/10 hover:bg-white/15 text-white px-6 py-3 rounded-full font-semibold text-sm transition-colors"
-            >
-              + Looking for Room
-            </Link>
-          </div>
         </div>
 
-        {/* Partner rooms */}
-        {partnerRooms && partnerRooms.length > 0 && (
-          <section className="mb-12">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="bg-gradient-to-r from-amber-400 to-brand-primary text-brand-dark text-xs font-bold px-3.5 py-1.5 rounded-full">
-                ⭐ VERIFIED PARTNER ROOMS
-              </span>
-              <p className="text-white/50 text-sm">Verified and trusted by Erasmus Vibe</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {partnerRooms.map((room) => (
-                <PartnerRoomCard key={room.id} room={room} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Members-only banner */}
-        <div className="flex items-center gap-4 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-4 mb-8">
-          <span className="text-2xl flex-shrink-0">👑</span>
-          <div>
-            <p className="text-yellow-400 font-semibold text-sm mb-0.5">Members see contact details</p>
-            <p className="text-white/50 text-xs">
-              Join membership for €9.99/month to see WhatsApp and email contacts.{' '}
-              <Link href="/membership" className="text-yellow-400 hover:underline">
-                Join now →
-              </Link>
-            </p>
-          </div>
-        </div>
-
-        {/* Board */}
-        <HousingBoard
+        <HousingTabs
+          partnerRooms={partnerRooms ?? []}
           initialListings={initialListings ?? []}
           hasMembership={hasMembership}
         />
