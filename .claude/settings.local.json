@@ -11,7 +11,13 @@
       "WebFetch(domain:unsplash.com)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://images.unsplash.com/photo-1563784462386-044fd95e9852?w=10\")",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://images.unsplash.com/photo-1728249960363-13079cc2c6f6?w=10\")",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://images.unsplash.com/photo-1541126274323-dbac58d14741?w=10\")"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://images.unsplash.com/photo-1541126274323-dbac58d14741?w=10\")",
+      "Bash(echo \"---TSC_EXIT:$?---\")",
+      "Bash(git -C /home/ayubxx/erasmus-vibe remote -v)",
+      "Bash(git -C /home/ayubxx/erasmus-vibe log --oneline origin/main -5)",
+      "Bash(git -C /home/ayubxx/erasmus-vibe rev-parse HEAD)",
+      "Bash(echo \"local HEAD: $\\(git -C /home/ayubxx/erasmus-vibe rev-parse HEAD\\)\")",
+      "Bash(echo \"exit:$?\")"
     ]
   }
 }
