@@ -397,6 +397,24 @@ export interface Database {
         Update:        HousingListingUpdate
         Relationships: never[]
       }
+      housing_partners: {
+        Row:           HousingPartnerRow
+        Insert:        HousingPartnerInsert
+        Update:        HousingPartnerUpdate
+        Relationships: never[]
+      }
+      partner_rooms: {
+        Row:           PartnerRoomRow
+        Insert:        PartnerRoomInsert
+        Update:        PartnerRoomUpdate
+        Relationships: never[]
+      }
+      room_contacts: {
+        Row:           RoomContactDbRow
+        Insert:        RoomContactInsert
+        Update:        Partial<RoomContactInsert>
+        Relationships: never[]
+      }
     }
     Views:          { [_ in never]: never }
     Functions: {
@@ -432,6 +450,10 @@ export interface Database {
         Args:    { p_id: string }
         Returns: undefined
       }
+      increment_contacts_sold: {
+        Args:    { p_room_id: string }
+        Returns: undefined
+      }
     }
     CompositeTypes: { [_ in never]: never }
     Enums: {
@@ -450,6 +472,127 @@ export interface Database {
       notification_type: NotificationType
     }
   }
+}
+
+// ─── Partner Rooms ────────────────────────────────────────────
+
+export type HousingPartnerStatus = 'active' | 'inactive'
+export type PartnerRoomStatus    = 'available' | 'reserved' | 'occupied'
+export type PartnerRoomType      = 'private_room' | 'shared_room' | 'studio' | 'full_apartment'
+export type GenderPreference     = 'male' | 'female' | 'mixed' | 'any'
+export type RoomContactStatus    = 'pending' | 'confirmed' | 'contact_shared' | 'rejected' | 'refunded' | 'cancelled'
+
+export type HousingPartnerRow = {
+  id:            string
+  name:          string
+  contact_name:  string
+  contact_email: string
+  contact_phone: string | null
+  whatsapp:      string | null
+  description:   string | null
+  logo_url:      string | null
+  status:        HousingPartnerStatus
+  created_at:    string
+  updated_at:    string
+}
+
+export type PartnerRoomRow = {
+  id:                      string
+  partner_id:              string
+  title:                   string
+  slug:                    string | null
+  description:             string | null
+  neighborhood:            string
+  address:                 string | null
+  room_type:               PartnerRoomType
+  monthly_rent:            number
+  deposit_amount:          number
+  platform_fee:            number
+  available_from:          string | null
+  available_until:         string | null
+  flatmates_count:         number
+  flatmates_nationalities: string[]
+  amenities:               string[]
+  bills_included:          boolean
+  gender_preference:       GenderPreference
+  photos:                  string[]
+  status:                  PartnerRoomStatus
+  featured:                boolean
+  views:                   number
+  contacts_sold:           number
+  created_at:              string
+  updated_at:              string
+  housing_partners?:       Pick<HousingPartnerRow, 'name' | 'logo_url' | 'contact_email' | 'contact_phone' | 'whatsapp' | 'contact_name'> | null
+}
+
+export type RoomContactRow = {
+  id:                string
+  room_id:           string | null
+  partner_id:        string | null
+  booking_ref:       string
+  guest_name:        string
+  guest_email:       string
+  guest_phone:       string | null
+  guest_nationality: string | null
+  university:        string | null
+  move_in_date:      string | null
+  duration_months:   number
+  message:           string | null
+  platform_fee:      number
+  stripe_payment_id: string | null
+  status:            RoomContactStatus
+  created_at:        string
+  partner_rooms?:    Pick<PartnerRoomRow, 'title' | 'neighborhood' | 'monthly_rent'> | null
+  housing_partners?: Pick<HousingPartnerRow, 'name'> | null
+}
+
+export type HousingPartnerInsert = Omit<HousingPartnerRow, 'id' | 'created_at' | 'updated_at'> & {
+  status?: HousingPartnerStatus
+}
+export type HousingPartnerUpdate = Partial<Omit<HousingPartnerRow, 'id' | 'created_at' | 'updated_at'>>
+
+export type PartnerRoomInsert = Omit<PartnerRoomRow, 'id' | 'created_at' | 'updated_at' | 'views' | 'contacts_sold' | 'housing_partners'> & {
+  status?:        PartnerRoomStatus
+  featured?:      boolean
+  views?:         number
+  contacts_sold?: number
+}
+export type PartnerRoomUpdate = Partial<Omit<PartnerRoomRow, 'id' | 'partner_id' | 'created_at' | 'updated_at' | 'housing_partners'>>
+
+export type RoomContactDbRow = {
+  id:                    string
+  room_id:               string | null
+  partner_id:            string | null
+  booking_ref:           string
+  guest_name:            string
+  guest_email:           string
+  guest_phone:           string | null
+  guest_nationality:     string | null
+  university:            string | null
+  move_in_date:          string | null
+  duration_months:       number
+  message:               string | null
+  platform_fee:          number
+  stripe_payment_id:     string | null
+  status:                RoomContactStatus
+  confirmation_deadline: string | null
+  confirmed_at:          string | null
+  rejected_at:           string | null
+  rejection_reason:      string | null
+  refund_id:             string | null
+  created_at:            string
+}
+
+export type RoomContactInsert = Omit<
+  RoomContactDbRow,
+  'id' | 'created_at' | 'status' | 'confirmation_deadline' | 'confirmed_at' | 'rejected_at' | 'rejection_reason' | 'refund_id'
+> & {
+  status?:                RoomContactStatus
+  confirmation_deadline?: string | null
+  confirmed_at?:          string | null
+  rejected_at?:           string | null
+  rejection_reason?:      string | null
+  refund_id?:             string | null
 }
 
 // ─── Non-schema insert types (tables added via migration) ─────

@@ -4,7 +4,7 @@ import type Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
 import { generateQR } from '@/lib/qr'
 import { nanoid } from 'nanoid'
-import { sendBookingConfirmation, sendMembershipWelcomeEmail } from '@/lib/email'
+import { sendBookingConfirmation, sendMembershipWelcomeEmail, sendBookingPendingEmail, sendPartnerConfirmationRequest } from '@/lib/email'
 import type { Database, MembershipPlan, MembershipStatus, TripTier } from '@/types/database'
 
 export const runtime = 'nodejs'
@@ -33,7 +33,7 @@ function membershipEndDate(plan: MembershipPlan): string {
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const admin = getAdminClient()
   const meta  = session.metadata ?? {}
-  const type       = meta.type    as 'event' | 'trip' | 'membership' | undefined
+  const type       = meta.type    as 'event' | 'trip' | 'membership' | 'room_contact' | undefined
   const userId     = meta.user_id  || null
   const itemId     = meta.item_id as string | undefined
   const guestName  = meta.guest_name  || null
@@ -255,6 +255,76 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       message: `Your ${plan} membership is now active. Welcome!`,
       read:    false,
     })
+  }
+
+  // ── Room contact ─────────────────────────────────────────────
+  if (type === 'room_contact') {
+    const bookingRef = meta.booking_ref
+    const roomId     = meta.room_id
+    const partnerId  = meta.partner_id
+    const baseUrl    = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+    const deadline   = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString()
+
+    // 1. Save booking as PENDING
+    const { error: rcErr } = await admin.from('room_contacts').insert({
+      room_id:               roomId,
+      partner_id:            partnerId,
+      booking_ref:           bookingRef,
+      guest_name:            meta.guest_name,
+      guest_email:           meta.guest_email,
+      guest_phone:           meta.guest_phone        || null,
+      guest_nationality:     meta.guest_nationality  || null,
+      university:            meta.university         || null,
+      move_in_date:          meta.move_in_date       || null,
+      duration_months:       parseInt(meta.duration  ?? '1', 10),
+      message:               meta.message            || null,
+      platform_fee:          amountPaid,
+      stripe_payment_id:     session.id,
+      status:                'pending',
+      confirmation_deadline: deadline,
+    })
+
+    if (rcErr) {
+      console.error('[webhook room_contact] insert failed:', rcErr.message)
+      return
+    }
+
+    // 2. Mark room as reserved
+    await admin
+      .from('partner_rooms')
+      .update({ status: 'reserved' })
+      .eq('id', roomId)
+
+    // 3. Send pending email to student
+    await sendBookingPendingEmail({
+      to:          meta.guest_email,
+      guestName:   meta.guest_name,
+      roomTitle:   meta.room_title,
+      neighborhood: meta.neighborhood ?? '',
+      bookingRef,
+    })
+
+    // 4. Send confirmation request to partner
+    if (meta.partner_email) {
+      await sendPartnerConfirmationRequest({
+        to:              meta.partner_email,
+        partnerName:     meta.partner_name,
+        guestName:       meta.guest_name,
+        guestEmail:      meta.guest_email,
+        guestPhone:      meta.guest_phone       ?? '',
+        guestNationality: meta.guest_nationality ?? '',
+        university:      meta.university        ?? '',
+        roomTitle:       meta.room_title,
+        moveInDate:      meta.move_in_date      ?? '',
+        duration:        meta.duration          ?? '1',
+        message:         meta.message           ?? '',
+        bookingRef,
+        confirmUrl: `${baseUrl}/api/housing/confirm-booking?ref=${bookingRef}&action=confirm`,
+        rejectUrl:  `${baseUrl}/api/housing/confirm-booking?ref=${bookingRef}&action=reject`,
+      })
+    }
+
+    console.log('[webhook room_contact] pending booking created', bookingRef)
   }
 
   // ── Decrement promo code uses ────────────────────────────────

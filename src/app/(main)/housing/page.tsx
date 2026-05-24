@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { getAdminClient } from '@/lib/supabase/admin'
 import HousingBoard from './HousingBoard'
+import PartnerRoomCard from '@/components/housing/PartnerRoomCard'
 
 export const metadata: Metadata = {
   title: 'Housing Board | Erasmus Vibe',
@@ -33,6 +35,14 @@ export default async function HousingPage() {
     .eq('type', 'room_available')
     .order('created_at', { ascending: false })
 
+  const adminClient = getAdminClient()
+  const { data: partnerRooms } = await adminClient
+    .from('partner_rooms')
+    .select('*, housing_partners(name, logo_url)')
+    .eq('status', 'available')
+    .order('featured', { ascending: false })
+    .order('created_at', { ascending: false }) as unknown as { data: Parameters<typeof PartnerRoomCard>[0]['room'][] | null }
+
   return (
     <main className="min-h-screen pt-24 pb-20 px-4">
       <div className="max-w-6xl mx-auto">
@@ -60,6 +70,23 @@ export default async function HousingPage() {
             </Link>
           </div>
         </div>
+
+        {/* Partner rooms */}
+        {partnerRooms && partnerRooms.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="bg-gradient-to-r from-amber-400 to-brand-primary text-brand-dark text-xs font-bold px-3.5 py-1.5 rounded-full">
+                ⭐ VERIFIED PARTNER ROOMS
+              </span>
+              <p className="text-white/50 text-sm">Verified and trusted by Erasmus Vibe</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {partnerRooms.map((room) => (
+                <PartnerRoomCard key={room.id} room={room} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Members-only banner */}
         <div className="flex items-center gap-4 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-4 mb-8">

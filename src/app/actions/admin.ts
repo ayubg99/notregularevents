@@ -3,7 +3,13 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
-import type { EventInsert, EventUpdate, TripInsert, TripUpdate, UserRole, HousingStatus } from '@/types/database'
+import { confirmBooking, rejectBooking } from '@/lib/booking-utils'
+import type {
+  EventInsert, EventUpdate, TripInsert, TripUpdate, UserRole, HousingStatus,
+  HousingPartnerInsert, HousingPartnerUpdate, HousingPartnerStatus,
+  PartnerRoomInsert, PartnerRoomUpdate, PartnerRoomStatus,
+  RoomContactStatus,
+} from '@/types/database'
 
 async function verifyAdmin(): Promise<{ ok: true; userId: string } | { ok: false; error: string }> {
   const supabase = await createClient()
@@ -134,4 +140,121 @@ export async function deleteHousing(id: string): Promise<{ success: boolean; err
 
   revalidatePath('/admin/housing')
   return { success: true }
+}
+
+// ── Housing Partners ──────────────────────────────────────────
+
+export async function createHousingPartner(data: HousingPartnerInsert): Promise<{ success: boolean; id?: string; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { data: row, error } = await admin.from('housing_partners').insert(data).select('id').single()
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/housing-partners')
+  return { success: true, id: row?.id }
+}
+
+export async function updateHousingPartner(id: string, data: HousingPartnerUpdate): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { error } = await admin.from('housing_partners').update(data).eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/housing-partners')
+  return { success: true }
+}
+
+export async function deleteHousingPartner(id: string): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { error } = await admin.from('housing_partners').delete().eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/housing-partners')
+  return { success: true }
+}
+
+export async function togglePartnerStatus(id: string, status: HousingPartnerStatus): Promise<{ success: boolean; error?: string }> {
+  return updateHousingPartner(id, { status })
+}
+
+// ── Partner Rooms ─────────────────────────────────────────────
+
+export async function createPartnerRoom(data: PartnerRoomInsert): Promise<{ success: boolean; id?: string; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { data: row, error } = await admin.from('partner_rooms').insert(data).select('id').single()
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath(`/admin/housing-partners/${data.partner_id}`)
+  revalidatePath('/housing')
+  return { success: true, id: row?.id }
+}
+
+export async function updatePartnerRoom(id: string, data: PartnerRoomUpdate): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { error } = await admin.from('partner_rooms').update(data).eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/housing-partners')
+  revalidatePath('/housing')
+  return { success: true }
+}
+
+export async function togglePartnerRoomStatus(id: string, status: PartnerRoomStatus): Promise<{ success: boolean; error?: string }> {
+  return updatePartnerRoom(id, { status })
+}
+
+export async function deletePartnerRoom(id: string): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { error } = await admin.from('partner_rooms').delete().eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/housing-partners')
+  revalidatePath('/housing')
+  return { success: true }
+}
+
+export async function updateRoomContactStatus(id: string, status: RoomContactStatus): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { error } = await admin.from('room_contacts').update({ status }).eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/housing-partners/contacts')
+  return { success: true }
+}
+
+export async function confirmBookingAdmin(bookingRef: string): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const result = await confirmBooking(bookingRef)
+  if (result.success) revalidatePath('/admin/housing-partners/contacts')
+  return result
+}
+
+export async function rejectBookingAdmin(bookingRef: string): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const result = await rejectBooking(bookingRef, 'Rejected by admin')
+  if (result.success) revalidatePath('/admin/housing-partners/contacts')
+  return { success: result.success, error: result.error }
 }
