@@ -3,13 +3,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Calendar, MapPin, Users, Ticket, Tag, LogOut, ArrowLeft, BarChart2, QrCode } from 'lucide-react'
+import { LayoutDashboard, Calendar, MapPin, Users, Ticket, Tag, LogOut, ArrowLeft, BarChart2, QrCode, Home } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 const NAV = [
   { href: '/admin',             label: 'Overview',    icon: <LayoutDashboard size={16} /> },
   { href: '/admin/events',      label: 'Events',      icon: <Calendar size={16} />        },
   { href: '/admin/trips',       label: 'Trips',       icon: <MapPin size={16} />          },
+  { href: '/admin/housing',     label: 'Housing',     icon: <Home size={16} />            },
   { href: '/admin/users',       label: 'Members',     icon: <Users size={16} />           },
   { href: '/admin/bookings',    label: 'Bookings',    icon: <Ticket size={16} />          },
   { href: '/admin/promo-codes', label: 'Promo Codes', icon: <Tag size={16} />             },

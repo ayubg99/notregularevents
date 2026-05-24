@@ -269,6 +269,43 @@ export type NotificationInsert = Omit<NotificationRow, 'id' | 'created_at' | 'up
   read?: boolean
 }
 
+// ─── Housing ──────────────────────────────────────────────────
+
+export type HousingType       = 'room_available' | 'looking_for_room'
+export type HousingRoomType   = 'private_room' | 'shared_room' | 'studio' | 'full_apartment'
+export type HousingGenderPref = 'male' | 'female' | 'mixed' | 'any'
+export type HousingStatus     = 'active' | 'inactive' | 'rented'
+
+export type HousingListingRow = {
+  id:                      string
+  type:                    HousingType
+  title:                   string
+  description:             string | null
+  price:                   number | null
+  neighborhood:            string | null
+  room_type:               HousingRoomType | null
+  available_from:          string | null
+  available_until:         string | null
+  flatmates_count:         number
+  flatmates_nationalities: string[]
+  amenities:               string[]
+  contact_name:            string
+  contact_whatsapp:        string | null
+  contact_email:           string | null
+  nationality:             string | null
+  university:              string | null
+  gender_preference:       HousingGenderPref
+  photos:                  string[]
+  status:                  HousingStatus
+  views:                   number
+  expires_at:              string
+  created_at:              string
+  updated_at:              string
+}
+
+export type HousingListingInsert = Omit<HousingListingRow, 'id' | 'created_at' | 'updated_at' | 'views'>
+export type HousingListingUpdate = Partial<Omit<HousingListingRow, 'id' | 'created_at' | 'updated_at'>>
+
 // ─── Update types (partial inserts, no id/timestamps) ─────────
 
 export type UserUpdate        = Partial<UserInsert>
@@ -352,6 +389,12 @@ export interface Database {
         Row:           NotificationRow
         Insert:        NotificationInsert
         Update:        NotificationUpdate
+        Relationships: never[]
+      }
+      housing_listings: {
+        Row:           HousingListingRow
+        Insert:        HousingListingInsert
+        Update:        HousingListingUpdate
         Relationships: never[]
       }
     }

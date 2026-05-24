@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
-import type { EventInsert, EventUpdate, TripInsert, TripUpdate, UserRole } from '@/types/database'
+import type { EventInsert, EventUpdate, TripInsert, TripUpdate, UserRole, HousingStatus } from '@/types/database'
 
 async function verifyAdmin(): Promise<{ ok: true; userId: string } | { ok: false; error: string }> {
   const supabase = await createClient()
@@ -107,5 +107,31 @@ export async function updateUserRole(userId: string, role: UserRole): Promise<{ 
   if (error) return { success: false, error: error.message }
 
   revalidatePath('/admin/users')
+  return { success: true }
+}
+
+// ── Housing ───────────────────────────────────────────────────
+
+export async function updateHousingStatus(id: string, status: HousingStatus): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { error } = await admin.from('housing_listings').update({ status }).eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/housing')
+  return { success: true }
+}
+
+export async function deleteHousing(id: string): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { error } = await admin.from('housing_listings').delete().eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/housing')
   return { success: true }
 }
