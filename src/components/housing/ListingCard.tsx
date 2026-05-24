@@ -104,6 +104,14 @@ export default function ListingCard({ listing, hasMembership }: Props) {
         {/* Spacer */}
         <div className="flex-1" />
 
+        {/* View details */}
+        <Link
+          href={`/housing/listings/${listing.id}`}
+          className="block text-center py-2 text-white/40 text-xs hover:text-white/70 transition-colors border border-white/5 rounded-full"
+        >
+          View Details →
+        </Link>
+
         {/* Contact section */}
         <div className="pt-2 border-t border-white/5 space-y-2">
           <p className="text-xs text-white/40">{listing.contact_name}</p>
