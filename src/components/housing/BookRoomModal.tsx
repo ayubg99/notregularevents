@@ -12,7 +12,7 @@ const NATIONALITIES = [
   'Danish','Dominican','Dutch','Ecuadorian','Egyptian','Eritrean','Estonian','Ethiopian',
   'Filipino','Finnish','French','Georgian','German','Ghanaian','Greek','Guatemalan',
   'Haitian','Honduran','Hungarian','Indian','Indonesian','Iranian','Iraqi','Irish',
-  'Israeli','Italian','Ivorian','Jamaican','Japanese','Jordanian','Kazakh','Kenyan',
+  'Italian','Ivorian','Jamaican','Japanese','Jordanian','Kazakh','Kenyan',
   'Korean','Kosovan','Kuwaiti','Kyrgyz','Latvian','Lebanese','Libyan','Lithuanian',
   'Luxembourgish','Macedonian','Malaysian','Malian','Maltese','Mexican','Moldovan',
   'Moroccan','Mozambican','Myanmar (Burmese)','Namibian','Nepali','New Zealander',

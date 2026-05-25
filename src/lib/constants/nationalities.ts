@@ -55,7 +55,6 @@ export const NATIONALITIES = [
   { value: 'iranian',       label: '🇮🇷 Iranian' },
   { value: 'iraqi',         label: '🇮🇶 Iraqi' },
   { value: 'irish',         label: '🇮🇪 Irish' },
-  { value: 'israeli',       label: '🇮🇱 Israeli' },
   { value: 'italian',       label: '🇮🇹 Italian' },
   { value: 'ivorian',       label: '🇨🇮 Ivorian' },
   { value: 'jamaican',      label: '🇯🇲 Jamaican' },
