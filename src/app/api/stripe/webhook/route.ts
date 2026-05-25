@@ -51,8 +51,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     hasGuestEmail: !!guestEmail,
   })
 
-  if (!type || !itemId) {
-    console.error('[webhook] missing type or itemId in metadata, skipping', meta)
+  if (!type) {
+    console.error('[webhook] missing type in metadata, skipping', meta)
+    return
+  }
+
+  // room_contact and membership don't use itemId — only event/trip do
+  if (type !== 'room_contact' && type !== 'membership' && !itemId) {
+    console.error('[webhook] missing itemId for type:', type, meta)
     return
   }
 
@@ -62,7 +68,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     const qrCode     = await generateQR(bookingRef)
 
     const { error } = await admin.rpc('create_event_ticket', {
-      p_event_id:          itemId,
+      p_event_id:          itemId!,
       p_booking_ref:       bookingRef,
       p_qr_code:           qrCode,
       p_stripe_payment_id: session.id,
@@ -82,7 +88,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
     const { error: seatError } = await admin.rpc('increment_tickets_sold', {
-      p_event_id: itemId,
+      p_event_id: itemId!,
       p_quantity:  Number(meta.quantity ?? 1),
     })
     if (seatError) console.error('❌ Seat update failed:', seatError)
@@ -120,7 +126,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     const qrCode     = await generateQR(bookingRef)
 
     const { error } = await admin.rpc('create_trip_booking', {
-      p_trip_id:           itemId,
+      p_trip_id:           itemId!,
       p_tier:              tier,
       p_booking_ref:       bookingRef,
       p_qr_code:           qrCode,
@@ -140,7 +146,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
     const { error: seatError } = await admin.rpc('increment_seats_sold', {
-      p_trip_id:  itemId,
+      p_trip_id:  itemId!,
       p_quantity: Number(meta.quantity ?? 1),
     })
     if (seatError) console.error('❌ Seat update failed:', seatError)
