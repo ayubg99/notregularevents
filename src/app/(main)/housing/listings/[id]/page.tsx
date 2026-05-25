@@ -248,10 +248,6 @@ export default async function ListingDetailPage({
 
               {/* Pricing card */}
               <div className="glass-card rounded-2xl p-6">
-                <p className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-3">
-                  {isRoom ? '🏠 Student Listing' : '👤 Looking for Room'}
-                </p>
-
                 {isRoom && listing.price && (
                   <div className="mb-4">
                     <span className="text-3xl font-bold text-white">€{listing.price}</span>
@@ -286,43 +282,16 @@ export default async function ListingDetailPage({
                   )}
                 </div>
 
-                <div className="border-t border-white/10 pt-3 mb-4">
+                <div className="border-t border-white/10 pt-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-white/50">Platform fee</span>
                     <span className="text-green-400 font-semibold">Free</span>
                   </div>
                 </div>
-
-                {hasMembership ? (
-                  <a
-                    href="#contact"
-                    className="block w-full text-center py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-teal-400 to-green-400 text-brand-dark hover:opacity-90 transition-opacity"
-                  >
-                    Contact Student →
-                  </a>
-                ) : (
-                  <Link
-                    href="/membership"
-                    className="block w-full text-center py-3 rounded-xl text-sm font-semibold border border-amber-400/30 text-amber-400 bg-amber-400/5 hover:bg-amber-400/10 transition-colors"
-                  >
-                    👑 Join to Contact
-                  </Link>
-                )}
-
-                <div className="mt-4 space-y-1.5">
-                  <p className="text-white/30 text-xs flex items-center gap-1.5">
-                    <span>✅</span> Verified Erasmus member
-                  </p>
-                  <p className="text-white/30 text-xs flex items-center gap-1.5">
-                    <span>✅</span> Free to contact
-                  </p>
-                </div>
               </div>
 
               {/* Contact section */}
-              <div id="contact">
-                <ContactSection listing={listing} hasMembership={hasMembership} />
-              </div>
+              <ContactSection listing={listing} hasMembership={hasMembership} />
             </div>
           </div>
 
