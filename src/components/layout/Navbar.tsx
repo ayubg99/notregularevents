@@ -139,13 +139,21 @@ export default function Navbar() {
                   </button>
                 </div>
               ) : (
-                <Link
-                  href="/auth/register"
-                  className="hidden md:inline-flex items-center gap-1.5 px-5 py-2.5 btn-primary text-sm"
-                >
-                  {t('joinNow')}
-                  <ChevronRight size={14} strokeWidth={2.5} />
-                </Link>
+                <div className="hidden md:flex items-center gap-3">
+                  <a
+                    href="/auth/login"
+                    className="text-white/60 hover:text-white text-sm font-medium transition-colors duration-200"
+                  >
+                    Login
+                  </a>
+                  <Link
+                    href="/auth/register"
+                    className="inline-flex items-center gap-1.5 px-5 py-2.5 btn-primary text-sm"
+                  >
+                    {t('joinNow')}
+                    <ChevronRight size={14} strokeWidth={2.5} />
+                  </Link>
+                </div>
               )}
 
               {/* Hamburger — mobile */}
@@ -220,14 +228,23 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <Link
-              href="/auth/register"
-              onClick={closeMenu}
-              className="flex items-center gap-2 px-10 py-4 btn-primary text-lg"
-            >
-              {t('joinNow')}
-              <ChevronRight size={18} strokeWidth={2.5} />
-            </Link>
+            <div className="flex flex-col items-center gap-4">
+              <Link
+                href="/auth/register"
+                onClick={closeMenu}
+                className="flex items-center gap-2 px-10 py-4 btn-primary text-lg"
+              >
+                {t('joinNow')}
+                <ChevronRight size={18} strokeWidth={2.5} />
+              </Link>
+              <a
+                href="/auth/login"
+                onClick={closeMenu}
+                className="text-white/60 hover:text-white text-sm font-medium transition-colors duration-200"
+              >
+                Login
+              </a>
+            </div>
           )}
         </div>
 
