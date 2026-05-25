@@ -29,7 +29,7 @@ export default function PartnerRoomCard({ room }: { room: PartnerRoomRow }) {
   return (
     <Link
       href={`/housing/rooms/${room.id}`}
-      className="block glass-card rounded-2xl overflow-hidden hover:border-brand-primary/40 transition-all duration-200 group"
+      className="block glass-card rounded-2xl overflow-hidden hover:border-brand-primary/40 hover:-translate-y-1 transition-all duration-200 group"
     >
       {/* Photo */}
       <div className="relative h-48 overflow-hidden">
@@ -113,7 +113,7 @@ export default function PartnerRoomCard({ room }: { room: PartnerRoomRow }) {
 
         {/* CTA */}
         <div className="btn-primary w-full text-center py-2.5 rounded-xl text-sm font-semibold">
-          Get Contact Details — €{room.platform_fee}
+          See Details
         </div>
       </div>
     </Link>

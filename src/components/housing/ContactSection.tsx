@@ -13,7 +13,7 @@ export default function ContactSection({ listing, hasMembership }: Props) {
         <p className="text-3xl mb-2">👑</p>
         <h3 className="text-yellow-400 font-semibold text-base mb-2">Members only</h3>
         <p className="text-white/50 text-sm mb-5">
-          Join membership to see contact details and connect with this student.
+          Join membership to see contact details.
         </p>
         <Link
           href="/membership"

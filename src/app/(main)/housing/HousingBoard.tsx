@@ -26,10 +26,9 @@ const GENDER_PREFS = [
 
 interface Props {
   initialListings: HousingListingRow[]
-  hasMembership:   boolean
 }
 
-export default function HousingBoard({ initialListings, hasMembership }: Props) {
+export default function HousingBoard({ initialListings }: Props) {
   const [activeTab,    setActiveTab]    = useState<HousingType>('room_available')
   const [neighborhood, setNeighborhood] = useState('')
   const [maxPrice,     setMaxPrice]     = useState(1000)
@@ -160,7 +159,7 @@ export default function HousingBoard({ initialListings, hasMembership }: Props) 
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {listings.map(listing => (
-            <ListingCard key={listing.id} listing={listing} hasMembership={hasMembership} />
+            <ListingCard key={listing.id} listing={listing} />
           ))}
         </div>
       )}

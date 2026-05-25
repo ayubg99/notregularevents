@@ -164,7 +164,7 @@ export default function HousingTabs({ partnerRooms, initialListings, hasMembersh
             </Link>
           </div>
 
-          <HousingBoard initialListings={initialListings} hasMembership={hasMembership} />
+          <HousingBoard initialListings={initialListings} />
         </div>
       )}
 
