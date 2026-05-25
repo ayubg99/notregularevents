@@ -12,9 +12,9 @@ const NEIGHBORHOODS = [
 ]
 
 const ROOM_TYPES = [
-  { value: 'private_room',   label: 'Private Room' },
-  { value: 'shared_room',    label: 'Shared Room'  },
-  { value: 'studio',         label: 'Studio'       },
+  { value: 'private_room',   label: 'Private Room'   },
+  { value: 'shared_room',    label: 'Shared Room'    },
+  { value: 'studio',         label: 'Studio'         },
   { value: 'full_apartment', label: 'Full Apartment' },
 ]
 
@@ -36,7 +36,6 @@ export default function HousingBoard({ initialListings }: Props) {
   const [genderPref,   setGenderPref]   = useState('')
   const [listings,     setListings]     = useState<HousingListingRow[]>(initialListings)
 
-  // Track whether we've already done the initial render so we can skip the first effect
   const isFirstRender = useRef(true)
 
   useEffect(() => {
@@ -61,7 +60,6 @@ export default function HousingBoard({ initialListings }: Props) {
     if (roomType && activeTab === 'room_available') query = query.eq('room_type', roomType as HousingRoomType)
     if (genderPref) query = query.eq('gender_preference', genderPref as HousingGenderPref)
 
-    // All setState calls are in the .then() callback — never synchronous
     query.then(({ data }) => {
       if (!cancelled) setListings(data ?? [])
     })
@@ -71,25 +69,84 @@ export default function HousingBoard({ initialListings }: Props) {
 
   return (
     <div>
-      {/* Tab bar */}
-      <div className="flex gap-2 mb-6">
-        {(['room_available', 'looking_for_room'] as const).map(tab => (
-          <button
-            key={tab}
-            onClick={() => { setActiveTab(tab); setRoomType('') }}
-            className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
-              activeTab === tab
-                ? 'bg-brand-primary text-white'
-                : 'bg-white/5 text-white/60 hover:bg-white/10'
-            }`}
+      {/* Controls row: tab switcher left, post buttons right */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '24px',
+        flexWrap: 'wrap',
+        gap: '12px',
+      }}>
+        {/* Tab switcher */}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {(['room_available', 'looking_for_room'] as const).map(tab => (
+            <button
+              key={tab}
+              onClick={() => { setActiveTab(tab); setRoomType('') }}
+              style={{
+                padding: '10px 20px',
+                borderRadius: '50px',
+                border: activeTab === tab ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                background: activeTab === tab ? '#F5A623' : 'transparent',
+                color: activeTab === tab ? '#1A1A2E' : '#888',
+                fontWeight: activeTab === tab ? 700 : 400,
+                cursor: 'pointer',
+                fontSize: '14px',
+              }}
+            >
+              {tab === 'room_available' ? '🏠 Rooms Available' : '👤 Looking for Room'}
+            </button>
+          ))}
+        </div>
+
+        {/* Post buttons */}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <a
+            href="/housing/post?type=room_available"
+            style={{
+              padding: '10px 16px',
+              borderRadius: '50px',
+              background: '#F5A623',
+              color: '#1A1A2E',
+              fontWeight: 700,
+              fontSize: '13px',
+              textDecoration: 'none',
+              whiteSpace: 'nowrap',
+            }}
           >
-            {tab === 'room_available' ? '🏠 Rooms Available' : '👤 Looking for Room'}
-          </button>
-        ))}
+            + Post a Room
+          </a>
+          <a
+            href="/housing/post?type=looking_for_room"
+            style={{
+              padding: '10px 16px',
+              borderRadius: '50px',
+              background: 'transparent',
+              color: '#fff',
+              border: '1px solid rgba(255,255,255,0.2)',
+              fontWeight: 500,
+              fontSize: '13px',
+              textDecoration: 'none',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            + Looking for Room
+          </a>
+        </div>
       </div>
 
-      {/* Filters */}
-      <div className="glass-card rounded-2xl p-5 mb-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Filter bar */}
+      <div style={{
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: '12px',
+        padding: '16px 24px',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+        gap: '16px',
+        marginBottom: '24px',
+      }}>
         <div>
           <label className="block text-xs text-white/50 mb-1.5">Neighborhood</label>
           <select

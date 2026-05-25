@@ -148,22 +148,6 @@ export default function HousingTabs({ partnerRooms, initialListings, hasMembersh
             </div>
           )}
 
-          {/* Post buttons */}
-          <div className="flex flex-wrap gap-3 mb-6">
-            <Link
-              href="/housing/post?type=room_available"
-              className="btn-primary px-5 py-2.5 rounded-full font-semibold text-sm"
-            >
-              + Post a Room
-            </Link>
-            <Link
-              href="/housing/post?type=looking_for_room"
-              className="bg-white/10 hover:bg-white/15 text-white px-5 py-2.5 rounded-full font-semibold text-sm transition-colors"
-            >
-              + Looking for Room
-            </Link>
-          </div>
-
           <HousingBoard initialListings={initialListings} />
         </div>
       )}
