@@ -76,6 +76,8 @@ export async function POST(req: Request) {
       partner_phone:     partner?.contact_phone ?? '',
       partner_contact_name: partner?.contact_name ?? '',
       neighborhood:      room.neighborhood,
+      monthly_rent:      String(room.monthly_rent),
+      deposit_amount:    String(room.deposit_amount),
       guest_name:        guestName,
       guest_email:       guestEmail,
       guest_phone:       guestPhone   ?? '',

@@ -297,10 +297,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     // 3. Send pending email to student
     await sendBookingPendingEmail({
-      to:          meta.guest_email,
-      guestName:   meta.guest_name,
-      roomTitle:   meta.room_title,
-      neighborhood: meta.neighborhood ?? '',
+      to:           meta.guest_email,
+      guestName:    meta.guest_name,
+      roomTitle:    meta.room_title,
+      neighborhood: meta.neighborhood      ?? '',
+      monthlyRent:  meta.monthly_rent      ? Number(meta.monthly_rent)   : undefined,
+      depositAmount: meta.deposit_amount   ? Number(meta.deposit_amount) : undefined,
+      moveInDate:   meta.move_in_date      ?? '',
+      duration:     meta.duration          ?? '',
       bookingRef,
     })
 

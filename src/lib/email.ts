@@ -93,11 +93,15 @@ export async function sendBookingConfirmation(params: BookingConfirmationParams)
 // ─── Partner Room Booking Emails ─────────────────────────────
 
 interface BookingPendingEmailParams {
-  to:          string
-  guestName:   string
-  roomTitle:   string
+  to:            string
+  guestName:     string
+  roomTitle:     string
   neighborhood?: string
-  bookingRef:  string
+  monthlyRent?:  number
+  depositAmount?: number
+  moveInDate?:   string
+  duration?:     string
+  bookingRef:    string
 }
 
 export async function sendBookingPendingEmail(params: BookingPendingEmailParams) {
@@ -106,15 +110,35 @@ export async function sendBookingPendingEmail(params: BookingPendingEmailParams)
 
   const html = `
     <div style="font-family:Inter,sans-serif;background:#1A1A2E;color:#fff;padding:40px;max-width:600px;margin:0 auto;">
-      <h1 style="color:#FF6B35;margin:0 0 24px;">Erasmus Vibe</h1>
+      <h1 style="color:#FF6B35;margin:0 0 4px;font-size:28px;">Erasmus Vibe</h1>
+      <p style="color:#888;margin:0 0 28px;font-size:13px;">Student Housing Valencia</p>
       <div style="background:rgba(245,166,35,0.1);border:1px solid #F5A623;border-radius:12px;padding:24px;margin:0 0 24px;text-align:center;">
         <p style="font-size:32px;margin:0;">⏳</p>
-        <h2 style="color:#F5A623;margin:8px 0;">Booking Pending!</h2>
-        <p style="color:#888;margin:0;">${params.roomTitle}${params.neighborhood ? ` · ${params.neighborhood}` : ''}</p>
+        <h2 style="color:#F5A623;margin:8px 0 4px;">Booking Pending!</h2>
+        <p style="color:#aaa;margin:0;font-size:15px;">${params.roomTitle}${params.neighborhood ? ` · ${params.neighborhood}` : ''}</p>
       </div>
       <p>Hi ${params.guestName},</p>
       <p>Your payment of <strong>€50</strong> was successful. The landlord has been notified and will confirm your booking within <strong>48 hours</strong>.</p>
-      <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:20px;margin:24px 0;">
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;margin:24px 0;">
+        <p style="color:#888;font-size:13px;margin:0 0 14px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Booking details</p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="color:#888;font-size:14px;padding:4px 0;">Room</td>
+            <td style="color:#fff;font-size:14px;font-weight:600;text-align:right;padding:4px 0;">${params.roomTitle}</td>
+          </tr>
+          ${params.neighborhood ? `<tr><td style="color:#888;font-size:14px;padding:4px 0;">Neighborhood</td><td style="color:#fff;font-size:14px;text-align:right;padding:4px 0;">${params.neighborhood}</td></tr>` : ''}
+          ${params.monthlyRent !== undefined ? `<tr><td style="color:#888;font-size:14px;padding:4px 0;">Monthly rent</td><td style="color:#4ECDC4;font-size:14px;font-weight:700;text-align:right;padding:4px 0;">€${params.monthlyRent}/month</td></tr>` : ''}
+          ${params.depositAmount !== undefined ? `<tr><td style="color:#888;font-size:14px;padding:4px 0;">Deposit</td><td style="color:#fff;font-size:14px;text-align:right;padding:4px 0;">€${params.depositAmount}</td></tr>` : ''}
+          ${params.moveInDate ? `<tr><td style="color:#888;font-size:14px;padding:4px 0;">Move-in date</td><td style="color:#fff;font-size:14px;text-align:right;padding:4px 0;">${params.moveInDate}</td></tr>` : ''}
+          ${params.duration ? `<tr><td style="color:#888;font-size:14px;padding:4px 0;">Duration</td><td style="color:#fff;font-size:14px;text-align:right;padding:4px 0;">${params.duration} month(s)</td></tr>` : ''}
+          <tr><td style="color:#888;font-size:14px;padding:4px 0;">Booking fee paid</td><td style="color:#2ECC71;font-size:14px;font-weight:700;text-align:right;padding:4px 0;">€50 ✓</td></tr>
+        </table>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.08);">
+          <p style="color:#888;font-size:12px;margin:0 0 4px;">Booking reference</p>
+          <p style="margin:0;font-family:monospace;font-size:18px;font-weight:700;color:#FF6B35;letter-spacing:2px;">${params.bookingRef}</p>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border-radius:12px;padding:20px;margin:24px 0;">
         <p style="color:#888;font-size:13px;margin:0 0 12px;font-weight:600;">What happens next</p>
         <p style="margin:0 0 8px;font-size:14px;color:#ccc;">1️⃣ Landlord receives your booking request</p>
         <p style="margin:0 0 8px;font-size:14px;color:#ccc;">2️⃣ They confirm within 48 hours</p>
@@ -122,10 +146,12 @@ export async function sendBookingPendingEmail(params: BookingPendingEmailParams)
         <p style="margin:0;font-size:14px;color:#ccc;">4️⃣ Schedule your viewing and arrange the contract</p>
       </div>
       <div style="background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);border-radius:12px;padding:16px;margin:24px 0;">
-        <p style="color:#2ECC71;margin:0;font-size:14px;">🛡️ If the landlord doesn't confirm within 48 hours, you'll receive a full automatic refund of €50.</p>
+        <p style="color:#2ECC71;margin:0;font-size:14px;">🛡️ <strong>Full refund guarantee:</strong> If the landlord doesn't confirm within 48 hours, you'll receive a full automatic refund of €50 — no questions asked.</p>
       </div>
-      <p style="color:#555;font-size:12px;margin-top:24px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">Booking ref: ${params.bookingRef} · Questions? Contact us on Instagram @erasmus_vibe</p>
-      <a href="${baseUrl}/housing" style="color:#FF6B35;font-size:13px;">← Browse more rooms</a>
+      <a href="${baseUrl}/housing" style="display:inline-block;color:#FF6B35;font-size:14px;margin-bottom:24px;">← Browse more rooms</a>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:16px;margin-top:8px;">
+        <p style="color:#555;font-size:12px;margin:0;">Questions? Email us at <a href="mailto:info@erasmusvibe.com" style="color:#FF6B35;">info@erasmusvibe.com</a> or find us on Instagram @erasmus_vibe</p>
+      </div>
     </div>
   `
 
@@ -199,7 +225,10 @@ export async function sendPartnerConfirmationRequest(params: PartnerConfirmation
       <div style="background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.2);border-radius:10px;padding:14px;margin-bottom:24px;">
         <p style="color:#FF8888;margin:0;font-size:13px;">⚠️ If you do not respond within 48 hours, the booking will be automatically cancelled and the student will receive a full refund.</p>
       </div>
-      <p style="color:#555;font-size:12px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">Booking ref: ${params.bookingRef} · Powered by Erasmus Vibe</p>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:16px;">
+        <p style="color:#888;font-size:12px;margin:0 0 4px;">Booking reference: <strong style="font-family:monospace;color:#FF6B35;letter-spacing:1px;">${params.bookingRef}</strong></p>
+        <p style="color:#555;font-size:12px;margin:4px 0 0;">Need help? Contact us at <a href="mailto:info@erasmusvibe.com" style="color:#FF6B35;">info@erasmusvibe.com</a> · Powered by Erasmus Vibe</p>
+      </div>
     </div>
   `
 
@@ -231,23 +260,31 @@ export async function sendBookingRefundEmail(params: BookingRefundEmailParams) {
 
   const html = `
     <div style="font-family:Inter,sans-serif;background:#1A1A2E;color:#fff;padding:40px;max-width:600px;margin:0 auto;">
-      <h1 style="color:#FF6B35;margin:0 0 24px;">Erasmus Vibe</h1>
+      <h1 style="color:#FF6B35;margin:0 0 4px;font-size:28px;">Erasmus Vibe</h1>
+      <p style="color:#888;margin:0 0 28px;font-size:13px;">Student Housing Valencia</p>
       <div style="background:rgba(255,68,68,0.1);border:1px solid #FF4444;border-radius:12px;padding:24px;margin:0 0 24px;text-align:center;">
         <p style="font-size:32px;margin:0;">💸</p>
         <h2 style="color:#FF4444;margin:8px 0;">Refund Processed</h2>
         <p style="color:#888;margin:0;">${params.roomTitle}</p>
       </div>
       <p>Hi ${params.guestName},</p>
-      <p>${params.reason}</p>
+      <p>We're sorry this didn't work out. ${params.reason}</p>
       <p>We have processed a full refund of <strong style="color:#2ECC71;">€${params.amount.toFixed(2)}</strong> to your original payment method.</p>
-      <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:20px;margin:24px 0;">
-        <p style="margin:0 0 8px;color:#888;font-size:14px;">Refund details</p>
-        <p style="margin:0;font-size:18px;font-weight:700;color:#2ECC71;">€${params.amount.toFixed(2)} refunded</p>
-        <p style="margin:4px 0 0;color:#888;font-size:13px;">${params.roomTitle}</p>
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;margin:24px 0;">
+        <p style="margin:0 0 8px;color:#888;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Refund details</p>
+        <p style="margin:0 0 4px;font-size:22px;font-weight:700;color:#2ECC71;">€${params.amount.toFixed(2)} refunded</p>
+        <p style="margin:0 0 12px;color:#888;font-size:13px;">${params.roomTitle}</p>
+        <p style="margin:0;font-size:13px;color:#888;">⏱ Refunds typically appear within <strong style="color:#ccc;">5–10 business days</strong> depending on your bank.</p>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.08);">
+          <p style="color:#888;font-size:12px;margin:0 0 4px;">Booking reference</p>
+          <p style="margin:0;font-family:monospace;font-size:16px;font-weight:700;color:#FF6B35;letter-spacing:2px;">${params.bookingRef}</p>
+        </div>
       </div>
-      <p style="color:#888;font-size:14px;">Refunds typically appear within 5–10 business days depending on your bank.</p>
-      <a href="${baseUrl}/housing" style="display:inline-block;background:#FF6B35;color:#fff;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:700;margin:16px 0;">← Browse more rooms</a>
-      <p style="color:#555;font-size:12px;margin-top:24px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">Booking ref: ${params.bookingRef} · Questions? Contact us on Instagram @erasmus_vibe</p>
+      <p style="color:#aaa;font-size:15px;">We hope to help you find your perfect room soon. There are plenty of other great options waiting for you!</p>
+      <a href="${baseUrl}/housing" style="display:inline-block;background:#FF6B35;color:#fff;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:700;margin:16px 0;">Browse other rooms →</a>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:16px;margin-top:24px;">
+        <p style="color:#555;font-size:12px;margin:0;">Questions or concerns? Contact our support team at <a href="mailto:info@erasmusvibe.com" style="color:#FF6B35;">info@erasmusvibe.com</a></p>
+      </div>
     </div>
   `
 
@@ -291,34 +328,39 @@ export async function sendRoomContactEmail(params: RoomContactEmailParams) {
 
   const html = `
     <div style="font-family:Inter,sans-serif;background:#1A1A2E;color:#fff;padding:40px;max-width:600px;margin:0 auto;">
-      <h1 style="color:#FF6B35;margin:0 0 24px;">Erasmus Vibe</h1>
+      <h1 style="color:#FF6B35;margin:0 0 4px;font-size:28px;">Erasmus Vibe</h1>
+      <p style="color:#888;margin:0 0 28px;font-size:13px;">Student Housing Valencia</p>
       <div style="background:rgba(78,205,196,0.1);border:1px solid #4ECDC4;border-radius:12px;padding:24px;margin:0 0 24px;text-align:center;">
         <p style="font-size:32px;margin:0;">✅</p>
         <h2 style="color:#4ECDC4;margin:8px 0;">Contact Unlocked!</h2>
-        <p style="color:#888;margin:0;">${params.roomTitle} · ${params.neighborhood}</p>
+        <p style="color:#aaa;margin:0;font-size:15px;">${params.roomTitle} · ${params.neighborhood}</p>
       </div>
       <p>Hi ${params.guestName},</p>
-      <p>Your payment was successful! Here are the landlord contact details for <strong>${params.roomTitle}</strong>:</p>
+      <p>Great news! The landlord confirmed your booking for <strong>${params.roomTitle}</strong>. Here are their contact details — reach out now to arrange your viewing!</p>
       <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:24px;margin:24px 0;">
-        <p style="color:#888;font-size:13px;margin:0 0 12px;">Landlord contact</p>
-        <p style="margin:0 0 8px;font-size:16px;font-weight:600;">${params.partnerName}</p>
-        ${params.partnerContactName ? `<p style="margin:0 0 8px;color:#aaa;">Contact: ${params.partnerContactName}</p>` : ''}
-        ${params.partnerWhatsapp ? `<p style="margin:0 0 6px;">📱 WhatsApp: <strong>${params.partnerWhatsapp}</strong></p>` : ''}
-        ${params.partnerEmail ? `<p style="margin:0 0 6px;">✉️ Email: <strong>${params.partnerEmail}</strong></p>` : ''}
-        ${params.partnerPhone ? `<p style="margin:0;">📞 Phone: <strong>${params.partnerPhone}</strong></p>` : ''}
+        <p style="color:#888;font-size:13px;margin:0 0 14px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Landlord contact</p>
+        <p style="margin:0 0 10px;font-size:18px;font-weight:700;">${params.partnerName}</p>
+        ${params.partnerContactName ? `<p style="margin:0 0 8px;color:#aaa;font-size:14px;">Contact person: ${params.partnerContactName}</p>` : ''}
+        ${params.partnerWhatsapp ? `<p style="margin:0 0 8px;font-size:15px;">📱 WhatsApp: <a href="https://wa.me/${params.partnerWhatsapp.replace(/[^0-9]/g, '')}" style="color:#25D366;font-weight:600;">${params.partnerWhatsapp}</a></p>` : ''}
+        ${params.partnerEmail ? `<p style="margin:0 0 8px;font-size:15px;">✉️ Email: <a href="mailto:${params.partnerEmail}" style="color:#4ECDC4;font-weight:600;">${params.partnerEmail}</a></p>` : ''}
+        ${params.partnerPhone ? `<p style="margin:0;font-size:15px;">📞 Phone: <strong>${params.partnerPhone}</strong></p>` : ''}
       </div>
-      ${waLink ? `<a href="${waLink}" style="display:block;background:#25D366;color:#fff;text-align:center;padding:14px 24px;border-radius:12px;text-decoration:none;font-weight:700;margin-bottom:24px;">💬 Message on WhatsApp</a>` : ''}
+      ${waLink ? `<a href="${waLink}" style="display:block;background:#25D366;color:#fff;text-align:center;padding:16px 24px;border-radius:12px;text-decoration:none;font-weight:700;font-size:16px;margin-bottom:24px;">💬 Message on WhatsApp</a>` : ''}
       <div style="background:rgba(255,255,255,0.03);border-radius:12px;padding:20px;margin:24px 0;">
         <p style="color:#888;font-size:13px;margin:0 0 12px;font-weight:600;">What happens next?</p>
-        <ol style="margin:0;padding-left:20px;color:#aaa;font-size:14px;line-height:1.8;">
-          <li>Contact the landlord via WhatsApp or email</li>
-          <li>Schedule a viewing at a time that works for both of you</li>
-          <li>Sign the rental contract</li>
-          <li>Pay rent + deposit directly to the landlord</li>
-        </ol>
+        <p style="margin:0 0 8px;font-size:14px;color:#ccc;">1️⃣ Contact the landlord on WhatsApp or email</p>
+        <p style="margin:0 0 8px;font-size:14px;color:#ccc;">2️⃣ Schedule a viewing at a convenient time</p>
+        <p style="margin:0 0 8px;font-size:14px;color:#ccc;">3️⃣ Sign the rental contract</p>
+        <p style="margin:0;font-size:14px;color:#ccc;">4️⃣ Pay rent + deposit directly to the landlord</p>
       </div>
-      <p style="color:#888;font-size:13px;">Move-in date: ${params.moveInDate} · Duration: ${params.duration} month(s)</p>
-      <p style="color:#555;font-size:12px;margin-top:24px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">Booking ref: ${params.bookingRef} · Questions? Contact us on Instagram @erasmus_vibe</p>
+      <p style="color:#888;font-size:13px;">Move-in date: <strong style="color:#ccc;">${params.moveInDate}</strong> · Duration: <strong style="color:#ccc;">${params.duration} month(s)</strong></p>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px;margin:24px 0;">
+        <p style="color:#888;margin:0;font-size:13px;">ℹ️ <strong style="color:#aaa;">Please note:</strong> Monthly rent and deposit are paid <strong>directly to the landlord</strong>, not through Erasmus Vibe. The €50 booking fee you paid covers our platform service only.</p>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:16px;margin-top:8px;">
+        <p style="color:#888;font-size:12px;margin:0 0 4px;">Booking reference: <strong style="font-family:monospace;color:#FF6B35;letter-spacing:1px;">${params.bookingRef}</strong></p>
+        <p style="color:#555;font-size:12px;margin:4px 0 0;">Questions? Contact us at <a href="mailto:info@erasmusvibe.com" style="color:#FF6B35;">info@erasmusvibe.com</a></p>
+      </div>
     </div>
   `
 
