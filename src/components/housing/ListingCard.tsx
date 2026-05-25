@@ -147,7 +147,7 @@ export default function ListingCard({ listing }: Props) {
               textAlign: 'center',
             }}
           >
-            View Details →
+            See Details
           </div>
         </div>
       </div>
