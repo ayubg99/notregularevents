@@ -52,11 +52,18 @@ export default function AdminSidebar() {
         {NAV.map(({ href, label, icon, ...rest }) => {
           const external   = 'external'   in rest && rest.external
           const neverActive = 'neverActive' in rest && rest.neverActive
-          const isActive   = neverActive
-            ? false
-            : href === '/admin'
-              ? pathname === '/admin'
-              : pathname.startsWith(href)
+          const isActive = (() => {
+            if (neverActive) return false
+            if (href === '/admin') return pathname === '/admin'
+            if (href === '/admin/housing') {
+              return pathname === '/admin/housing' ||
+                (pathname.startsWith('/admin/housing') && !pathname.startsWith('/admin/housing-partners'))
+            }
+            if (href === '/admin/housing-partners') {
+              return pathname.startsWith('/admin/housing-partners')
+            }
+            return pathname.startsWith(href)
+          })()
 
           const baseClass = 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150'
           const activeClass = isActive
