@@ -62,12 +62,14 @@ export default function TripCard({ trip }: Props) {
   })
 
   const now = new Date()
-  const earlyBirdActive =
-    !!trip.price_early_bird &&
+  const ebDeadlineValid = !!trip.price_early_bird &&
     trip.price_early_bird > 0 &&
     !!trip.early_bird_deadline &&
     new Date(trip.early_bird_deadline) > now
-  const displayPrice = earlyBirdActive ? trip.price_early_bird! : trip.price_standard
+  const ebSeatsLeft     = (trip.early_bird_seats ?? 0) - (trip.early_bird_seats_sold ?? 0)
+  const earlyBirdActive  = ebDeadlineValid && (trip.early_bird_seats == null || ebSeatsLeft > 0)
+  const earlyBirdSoldOut = ebDeadlineValid && trip.early_bird_seats != null && ebSeatsLeft <= 0
+  const displayPrice     = earlyBirdActive ? trip.price_early_bird! : trip.price_standard
 
   return (
     <Link href={`/trips/${trip.slug}`} className="group block">
@@ -143,6 +145,9 @@ export default function TripCard({ trip }: Props) {
             <div>
               {earlyBirdActive && (
                 <p className="text-xs text-brand-accent font-bold uppercase tracking-wide">Early Bird</p>
+              )}
+              {earlyBirdSoldOut && (
+                <p className="text-xs text-red-400 font-bold uppercase tracking-wide">🔥 Early Bird Sold Out</p>
               )}
               <p className={`font-bold text-base ${earlyBirdActive ? 'text-gradient-primary' : 'text-white'}`}>
                 {displayPrice === 0 ? 'Free' : `From €${displayPrice}`}

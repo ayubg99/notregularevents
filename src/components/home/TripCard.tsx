@@ -24,9 +24,15 @@ interface TripCardProps {
 }
 
 export default function TripCard({ trip, className }: TripCardProps) {
-  const seatsLeft    = trip.capacity - trip.seats_sold
-  const displayPrice = trip.price_early_bird ?? trip.price_standard
-  const hasEarlyBird = !!trip.price_early_bird
+  const seatsLeft = trip.capacity - trip.seats_sold
+  const now       = new Date()
+  const ebValid   = !!trip.price_early_bird &&
+    !!trip.early_bird_deadline &&
+    new Date(trip.early_bird_deadline) > now &&
+    (trip.early_bird_seats == null ||
+      (trip.early_bird_seats - (trip.early_bird_seats_sold ?? 0)) > 0)
+  const displayPrice = ebValid ? trip.price_early_bird! : trip.price_standard
+  const hasEarlyBird = ebValid
 
   const startFmt = new Date(trip.start_date).toLocaleDateString('en-GB', {
     day: 'numeric', month: 'short',

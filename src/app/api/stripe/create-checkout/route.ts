@@ -253,7 +253,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
 
     const { data: trip } = await supabase
       .from('trips')
-      .select('id, title, price_early_bird, price_standard, price_vip, price_group, capacity, seats_sold, slug, image_url, start_date, destination, whatsapp_group_url')
+      .select('id, title, price_early_bird, price_standard, price_vip, price_group, early_bird_deadline, early_bird_seats, early_bird_seats_sold, capacity, seats_sold, slug, image_url, start_date, destination, whatsapp_group_url')
       .eq('id', itemId)
       .eq('status', 'published')
       .single()
@@ -265,6 +265,21 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
     const seatsLeft = trip.capacity - trip.seats_sold
     if (seatsLeft < 1) {
       return NextResponse.json({ error: 'Sorry, this trip is fully booked.' }, { status: 409 })
+    }
+
+    if (tripTier === 'early_bird') {
+      const ebValid =
+        trip.price_early_bird != null &&
+        trip.early_bird_deadline != null &&
+        new Date(trip.early_bird_deadline) > new Date() &&
+        (trip.early_bird_seats == null ||
+          (trip.early_bird_seats - (trip.early_bird_seats_sold ?? 0)) > 0)
+      if (!ebValid) {
+        return NextResponse.json(
+          { error: 'Early bird is no longer available. Please select standard price.' },
+          { status: 400 },
+        )
+      }
     }
 
     const tierPrices: Record<TripTier, number> = {

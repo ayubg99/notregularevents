@@ -276,6 +276,16 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     if (seatError) console.error('❌ Seat update failed:', seatError)
     else           console.log('✅ Seats updated:', itemId, tripAttendees.length)
 
+    if (tier === 'early_bird') {
+      // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
+      const { error: ebErr } = await admin.rpc('increment_early_bird_sold', {
+        p_trip_id:  itemId!,
+        p_quantity: tripAttendees.length,
+      })
+      if (ebErr) console.error('❌ Early bird seat update failed:', ebErr)
+      else       console.log('✅ Early bird seats updated:', itemId, tripAttendees.length)
+    }
+
     if (userId) {
       await admin.from('notifications').insert({
         user_id: userId,
