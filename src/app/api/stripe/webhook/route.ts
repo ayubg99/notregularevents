@@ -227,8 +227,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       const toAddr     = attendee.email?.trim() || guestEmail || null
       if (!firstRef) firstRef = bookingRef
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: insertErr } = await admin.from('trip_bookings').insert({
+      const tripRow = {
         trip_id:           itemId!,
         user_id:           i === 0 ? userId : null,
         tier,
@@ -246,7 +245,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         is_group_booking:  isGroup,
         lead_name:         isGroup ? (guestName || null) : null,
         lead_email:        isGroup ? (guestEmail || null) : null,
-      } as any)
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: insertErr } = await admin.from('trip_bookings').insert(tripRow as any)
       if (insertErr) console.error(`[webhook trip booking #${i + 1}]`, insertErr.message)
 
       allTickets.push({ name: attendee.name, bookingRef, qrCode })
