@@ -69,13 +69,6 @@ const PLANS: PlanDef[] = [
   },
 ]
 
-const LOGIN_BENEFITS = [
-  { icon: '🎟️', text: '15% off all events & trips' },
-  { icon: '⚡',  text: 'Priority access to new events' },
-  { icon: '🎉', text: 'Exclusive members-only parties' },
-  { icon: '💬', text: 'Private WhatsApp groups' },
-  { icon: '🏠', text: 'Housing contact details' },
-]
 
 interface Props {
   currentPlan: MembershipPlan | null
@@ -312,34 +305,6 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
             <p style={{ color: '#888', fontSize: '14px', margin: '0 0 32px', lineHeight: 1.6 }}>
               Create a free account to get started with exclusive Erasmus Vibe benefits
             </p>
-
-            {/* Benefits */}
-            <div style={{
-              background:    'rgba(255,255,255,0.03)',
-              border:        '1px solid rgba(245,166,35,0.08)',
-              borderRadius:  '16px',
-              padding:       '20px',
-              marginBottom:  '28px',
-              textAlign:     'left',
-            }}>
-              {LOGIN_BENEFITS.map((benefit, i) => (
-                <div
-                  key={benefit.text}
-                  style={{
-                    display:      'flex',
-                    alignItems:   'center',
-                    gap:          '10px',
-                    padding:      '6px 0',
-                    borderBottom: i < LOGIN_BENEFITS.length - 1
-                      ? '1px solid rgba(245,166,35,0.06)'
-                      : 'none',
-                  }}
-                >
-                  <span style={{ fontSize: '16px' }}>{benefit.icon}</span>
-                  <span style={{ color: '#ccc', fontSize: '13px' }}>{benefit.text}</span>
-                </div>
-              ))}
-            </div>
 
             {/* CTA buttons */}
             <Link
