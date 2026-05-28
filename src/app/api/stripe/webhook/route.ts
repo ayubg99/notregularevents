@@ -97,8 +97,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         if (!firstBookingRef) firstBookingRef = bookingRef
         allTickets.push({ name: attendee.name, bookingRef, qrCode })
 
-        // Individual email only for secondary attendees with their own address
-        if (i > 0 && recipientEmail && recipientEmail !== guestEmail) {
+        // Individual email to every attendee who has an email address
+        if (recipientEmail) {
           await sendBookingConfirmation({
             to:       recipientEmail,
             name:     attendee.name,
@@ -109,6 +109,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
             date:     meta.event_date  || undefined,
             location: meta.location    || undefined,
           })
+          console.log(`[webhook] individual ticket sent to: ${recipientEmail}`)
         }
       }
 
