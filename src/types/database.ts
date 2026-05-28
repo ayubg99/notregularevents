@@ -70,6 +70,7 @@ export type EventRow = {
   capacity:              number
   tickets_sold:          number
   group_min_size:        number | null
+  is_free:               boolean
   status:                EventStatus
   created_by:            string | null
   created_at:            string
@@ -213,7 +214,7 @@ export type UserInsert = Omit<UserRow, 'created_at' | 'updated_at'> & {
 
 export type ProfileInsert = Omit<ProfileRow, 'id' | 'created_at' | 'updated_at'>
 
-export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 'updated_at' | 'price_early_bird' | 'price_group' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold' | 'group_min_size'> & {
+export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 'updated_at' | 'price_early_bird' | 'price_group' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold' | 'group_min_size' | 'is_free'> & {
   tickets_sold?:         number
   status?:               EventStatus
   price_early_bird?:     number | null
@@ -222,6 +223,7 @@ export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 
   early_bird_seats?:     number
   early_bird_seats_sold?: number
   group_min_size?:       number | null
+  is_free?:              boolean
 }
 
 export type EventTicketInsert = Omit<EventTicketRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid' | 'checked_in' | 'checked_in_at'> & {

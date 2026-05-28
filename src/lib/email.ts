@@ -49,15 +49,16 @@ export async function sendRefundEmail({ email, name, tripTitle, amount, reason }
 }
 
 interface BookingConfirmationParams {
-  to:          string
-  name:        string
-  bookingRef:  string
-  qrCode:      string
-  title:       string
-  type:        'event' | 'trip'
-  date?:       string
-  location?:   string
+  to:           string
+  name:         string
+  bookingRef:   string
+  qrCode:       string
+  title:        string
+  type:         'event' | 'trip'
+  date?:        string
+  location?:    string
   whatsappUrl?: string
+  isFree?:      boolean
 }
 
 export async function sendBookingConfirmation(params: BookingConfirmationParams) {
@@ -76,7 +77,9 @@ export async function sendBookingConfirmation(params: BookingConfirmationParams)
     const { error } = await getResend().emails.send({
       from,
       to:      params.to,
-      subject: `Booking Confirmed — ${params.title} (Ref: ${params.bookingRef})`,
+      subject: params.isFree
+        ? `🎉 You're registered — ${params.title} (Ref: ${params.bookingRef})`
+        : `Booking Confirmed — ${params.title} (Ref: ${params.bookingRef})`,
       html,
       attachments: [{
         filename:  'qr-code.png',

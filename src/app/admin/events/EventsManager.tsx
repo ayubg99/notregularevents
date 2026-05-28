@@ -69,6 +69,7 @@ export default function EventsManager({ initialEvents }: Props) {
   const [toast,   setToast]   = useState('')
   const [isPending, startTransition] = useTransition()
   const [groupEnabled, setGroupEnabled] = useState(false)
+  const [isFree, setIsFree] = useState(false)
 
   function showToast(msg: string) {
     setToast(msg)
@@ -79,6 +80,7 @@ export default function EventsManager({ initialEvents }: Props) {
     setEditing(null)
     setForm(defaultForm())
     setGroupEnabled(false)
+    setIsFree(false)
     setToast('')
     setModal('create')
   }
@@ -86,6 +88,7 @@ export default function EventsManager({ initialEvents }: Props) {
   function openEdit(event: EventRow) {
     setEditing(event)
     setGroupEnabled(event.price_group != null)
+    setIsFree(event.is_free ?? false)
     setForm({
       title:               event.title,
       slug:                event.slug,
@@ -121,14 +124,16 @@ export default function EventsManager({ initialEvents }: Props) {
     // Validation
     const stdPrice = parseFloat(form.price) || 0
     const ebPrice  = parseOptional(form.price_early_bird)
-    if (ebPrice !== null && ebPrice >= stdPrice) {
-      showToast('Early bird price must be less than the standard price.')
-      return
-    }
-    if (ebPrice !== null && form.early_bird_deadline && form.date) {
-      if (new Date(form.early_bird_deadline) >= new Date(form.date)) {
-        showToast('Early bird deadline must be before the event date.')
+    if (!isFree) {
+      if (ebPrice !== null && ebPrice >= stdPrice) {
+        showToast('Early bird price must be less than the standard price.')
         return
+      }
+      if (ebPrice !== null && form.early_bird_deadline && form.date) {
+        if (new Date(form.early_bird_deadline) >= new Date(form.date)) {
+          showToast('Early bird deadline must be before the event date.')
+          return
+        }
       }
     }
 
@@ -141,12 +146,13 @@ export default function EventsManager({ initialEvents }: Props) {
         date:                form.date,
         location:            form.location || null,
         image_url:           form.image_url || null,
-        price:               stdPrice,
-        price_early_bird:    ebPrice,
-        price_group:         groupEnabled ? parseOptional(form.price_group) : null,
-        early_bird_deadline: form.early_bird_deadline ? new Date(form.early_bird_deadline).toISOString() : null,
+        is_free:             isFree,
+        price:               isFree ? 0 : stdPrice,
+        price_early_bird:    isFree ? null : ebPrice,
+        price_group:         isFree ? null : (groupEnabled ? parseOptional(form.price_group) : null),
+        early_bird_deadline: isFree ? null : (form.early_bird_deadline ? new Date(form.early_bird_deadline).toISOString() : null),
         early_bird_seats:    parseInt(form.early_bird_seats) || 20,
-        group_min_size:      groupEnabled ? (parseInt(form.group_min_size) || 4) : null,
+        group_min_size:      isFree ? null : (groupEnabled ? (parseInt(form.group_min_size) || 4) : null),
         capacity:            parseInt(form.capacity) || 100,
         status:              form.status,
         created_by:          null,
@@ -337,67 +343,86 @@ export default function EventsManager({ initialEvents }: Props) {
 
               {/* Pricing */}
               <Section title="Pricing">
-                <div className="grid grid-cols-3 gap-3">
-                  {/* Early Bird */}
-                  <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 flex flex-col gap-2">
-                    <span className="text-xs font-semibold text-amber-400">🔥 Early Bird</span>
-                    <div>
-                      <label className={labelClass}>Price (€)</label>
-                      <input type="number" min="0" step="0.01" value={form.price_early_bird} onChange={e => setForm(f => ({ ...f, price_early_bird: e.target.value }))} className={inputClass} placeholder="optional" />
-                    </div>
-                    <div>
-                      <label className={labelClass}>Deadline</label>
-                      <input type="datetime-local" value={form.early_bird_deadline} onChange={e => setForm(f => ({ ...f, early_bird_deadline: e.target.value }))} className={inputClass} />
-                    </div>
-                    <div>
-                      <label className={labelClass}>Seats</label>
-                      <input type="number" min="0" value={form.early_bird_seats} onChange={e => setForm(f => ({ ...f, early_bird_seats: e.target.value }))} className={inputClass} />
-                    </div>
+                {/* Free event toggle */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: isFree ? '1px solid rgba(46,204,113,0.3)' : '1px solid rgba(255,255,255,0.08)' }}>
+                  <div>
+                    <p style={{ color: '#fff', fontWeight: 600, margin: '0 0 4px', fontSize: '14px' }}>Free Event</p>
+                    <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>No payment required — students just register</p>
                   </div>
-
-                  {/* Standard */}
-                  <div className="rounded-xl border border-brand-primary/40 bg-brand-primary/5 p-3 flex flex-col gap-2">
-                    <span className="text-xs font-semibold text-brand-primary">💰 Standard</span>
-                    <div>
-                      <label className={labelClass}>Price (€) *</label>
-                      <input type="number" min="0" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} className={inputClass} placeholder="0" />
-                    </div>
-                  </div>
-
-                  {/* Group */}
-                  <div className={`rounded-xl border p-3 flex flex-col gap-2 transition-colors ${groupEnabled ? 'border-green-500/40 bg-green-500/5' : 'border-white/10 bg-white/3'}`}>
-                    <div className="flex items-center justify-between">
-                      <span className={`text-xs font-semibold ${groupEnabled ? 'text-green-400' : 'text-white/30'}`}>👥 Group</span>
-                      <button
-                        type="button"
-                        onClick={() => setGroupEnabled(v => !v)}
-                        className={`w-8 h-4.5 rounded-full transition-colors relative ${groupEnabled ? 'bg-green-500' : 'bg-white/15'}`}
-                        style={{ height: '18px', width: '32px' }}
-                      >
-                        <span className={`absolute top-0.5 w-3.5 h-3.5 rounded-full bg-white transition-all ${groupEnabled ? 'left-[14px]' : 'left-0.5'}`} />
-                      </button>
-                    </div>
-                    <div>
-                      <label className={labelClass}>Price/person (€)</label>
-                      <input type="number" min="0" step="0.01" value={form.price_group} onChange={e => setForm(f => ({ ...f, price_group: e.target.value }))} disabled={!groupEnabled} className={`${inputClass} disabled:opacity-30`} placeholder="optional" />
-                    </div>
-                    <div>
-                      <label className={labelClass}>Min group size</label>
-                      <input type="number" min="2" max="20" value={form.group_min_size} onChange={e => setForm(f => ({ ...f, group_min_size: e.target.value }))} disabled={!groupEnabled} className={`${inputClass} disabled:opacity-30`} />
-                    </div>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsFree(v => !v)}
+                    style={{ width: '48px', height: '26px', borderRadius: '13px', border: 'none', background: isFree ? '#F5A623' : 'rgba(255,255,255,0.1)', cursor: 'pointer', position: 'relative', transition: 'background 0.2s', flexShrink: 0 }}
+                  >
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#fff', position: 'absolute', top: '3px', left: isFree ? '25px' : '3px', transition: 'left 0.2s' }} />
+                  </button>
                 </div>
 
-                {/* Live pricing preview */}
-                {(stdNum > 0 || ebNum || grpNum) && (
-                  <div className="rounded-xl bg-white/5 border border-white/10 p-3 text-xs text-white/60 flex flex-col gap-1">
-                    <span className="text-white/30 font-semibold uppercase tracking-wider text-[10px]">Preview</span>
-                    <div className="flex gap-4 flex-wrap">
-                      {ebNum !== null && <span>🔥 Early Bird: <strong className="text-amber-400">€{ebNum.toFixed(2)}</strong> <span className="text-white/30">/ €{(ebNum * 0.85).toFixed(2)} members</span></span>}
-                      {stdNum > 0 && <span>💰 Standard: <strong className="text-white/80">€{stdNum.toFixed(2)}</strong> <span className="text-white/30">/ €{(stdNum * 0.85).toFixed(2)} members</span></span>}
-                      {grpNum !== null && <span>👥 Group: <strong className="text-green-400">€{grpNum!.toFixed(2)}/pp</strong> <span className="text-white/30">min {form.group_min_size}</span></span>}
+                {!isFree && (
+                  <>
+                    <div className="grid grid-cols-3 gap-3">
+                      {/* Early Bird */}
+                      <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 flex flex-col gap-2">
+                        <span className="text-xs font-semibold text-amber-400">🔥 Early Bird</span>
+                        <div>
+                          <label className={labelClass}>Price (€)</label>
+                          <input type="number" min="0" step="0.01" value={form.price_early_bird} onChange={e => setForm(f => ({ ...f, price_early_bird: e.target.value }))} className={inputClass} placeholder="optional" />
+                        </div>
+                        <div>
+                          <label className={labelClass}>Deadline</label>
+                          <input type="datetime-local" value={form.early_bird_deadline} onChange={e => setForm(f => ({ ...f, early_bird_deadline: e.target.value }))} className={inputClass} />
+                        </div>
+                        <div>
+                          <label className={labelClass}>Seats</label>
+                          <input type="number" min="0" value={form.early_bird_seats} onChange={e => setForm(f => ({ ...f, early_bird_seats: e.target.value }))} className={inputClass} />
+                        </div>
+                      </div>
+
+                      {/* Standard */}
+                      <div className="rounded-xl border border-brand-primary/40 bg-brand-primary/5 p-3 flex flex-col gap-2">
+                        <span className="text-xs font-semibold text-brand-primary">💰 Standard</span>
+                        <div>
+                          <label className={labelClass}>Price (€) *</label>
+                          <input type="number" min="0" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} className={inputClass} placeholder="0" />
+                        </div>
+                      </div>
+
+                      {/* Group */}
+                      <div className={`rounded-xl border p-3 flex flex-col gap-2 transition-colors ${groupEnabled ? 'border-green-500/40 bg-green-500/5' : 'border-white/10 bg-white/3'}`}>
+                        <div className="flex items-center justify-between">
+                          <span className={`text-xs font-semibold ${groupEnabled ? 'text-green-400' : 'text-white/30'}`}>👥 Group</span>
+                          <button
+                            type="button"
+                            onClick={() => setGroupEnabled(v => !v)}
+                            className={`w-8 h-4.5 rounded-full transition-colors relative ${groupEnabled ? 'bg-green-500' : 'bg-white/15'}`}
+                            style={{ height: '18px', width: '32px' }}
+                          >
+                            <span className={`absolute top-0.5 w-3.5 h-3.5 rounded-full bg-white transition-all ${groupEnabled ? 'left-[14px]' : 'left-0.5'}`} />
+                          </button>
+                        </div>
+                        <div>
+                          <label className={labelClass}>Price/person (€)</label>
+                          <input type="number" min="0" step="0.01" value={form.price_group} onChange={e => setForm(f => ({ ...f, price_group: e.target.value }))} disabled={!groupEnabled} className={`${inputClass} disabled:opacity-30`} placeholder="optional" />
+                        </div>
+                        <div>
+                          <label className={labelClass}>Min group size</label>
+                          <input type="number" min="2" max="20" value={form.group_min_size} onChange={e => setForm(f => ({ ...f, group_min_size: e.target.value }))} disabled={!groupEnabled} className={`${inputClass} disabled:opacity-30`} />
+                        </div>
+                      </div>
                     </div>
-                  </div>
+
+                    {/* Live pricing preview */}
+                    {(stdNum > 0 || ebNum || grpNum) && (
+                      <div className="rounded-xl bg-white/5 border border-white/10 p-3 text-xs text-white/60 flex flex-col gap-1">
+                        <span className="text-white/30 font-semibold uppercase tracking-wider text-[10px]">Preview</span>
+                        <div className="flex gap-4 flex-wrap">
+                          {ebNum !== null && <span>🔥 Early Bird: <strong className="text-amber-400">€{ebNum.toFixed(2)}</strong> <span className="text-white/30">/ €{(ebNum * 0.85).toFixed(2)} members</span></span>}
+                          {stdNum > 0 && <span>💰 Standard: <strong className="text-white/80">€{stdNum.toFixed(2)}</strong> <span className="text-white/30">/ €{(stdNum * 0.85).toFixed(2)} members</span></span>}
+                          {grpNum !== null && <span>👥 Group: <strong className="text-green-400">€{grpNum!.toFixed(2)}/pp</strong> <span className="text-white/30">min {form.group_min_size}</span></span>}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </Section>
 

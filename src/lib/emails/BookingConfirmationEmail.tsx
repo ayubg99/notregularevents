@@ -1,16 +1,17 @@
 interface Props {
-  name:        string
-  bookingRef:  string
-  title:       string
-  type:        'event' | 'trip'
-  date?:       string
-  location?:   string
+  name:         string
+  bookingRef:   string
+  title:        string
+  type:         'event' | 'trip'
+  date?:        string
+  location?:    string
   whatsappUrl?: string
-  baseUrl:     string
+  baseUrl:      string
+  isFree?:      boolean
 }
 
 export function BookingConfirmationEmail({
-  name, bookingRef, title, type, date, location, whatsappUrl, baseUrl,
+  name, bookingRef, title, type, date, location, whatsappUrl, baseUrl, isFree,
 }: Props): string {
   const formattedDate = date
     ? new Date(date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
@@ -43,9 +44,10 @@ export function BookingConfirmationEmail({
         <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
           Hey ${name} 👋
         </p>
-        <p style="margin:0 0 32px;font-size:15px;color:#B8A090;line-height:1.6;">
-          Your ${type === 'trip' ? 'trip' : 'event'} booking is confirmed. See you there!
+        <p style="margin:0 0 ${isFree ? '16' : '32'}px;font-size:15px;color:#B8A090;line-height:1.6;">
+          ${isFree ? "You're registered! See you there 🎉" : `Your ${type === 'trip' ? 'trip' : 'event'} booking is confirmed. See you there!`}
         </p>
+        ${isFree ? '<p style="margin:0 0 32px;font-size:20px;font-weight:700;color:#2ECC71;">FREE EVENT ✓</p>' : ''}
 
         <!-- Booking ref card -->
         <table width="100%" cellpadding="0" cellspacing="0"

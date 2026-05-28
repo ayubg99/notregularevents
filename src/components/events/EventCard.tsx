@@ -67,7 +67,7 @@ export default function EventCard({ event, className }: Props) {
     !!event.early_bird_deadline &&
     new Date(event.early_bird_deadline) > now
   const displayPrice   = earlyBirdActive ? event.price_early_bird! : event.price
-  const isFree         = displayPrice === 0
+  const isFree         = event.is_free || displayPrice === 0
 
   const formattedDate  = new Date(event.date).toLocaleDateString('en-GB', {
     weekday: 'short', day: 'numeric', month: 'short',
@@ -102,7 +102,11 @@ export default function EventCard({ event, className }: Props) {
         </span>
 
         {/* Price / Early Bird badge */}
-        {earlyBirdActive ? (
+        {isFree ? (
+          <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: 'rgba(46,204,113,0.2)', color: '#2ECC71', border: '1px solid rgba(46,204,113,0.4)' }}>
+            🎉 FREE
+          </span>
+        ) : earlyBirdActive ? (
           <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: '#F5A623', color: '#1A1A2E' }}>
             🔥 Early Bird {formattedPrice}
           </span>
@@ -173,7 +177,7 @@ export default function EventCard({ event, className }: Props) {
                 : 'btn-primary',
             )}
           >
-            {isSoldOut ? 'Sold Out' : isFree ? 'RSVP Free' : 'Book Now'}
+            {isSoldOut ? 'Sold Out' : isFree ? 'Register Free' : 'Book Now'}
           </Link>
         </div>
       </div>

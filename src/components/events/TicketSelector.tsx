@@ -10,6 +10,7 @@ interface Props {
   sold:                 number
   slug:                 string
   title:                string
+  isFree?:              boolean
   priceEarlyBird?:      number | null
   priceGroup?:          number | null
   earlyBirdDeadline?:   string | null
@@ -18,7 +19,7 @@ interface Props {
 }
 
 export default function TicketSelector({
-  eventId, price, capacity, sold, slug, title,
+  eventId, price, capacity, sold, slug, title, isFree: isFreeprop,
   priceEarlyBird, priceGroup, earlyBirdDeadline, earlyBirdSeats, earlyBirdSeatsSold,
 }: Props) {
   const [modalOpen, setModalOpen] = useState(false)
@@ -27,7 +28,7 @@ export default function TicketSelector({
 
   const spotsLeft = capacity - sold
   const isSoldOut = spotsLeft <= 0
-  const isFree    = price === 0
+  const isFree    = isFreeprop ?? price === 0
 
   const isEarlyBirdValid =
     !!priceEarlyBird &&
@@ -86,6 +87,7 @@ export default function TicketSelector({
         sold={sold}
         slug={slug}
         title={title}
+        isFree={isFree}
         priceEarlyBird={priceEarlyBird}
         priceGroup={priceGroup}
         earlyBirdDeadline={earlyBirdDeadline}

@@ -14,6 +14,7 @@ type EventProps = {
   sold:                  number
   slug:                  string
   title:                 string
+  isFree?:               boolean
   priceEarlyBird?:       number | null
   priceGroup?:           number | null
   earlyBirdDeadline?:    string | null
@@ -120,6 +121,8 @@ export default function BookingModal(props: Props) {
   const [promoLoading, setPromoLoading] = useState(false)
   const [promoError,   setPromoError]   = useState('')
   const [error,        setError]        = useState('')
+  const [showSuccess,  setShowSuccess]  = useState(false)
+  const [bookingRef,   setBookingRef]   = useState('')
 
   useEffect(() => {
     if (!open) return
@@ -142,10 +145,17 @@ export default function BookingModal(props: Props) {
 
   useEffect(() => {
     if (!open) return
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose() }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [open, onClose])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
+
+  function handleClose() {
+    setShowSuccess(false)
+    setBookingRef('')
+    onClose()
+  }
 
   // ── Early return after all hooks ─────────────────────────────
   if (!open) return null
@@ -178,6 +188,7 @@ export default function BookingModal(props: Props) {
 
   const hasDiscount = isMember && !promoCode && basePrice > 0
   const isFree      = displayPrice === 0
+  const isFreePath  = props.type === 'event' && !!(props.isFree || props.price === 0)
 
   const isGroupTier = (props.type === 'trip' && selectedTier === 'group')
     || (props.type === 'event' && eventTier === 'group')
@@ -200,6 +211,32 @@ export default function BookingModal(props: Props) {
     standard: props.trip.price_standard,
     ...(props.trip.price_group != null ? { group: props.trip.price_group } : {}),
   } : {}
+
+  function handleRegisterFree() {
+    if (!name.trim())  { setError('Please enter your name.');  return }
+    if (!email.trim()) { setError('Please enter your email.'); return }
+    setError('')
+    startTransition(async () => {
+      try {
+        const res  = await fetch('/api/events/register-free', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            eventId:    (props as EventProps).eventId,
+            guestName:  name.trim(),
+            guestEmail: email.trim(),
+            guestPhone: phone.trim() || undefined,
+            quantity,
+          }),
+        })
+        const data = await res.json()
+        if (data.bookingRef) { setBookingRef(data.bookingRef); setShowSuccess(true) }
+        else setError(data.error ?? 'Registration failed.')
+      } catch {
+        setError('Network error. Please try again.')
+      }
+    })
+  }
 
   async function applyPromo() {
     if (!promoInput.trim()) return
@@ -265,7 +302,7 @@ export default function BookingModal(props: Props) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
-      onClick={e => { if (e.target === e.currentTarget) onClose() }}
+      onClick={e => { if (e.target === e.currentTarget) handleClose() }}
     >
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
       <div className="relative w-full sm:max-w-md bg-[#1A1209] border border-white/10 rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[92dvh] overflow-y-auto">
@@ -277,12 +314,27 @@ export default function BookingModal(props: Props) {
             </p>
             <h2 className="font-heading text-lg font-bold text-white leading-tight line-clamp-1">{title}</h2>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl border border-white/10 text-white/50 hover:text-white transition-colors">
+          <button onClick={handleClose} className="p-2 rounded-xl border border-white/10 text-white/50 hover:text-white transition-colors">
             <X size={16} />
           </button>
         </div>
 
         <div className="px-6 pb-8 pt-5 flex flex-col gap-5">
+          {showSuccess ? (
+            <div style={{ textAlign: 'center', padding: '32px' }}>
+              <p style={{ fontSize: '48px', margin: '0 0 16px' }}>🎉</p>
+              <h2 style={{ color: '#2ECC71', margin: '0 0 8px' }}>You&apos;re registered!</h2>
+              <p style={{ color: '#888', margin: '0 0 16px' }}>Check your email for your QR ticket</p>
+              <p style={{ color: '#F5A623', fontFamily: 'monospace', fontSize: '18px', fontWeight: 700 }}>{bookingRef}</p>
+              <button
+                onClick={handleClose}
+                style={{ marginTop: '24px', padding: '12px 32px', background: '#F5A623', color: '#1A1A2E', border: 'none', borderRadius: '50px', fontWeight: 700, cursor: 'pointer' }}
+              >
+                Done ✓
+              </button>
+            </div>
+          ) : (
+          <>
           <MembershipBanner authLoaded={authLoaded} isLoggedIn={isLoggedIn} isMember={isMember} />
 
           {/* Tier selector (trips) */}
@@ -330,7 +382,7 @@ export default function BookingModal(props: Props) {
           )}
 
           {/* Tier selector (events with tiered pricing) */}
-          {props.type === 'event' && hasEventTiers && (
+          {props.type === 'event' && hasEventTiers && !isFreePath && (
             <div className="flex flex-col gap-2">
               <p className="text-white/50 text-xs uppercase tracking-widest">Select tier</p>
               {isEventEarlyBirdValid && (
@@ -387,7 +439,7 @@ export default function BookingModal(props: Props) {
           )}
 
           {/* Quantity stepper for events */}
-          {props.type === 'event' && !isFree && (
+          {props.type === 'event' && (isFreePath || !isFree) && (
             <div className="flex items-center justify-between">
               <span className="text-white/60 text-sm">
                 {isGroupTier ? 'Group size' : 'Quantity'}
@@ -475,21 +527,23 @@ export default function BookingModal(props: Props) {
 
           {error && <p className="text-red-400 text-sm">{error}</p>}
 
-          <button onClick={handleBook} disabled={isPending}
+          <button onClick={isFreePath ? handleRegisterFree : handleBook} disabled={isPending}
             className="w-full py-4 rounded-full btn-primary font-bold text-sm shadow-brand-sm hover:brightness-105 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
           >
             {isPending ? (
               <><Loader2 size={15} className="animate-spin" /> Processing…</>
-            ) : isFree ? (
-              "RSVP — It's Free!"
+            ) : isFreePath ? (
+              'Register for Free →'
             ) : (
               'Proceed to Payment →'
             )}
           </button>
 
           <p className="text-center text-white/25 text-xs -mt-2">
-            {isFree ? 'Instant confirmation, no payment needed' : 'Secure checkout via Stripe'}
+            {isFreePath ? 'Instant confirmation, no payment needed' : 'Secure checkout via Stripe'}
           </p>
+          </>
+          )}
         </div>
       </div>
     </div>
