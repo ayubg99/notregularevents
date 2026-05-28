@@ -26,9 +26,10 @@ const GENDER_PREFS = [
 
 interface Props {
   initialListings: HousingListingRow[]
+  isLoggedIn:      boolean
 }
 
-export default function HousingBoard({ initialListings }: Props) {
+export default function HousingBoard({ initialListings, isLoggedIn }: Props) {
   const [activeTab,    setActiveTab]    = useState<HousingType>('room_available')
   const [neighborhood, setNeighborhood] = useState('')
   const [maxPrice,     setMaxPrice]     = useState(1000)
@@ -103,7 +104,7 @@ export default function HousingBoard({ initialListings }: Props) {
         {/* Post buttons */}
         <div style={{ display: 'flex', gap: '8px' }}>
           <a
-            href="/housing/post?type=room_available"
+            href={isLoggedIn ? '/housing/post?type=room_available' : '/auth/login?redirect=/housing/post?type=room_available'}
             style={{
               padding: '10px 16px',
               borderRadius: '50px',
@@ -118,7 +119,7 @@ export default function HousingBoard({ initialListings }: Props) {
             + Post a Room
           </a>
           <a
-            href="/housing/post?type=looking_for_room"
+            href={isLoggedIn ? '/housing/post?type=looking_for_room' : '/auth/login?redirect=/housing/post?type=looking_for_room'}
             style={{
               padding: '10px 16px',
               borderRadius: '50px',

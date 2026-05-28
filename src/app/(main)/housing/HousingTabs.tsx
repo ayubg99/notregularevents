@@ -29,9 +29,10 @@ interface Props {
   partnerRooms:    PartnerRoomRow[]
   initialListings: HousingListingRow[]
   hasMembership:   boolean
+  isLoggedIn:      boolean
 }
 
-export default function HousingTabs({ partnerRooms, initialListings, hasMembership }: Props) {
+export default function HousingTabs({ partnerRooms, initialListings, hasMembership, isLoggedIn }: Props) {
   const [activeTab,  setActiveTab]  = useState<TabId>('partner')
   const [hood,       setHood]       = useState('')
   const [maxPrice,   setMaxPrice]   = useState(2000)
@@ -148,13 +149,13 @@ export default function HousingTabs({ partnerRooms, initialListings, hasMembersh
             </div>
           )}
 
-          <HousingBoard initialListings={initialListings} />
+          <HousingBoard initialListings={initialListings} isLoggedIn={isLoggedIn} />
         </div>
       )}
 
       {/* ── Floating FAB (mobile) ─────────────────────────────── */}
       <Link
-        href="/housing/post?type=room_available"
+        href={isLoggedIn ? '/housing/post?type=room_available' : '/auth/login?redirect=/housing/post?type=room_available'}
         className="md:hidden fixed bottom-6 right-5 z-50 btn-primary px-5 py-3 rounded-full font-semibold text-sm shadow-xl shadow-brand-primary/30"
       >
         + Post

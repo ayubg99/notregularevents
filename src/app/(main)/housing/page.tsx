@@ -60,6 +60,7 @@ export default async function HousingPage() {
           partnerRooms={partnerRooms ?? []}
           initialListings={initialListings ?? []}
           hasMembership={hasMembership}
+          isLoggedIn={!!user}
         />
       </div>
     </main>

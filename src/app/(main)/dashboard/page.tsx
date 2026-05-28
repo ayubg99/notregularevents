@@ -11,7 +11,7 @@ export const metadata = {
 }
 import ProfileForm from './ProfileForm'
 import BookingTabs from './BookingTabs'
-import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow } from '@/types/database'
+import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow, HousingListingRow } from '@/types/database'
 
 type EventTicketWithEvent = EventTicketRow & {
   events: { id: string; title: string; date: string; location: string | null; slug: string } | null
@@ -80,12 +80,14 @@ export default async function DashboardPage() {
     { data: membership },
     { data: eventTicketsRaw },
     { data: tripBookingsRaw },
+    { data: myListingsRaw },
   ] = await Promise.all([
     supabase.from('users').select('full_name, avatar_url, role').eq('id', user.id).single(),
     supabase.from('profiles').select('*').eq('user_id', user.id).single(),
     supabase.from('memberships').select('*').eq('user_id', user.id).eq('status', 'active').maybeSingle(),
     supabase.from('event_tickets').select('*, events(id, title, date, location, slug)').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('trip_bookings').select('*, trips(id, title, start_date, destination, slug, whatsapp_group_url)').eq('user_id', user.id).order('created_at', { ascending: false }),
+    supabase.from('housing_listings').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
   ])
 
   const displayName = (userRow as Pick<UserRow, 'full_name'> | null)?.full_name ?? user.email?.split('@')[0] ?? 'Student'
@@ -94,6 +96,7 @@ export default async function DashboardPage() {
 
   const eventTickets = (eventTicketsRaw ?? []) as unknown as EventTicketWithEvent[]
   const tripBookings = (tripBookingsRaw ?? []) as unknown as TripBookingWithTrip[]
+  const myListings   = (myListingsRaw ?? []) as HousingListingRow[]
 
   return (
     <main className="min-h-screen bg-brand-dark pt-28 pb-16 px-4">
@@ -124,6 +127,7 @@ export default async function DashboardPage() {
             <BookingTabs
               eventTickets={eventTickets}
               tripBookings={tripBookings}
+              myListings={myListings}
             />
           </div>
 
