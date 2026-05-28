@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Check, Loader2 } from 'lucide-react'
 import type { MembershipPlan } from '@/types/database'
 
@@ -68,17 +69,31 @@ const PLANS: PlanDef[] = [
   },
 ]
 
+const LOGIN_BENEFITS = [
+  '15% off all events and trips',
+  'Priority access to new events',
+  'Exclusive members-only parties',
+  'Private WhatsApp groups',
+  'Housing contact details',
+]
+
 interface Props {
   currentPlan: MembershipPlan | null
+  isLoggedIn:  boolean
 }
 
-export default function PricingCards({ currentPlan }: Props) {
+export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
   const router = useRouter()
-  const [pendingId, setPendingId]   = useState<MembershipPlan | null>(null)
-  const [error,     setError]       = useState('')
+  const [pendingId,      setPendingId]      = useState<MembershipPlan | null>(null)
+  const [error,          setError]          = useState('')
+  const [showLoginModal, setShowLoginModal] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   function handleSubscribe(planId: MembershipPlan) {
+    if (!isLoggedIn) {
+      setShowLoginModal(true)
+      return
+    }
     setError('')
     setPendingId(planId)
     startTransition(async () => {
@@ -212,6 +227,122 @@ export default function PricingCards({ currentPlan }: Props) {
 
       {error && (
         <p className="text-red-400 text-sm text-center">{error}</p>
+      )}
+
+      {showLoginModal && (
+        <div
+          onClick={() => setShowLoginModal(false)}
+          style={{
+            position:       'fixed',
+            inset:          0,
+            background:     'rgba(0,0,0,0.8)',
+            display:        'flex',
+            alignItems:     'center',
+            justifyContent: 'center',
+            zIndex:         1000,
+            padding:        '20px',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              position:     'relative',
+              background:   '#1A1A2E',
+              border:       '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '20px',
+              padding:      '40px 32px',
+              maxWidth:     '400px',
+              width:        '100%',
+              textAlign:    'center',
+            }}
+          >
+            <button
+              onClick={() => setShowLoginModal(false)}
+              style={{
+                position:   'absolute',
+                top:        '16px',
+                right:      '16px',
+                background: 'transparent',
+                border:     'none',
+                color:      '#888',
+                fontSize:   '24px',
+                cursor:     'pointer',
+                lineHeight: 1,
+              }}
+            >
+              ×
+            </button>
+
+            <p style={{ fontSize: '48px', margin: '0 0 16px' }}>👑</p>
+
+            <h2 style={{ color: '#F5A623', fontSize: '22px', margin: '0 0 8px' }}>
+              Join Erasmus Vibe
+            </h2>
+
+            <p style={{ color: '#888', fontSize: '14px', margin: '0 0 24px', lineHeight: 1.5 }}>
+              Create a free account or login to get your membership and unlock exclusive benefits
+            </p>
+
+            <Link
+              href="/auth/register?redirect=/membership"
+              style={{
+                display:        'block',
+                background:     '#F5A623',
+                color:          '#1A1A2E',
+                padding:        '14px',
+                borderRadius:   '50px',
+                textDecoration: 'none',
+                fontWeight:     700,
+                fontSize:       '15px',
+                marginBottom:   '10px',
+              }}
+            >
+              Create Free Account →
+            </Link>
+
+            <Link
+              href="/auth/login?redirect=/membership"
+              style={{
+                display:        'block',
+                background:     'transparent',
+                color:          '#fff',
+                padding:        '14px',
+                borderRadius:   '50px',
+                textDecoration: 'none',
+                fontWeight:     600,
+                fontSize:       '15px',
+                border:         '1px solid rgba(255,255,255,0.1)',
+              }}
+            >
+              Login to existing account
+            </Link>
+
+            <div style={{
+              marginTop:  '24px',
+              padding:    '16px',
+              background: 'rgba(245,166,35,0.05)',
+              borderRadius: '12px',
+              textAlign:  'left',
+            }}>
+              <p style={{ color: '#F5A623', fontSize: '12px', fontWeight: 600, margin: '0 0 8px' }}>
+                MEMBERSHIP BENEFITS
+              </p>
+              {LOGIN_BENEFITS.map(benefit => (
+                <p key={benefit} style={{
+                  color:       '#888',
+                  fontSize:    '13px',
+                  margin:      '4px 0',
+                  display:     'flex',
+                  alignItems:  'center',
+                  gap:         '6px',
+                }}>
+                  <span style={{ color: '#F5A623' }}>✓</span>
+                  {benefit}
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

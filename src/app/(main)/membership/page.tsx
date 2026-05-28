@@ -143,7 +143,7 @@ export default async function MembershipPage() {
           </div>
         )}
 
-        <PricingCards currentPlan={currentPlan} />
+        <PricingCards currentPlan={currentPlan} isLoggedIn={!!user} />
       </section>
 
       {/* ── Trust strip ───────────────────────────────────────────── */}
