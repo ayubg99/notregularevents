@@ -105,6 +105,7 @@ export default function BookingModal(props: Props) {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isMember,   setIsMember]   = useState(false)
   const [quantity,   setQuantity]   = useState(1)
+  const [attendees,  setAttendees]  = useState<{ name: string; email: string }[]>([{ name: '', email: '' }])
 
   const [selectedTier, setSelectedTier] = useState<TripTier>(
     props.type === 'trip' ? (props.initialTier ?? 'standard') : 'standard',
@@ -131,8 +132,15 @@ export default function BookingModal(props: Props) {
       if (!user) { setAuthLoaded(true); return }
       setIsLoggedIn(true)
       setAuthEmail(user.email ?? null)
-      if (user.email && !email) setEmail(user.email)
-      if (user.user_metadata?.full_name && !name) setName(user.user_metadata.full_name)
+      const userEmail = user.email ?? ''
+      const userName  = user.user_metadata?.full_name ?? ''
+      if (userEmail && !email) setEmail(userEmail)
+      if (userName  && !name)  setName(userName)
+      setAttendees(prev => {
+        const copy = [...prev]
+        copy[0] = { name: copy[0]?.name || userName, email: copy[0]?.email || userEmail }
+        return copy
+      })
       const [{ data: mem }, { data: profile }] = await Promise.all([
         supabase.from('memberships').select('status').eq('user_id', user.id).eq('status', 'active').maybeSingle(),
         supabase.from('profiles').select('membership_status').eq('user_id', user.id).maybeSingle(),
@@ -150,6 +158,7 @@ export default function BookingModal(props: Props) {
     return () => window.removeEventListener('keydown', handler)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
+
 
   function handleClose() {
     setShowSuccess(false)
@@ -261,8 +270,18 @@ export default function BookingModal(props: Props) {
   }
 
   function handleBook() {
-    if (!name.trim())  { setError('Please enter your name.');  return }
-    if (!email.trim()) { setError('Please enter your email.'); return }
+    const isMultiTicket   = props.type === 'event' && !isFreePath && quantity > 1
+    const ticketAttendees = isMultiTicket
+      ? Array.from({ length: quantity }, (_, i) => attendees[i] ?? { name: '', email: '' })
+      : []
+
+    if (isMultiTicket) {
+      if (!ticketAttendees.every(a => a.name.trim())) { setError('Please enter a name for each ticket.'); return }
+      if (!ticketAttendees[0].email.trim())           { setError('Please enter your email for ticket 1.'); return }
+    } else {
+      if (!name.trim())  { setError('Please enter your name.');  return }
+      if (!email.trim()) { setError('Please enter your email.'); return }
+    }
     setError('')
 
     startTransition(async () => {
@@ -271,12 +290,16 @@ export default function BookingModal(props: Props) {
           ? selectedTier
           : hasEventTiers ? eventTier : undefined
 
+        const leadName  = isMultiTicket ? ticketAttendees[0].name.trim()  : name.trim()
+        const leadEmail = isMultiTicket ? ticketAttendees[0].email.trim() : email.trim()
+
         const body: Record<string, unknown> = {
           type:       props.type,
           itemId:     props.type === 'event' ? props.eventId : props.trip.id,
-          guestName:  name.trim(),
-          guestEmail: email.trim(),
+          guestName:  leadName,
+          guestEmail: leadEmail,
           guestPhone: phone.trim() || undefined,
+          ...(isMultiTicket ? { attendees: ticketAttendees.map(a => ({ name: a.name.trim(), email: a.email.trim() })) } : {}),
           ...(tier      ? { tier }      : {}),
           ...(promoCode ? { promoCode } : {}),
         }
@@ -501,15 +524,56 @@ export default function BookingModal(props: Props) {
           )}
 
           {/* Guest details */}
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2 text-white/40 text-xs uppercase tracking-widest">
-              <User size={12} />
-              Your details
+          {props.type === 'event' && !isFreePath && quantity > 1 ? (
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-2 text-white/40 text-xs uppercase tracking-widest">
+                <User size={12} />
+                Ticket details
+              </div>
+              {Array.from({ length: quantity }, (_, i) => attendees[i] ?? { name: '', email: '' }).map((attendee, i) => (
+                <div key={i} className="rounded-xl border border-white/8 bg-white/3 p-4 flex flex-col gap-2.5">
+                  <p className="text-brand-primary text-xs font-bold uppercase tracking-wide">
+                    Ticket {i + 1}{i === 0 ? ' (You)' : ''}
+                  </p>
+                  <input
+                    type="text"
+                    placeholder="Full name *"
+                    value={attendee.name}
+                    onChange={e => {
+                      const updated = [...attendees]
+                      while (updated.length <= i) updated.push({ name: '', email: '' })
+                      updated[i] = { ...updated[i], name: e.target.value }
+                      setAttendees(updated)
+                    }}
+                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors"
+                  />
+                  <input
+                    type="email"
+                    placeholder={i === 0 ? 'Your email * (confirmation sent here)' : 'Their email (optional)'}
+                    value={attendee.email}
+                    disabled={i === 0 && !!authEmail}
+                    onChange={e => {
+                      const updated = [...attendees]
+                      while (updated.length <= i) updated.push({ name: '', email: '' })
+                      updated[i] = { ...updated[i], email: e.target.value }
+                      setAttendees(updated)
+                    }}
+                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                </div>
+              ))}
             </div>
-            <input type="text"  value={name}  onChange={e => setName(e.target.value)}  placeholder="Full name *"      className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors" />
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address *"  disabled={!!authEmail} className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" />
-            <input type="tel"   value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone (optional)" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors" />
-          </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-2 text-white/40 text-xs uppercase tracking-widest">
+                <User size={12} />
+                Your details
+              </div>
+              <input type="text"  value={name}  onChange={e => setName(e.target.value)}  placeholder="Full name *"      className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors" />
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address *"  disabled={!!authEmail} className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" />
+              <input type="tel"   value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone (optional)" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors" />
+            </div>
+          )}
 
           {/* Price summary */}
           {!isFree && (

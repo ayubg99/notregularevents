@@ -4,7 +4,7 @@ import type Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
 import { generateQR } from '@/lib/qr'
 import { nanoid } from 'nanoid'
-import { sendBookingConfirmation, sendMembershipWelcomeEmail, sendBookingPendingEmail, sendPartnerConfirmationRequest } from '@/lib/email'
+import { sendBookingConfirmation, sendGroupBookingConfirmation, sendMembershipWelcomeEmail, sendBookingPendingEmail, sendPartnerConfirmationRequest } from '@/lib/email'
 import type { Database, MembershipPlan, MembershipStatus, TripTier } from '@/types/database'
 
 export const runtime = 'nodejs'
@@ -64,58 +64,138 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   // ── Event ────────────────────────────────────────────────────
   if (type === 'event') {
-    const bookingRef = nanoid(8).toUpperCase()
-    const qrCode     = await generateQR(bookingRef)
+    const rawAttendees = meta.attendees
+      ? (JSON.parse(meta.attendees) as { name: string; email: string }[])
+      : []
 
-    const { error } = await admin.rpc('create_event_ticket', {
-      p_event_id:          itemId!,
-      p_booking_ref:       bookingRef,
-      p_qr_code:           qrCode,
-      p_stripe_payment_id: session.id,
-      p_quantity:          Number(meta.quantity ?? 1),
-      p_user_id:           userId || undefined,
-      p_guest_name:        guestName  || undefined,
-      p_guest_email:       guestEmail || undefined,
-      p_guest_phone:       guestPhone || undefined,
-    })
+    if (rawAttendees.length > 1) {
+      // Multi-ticket: one row + QR per named attendee
+      const amountPerTicket = amountPaid / rawAttendees.length
+      const allTickets: { name: string; bookingRef: string; qrCode: string }[] = []
+      let firstBookingRef = ''
 
-    if (error) {
-      console.error('[webhook event ticket]', error.message)
-      return
-    }
+      for (let i = 0; i < rawAttendees.length; i++) {
+        const attendee  = rawAttendees[i]
+        const bookingRef = nanoid(8).toUpperCase()
+        const qrCode     = await generateQR(bookingRef)
+        const recipientEmail = attendee.email?.trim() || guestEmail || null
 
-    await admin.from('event_tickets').update({ amount_paid: amountPaid }).eq('booking_ref', bookingRef)
+        const { error: insertErr } = await admin.from('event_tickets').insert({
+          event_id:          itemId!,
+          user_id:           i === 0 ? userId : null,
+          booking_ref:       bookingRef,
+          qr_code:           qrCode,
+          stripe_payment_id: session.id,
+          guest_name:        attendee.name  || null,
+          guest_email:       recipientEmail,
+          guest_phone:       i === 0 ? guestPhone : null,
+          status:            'active' as const,
+          amount_paid:       amountPerTicket,
+        })
+        if (insertErr) console.error(`[webhook event ticket #${i + 1}]`, insertErr.message)
 
-    // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
-    const { error: seatError } = await admin.rpc('increment_tickets_sold', {
-      p_event_id: itemId!,
-      p_quantity:  Number(meta.quantity ?? 1),
-    })
-    if (seatError) console.error('❌ Seat update failed:', seatError)
-    else           console.log('✅ Seats updated:', itemId, Number(meta.quantity ?? 1))
+        if (!firstBookingRef) firstBookingRef = bookingRef
+        allTickets.push({ name: attendee.name, bookingRef, qrCode })
 
-    if (userId) {
-      await admin.from('notifications').insert({
-        user_id: userId,
-        type:    'booking_confirmed',
-        message: `Your ticket is confirmed. Ref: ${bookingRef}`,
-        read:    false,
+        // Individual email only for secondary attendees with their own address
+        if (i > 0 && recipientEmail && recipientEmail !== guestEmail) {
+          await sendBookingConfirmation({
+            to:       recipientEmail,
+            name:     attendee.name,
+            bookingRef,
+            qrCode,
+            title:    meta.event_title ?? 'your event',
+            type:     'event',
+            date:     meta.event_date  || undefined,
+            location: meta.location    || undefined,
+          })
+        }
+      }
+
+      // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
+      const { error: seatError } = await admin.rpc('increment_tickets_sold', {
+        p_event_id: itemId!,
+        p_quantity:  rawAttendees.length,
       })
-    }
+      if (seatError) console.error('❌ Seat update failed:', seatError)
+      else           console.log('✅ Seats updated:', itemId, rawAttendees.length)
 
-    const toEmail = guestEmail ?? (userId ? await getUserEmail(admin, userId) : null)
-    const toName  = guestName ?? 'there'
-    if (toEmail) {
-      await sendBookingConfirmation({
-        to:       toEmail,
-        name:     toName,
-        bookingRef,
-        qrCode,
-        title:    meta.event_title ?? 'your event',
-        type:     'event',
-        date:     meta.event_date  || undefined,
-        location: meta.location    || undefined,
+      if (userId) {
+        await admin.from('notifications').insert({
+          user_id: userId,
+          type:    'booking_confirmed',
+          message: `Your ${rawAttendees.length} tickets are confirmed. Ref: ${firstBookingRef}`,
+          read:    false,
+        })
+      }
+
+      // Group summary to lead booker with all QR codes
+      const toEmail = guestEmail ?? (userId ? await getUserEmail(admin, userId) : null)
+      if (toEmail) {
+        await sendGroupBookingConfirmation({
+          to:            toEmail,
+          leadName:      guestName ?? 'there',
+          eventTitle:    meta.event_title ?? 'your event',
+          eventDate:     meta.event_date  || undefined,
+          eventLocation: meta.location    || undefined,
+          tickets:       allTickets,
+        })
+      }
+    } else {
+      // Single-ticket path (backward compat) — unchanged
+      const bookingRef = nanoid(8).toUpperCase()
+      const qrCode     = await generateQR(bookingRef)
+
+      const { error } = await admin.rpc('create_event_ticket', {
+        p_event_id:          itemId!,
+        p_booking_ref:       bookingRef,
+        p_qr_code:           qrCode,
+        p_stripe_payment_id: session.id,
+        p_quantity:          Number(meta.quantity ?? 1),
+        p_user_id:           userId || undefined,
+        p_guest_name:        guestName  || undefined,
+        p_guest_email:       guestEmail || undefined,
+        p_guest_phone:       guestPhone || undefined,
       })
+
+      if (error) {
+        console.error('[webhook event ticket]', error.message)
+        return
+      }
+
+      await admin.from('event_tickets').update({ amount_paid: amountPaid }).eq('booking_ref', bookingRef)
+
+      // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
+      const { error: seatError } = await admin.rpc('increment_tickets_sold', {
+        p_event_id: itemId!,
+        p_quantity:  Number(meta.quantity ?? 1),
+      })
+      if (seatError) console.error('❌ Seat update failed:', seatError)
+      else           console.log('✅ Seats updated:', itemId, Number(meta.quantity ?? 1))
+
+      if (userId) {
+        await admin.from('notifications').insert({
+          user_id: userId,
+          type:    'booking_confirmed',
+          message: `Your ticket is confirmed. Ref: ${bookingRef}`,
+          read:    false,
+        })
+      }
+
+      const toEmail = guestEmail ?? (userId ? await getUserEmail(admin, userId) : null)
+      const toName  = guestName ?? 'there'
+      if (toEmail) {
+        await sendBookingConfirmation({
+          to:       toEmail,
+          name:     toName,
+          bookingRef,
+          qrCode,
+          title:    meta.event_title ?? 'your event',
+          type:     'event',
+          date:     meta.event_date  || undefined,
+          location: meta.location    || undefined,
+        })
+      }
     }
   }
 

@@ -19,6 +19,7 @@ interface Body {
   guestName?:  string
   guestEmail?: string
   guestPhone?: string
+  attendees?:  { name: string; email: string }[]
 }
 
 function applyDiscount(price: number, type: 'percentage' | 'fixed', value: number): number {
@@ -68,7 +69,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
   const { data: { user } } = await supabase.auth.getUser()
 
   const body: Body = await request.json()
-  const { type, itemId, tier, quantity = 1, groupSize, promoCode, guestName, guestEmail, guestPhone } = body
+  const { type, itemId, tier, quantity = 1, groupSize, promoCode, guestName, guestEmail, guestPhone, attendees } = body
 
   console.log('[create-checkout]', { type, itemId, tier, quantity, hasUser: !!user })
 
@@ -238,6 +239,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
         event_title: event.title,
         event_date:  event.date   ?? '',
         location:    event.location ?? '',
+        attendees:   JSON.stringify(attendees ?? []),
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
     })

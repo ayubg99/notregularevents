@@ -437,6 +437,71 @@ export async function sendPartnerNotificationEmail(params: PartnerNotificationEm
   }
 }
 
+interface GroupBookingEmailParams {
+  to:            string
+  leadName:      string
+  eventTitle:    string
+  eventDate?:    string
+  eventLocation?: string
+  tickets:       { name: string; bookingRef: string; qrCode: string }[]
+}
+
+export async function sendGroupBookingConfirmation(params: GroupBookingEmailParams) {
+  const from = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
+
+  const ticketsHtml = params.tickets.map((t, i) => `
+    <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;margin-bottom:12px;text-align:center;">
+      <p style="color:#F5A623;font-weight:700;font-size:14px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;">
+        Ticket ${i + 1}${i === 0 ? ' — You' : ''}: ${t.name}
+      </p>
+      <img src="cid:qr-${i}" width="160" height="160" alt="QR Code" style="border-radius:8px;display:block;margin:0 auto;" />
+      <p style="color:#888;font-size:12px;font-family:monospace;margin:10px 0 0;letter-spacing:2px;">${t.bookingRef}</p>
+    </div>
+  `).join('')
+
+  const dateStr = params.eventDate
+    ? new Date(params.eventDate).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    : ''
+
+  const html = `
+    <div style="font-family:Inter,sans-serif;background:#1A1A2E;color:#fff;padding:40px;max-width:600px;margin:0 auto;border-radius:16px;">
+      <h1 style="color:#F5A623;margin:0 0 24px;">🎟️ Erasmus Vibe</h1>
+      <div style="background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:12px;padding:20px;margin:0 0 24px;text-align:center;">
+        <h2 style="color:#fff;margin:0 0 4px;">${params.eventTitle}</h2>
+        ${dateStr ? `<p style="color:#888;margin:4px 0 0;">${dateStr}</p>` : ''}
+        ${params.eventLocation ? `<p style="color:#888;margin:4px 0 0;">📍 ${params.eventLocation}</p>` : ''}
+      </div>
+      <p style="color:#ccc;">Hi ${params.leadName}! Here are all ${params.tickets.length} ticket${params.tickets.length > 1 ? 's' : ''} for your group. Each person should show their own QR code at the door.</p>
+      <h3 style="color:#F5A623;margin:24px 0 16px;">Your Group Tickets</h3>
+      ${ticketsHtml}
+      <p style="color:#888;font-size:13px;margin-top:24px;text-align:center;">Each QR code is unique and can only be scanned once at the door.</p>
+      <p style="color:#555;font-size:12px;text-align:center;margin-top:16px;">Erasmus Vibe Valencia · @erasmus_vibe</p>
+    </div>
+  `
+
+  const attachments = params.tickets.map((t, i) => {
+    const qrBase64 = t.qrCode.startsWith('data:') ? t.qrCode.split(',')[1] : t.qrCode
+    return {
+      filename:  `ticket-${i + 1}.png`,
+      content:   Buffer.from(qrBase64, 'base64'),
+      contentId: `qr-${i}`,
+    }
+  })
+
+  try {
+    const { error } = await getResend().emails.send({
+      from,
+      to:      params.to,
+      subject: `🎟️ ${params.tickets.length} ticket${params.tickets.length > 1 ? 's' : ''} — ${params.eventTitle}`,
+      html,
+      attachments,
+    })
+    if (error) console.error('[email group-booking] send failed:', error)
+  } catch (err) {
+    console.error('[email group-booking] unexpected error:', err)
+  }
+}
+
 interface MembershipWelcomeParams {
   to:      string
   name:    string
