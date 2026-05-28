@@ -225,7 +225,9 @@ export default function BookingModal(props: Props) {
       && (props.trip.early_bird_seats - props.trip.early_bird_seats_sold) > 0
       ? { early_bird: props.trip.price_early_bird } : {}),
     standard: props.trip.price_standard,
-    ...(props.trip.price_group != null ? { group: props.trip.price_group } : {}),
+    ...(props.trip.price_group != null && props.seatsLeft >= (props.trip.group_min_size ?? 4)
+      ? { group: props.trip.price_group }
+      : {}),
   } : {}
 
   function handleRegisterFree() {

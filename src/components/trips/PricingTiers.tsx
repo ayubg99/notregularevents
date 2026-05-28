@@ -43,6 +43,9 @@ export default function PricingTiers({
   const [promoLoading, setPromoLoading] = useState(false)
   const [promoError, setPromoError]    = useState('')
 
+  const minGroupSize     = trip.group_min_size ?? 4
+  const isGroupAvailable = trip.price_group != null && seatsLeft >= minGroupSize
+
   const soldOut = seatsLeft === 0
   const urgency = isEarlyBirdValid
     ? getUrgency(trip.early_bird_deadline, ebSeatsLeft)
@@ -157,7 +160,7 @@ export default function PricingTiers({
         </button>
 
         {/* ── Group (4+) ── */}
-        {trip.price_group != null && (
+        {isGroupAvailable && (
           <div
             onClick={() => !soldOut && !isPending && setSelected('group')}
             className={`w-full rounded-xl border p-4 transition-all duration-200 ${
@@ -187,7 +190,7 @@ export default function PricingTiers({
                         </button>
                         <span className="font-bold text-white tabular-nums">{groupSize} people</span>
                         <button
-                          onClick={e => { e.stopPropagation(); setGroupSize(s => Math.min(20, s + 1)) }}
+                          onClick={e => { e.stopPropagation(); setGroupSize(s => Math.min(seatsLeft, 20, s + 1)) }}
                           className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:border-brand-primary transition-colors"
                         >
                           <Plus size={13} />
@@ -195,7 +198,7 @@ export default function PricingTiers({
                       </div>
                       <p className="text-white/50 text-xs">
                         {groupSize} × €{trip.price_group} ={' '}
-                        <span className="text-white font-bold">€{(groupSize * trip.price_group).toFixed(0)} total</span>
+                        <span className="text-white font-bold">€{(groupSize * trip.price_group!).toFixed(0)} total</span>
                       </p>
                     </div>
                   )}
