@@ -70,11 +70,11 @@ const PLANS: PlanDef[] = [
 ]
 
 const LOGIN_BENEFITS = [
-  '15% off all events and trips',
-  'Priority access to new events',
-  'Exclusive members-only parties',
-  'Private WhatsApp groups',
-  'Housing contact details',
+  { icon: '🎟️', text: '15% off all events & trips' },
+  { icon: '⚡',  text: 'Priority access to new events' },
+  { icon: '🎉', text: 'Exclusive members-only parties' },
+  { icon: '💬', text: 'Private WhatsApp groups' },
+  { icon: '🏠', text: 'Housing contact details' },
 ]
 
 interface Props {
@@ -233,68 +233,128 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
         <div
           onClick={() => setShowLoginModal(false)}
           style={{
-            position:       'fixed',
-            inset:          0,
-            background:     'rgba(0,0,0,0.8)',
-            display:        'flex',
-            alignItems:     'center',
-            justifyContent: 'center',
-            zIndex:         1000,
-            padding:        '20px',
+            position:        'fixed',
+            inset:           0,
+            background:      'rgba(0,0,0,0.85)',
+            backdropFilter:  'blur(8px)',
+            display:         'flex',
+            alignItems:      'center',
+            justifyContent:  'center',
+            zIndex:          1000,
+            padding:         '20px',
           }}
         >
           <div
             onClick={e => e.stopPropagation()}
             style={{
               position:     'relative',
-              background:   '#1A1A2E',
-              border:       '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '20px',
-              padding:      '40px 32px',
-              maxWidth:     '400px',
+              background:   'linear-gradient(145deg, #1E1A2E, #1A1A2E)',
+              border:       '1px solid rgba(245,166,35,0.2)',
+              borderRadius: '24px',
+              padding:      '48px 40px',
+              maxWidth:     '420px',
               width:        '100%',
               textAlign:    'center',
+              boxShadow:    '0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(245,166,35,0.1)',
             }}
           >
+            {/* Close button */}
             <button
               onClick={() => setShowLoginModal(false)}
               style={{
-                position:   'absolute',
-                top:        '16px',
-                right:      '16px',
-                background: 'transparent',
-                border:     'none',
-                color:      '#888',
-                fontSize:   '24px',
-                cursor:     'pointer',
-                lineHeight: 1,
+                position:       'absolute',
+                top:            '16px',
+                right:          '16px',
+                background:     'rgba(255,255,255,0.05)',
+                border:         '1px solid rgba(255,255,255,0.1)',
+                borderRadius:   '50%',
+                width:          '32px',
+                height:         '32px',
+                color:          '#888',
+                fontSize:       '16px',
+                cursor:         'pointer',
+                display:        'flex',
+                alignItems:     'center',
+                justifyContent: 'center',
               }}
             >
-              ×
+              ✕
             </button>
 
-            <p style={{ fontSize: '48px', margin: '0 0 16px' }}>👑</p>
+            {/* Icon */}
+            <div style={{
+              width:          '64px',
+              height:         '64px',
+              borderRadius:   '50%',
+              background:     'linear-gradient(135deg, #F5A623, #FF6B35)',
+              display:        'flex',
+              alignItems:     'center',
+              justifyContent: 'center',
+              margin:         '0 auto 20px',
+              fontSize:       '28px',
+              boxShadow:      '0 8px 24px rgba(245,166,35,0.3)',
+            }}>
+              👑
+            </div>
 
-            <h2 style={{ color: '#F5A623', fontSize: '22px', margin: '0 0 8px' }}>
-              Join Erasmus Vibe
+            {/* Title */}
+            <h2 style={{
+              color:          '#fff',
+              fontSize:       '24px',
+              fontWeight:     700,
+              margin:         '0 0 8px',
+              letterSpacing:  '-0.5px',
+            }}>
+              Unlock Your Membership
             </h2>
 
-            <p style={{ color: '#888', fontSize: '14px', margin: '0 0 24px', lineHeight: 1.5 }}>
-              Create a free account or login to get your membership and unlock exclusive benefits
+            {/* Subtitle */}
+            <p style={{ color: '#888', fontSize: '14px', margin: '0 0 32px', lineHeight: 1.6 }}>
+              Create a free account to get started with exclusive Erasmus Vibe benefits
             </p>
 
+            {/* Benefits */}
+            <div style={{
+              background:    'rgba(255,255,255,0.03)',
+              border:        '1px solid rgba(255,255,255,0.06)',
+              borderRadius:  '16px',
+              padding:       '20px',
+              marginBottom:  '28px',
+              textAlign:     'left',
+            }}>
+              {LOGIN_BENEFITS.map((benefit, i) => (
+                <div
+                  key={benefit.text}
+                  style={{
+                    display:      'flex',
+                    alignItems:   'center',
+                    gap:          '10px',
+                    padding:      '6px 0',
+                    borderBottom: i < LOGIN_BENEFITS.length - 1
+                      ? '1px solid rgba(255,255,255,0.04)'
+                      : 'none',
+                  }}
+                >
+                  <span style={{ fontSize: '16px' }}>{benefit.icon}</span>
+                  <span style={{ color: '#ccc', fontSize: '13px' }}>{benefit.text}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA buttons */}
             <Link
               href="/auth/register?redirect=/membership"
               style={{
                 display:        'block',
-                background:     '#F5A623',
+                background:     'linear-gradient(135deg, #F5A623, #FF6B35)',
                 color:          '#1A1A2E',
-                padding:        '14px',
+                padding:        '15px',
                 borderRadius:   '50px',
                 textDecoration: 'none',
                 fontWeight:     700,
                 fontSize:       '15px',
                 marginBottom:   '10px',
+                boxShadow:      '0 8px 24px rgba(245,166,35,0.25)',
               }}
             >
               Create Free Account →
@@ -304,43 +364,22 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
               href="/auth/login?redirect=/membership"
               style={{
                 display:        'block',
-                background:     'transparent',
+                background:     'rgba(255,255,255,0.05)',
                 color:          '#fff',
-                padding:        '14px',
+                padding:        '15px',
                 borderRadius:   '50px',
                 textDecoration: 'none',
-                fontWeight:     600,
-                fontSize:       '15px',
-                border:         '1px solid rgba(255,255,255,0.1)',
+                fontWeight:     500,
+                fontSize:       '14px',
+                border:         '1px solid rgba(255,255,255,0.08)',
               }}
             >
-              Login to existing account
+              Already have an account? Login
             </Link>
 
-            <div style={{
-              marginTop:  '24px',
-              padding:    '16px',
-              background: 'rgba(245,166,35,0.05)',
-              borderRadius: '12px',
-              textAlign:  'left',
-            }}>
-              <p style={{ color: '#F5A623', fontSize: '12px', fontWeight: 600, margin: '0 0 8px' }}>
-                MEMBERSHIP BENEFITS
-              </p>
-              {LOGIN_BENEFITS.map(benefit => (
-                <p key={benefit} style={{
-                  color:       '#888',
-                  fontSize:    '13px',
-                  margin:      '4px 0',
-                  display:     'flex',
-                  alignItems:  'center',
-                  gap:         '6px',
-                }}>
-                  <span style={{ color: '#F5A623' }}>✓</span>
-                  {benefit}
-                </p>
-              ))}
-            </div>
+            <p style={{ color: '#555', fontSize: '12px', marginTop: '20px' }}>
+              Free to join • Cancel anytime
+            </p>
           </div>
         </div>
       )}
