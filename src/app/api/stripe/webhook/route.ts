@@ -4,7 +4,7 @@ import type Stripe from 'stripe'
 import { stripe } from '@/lib/stripe'
 import { generateQR } from '@/lib/qr'
 import { nanoid } from 'nanoid'
-import { sendBookingConfirmation, sendGroupBookingConfirmation, sendMembershipWelcomeEmail, sendBookingPendingEmail, sendPartnerConfirmationRequest } from '@/lib/email'
+import { sendBookingConfirmation, sendGroupBookingConfirmation, sendMembershipWelcomeEmail, sendBookingPendingEmail, sendPartnerConfirmationRequest, sendRefundEmail } from '@/lib/email'
 import type { Database, MembershipPlan, MembershipStatus, TripTier } from '@/types/database'
 
 export const runtime = 'nodejs'
@@ -69,6 +69,24 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     if (rawAttendees.length > 1) {
       // Multi-ticket: one row + QR per named attendee
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: seatResult } = await (admin as any).rpc('book_event_seats', {
+        p_event_id: itemId!,
+        p_quantity:  rawAttendees.length,
+      })
+      if (!seatResult?.success) {
+        console.error('[webhook] event seat booking failed:', seatResult?.error)
+        await stripe.refunds.create({ payment_intent: session.payment_intent as string })
+        await sendRefundEmail({
+          email:     guestEmail ?? '',
+          name:      guestName  ?? 'there',
+          tripTitle: meta.event_title ?? 'your event',
+          amount:    amountPaid,
+          reason:    seatResult?.error ?? 'Event sold out',
+        })
+        return
+      }
+
       const amountPerTicket = amountPaid / rawAttendees.length
       const allTickets: { name: string; bookingRef: string; qrCode: string }[] = []
       let firstBookingRef = ''
@@ -117,14 +135,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         }
       }
 
-      // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
-      const { error: seatError } = await admin.rpc('increment_tickets_sold', {
-        p_event_id: itemId!,
-        p_quantity:  rawAttendees.length,
-      })
-      if (seatError) console.error('❌ Seat update failed:', seatError)
-      else           console.log('✅ Seats updated:', itemId, rawAttendees.length)
-
       if (userId) {
         await admin.from('notifications').insert({
           user_id: userId,
@@ -147,7 +157,25 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         })
       }
     } else {
-      // Single-ticket path (backward compat) — unchanged
+      // Single-ticket path (backward compat)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: seatResult } = await (admin as any).rpc('book_event_seats', {
+        p_event_id: itemId!,
+        p_quantity:  Number(meta.quantity ?? 1),
+      })
+      if (!seatResult?.success) {
+        console.error('[webhook] event seat booking failed:', seatResult?.error)
+        await stripe.refunds.create({ payment_intent: session.payment_intent as string })
+        await sendRefundEmail({
+          email:     guestEmail ?? '',
+          name:      guestName  ?? 'there',
+          tripTitle: meta.event_title ?? 'your event',
+          amount:    amountPaid,
+          reason:    seatResult?.error ?? 'Event sold out',
+        })
+        return
+      }
+
       const bookingRef = nanoid(8).toUpperCase()
       const qrCode     = await generateQR(bookingRef)
 
@@ -169,14 +197,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       }
 
       await admin.from('event_tickets').update({ amount_paid: amountPaid }).eq('booking_ref', bookingRef)
-
-      // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
-      const { error: seatError } = await admin.rpc('increment_tickets_sold', {
-        p_event_id: itemId!,
-        p_quantity:  Number(meta.quantity ?? 1),
-      })
-      if (seatError) console.error('❌ Seat update failed:', seatError)
-      else           console.log('✅ Seats updated:', itemId, Number(meta.quantity ?? 1))
 
       if (userId) {
         await admin.from('notifications').insert({
@@ -213,6 +233,24 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     const tripAttendees = rawAttendees.length > 0
       ? rawAttendees
       : [{ name: guestName ?? '', email: guestEmail ?? '' }]
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: seatResult } = await (admin as any).rpc('book_trip_seats', {
+      p_trip_id:  itemId!,
+      p_quantity: tripAttendees.length,
+    })
+    if (!seatResult?.success) {
+      console.error('[webhook] trip seat booking failed:', seatResult?.error)
+      await stripe.refunds.create({ payment_intent: session.payment_intent as string })
+      await sendRefundEmail({
+        email:     guestEmail ?? '',
+        name:      guestName  ?? 'there',
+        tripTitle: meta.trip_title ?? 'your trip',
+        amount:    amountPaid,
+        reason:    seatResult?.error ?? 'Trip fully booked',
+      })
+      return
+    }
 
     const groupRef   = nanoid(8).toUpperCase()
     const isGroup    = tripAttendees.length > 1
@@ -267,14 +305,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         console.log(`[webhook] trip ticket sent to: ${toAddr}`)
       }
     }
-
-    // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
-    const { error: seatError } = await admin.rpc('increment_seats_sold', {
-      p_trip_id:  itemId!,
-      p_quantity: tripAttendees.length,
-    })
-    if (seatError) console.error('❌ Seat update failed:', seatError)
-    else           console.log('✅ Seats updated:', itemId, tripAttendees.length)
 
     if (tier === 'early_bird') {
       // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`

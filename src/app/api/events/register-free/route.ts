@@ -5,7 +5,7 @@ import { generateQR } from '@/lib/qr'
 import { sendBookingConfirmation, sendGroupBookingConfirmation } from '@/lib/email'
 
 export async function POST(req: Request) {
-  const { eventId, guestName, guestEmail, guestPhone, quantity = 1, attendees } = await req.json()
+  const { eventId, guestName, guestEmail, guestPhone, attendees } = await req.json()
 
   if (!eventId || !guestName || !guestEmail) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -24,18 +24,19 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Event not found or not a free event' }, { status: 404 })
   }
 
-  const remaining = event.capacity - event.tickets_sold
-  if (remaining < quantity) {
-    return NextResponse.json(
-      { error: `Only ${remaining} spot${remaining === 1 ? '' : 's'} left` },
-      { status: 400 },
-    )
-  }
-
   const ticketAttendees: { name: string; email: string }[] =
     Array.isArray(attendees) && attendees.length > 0
       ? attendees
       : [{ name: guestName, email: guestEmail }]
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: seatResult } = await (admin as any).rpc('book_free_event_seats', {
+    p_event_id: eventId,
+    p_quantity:  ticketAttendees.length,
+  })
+  if (!seatResult?.success) {
+    return NextResponse.json({ error: seatResult?.error }, { status: 400 })
+  }
 
   const allTickets: { name: string; bookingRef: string; qrCode: string }[] = []
   const groupRef = ticketAttendees.length > 1 ? nanoid(8).toUpperCase() : null
@@ -84,9 +85,6 @@ export async function POST(req: Request) {
       })
     }
   }
-
-  // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
-  await admin.rpc('increment_tickets_sold', { p_event_id: eventId, p_quantity: ticketAttendees.length })
 
   if (ticketAttendees.length > 1) {
     await sendGroupBookingConfirmation({
