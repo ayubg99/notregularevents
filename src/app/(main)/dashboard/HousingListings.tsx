@@ -41,101 +41,189 @@ export default function HousingListings({ myListings }: Props) {
 
   return (
     <div className="glass-card rounded-2xl p-6">
+
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="font-heading text-lg font-bold text-white">🏠 My Housing Listings</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2 className="font-heading" style={{ color: '#fff', fontSize: '18px', fontWeight: 700, margin: 0 }}>
+          My Housing Listings
+        </h2>
         <Link
           href="/housing/post"
-          className="px-4 py-1.5 rounded-full bg-brand-accent text-brand-dark text-xs font-bold hover:brightness-110 transition-all"
+          style={{
+            padding: '8px 16px',
+            background: '#F5A623',
+            color: '#1A1A2E',
+            borderRadius: '50px',
+            textDecoration: 'none',
+            fontWeight: 700,
+            fontSize: '13px',
+          }}
         >
           + Post a Room
         </Link>
       </div>
 
+      {/* Empty state */}
       {listings.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-4xl mb-3">🏠</p>
-          <p className="text-white/30 text-sm mb-4">No listings yet</p>
-          <Link
+        <div style={{
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: '16px',
+          padding: '40px 20px',
+          textAlign: 'center',
+        }}>
+          <p style={{ fontSize: '32px', margin: '0 0 8px' }}>🏠</p>
+          <p style={{ color: '#888', fontSize: '14px', margin: '0 0 20px' }}>No housing listings yet</p>
+          <a
             href="/housing/post"
-            className="inline-block bg-brand-accent text-brand-dark px-6 py-2.5 rounded-full font-bold text-sm hover:brightness-110 transition-all"
+            style={{
+              display: 'inline-block',
+              background: '#F5A623',
+              color: '#1A1A2E',
+              padding: '10px 24px',
+              borderRadius: '50px',
+              textDecoration: 'none',
+              fontWeight: 700,
+              fontSize: '14px',
+            }}
           >
             + Post a Room
-          </Link>
+          </a>
         </div>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div>
           {listings.map(listing => (
             <div
               key={listing.id}
-              className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 p-4"
+              style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '16px',
+                padding: '20px',
+                marginBottom: '12px',
+              }}
             >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap mb-1">
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
-                    listing.type === 'room_available'
-                      ? 'bg-teal-500/15 text-teal-400 border-teal-500/30'
-                      : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
-                  }`}>
-                    {listing.type === 'room_available' ? '🏠 Room Available' : '👤 Looking for Room'}
-                  </span>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full border capitalize ${
-                    listing.status === 'active'
-                      ? 'bg-green-500/15 text-green-400 border-green-500/30'
-                      : listing.status === 'rented'
-                      ? 'bg-brand-primary/15 text-brand-primary border-brand-primary/30'
-                      : 'bg-red-500/15 text-red-400 border-red-500/30'
-                  }`}>
-                    ● {listing.status}
-                  </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
+
+                {/* Left content */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+
+                  {/* Top badges row */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#888', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                      {listing.type === 'room_available' ? 'ROOM' : 'LOOKING'}
+                    </span>
+                    <span style={{
+                      background:
+                        listing.status === 'active'  ? 'rgba(46,204,113,0.15)'  :
+                        listing.status === 'rented'  ? 'rgba(245,166,35,0.15)'  :
+                        'rgba(255,68,68,0.15)',
+                      color:
+                        listing.status === 'active'  ? '#2ECC71' :
+                        listing.status === 'rented'  ? '#F5A623' :
+                        '#FF4444',
+                      padding: '2px 10px',
+                      borderRadius: '20px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                    }}>
+                      {listing.status}
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <p style={{ color: '#fff', fontWeight: 600, fontSize: '16px', margin: '0 0 8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {listing.title}
+                  </p>
+
+                  {/* Details row */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                    {listing.neighborhood && (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#888', fontSize: '13px' }}>
+                        📍 {listing.neighborhood}
+                      </span>
+                    )}
+                    {listing.price && (
+                      <span style={{ color: '#F5A623', fontSize: '13px', fontWeight: 600 }}>
+                        €{listing.price}/mo
+                      </span>
+                    )}
+                    <span style={{ color: '#555', fontSize: '12px' }}>
+                      Expires {new Date(listing.expires_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                    </span>
+                  </div>
+
                 </div>
-                <p className="text-white font-semibold text-sm truncate">{listing.title}</p>
-                <p className="text-white/40 text-xs mt-0.5">
-                  {listing.neighborhood && `📍 ${listing.neighborhood}`}
-                  {listing.price && ` • €${listing.price}/mo`}
-                  {listing.expires_at && ` • Expires ${new Date(listing.expires_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`}
-                </p>
-              </div>
-              <div className="flex flex-col gap-1.5 flex-shrink-0">
-                <Link
-                  href={`/housing/edit/${listing.id}`}
-                  className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white/70 hover:text-white text-xs transition-colors text-center"
-                >
-                  ✏️ Edit
-                </Link>
-                {listing.status === 'active' && (
-                  <button
-                    onClick={() => handleMarkRented(listing.id)}
-                    className="px-3 py-1.5 rounded-lg bg-green-500/15 hover:bg-green-500/25 text-green-400 text-xs transition-colors"
+
+                {/* Right: action buttons */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flexShrink: 0 }}>
+                  <Link
+                    href={`/housing/edit/${listing.id}`}
+                    style={{
+                      padding: '7px 14px',
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '20px',
+                      color: '#ccc',
+                      fontSize: '12px',
+                      textDecoration: 'none',
+                      textAlign: 'center',
+                      fontWeight: 500,
+                    }}
                   >
-                    ✅ Rented
+                    Edit
+                  </Link>
+                  {listing.status === 'active' && (
+                    <button
+                      onClick={() => handleMarkRented(listing.id)}
+                      style={{
+                        padding: '7px 14px',
+                        background: 'transparent',
+                        border: '1px solid rgba(46,204,113,0.3)',
+                        borderRadius: '20px',
+                        color: '#2ECC71',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        fontWeight: 500,
+                      }}
+                    >
+                      Mark Rented
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleDeleteListing(listing.id)}
+                    style={{
+                      padding: '7px 14px',
+                      background: 'transparent',
+                      border: '1px solid rgba(255,68,68,0.2)',
+                      borderRadius: '20px',
+                      color: '#FF4444',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      fontWeight: 500,
+                    }}
+                  >
+                    Delete
                   </button>
-                )}
-                <button
-                  onClick={() => handleDeleteListing(listing.id)}
-                  className="px-3 py-1.5 rounded-lg bg-red-500/15 hover:bg-red-500/25 text-red-400 text-xs transition-colors"
-                >
-                  🗑️ Delete
-                </button>
+                </div>
+
               </div>
             </div>
           ))}
-
-          <Link
-            href="/housing/post"
-            className="block text-center py-3 rounded-xl border border-brand-accent/30 bg-brand-accent/10 text-brand-accent font-semibold text-sm hover:bg-brand-accent/20 transition-colors"
-          >
-            + Post Another Listing
-          </Link>
         </div>
       )}
 
       {toast && (
-        <div className={`mt-4 text-center text-sm rounded-xl py-2 border ${
-          toast.startsWith('Error')
-            ? 'text-red-400 bg-red-500/10 border-red-500/20'
-            : 'text-green-400 bg-green-500/10 border-green-500/20'
-        }`}>
+        <div style={{
+          marginTop: '16px',
+          textAlign: 'center',
+          fontSize: '13px',
+          padding: '10px',
+          borderRadius: '10px',
+          background: toast.startsWith('Error') ? 'rgba(255,68,68,0.1)' : 'rgba(46,204,113,0.1)',
+          color: toast.startsWith('Error') ? '#FF4444' : '#2ECC71',
+          border: `1px solid ${toast.startsWith('Error') ? 'rgba(255,68,68,0.2)' : 'rgba(46,204,113,0.2)'}`,
+        }}>
           {toast}
         </div>
       )}
