@@ -18,7 +18,10 @@
       "Bash(git -C /home/ayubxx/erasmus-vibe rev-parse HEAD)",
       "Bash(echo \"local HEAD: $\\(git -C /home/ayubxx/erasmus-vibe rev-parse HEAD\\)\")",
       "Bash(echo \"exit:$?\")",
-      "Bash(wait)"
+      "Bash(wait)",
+      "Bash(pkill -f \"next build\")",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }
