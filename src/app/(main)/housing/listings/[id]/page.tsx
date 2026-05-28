@@ -78,6 +78,7 @@ export default async function ListingDetailPage({
     .eq('id', id)
 
   const isRoom = listing.type === 'room_available'
+  const firstName = (name: string) => name.split(' ')[0]
 
   return (
     <main className="min-h-screen pt-24 pb-20 px-4">
@@ -204,7 +205,7 @@ export default async function ListingDetailPage({
                   {listing.contact_name.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <p className="text-white font-semibold">{listing.contact_name}</p>
+                  <p className="text-white font-semibold">{firstName(listing.contact_name)}</p>
                   <p className="text-white/50 text-xs">
                     {[
                       listing.nationality && `${NATIONALITY_FLAGS[listing.nationality] ?? ''} ${listing.nationality}`,

@@ -35,7 +35,7 @@ export default function ContactSection({ listing, hasMembership }: Props) {
           rel="noopener noreferrer"
           className="block bg-[#25D366] text-white text-center py-3.5 rounded-full font-bold text-sm hover:opacity-90 transition-opacity"
         >
-          💬 WhatsApp {listing.contact_name}
+          💬 WhatsApp {listing.contact_name.split(' ')[0]}
         </a>
       )}
       {listing.contact_email && (
