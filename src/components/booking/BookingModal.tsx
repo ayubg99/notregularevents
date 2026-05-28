@@ -222,8 +222,11 @@ export default function BookingModal(props: Props) {
   } : {}
 
   function handleRegisterFree() {
-    if (!name.trim())  { setError('Please enter your name.');  return }
-    if (!email.trim()) { setError('Please enter your email.'); return }
+    const ticketAttendees = quantity > 1
+      ? Array.from({ length: quantity }, (_, i) => attendees[i] ?? { name: '', email: '' })
+      : [{ name: name.trim(), email: email.trim() }]
+    if (!ticketAttendees.every(a => a.name.trim())) { setError('Please enter a name for each ticket.'); return }
+    if (!ticketAttendees[0].email.trim())           { setError('Please enter your email.'); return }
     setError('')
     startTransition(async () => {
       try {
@@ -232,14 +235,15 @@ export default function BookingModal(props: Props) {
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({
             eventId:    (props as EventProps).eventId,
-            guestName:  name.trim(),
-            guestEmail: email.trim(),
+            guestName:  ticketAttendees[0].name,
+            guestEmail: ticketAttendees[0].email,
             guestPhone: phone.trim() || undefined,
+            attendees:  ticketAttendees,
             quantity,
           }),
         })
         const data = await res.json()
-        if (data.bookingRef) { setBookingRef(data.bookingRef); setShowSuccess(true) }
+        if (data.bookingRef || data.success) { setBookingRef(data.bookingRef ?? ''); setShowSuccess(true) }
         else setError(data.error ?? 'Registration failed.')
       } catch {
         setError('Network error. Please try again.')
@@ -524,7 +528,7 @@ export default function BookingModal(props: Props) {
           )}
 
           {/* Guest details */}
-          {props.type === 'event' && !isFreePath && quantity > 1 ? (
+          {props.type === 'event' && quantity > 1 ? (
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-2 text-white/40 text-xs uppercase tracking-widest">
                 <User size={12} />

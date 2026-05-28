@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server'
 import { nanoid } from 'nanoid'
 import { getAdminClient } from '@/lib/supabase/admin'
 import { generateQR } from '@/lib/qr'
-import { sendBookingConfirmation } from '@/lib/email'
+import { sendBookingConfirmation, sendGroupBookingConfirmation } from '@/lib/email'
 
 export async function POST(req: Request) {
-  const { eventId, guestName, guestEmail, guestPhone, quantity = 1 } = await req.json()
+  const { eventId, guestName, guestEmail, guestPhone, quantity = 1, attendees } = await req.json()
 
   if (!eventId || !guestName || !guestEmail) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -32,43 +32,68 @@ export async function POST(req: Request) {
     )
   }
 
-  const bookingRef    = nanoid(8).toUpperCase()
-  const qrCodeDataUrl = await generateQR(bookingRef)
+  const ticketAttendees: { name: string; email: string }[] =
+    Array.isArray(attendees) && attendees.length > 0
+      ? attendees
+      : [{ name: guestName, email: guestEmail }]
 
-  const { error: insertError } = await admin.from('event_tickets').insert({
-    event_id:          eventId,
-    user_id:           null,
-    guest_name:        guestName,
-    guest_email:       guestEmail,
-    guest_phone:       guestPhone ?? null,
-    booking_ref:       bookingRef,
-    qr_code:           qrCodeDataUrl,
-    status:            'active' as const,
-    amount_paid:       0,
-    stripe_payment_id: null,
-  })
+  const allTickets: { name: string; bookingRef: string; qrCode: string }[] = []
 
-  if (insertError) {
-    console.error('[register-free] insert error:', insertError)
-    return NextResponse.json({ error: 'Registration failed' }, { status: 500 })
+  for (let i = 0; i < ticketAttendees.length; i++) {
+    const attendee       = ticketAttendees[i]
+    const bookingRef     = nanoid(8).toUpperCase()
+    const qrCodeDataUrl  = await generateQR(bookingRef)
+    const recipientEmail = attendee.email?.trim() || guestEmail
+
+    const { error: insertError } = await admin.from('event_tickets').insert({
+      event_id:          eventId,
+      user_id:           null,
+      guest_name:        attendee.name || null,
+      guest_email:       recipientEmail,
+      guest_phone:       i === 0 ? (guestPhone ?? null) : null,
+      booking_ref:       bookingRef,
+      qr_code:           qrCodeDataUrl,
+      status:            'active' as const,
+      amount_paid:       0,
+      stripe_payment_id: null,
+    })
+
+    if (insertError) {
+      console.error('[register-free] insert error:', insertError)
+      return NextResponse.json({ error: 'Registration failed' }, { status: 500 })
+    }
+
+    allTickets.push({ name: attendee.name, bookingRef, qrCode: qrCodeDataUrl })
+
+    if (recipientEmail) {
+      await sendBookingConfirmation({
+        to:       recipientEmail,
+        name:     attendee.name,
+        bookingRef,
+        qrCode:   qrCodeDataUrl,
+        title:    event.title,
+        type:     'event',
+        date:     event.date     ?? undefined,
+        location: event.location ?? undefined,
+        isFree:   true,
+      })
+    }
   }
 
-  await admin
-    .from('events')
-    .update({ tickets_sold: event.tickets_sold + quantity })
-    .eq('id', eventId)
+  // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
+  await admin.rpc('increment_tickets_sold', { p_event_id: eventId, p_quantity: ticketAttendees.length })
 
-  await sendBookingConfirmation({
-    to:        guestEmail,
-    name:      guestName,
-    bookingRef,
-    qrCode:    qrCodeDataUrl,
-    title:     event.title,
-    type:      'event',
-    date:      event.date ?? undefined,
-    location:  event.location ?? undefined,
-    isFree:    true,
-  })
+  if (ticketAttendees.length > 1) {
+    await sendGroupBookingConfirmation({
+      to:            guestEmail,
+      leadName:      guestName,
+      eventTitle:    event.title,
+      eventDate:     event.date     ?? undefined,
+      eventLocation: event.location ?? undefined,
+      tickets:       allTickets,
+      isFree:        true,
+    })
+  }
 
-  return NextResponse.json({ success: true, bookingRef, qrCode: qrCodeDataUrl })
+  return NextResponse.json({ success: true, bookingRef: allTickets[0]?.bookingRef })
 }

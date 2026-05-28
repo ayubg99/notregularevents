@@ -444,6 +444,7 @@ interface GroupBookingEmailParams {
   eventDate?:    string
   eventLocation?: string
   tickets:       { name: string; bookingRef: string; qrCode: string }[]
+  isFree?:       boolean
 }
 
 export async function sendGroupBookingConfirmation(params: GroupBookingEmailParams) {
@@ -492,7 +493,9 @@ export async function sendGroupBookingConfirmation(params: GroupBookingEmailPara
     const { error } = await getResend().emails.send({
       from,
       to:      params.to,
-      subject: `🎟️ ${params.tickets.length} ticket${params.tickets.length > 1 ? 's' : ''} — ${params.eventTitle}`,
+      subject: params.isFree
+        ? `🎉 ${params.tickets.length} free ticket${params.tickets.length > 1 ? 's' : ''} — ${params.eventTitle}`
+        : `🎟️ ${params.tickets.length} ticket${params.tickets.length > 1 ? 's' : ''} — ${params.eventTitle}`,
       html,
       attachments,
     })
