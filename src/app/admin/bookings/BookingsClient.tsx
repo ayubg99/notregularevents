@@ -26,6 +26,10 @@ export interface Booking {
   tier:              string | null
   quantity:          number
   qr_code:           string | null
+  group_booking_ref: string | null
+  is_group_booking:  boolean
+  lead_name:         string | null
+  lead_email:        string | null
 }
 
 type BookingRow = Booking & Record<string, unknown>
@@ -46,7 +50,7 @@ const STATUS_COLORS: Record<string, string> = {
 }
 
 function buildCSV(rows: Booking[]): string {
-  const headers = ['Type', 'Booking Ref', 'Guest Name', 'Guest Email', 'Title', 'Date', 'Status', 'Amount', 'Created At']
+  const headers = ['Type', 'Booking Ref', 'Guest Name', 'Guest Email', 'Title', 'Date', 'Status', 'Amount', 'Created At', 'Group Ref', 'Lead Name', 'Lead Email']
   const lines = [
     headers.join(','),
     ...rows.map(b => [
@@ -59,6 +63,9 @@ function buildCSV(rows: Booking[]): string {
       b.status,
       b.price != null ? `€${b.price}` : '',
       new Date(b.created_at).toLocaleDateString('en-GB'),
+      b.group_booking_ref ?? '',
+      b.lead_name         ?? '',
+      b.lead_email        ?? '',
     ].join(',')),
   ]
   return lines.join('\n')
@@ -95,10 +102,12 @@ function TierBadge({ tier }: { tier: string }) {
 
 function BookingDetailModal({
   booking,
+  allBookings,
   onClose,
   onStatusChange,
 }: {
   booking: Booking
+  allBookings: Booking[]
   onClose: () => void
   onStatusChange: (status: string) => void
 }) {
@@ -230,6 +239,48 @@ function BookingDetailModal({
               </div>
             </div>
 
+            {/* Group booking */}
+            {booking.is_group_booking && (() => {
+              const siblings = allBookings.filter(
+                b => b.group_booking_ref && b.group_booking_ref === booking.group_booking_ref
+              )
+              return (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-2">Group Booking</p>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between">
+                      <span className="text-white/40 text-sm">Group ref</span>
+                      <span className="font-mono text-xs tracking-widest text-white/70">{booking.group_booking_ref}</span>
+                    </div>
+                    {booking.lead_name && (
+                      <div className="flex justify-between">
+                        <span className="text-white/40 text-sm">Lead booker</span>
+                        <div className="text-right">
+                          <p className="text-white/70 text-sm">{booking.lead_name}</p>
+                          {booking.lead_email && <p className="text-white/40 text-xs">{booking.lead_email}</p>}
+                        </div>
+                      </div>
+                    )}
+                    {siblings.length > 0 && (
+                      <div>
+                        <p className="text-white/40 text-xs mb-1.5">All tickets ({siblings.length})</p>
+                        <div className="flex flex-col gap-1">
+                          {siblings.map((s, idx) => (
+                            <div key={s.id} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs ${s.id === booking.id ? 'bg-brand-primary/10 border border-brand-primary/20' : 'bg-white/3'}`}>
+                              <span className="text-white/30 font-mono w-5 text-center">{idx + 1}</span>
+                              <span className="text-white/70 flex-1">{s.guest_name ?? 'Unknown'}</span>
+                              {s.guest_email && <span className="text-white/30 truncate max-w-[120px]">{s.guest_email}</span>}
+                              <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold capitalize ${STATUS_COLORS[s.status] ?? 'bg-white/10 text-white/40'}`}>{s.status}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })()}
+
             {/* Status */}
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-2">Status</p>
@@ -335,12 +386,26 @@ export default function BookingsClient({ bookings }: Props) {
     {
       key: 'booking_ref', header: 'Ref', sortable: true,
       render: (r) => (
-        <span className="font-mono text-xs tracking-widest text-white/70">{r.booking_ref}</span>
+        <div>
+          <span className="font-mono text-xs tracking-widest text-white/70">{r.booking_ref}</span>
+          {r.is_group_booking && (
+            <span className="ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-brand-primary/20 text-brand-primary align-middle">
+              👥 GROUP
+            </span>
+          )}
+        </div>
       ),
     },
     {
       key: 'guest_name', header: 'Name',
-      render: (r) => <span className="text-white/80">{r.guest_name ?? 'Member'}</span>,
+      render: (r) => (
+        <div>
+          <span className="text-white/80">{r.guest_name ?? 'Member'}</span>
+          {r.is_group_booking && r.lead_name && r.lead_name !== r.guest_name && (
+            <p className="text-white/30 text-xs">via {r.lead_name}</p>
+          )}
+        </div>
+      ),
     },
     {
       key: 'guest_email', header: 'Email',
@@ -451,6 +516,7 @@ export default function BookingsClient({ bookings }: Props) {
       {selected && (
         <BookingDetailModal
           booking={selected}
+          allBookings={bookings}
           onClose={() => setSelected(null)}
           onStatusChange={(status) => {
             setSelected(prev => prev ? { ...prev, status } : null)

@@ -73,6 +73,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       const amountPerTicket = amountPaid / rawAttendees.length
       const allTickets: { name: string; bookingRef: string; qrCode: string }[] = []
       let firstBookingRef = ''
+      const groupRef = nanoid(8).toUpperCase()
 
       for (let i = 0; i < rawAttendees.length; i++) {
         const attendee  = rawAttendees[i]
@@ -91,6 +92,10 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           guest_phone:       i === 0 ? guestPhone : null,
           status:            'active' as const,
           amount_paid:       amountPerTicket,
+          group_booking_ref: groupRef,
+          is_group_booking:  true,
+          lead_name:         guestName  || null,
+          lead_email:        guestEmail || null,
         })
         if (insertErr) console.error(`[webhook event ticket #${i + 1}]`, insertErr.message)
 

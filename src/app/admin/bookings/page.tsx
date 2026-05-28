@@ -10,7 +10,7 @@ export default async function AdminBookingsPage() {
   ] = await Promise.all([
     admin
       .from('event_tickets')
-      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, amount_paid, qr_code, events(title, date, location)')
+      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, amount_paid, qr_code, group_booking_ref, is_group_booking, lead_name, lead_email, events(title, date, location)')
       .order('created_at', { ascending: false }),
     admin
       .from('trip_bookings')
@@ -36,9 +36,13 @@ export default async function AdminBookingsPage() {
       date:     (b.events as unknown as { date: string }  | null)?.date     ?? null,
       price:    b.amount_paid ?? null,
       location: (b.events as unknown as { location: string } | null)?.location ?? null,
-      tier:     null as string | null,
-      quantity: 1,
-      qr_code:  b.qr_code ?? null,
+      tier:              null as string | null,
+      quantity:          1,
+      qr_code:           b.qr_code           ?? null,
+      group_booking_ref: b.group_booking_ref  ?? null,
+      is_group_booking:  b.is_group_booking   ?? false,
+      lead_name:         b.lead_name          ?? null,
+      lead_email:        b.lead_email         ?? null,
     })),
     ...(tripBookings ?? []).map(b => ({
       id:                b.id,
@@ -54,9 +58,13 @@ export default async function AdminBookingsPage() {
       date:     (b.trips as unknown as { start_date: string }  | null)?.start_date  ?? null,
       price:    b.amount_paid ?? null,
       location: (b.trips as unknown as { destination: string } | null)?.destination ?? null,
-      tier:     b.tier as string | null,
-      quantity: b.quantity ?? 1,
-      qr_code:  b.qr_code ?? null,
+      tier:              b.tier as string | null,
+      quantity:          b.quantity ?? 1,
+      qr_code:           b.qr_code   ?? null,
+      group_booking_ref: null,
+      is_group_booking:  false,
+      lead_name:         null,
+      lead_email:        null,
     })),
   ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 

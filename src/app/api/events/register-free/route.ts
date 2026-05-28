@@ -38,6 +38,7 @@ export async function POST(req: Request) {
       : [{ name: guestName, email: guestEmail }]
 
   const allTickets: { name: string; bookingRef: string; qrCode: string }[] = []
+  const groupRef = ticketAttendees.length > 1 ? nanoid(8).toUpperCase() : null
 
   for (let i = 0; i < ticketAttendees.length; i++) {
     const attendee       = ticketAttendees[i]
@@ -56,6 +57,10 @@ export async function POST(req: Request) {
       status:            'active' as const,
       amount_paid:       0,
       stripe_payment_id: null,
+      group_booking_ref: groupRef,
+      is_group_booking:  ticketAttendees.length > 1,
+      lead_name:         ticketAttendees.length > 1 ? guestName  : null,
+      lead_email:        ticketAttendees.length > 1 ? guestEmail : null,
     })
 
     if (insertError) {

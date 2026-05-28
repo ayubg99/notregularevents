@@ -93,6 +93,10 @@ export type EventTicketRow = {
   checked_in_at:     string  | null
   created_at:        string
   updated_at:        string
+  group_booking_ref: string  | null
+  is_group_booking:  boolean | null
+  lead_name:         string  | null
+  lead_email:        string  | null
 }
 
 export type ItineraryDay = { day: number; title: string; description: string }
@@ -226,11 +230,15 @@ export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 
   is_free?:              boolean
 }
 
-export type EventTicketInsert = Omit<EventTicketRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid' | 'checked_in' | 'checked_in_at'> & {
-  status?:        TicketStatus
-  amount_paid?:   number | null
-  checked_in?:    boolean | null
-  checked_in_at?: string  | null
+export type EventTicketInsert = Omit<EventTicketRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid' | 'checked_in' | 'checked_in_at' | 'group_booking_ref' | 'is_group_booking' | 'lead_name' | 'lead_email'> & {
+  status?:            TicketStatus
+  amount_paid?:       number | null
+  checked_in?:        boolean | null
+  checked_in_at?:     string  | null
+  group_booking_ref?: string  | null
+  is_group_booking?:  boolean | null
+  lead_name?:         string  | null
+  lead_email?:        string  | null
 }
 
 export type TripInsert = Omit<TripRow, 'id' | 'seats_sold' | 'created_at' | 'updated_at' | 'price_vip' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold' | 'group_min_size'> & {
