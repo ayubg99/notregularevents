@@ -11,6 +11,7 @@ export const metadata = {
 }
 import ProfileForm from './ProfileForm'
 import BookingTabs from './BookingTabs'
+import HousingListings from './HousingListings'
 import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow, HousingListingRow } from '@/types/database'
 
 type EventTicketWithEvent = EventTicketRow & {
@@ -122,13 +123,13 @@ export default async function DashboardPage() {
         {/* Main grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* Left — bookings (wider) */}
-          <div className="lg:col-span-2">
+          {/* Left — bookings + housing (wider) */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
             <BookingTabs
               eventTickets={eventTickets}
               tripBookings={tripBookings}
-              myListings={myListings}
             />
+            <HousingListings myListings={myListings} />
           </div>
 
           {/* Right — membership + profile */}
