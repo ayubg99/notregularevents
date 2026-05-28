@@ -100,19 +100,20 @@ export default function BookingTabs({ eventTickets, tripBookings, myListings }: 
     if (!confirm('Are you sure you want to delete this listing?')) return
     const supabase = createClient()
     const { error } = await supabase.from('housing_listings').delete().eq('id', id)
-    if (!error) {
-      setListings(prev => prev.filter(l => l.id !== id))
-      setToast('Listing deleted')
-    }
+    if (error) { setToast('Error: ' + error.message); return }
+    setListings(prev => prev.filter(l => l.id !== id))
+    setToast('Listing deleted')
   }
 
   async function handleMarkRented(id: string) {
     const supabase = createClient()
-    const { error } = await supabase.from('housing_listings').update({ status: 'rented' }).eq('id', id)
-    if (!error) {
-      setListings(prev => prev.map(l => l.id === id ? { ...l, status: 'rented' } : l))
-      setToast('Marked as rented')
-    }
+    const { error } = await supabase
+      .from('housing_listings')
+      .update({ status: 'rented' })
+      .eq('id', id)
+    if (error) { setToast('Error: ' + error.message); return }
+    setListings(prev => prev.map(l => l.id === id ? { ...l, status: 'rented' } : l))
+    setToast('Marked as rented')
   }
 
   return (
