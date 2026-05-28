@@ -14,7 +14,7 @@ export default async function AdminBookingsPage() {
       .order('created_at', { ascending: false }),
     admin
       .from('trip_bookings')
-      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, tier, amount_paid, quantity, qr_code, trips(title, start_date, destination)')
+      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, tier, amount_paid, quantity, qr_code, group_booking_ref, is_group_booking, lead_name, lead_email, trips(title, start_date, destination)')
       .order('created_at', { ascending: false }),
   ])
 
@@ -44,7 +44,8 @@ export default async function AdminBookingsPage() {
       lead_name:         b.lead_name          ?? null,
       lead_email:        b.lead_email         ?? null,
     })),
-    ...(tripBookings ?? []).map(b => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...((tripBookings ?? []) as any[]).map((b: any) => ({
       id:                b.id,
       type:              'Trip' as const,
       booking_ref:       b.booking_ref,
@@ -60,11 +61,11 @@ export default async function AdminBookingsPage() {
       location: (b.trips as unknown as { destination: string } | null)?.destination ?? null,
       tier:              b.tier as string | null,
       quantity:          b.quantity ?? 1,
-      qr_code:           b.qr_code   ?? null,
-      group_booking_ref: null,
-      is_group_booking:  false,
-      lead_name:         null,
-      lead_email:        null,
+      qr_code:           b.qr_code            ?? null,
+      group_booking_ref: b.group_booking_ref  ?? null,
+      is_group_booking:  b.is_group_booking   ?? false,
+      lead_name:         b.lead_name          ?? null,
+      lead_email:        b.lead_email         ?? null,
     })),
   ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 

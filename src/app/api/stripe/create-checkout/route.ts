@@ -360,6 +360,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
         trip_date:          trip.start_date ?? '',
         destination:        trip.destination ?? '',
         whatsapp_group_url: trip.whatsapp_group_url ?? '',
+        attendees:          JSON.stringify(attendees ?? []),
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
     })

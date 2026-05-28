@@ -278,10 +278,18 @@ export default function BookingModal(props: Props) {
     const ticketAttendees = isMultiTicket
       ? Array.from({ length: quantity }, (_, i) => attendees[i] ?? { name: '', email: '' })
       : []
+    const isTripMulti   = props.type === 'trip' && effectiveQty > 1
+    const tripAttendees = props.type === 'trip'
+      ? Array.from({ length: effectiveQty }, (_, i) => attendees[i] ?? { name: '', email: '' })
+      : []
 
     if (isMultiTicket) {
       if (!ticketAttendees.every(a => a.name.trim())) { setError('Please enter a name for each ticket.'); return }
       if (!ticketAttendees[0].email.trim())           { setError('Please enter your email for ticket 1.'); return }
+    } else if (props.type === 'trip') {
+      if (!tripAttendees[0]?.name.trim())  { setError('Please enter your name.'); return }
+      if (!tripAttendees[0]?.email.trim()) { setError('Please enter your email.'); return }
+      if (isTripMulti && !tripAttendees.every(a => a.name.trim())) { setError('Please enter a name for each traveller.'); return }
     } else {
       if (!name.trim())  { setError('Please enter your name.');  return }
       if (!email.trim()) { setError('Please enter your email.'); return }
@@ -294,8 +302,12 @@ export default function BookingModal(props: Props) {
           ? selectedTier
           : hasEventTiers ? eventTier : undefined
 
-        const leadName  = isMultiTicket ? ticketAttendees[0].name.trim()  : name.trim()
-        const leadEmail = isMultiTicket ? ticketAttendees[0].email.trim() : email.trim()
+        const leadName  = isMultiTicket
+          ? ticketAttendees[0].name.trim()
+          : props.type === 'trip' ? (tripAttendees[0]?.name.trim() || '') : name.trim()
+        const leadEmail = isMultiTicket
+          ? ticketAttendees[0].email.trim()
+          : props.type === 'trip' ? (tripAttendees[0]?.email.trim() || '') : email.trim()
 
         const body: Record<string, unknown> = {
           type:       props.type,
@@ -303,15 +315,17 @@ export default function BookingModal(props: Props) {
           guestName:  leadName,
           guestEmail: leadEmail,
           guestPhone: phone.trim() || undefined,
-          ...(isMultiTicket ? { attendees: ticketAttendees.map(a => ({ name: a.name.trim(), email: a.email.trim() })) } : {}),
+          ...(isMultiTicket    ? { attendees: ticketAttendees.map(a => ({ name: a.name.trim(), email: a.email.trim() })) } : {}),
+          ...(props.type === 'trip' ? { attendees: tripAttendees.map(a => ({ name: a.name.trim(), email: a.email.trim() })) } : {}),
           ...(tier      ? { tier }      : {}),
           ...(promoCode ? { promoCode } : {}),
         }
 
         if (props.type === 'event') {
           body.quantity = effectiveQty
-        } else if (selectedTier === 'group') {
-          body.groupSize = effectiveQty
+        } else {
+          body.quantity = effectiveQty
+          if (selectedTier === 'group') body.groupSize = effectiveQty
         }
 
         const res  = await fetch('/api/stripe/create-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
@@ -566,6 +580,51 @@ export default function BookingModal(props: Props) {
                   />
                 </div>
               ))}
+            </div>
+          ) : props.type === 'trip' ? (
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-2 text-white/40 text-xs uppercase tracking-widest">
+                <User size={12} />
+                {effectiveQty > 1 ? 'Traveller details' : 'Your details'}
+              </div>
+              {effectiveQty > 1 && (
+                <p className="text-white/40 text-xs -mt-1">Enter details for each traveller</p>
+              )}
+              {Array.from({ length: effectiveQty }, (_, i) => attendees[i] ?? { name: '', email: '' }).map((attendee, i) => (
+                <div key={i} className={effectiveQty > 1 ? 'rounded-xl border border-white/8 bg-white/3 p-4 flex flex-col gap-2.5' : 'flex flex-col gap-2.5'}>
+                  {effectiveQty > 1 && (
+                    <p className="text-brand-accent text-xs font-bold uppercase tracking-wide">
+                      ✈️ Traveller {i + 1}{i === 0 ? ' (You)' : ''}
+                    </p>
+                  )}
+                  <input
+                    type="text"
+                    placeholder="Full name *"
+                    value={attendee.name}
+                    onChange={e => {
+                      const updated = [...attendees]
+                      while (updated.length <= i) updated.push({ name: '', email: '' })
+                      updated[i] = { ...updated[i], name: e.target.value }
+                      setAttendees(updated)
+                    }}
+                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors"
+                  />
+                  <input
+                    type="email"
+                    placeholder={i === 0 ? 'Your email * (QR ticket sent here)' : 'Their email (optional)'}
+                    value={attendee.email}
+                    disabled={i === 0 && !!authEmail}
+                    onChange={e => {
+                      const updated = [...attendees]
+                      while (updated.length <= i) updated.push({ name: '', email: '' })
+                      updated[i] = { ...updated[i], email: e.target.value }
+                      setAttendees(updated)
+                    }}
+                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                </div>
+              ))}
+              <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone (optional)" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors" />
             </div>
           ) : (
             <div className="flex flex-col gap-3">

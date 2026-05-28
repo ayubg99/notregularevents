@@ -438,22 +438,28 @@ export async function sendPartnerNotificationEmail(params: PartnerNotificationEm
 }
 
 interface GroupBookingEmailParams {
-  to:            string
-  leadName:      string
-  eventTitle:    string
-  eventDate?:    string
+  to:             string
+  leadName:       string
+  eventTitle:     string
+  eventDate?:     string
   eventLocation?: string
-  tickets:       { name: string; bookingRef: string; qrCode: string }[]
-  isFree?:       boolean
+  tickets:        { name: string; bookingRef: string; qrCode: string }[]
+  isFree?:        boolean
+  type?:          'event' | 'trip'
 }
 
 export async function sendGroupBookingConfirmation(params: GroupBookingEmailParams) {
-  const from = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
+  const isTrip  = params.type === 'trip'
+  const n       = params.tickets.length
+  const scanCopy = isTrip
+    ? 'Each person should show their own QR code at the pickup point.'
+    : 'Each QR code is unique and can only be scanned once at the door.'
 
   const ticketsHtml = params.tickets.map((t, i) => `
     <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;margin-bottom:12px;text-align:center;">
       <p style="color:#F5A623;font-weight:700;font-size:14px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px;">
-        Ticket ${i + 1}${i === 0 ? ' — You' : ''}: ${t.name}
+        ${isTrip ? '✈️ Traveller' : 'Ticket'} ${i + 1}${i === 0 ? ' — You' : ''}: ${t.name}
       </p>
       <img src="cid:qr-${i}" width="160" height="160" alt="QR Code" style="border-radius:8px;display:block;margin:0 auto;" />
       <p style="color:#888;font-size:12px;font-family:monospace;margin:10px 0 0;letter-spacing:2px;">${t.bookingRef}</p>
@@ -466,16 +472,16 @@ export async function sendGroupBookingConfirmation(params: GroupBookingEmailPara
 
   const html = `
     <div style="font-family:Inter,sans-serif;background:#1A1A2E;color:#fff;padding:40px;max-width:600px;margin:0 auto;border-radius:16px;">
-      <h1 style="color:#F5A623;margin:0 0 24px;">🎟️ Erasmus Vibe</h1>
+      <h1 style="color:#F5A623;margin:0 0 24px;">${isTrip ? '✈️' : '🎟️'} Erasmus Vibe</h1>
       <div style="background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:12px;padding:20px;margin:0 0 24px;text-align:center;">
         <h2 style="color:#fff;margin:0 0 4px;">${params.eventTitle}</h2>
         ${dateStr ? `<p style="color:#888;margin:4px 0 0;">${dateStr}</p>` : ''}
         ${params.eventLocation ? `<p style="color:#888;margin:4px 0 0;">📍 ${params.eventLocation}</p>` : ''}
       </div>
-      <p style="color:#ccc;">Hi ${params.leadName}! Here are all ${params.tickets.length} ticket${params.tickets.length > 1 ? 's' : ''} for your group. Each person should show their own QR code at the door.</p>
-      <h3 style="color:#F5A623;margin:24px 0 16px;">Your Group Tickets</h3>
+      <p style="color:#ccc;">Hi ${params.leadName}! Here are all ${n} ${isTrip ? `trip spot${n > 1 ? 's' : ''}` : `ticket${n > 1 ? 's' : ''}`} for your group. ${scanCopy}</p>
+      <h3 style="color:#F5A623;margin:24px 0 16px;">${isTrip ? 'Your Travellers' : 'Your Group Tickets'}</h3>
       ${ticketsHtml}
-      <p style="color:#888;font-size:13px;margin-top:24px;text-align:center;">Each QR code is unique and can only be scanned once at the door.</p>
+      <p style="color:#888;font-size:13px;margin-top:24px;text-align:center;">${scanCopy}</p>
       <p style="color:#555;font-size:12px;text-align:center;margin-top:16px;">Erasmus Vibe Valencia · @erasmus_vibe</p>
     </div>
   `
@@ -493,9 +499,11 @@ export async function sendGroupBookingConfirmation(params: GroupBookingEmailPara
     const { error } = await getResend().emails.send({
       from,
       to:      params.to,
-      subject: params.isFree
-        ? `🎉 ${params.tickets.length} free ticket${params.tickets.length > 1 ? 's' : ''} — ${params.eventTitle}`
-        : `🎟️ ${params.tickets.length} ticket${params.tickets.length > 1 ? 's' : ''} — ${params.eventTitle}`,
+      subject: isTrip
+        ? `✈️ ${n} trip spot${n > 1 ? 's' : ''} — ${params.eventTitle}`
+        : params.isFree
+          ? `🎉 ${n} free ticket${n > 1 ? 's' : ''} — ${params.eventTitle}`
+          : `🎟️ ${n} ticket${n > 1 ? 's' : ''} — ${params.eventTitle}`,
       html,
       attachments,
     })

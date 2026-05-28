@@ -40,7 +40,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const guestEmail = meta.guest_email || null
   const guestPhone = meta.guest_phone || null
   const amountPaid = (session.amount_total ?? 0) / 100
-  const quantity   = Number(meta.quantity ?? 1)
 
   console.log('[webhook checkout.session.completed]', {
     sessionId:    session.id,
@@ -207,60 +206,97 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   // ── Trip ─────────────────────────────────────────────────────
   if (type === 'trip') {
-    const tier       = (meta.tier ?? 'standard') as TripTier
-    const bookingRef = nanoid(8).toUpperCase()
-    const qrCode     = await generateQR(bookingRef)
+    const tier = (meta.tier ?? 'standard') as TripTier
+    const rawAttendees: { name: string; email: string }[] =
+      meta.attendees ? (JSON.parse(meta.attendees) as { name: string; email: string }[]) : []
 
-    const { error } = await admin.rpc('create_trip_booking', {
-      p_trip_id:           itemId!,
-      p_tier:              tier,
-      p_booking_ref:       bookingRef,
-      p_qr_code:           qrCode,
-      p_stripe_payment_id: session.id,
-      p_user_id:           userId || undefined,
-      p_guest_name:        guestName  || undefined,
-      p_guest_email:       guestEmail || undefined,
-      p_guest_phone:       guestPhone || undefined,
-    })
+    const tripAttendees = rawAttendees.length > 0
+      ? rawAttendees
+      : [{ name: guestName ?? '', email: guestEmail ?? '' }]
 
-    if (error) {
-      console.error('[webhook trip booking]', error.message)
-      return
+    const groupRef   = nanoid(8).toUpperCase()
+    const isGroup    = tripAttendees.length > 1
+    const amountEach = amountPaid / tripAttendees.length
+    const allTickets: { name: string; bookingRef: string; qrCode: string }[] = []
+    let firstRef = ''
+
+    for (let i = 0; i < tripAttendees.length; i++) {
+      const attendee   = tripAttendees[i]
+      const bookingRef = nanoid(8).toUpperCase()
+      const qrCode     = await generateQR(bookingRef)
+      const toAddr     = attendee.email?.trim() || guestEmail || null
+      if (!firstRef) firstRef = bookingRef
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: insertErr } = await admin.from('trip_bookings').insert({
+        trip_id:           itemId!,
+        user_id:           i === 0 ? userId : null,
+        tier,
+        booking_ref:       bookingRef,
+        qr_code:           qrCode,
+        stripe_payment_id: session.id,
+        guest_name:        attendee.name  || null,
+        guest_email:       toAddr,
+        guest_phone:       i === 0 ? guestPhone : null,
+        status:            'confirmed' as const,
+        amount_paid:       amountEach,
+        quantity:          1,
+        deposit_paid:      true,
+        group_booking_ref: isGroup ? groupRef : null,
+        is_group_booking:  isGroup,
+        lead_name:         isGroup ? (guestName || null) : null,
+        lead_email:        isGroup ? (guestEmail || null) : null,
+      } as any)
+      if (insertErr) console.error(`[webhook trip booking #${i + 1}]`, insertErr.message)
+
+      allTickets.push({ name: attendee.name, bookingRef, qrCode })
+
+      if (toAddr) {
+        await sendBookingConfirmation({
+          to:          toAddr,
+          name:        attendee.name,
+          bookingRef,
+          qrCode,
+          title:       meta.trip_title ?? 'your trip',
+          type:        'trip',
+          date:        meta.trip_date   || undefined,
+          location:    meta.destination || undefined,
+          whatsappUrl: meta.whatsapp_group_url || undefined,
+        })
+        console.log(`[webhook] trip ticket sent to: ${toAddr}`)
+      }
     }
-
-    await admin.from('trip_bookings').update({ amount_paid: amountPaid, quantity }).eq('booking_ref', bookingRef)
 
     // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
     const { error: seatError } = await admin.rpc('increment_seats_sold', {
       p_trip_id:  itemId!,
-      p_quantity: Number(meta.quantity ?? 1),
+      p_quantity: tripAttendees.length,
     })
     if (seatError) console.error('❌ Seat update failed:', seatError)
-    else           console.log('✅ Seats updated:', itemId, 1)
+    else           console.log('✅ Seats updated:', itemId, tripAttendees.length)
 
     if (userId) {
       await admin.from('notifications').insert({
         user_id: userId,
         type:    'booking_confirmed',
-        message: `Your trip booking is confirmed. Ref: ${bookingRef}`,
+        message: `Your trip booking is confirmed. Ref: ${firstRef}`,
         read:    false,
       })
     }
 
-    const toEmail = guestEmail ?? (userId ? await getUserEmail(admin, userId) : null)
-    const toName  = guestName ?? 'there'
-    if (toEmail) {
-      await sendBookingConfirmation({
-        to:          toEmail,
-        name:        toName,
-        bookingRef,
-        qrCode,
-        title:       meta.trip_title ?? 'your trip',
-        type:        'trip',
-        date:        meta.trip_date   || undefined,
-        location:    meta.destination || undefined,
-        whatsappUrl: meta.whatsapp_group_url || undefined,
-      })
+    if (isGroup) {
+      const toEmail = guestEmail ?? (userId ? await getUserEmail(admin, userId) : null)
+      if (toEmail) {
+        await sendGroupBookingConfirmation({
+          to:            toEmail,
+          leadName:      guestName ?? 'there',
+          eventTitle:    meta.trip_title ?? 'your trip',
+          eventDate:     meta.trip_date  || undefined,
+          eventLocation: meta.destination || undefined,
+          tickets:       allTickets,
+          type:          'trip',
+        })
+      }
     }
   }
 
