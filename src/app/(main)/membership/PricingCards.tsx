@@ -248,14 +248,14 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
             onClick={e => e.stopPropagation()}
             style={{
               position:     'relative',
-              background:   'linear-gradient(145deg, #1E1A2E, #1A1A2E)',
-              border:       '1px solid rgba(245,166,35,0.2)',
+              background:   'linear-gradient(145deg, #1C1400, #1A1200)',
+              border:       '1px solid rgba(245,166,35,0.25)',
               borderRadius: '24px',
               padding:      '48px 40px',
               maxWidth:     '420px',
               width:        '100%',
               textAlign:    'center',
-              boxShadow:    '0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(245,166,35,0.1)',
+              boxShadow:    '0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(245,166,35,0.05)',
             }}
           >
             {/* Close button */}
@@ -316,7 +316,7 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
             {/* Benefits */}
             <div style={{
               background:    'rgba(255,255,255,0.03)',
-              border:        '1px solid rgba(255,255,255,0.06)',
+              border:        '1px solid rgba(245,166,35,0.08)',
               borderRadius:  '16px',
               padding:       '20px',
               marginBottom:  '28px',
@@ -331,7 +331,7 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
                     gap:          '10px',
                     padding:      '6px 0',
                     borderBottom: i < LOGIN_BENEFITS.length - 1
-                      ? '1px solid rgba(255,255,255,0.04)'
+                      ? '1px solid rgba(245,166,35,0.06)'
                       : 'none',
                   }}
                 >
@@ -348,13 +348,15 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
                 display:        'block',
                 background:     'linear-gradient(135deg, #F5A623, #FF6B35)',
                 color:          '#1A1A2E',
-                padding:        '15px',
+                padding:        '16px',
                 borderRadius:   '50px',
                 textDecoration: 'none',
                 fontWeight:     700,
                 fontSize:       '15px',
                 marginBottom:   '10px',
-                boxShadow:      '0 8px 24px rgba(245,166,35,0.25)',
+                boxShadow:      '0 8px 24px rgba(245,166,35,0.35)',
+                textAlign:      'center',
+                letterSpacing:  '0.3px',
               }}
             >
               Create Free Account →
@@ -364,20 +366,22 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
               href="/auth/login?redirect=/membership"
               style={{
                 display:        'block',
-                background:     'rgba(255,255,255,0.05)',
+                background:     'transparent',
                 color:          '#fff',
                 padding:        '15px',
                 borderRadius:   '50px',
                 textDecoration: 'none',
-                fontWeight:     500,
+                fontWeight:     600,
                 fontSize:       '14px',
-                border:         '1px solid rgba(255,255,255,0.08)',
+                border:         '1px solid rgba(255,255,255,0.15)',
+                textAlign:      'center',
+                letterSpacing:  '0.3px',
               }}
             >
               Already have an account? Login
             </Link>
 
-            <p style={{ color: '#555', fontSize: '12px', marginTop: '20px' }}>
+            <p style={{ color: 'rgba(245,166,35,0.4)', fontSize: '12px', marginTop: '20px' }}>
               Free to join • Cancel anytime
             </p>
           </div>
