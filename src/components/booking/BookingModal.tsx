@@ -209,7 +209,7 @@ export default function BookingModal(props: Props) {
   const isGroupTier = (props.type === 'trip' && selectedTier === 'group')
     || (props.type === 'event' && eventTier === 'group')
   const minQty = isGroupTier ? 4 : 1
-  const maxQty = isGroupTier ? 20 : Math.min(spotsLeft, 10)
+  const maxQty = isGroupTier ? Math.min(spotsLeft, 20) : Math.min(spotsLeft, 10)
 
   const effectiveQty = props.type === 'trip' && selectedTier === 'group' && props.groupSize
     ? props.groupSize
@@ -509,6 +509,17 @@ export default function BookingModal(props: Props) {
             </div>
           )}
 
+          {spotsLeft <= 10 && spotsLeft > 0 && (
+            <p className="text-brand-primary text-xs font-semibold text-center -mt-2">
+              ⚡ Only {spotsLeft} spot{spotsLeft === 1 ? '' : 's'} left!
+            </p>
+          )}
+          {spotsLeft <= 0 && (
+            <p className="text-red-400 text-sm font-bold text-center">
+              {props.type === 'trip' ? 'Fully booked!' : 'Sold out!'}
+            </p>
+          )}
+
           {/* Promo code */}
           {!isFree && (
             <div>
@@ -661,11 +672,13 @@ export default function BookingModal(props: Props) {
 
           {error && <p className="text-red-400 text-sm">{error}</p>}
 
-          <button onClick={isFreePath ? handleRegisterFree : handleBook} disabled={isPending}
+          <button onClick={isFreePath ? handleRegisterFree : handleBook} disabled={isPending || spotsLeft <= 0}
             className="w-full py-4 rounded-full btn-primary font-bold text-sm shadow-brand-sm hover:brightness-105 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
           >
             {isPending ? (
               <><Loader2 size={15} className="animate-spin" /> Processing…</>
+            ) : spotsLeft <= 0 ? (
+              'Sold Out'
             ) : isFreePath ? (
               'Register for Free →'
             ) : (
