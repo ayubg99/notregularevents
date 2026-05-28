@@ -52,6 +52,7 @@ interface FormData {
   university:             string
   contactWhatsapp:        string
   contactEmail:           string
+  status:                 string
 }
 
 interface Props {
@@ -111,6 +112,7 @@ export default function EditListingForm({ listing, userId }: Props) {
     university:             listing.university ?? '',
     contactWhatsapp:        listing.contact_whatsapp ?? '',
     contactEmail:           listing.contact_email ?? '',
+    status:                 listing.status,
   })
 
   function update<K extends keyof FormData>(key: K, value: FormData[K]) {
@@ -168,6 +170,7 @@ export default function EditListingForm({ listing, userId }: Props) {
       university:              form.university || null,
       gender_preference:       (form.genderPreference as HousingGenderPref) || 'any',
       photos:                  form.photos,
+      status:                  form.status as 'active' | 'inactive' | 'rented',
     }
 
     const { error: updateErr } = await supabase
@@ -200,9 +203,28 @@ export default function EditListingForm({ listing, userId }: Props) {
           </Link>
         </div>
         <h1 className="text-2xl font-bold text-white text-center mb-2 mt-4">Edit Listing</h1>
-        <p className="text-white/40 text-center text-sm mb-6">
+        <p className="text-white/40 text-center text-sm mb-4">
           {isRoomAvailable ? '🏠 Room Available' : '👤 Looking for Room'}
         </p>
+
+        {/* Status selector */}
+        <div className="flex gap-2 justify-center mb-8">
+          {(['active', 'rented', 'inactive'] as const).map(s => (
+            <button
+              key={s}
+              onClick={() => update('status', s)}
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all capitalize border ${
+                form.status === s
+                  ? s === 'active'    ? 'bg-green-500/20 text-green-400 border-green-500/40'
+                  : s === 'rented'    ? 'bg-teal-500/20 text-teal-400 border-teal-500/40'
+                  :                    'bg-red-500/20 text-red-400 border-red-500/40'
+                  : 'bg-white/5 text-white/30 border-white/10 hover:border-white/20'
+              }`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
 
         <StepIndicator step={step} />
 

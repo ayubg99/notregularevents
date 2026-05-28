@@ -202,14 +202,6 @@ export default function BookingTabs({ eventTickets, tripBookings, myListings }: 
                       >
                         ✏️ Edit
                       </Link>
-                      {listing.status === 'active' && (
-                        <button
-                          onClick={() => handleMarkRented(listing.id)}
-                          className="px-3 py-1.5 rounded-lg bg-green-500/15 hover:bg-green-500/25 text-green-400 text-xs transition-colors"
-                        >
-                          ✅ Rented
-                        </button>
-                      )}
                       <button
                         onClick={() => handleDeleteListing(listing.id)}
                         className="px-3 py-1.5 rounded-lg bg-red-500/15 hover:bg-red-500/25 text-red-400 text-xs transition-colors"
