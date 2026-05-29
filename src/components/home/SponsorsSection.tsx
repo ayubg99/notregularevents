@@ -26,29 +26,51 @@ export default async function SponsorsSection() {
   if (sponsors.length === 0) return null
 
   return (
-    <section className="py-16 px-4">
+    <section className="py-20 px-5">
       <div className="max-w-5xl mx-auto text-center">
-        <p className="text-white/30 text-xs font-semibold tracking-widest uppercase mb-8">
+        <p className="text-white/30 text-xs font-semibold tracking-widest uppercase mb-10">
           Our Partners &amp; Sponsors
         </p>
-        <div className="flex flex-wrap justify-center items-center gap-8">
+        <div className="flex flex-wrap justify-center items-center gap-12">
           {sponsors.map(sponsor => (
             <a
               key={sponsor.id}
               href={sponsor.website_url ?? '#'}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-opacity duration-200 no-underline"
+              className="flex flex-col items-center gap-3 opacity-60 hover:opacity-100 transition-opacity duration-200 no-underline"
             >
               {sponsor.logo_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={sponsor.logo_url}
-                  alt={sponsor.name}
-                  style={{ height: 40, width: 'auto', objectFit: 'contain', maxWidth: 120 }}
-                />
+                <div style={{
+                  background: 'rgba(255,255,255,0.08)',
+                  borderRadius: '12px',
+                  padding: '12px 20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '120px',
+                  height: '60px',
+                }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={sponsor.logo_url}
+                    alt={sponsor.name}
+                    style={{ maxHeight: 36, maxWidth: 100, width: 'auto', objectFit: 'contain' }}
+                  />
+                </div>
               ) : (
-                <span className="text-white/60 font-bold text-base">{sponsor.name}</span>
+                <div style={{
+                  background: 'rgba(255,255,255,0.08)',
+                  borderRadius: '12px',
+                  padding: '12px 20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '120px',
+                  height: '60px',
+                }}>
+                  <span className="text-white/60 font-bold text-sm text-center leading-tight">{sponsor.name}</span>
+                </div>
               )}
               {sponsor.discount_text && (
                 <span

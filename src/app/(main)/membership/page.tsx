@@ -175,28 +175,43 @@ export default async function MembershipPage() {
             <h2 className="font-heading text-3xl font-bold text-white mb-2">Member Discounts</h2>
             <p className="text-white/50 text-sm">Exclusive deals with our partners</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {sponsors.map(sponsor => (
               <div
                 key={sponsor.id}
-                className="glass-card rounded-2xl p-5 text-center flex flex-col items-center gap-3"
+                className="glass-card rounded-2xl p-5 text-center flex flex-col items-center"
               >
-                {sponsor.logo_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={sponsor.logo_url}
-                    alt={sponsor.name}
-                    className="h-12 w-auto object-contain"
-                  />
-                ) : (
-                  <p className="text-white font-bold text-base">{sponsor.name}</p>
-                )}
+                {/* Logo container */}
+                <div style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '72px',
+                  width: '100%',
+                  marginBottom: '12px',
+                }}>
+                  {sponsor.logo_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={sponsor.logo_url}
+                      alt={sponsor.name}
+                      style={{ maxHeight: 44, maxWidth: 120, width: 'auto', objectFit: 'contain' }}
+                    />
+                  ) : (
+                    <p className="text-white font-bold text-sm text-center leading-tight">{sponsor.name}</p>
+                  )}
+                </div>
+                {/* Discount badge */}
                 <span
-                  className="text-sm font-bold px-3 py-1 rounded-full"
+                  className="text-xs font-bold px-3 py-1 rounded-full mb-2"
                   style={{ background: 'rgba(245,166,35,0.15)', color: '#F5A623' }}
                 >
                   {sponsor.discount_text}
                 </span>
+                {/* Description */}
                 {sponsor.description && (
                   <p className="text-white/40 text-xs leading-relaxed">{sponsor.description}</p>
                 )}
