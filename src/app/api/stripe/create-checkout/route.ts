@@ -7,7 +7,7 @@ import { nanoid } from 'nanoid'
 import { sendBookingConfirmation } from '@/lib/email'
 import type { MembershipPlan, TripTier } from '@/types/database'
 
-type CheckoutType = 'event' | 'trip' | 'membership'
+type CheckoutType = 'event' | 'trip' | 'membership' | 'job_listing'
 
 interface Body {
   type:        CheckoutType
@@ -20,6 +20,9 @@ interface Body {
   guestEmail?: string
   guestPhone?: string
   attendees?:  { name: string; email: string }[]
+  // job_listing specific
+  isFeatured?: boolean
+  isUrgent?:   boolean
 }
 
 function applyDiscount(price: number, type: 'percentage' | 'fixed', value: number): number {
@@ -442,6 +445,47 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       success_url:       `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:        `${baseUrl}/membership`,
       metadata:          membershipMeta,
+    })
+
+    return NextResponse.json({ url: session.url })
+  }
+
+  // ── Job listing checkout ─────────────────────────────────────
+  if (type === 'job_listing') {
+    const isFeatured = body.isFeatured ?? false
+    const isUrgent   = body.isUrgent   ?? false
+    const amount     = (isFeatured ? 2900 : 0) + (isUrgent ? 900 : 0)
+
+    if (amount === 0) {
+      return NextResponse.json({ error: 'No paid option selected.' }, { status: 400 })
+    }
+
+    const productName = isFeatured && isUrgent
+      ? 'Featured + Urgent Job Listing'
+      : isFeatured
+        ? 'Featured Job Listing'
+        : 'Urgent Job Badge'
+
+    const session = await stripe.checkout.sessions.create({
+      mode:           'payment',
+      customer_email: user?.email ?? undefined,
+      line_items: [{
+        price_data: {
+          currency:     'eur',
+          unit_amount:  amount,
+          product_data: { name: productName },
+        },
+        quantity: 1,
+      }],
+      success_url: `${baseUrl}/jobs/${itemId}?payment=success`,
+      cancel_url:  `${baseUrl}/jobs/post`,
+      metadata: {
+        type:        'job_listing',
+        item_id:     itemId,
+        user_id:     user?.id   ?? '',
+        is_featured: String(isFeatured),
+        is_urgent:   String(isUrgent),
+      },
     })
 
     return NextResponse.json({ url: session.url })

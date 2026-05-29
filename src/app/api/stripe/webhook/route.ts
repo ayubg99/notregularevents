@@ -33,7 +33,7 @@ function membershipEndDate(plan: MembershipPlan): string {
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const admin = getAdminClient()
   const meta  = session.metadata ?? {}
-  const type       = meta.type    as 'event' | 'trip' | 'membership' | 'room_contact' | undefined
+  const type       = meta.type    as 'event' | 'trip' | 'membership' | 'room_contact' | 'job_listing' | undefined
   const userId     = meta.user_id  || null
   const itemId     = meta.item_id as string | undefined
   const guestName  = meta.guest_name  || null
@@ -55,7 +55,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return
   }
 
-  // room_contact and membership don't use itemId — only event/trip do
+  // room_contact and membership don't use itemId — only event/trip/job_listing do
   if (type !== 'room_contact' && type !== 'membership' && !itemId) {
     console.error('[webhook] missing itemId for type:', type, meta)
     return
@@ -498,6 +498,27 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
 
     console.log('[webhook room_contact] pending booking created', bookingRef)
+  }
+
+  // ── Job listing ──────────────────────────────────────────────
+  if (type === 'job_listing') {
+    const isFeatured = meta.is_featured === 'true'
+    const isUrgent   = meta.is_urgent   === 'true'
+    const daysActive = isFeatured ? 60 : 30
+    const expiresAt  = new Date(Date.now() + daysActive * 24 * 60 * 60 * 1000).toISOString()
+
+    const { error: jobErr } = await admin
+      .from('job_listings')
+      .update({
+        status:      'active',
+        is_featured: isFeatured,
+        is_urgent:   isUrgent,
+        expires_at:  expiresAt,
+      })
+      .eq('id', itemId!)
+
+    if (jobErr) console.error('[webhook job_listing]', jobErr.message)
+    else        console.log('[webhook job_listing] activated job', itemId, { isFeatured, isUrgent })
   }
 
   // ── Decrement promo code uses ────────────────────────────────

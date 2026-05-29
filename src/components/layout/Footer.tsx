@@ -8,6 +8,7 @@ const FOOTER_LINKS = {
   Explore: [
     { href: '/events',     label: 'Events'      },
     { href: '/trips',      label: 'Trips'        },
+    { href: '/jobs',       label: 'Jobs'         },
     { href: '/community',  label: 'Community'    },
     { href: '/membership', label: 'Membership'   },
     { href: '/ambassadors', label: 'Ambassadors' },

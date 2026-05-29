@@ -14,6 +14,7 @@ const NAV_HREFS = [
   { href: '/trips',      key: 'trips'      },
   { href: '/community',  key: 'community'  },
   { href: '/housing',    key: 'housing'    },
+  { href: '/jobs',       key: 'jobs'       },
   { href: '/membership', key: 'membership' },
   { href: '/about',      key: 'about'      },
 ] as const

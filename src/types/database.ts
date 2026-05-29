@@ -432,6 +432,12 @@ export interface Database {
         Update:        SponsorUpdate
         Relationships: never[]
       }
+      job_listings: {
+        Row:           JobListingRow
+        Insert:        JobListingInsert
+        Update:        JobListingUpdate
+        Relationships: never[]
+      }
     }
     Views:          { [_ in never]: never }
     Functions: {
@@ -660,3 +666,48 @@ export type AmbassadorApplicationInsert = {
   instagram?: string
   why_join:   string
 }
+
+// ─── Jobs ─────────────────────────────────────────────────────
+
+export type JobType     = 'part_time' | 'internship' | 'full_time' | 'freelance' | 'volunteer'
+export type JobCategory = 'hospitality' | 'marketing' | 'tech' | 'education' | 'retail' | 'events' | 'language' | 'other'
+export type JobStatus   = 'active' | 'closed' | 'draft'
+export type JobLanguage = 'english' | 'spanish' | 'both' | 'any'
+
+export type JobListingRow = {
+  id:                string
+  title:             string
+  company_name:      string
+  company_logo_url:  string | null
+  description:       string
+  requirements:      string | null
+  location:          string
+  job_type:          JobType
+  category:          JobCategory
+  salary_text:       string | null
+  hours_per_week:    number | null
+  language_required: JobLanguage
+  apply_email:       string | null
+  apply_whatsapp:    string | null
+  apply_url:         string | null
+  contact_name:      string | null
+  is_featured:       boolean
+  is_urgent:         boolean
+  status:            JobStatus
+  posted_by_user_id: string | null
+  expires_at:        string
+  views:             number
+  applications:      number
+  created_at:        string
+  updated_at:        string
+}
+
+export type JobListingInsert = Omit<JobListingRow, 'id' | 'created_at' | 'updated_at' | 'views' | 'applications'> & {
+  status?:       JobStatus
+  is_featured?:  boolean
+  is_urgent?:    boolean
+  views?:        number
+  applications?: number
+}
+
+export type JobListingUpdate = Partial<Omit<JobListingRow, 'id' | 'created_at' | 'updated_at'>>
