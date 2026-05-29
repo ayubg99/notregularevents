@@ -698,16 +698,20 @@ export type JobListingRow = {
   expires_at:        string
   views:             number
   applications:      number
+  management_token:  string | null
+  poster_email:      string | null
   created_at:        string
   updated_at:        string
 }
 
 export type JobListingInsert = Omit<JobListingRow, 'id' | 'created_at' | 'updated_at' | 'views' | 'applications'> & {
-  status?:       JobStatus
-  is_featured?:  boolean
-  is_urgent?:    boolean
-  views?:        number
-  applications?: number
+  status?:           JobStatus
+  is_featured?:      boolean
+  is_urgent?:        boolean
+  views?:            number
+  applications?:     number
+  management_token?: string | null
+  poster_email?:     string | null
 }
 
 export type JobListingUpdate = Partial<Omit<JobListingRow, 'id' | 'created_at' | 'updated_at'>>

@@ -13,8 +13,9 @@ export const metadata = {
 import ProfileForm from './ProfileForm'
 import BookingTabs from './BookingTabs'
 import HousingListings from './HousingListings'
+import JobListings from './JobListings'
 import MemberCard from './MemberCard'
-import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow, HousingListingRow, SponsorRow } from '@/types/database'
+import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow, HousingListingRow, JobListingRow, SponsorRow } from '@/types/database'
 
 type EventTicketWithEvent = EventTicketRow & {
   events: { id: string; title: string; date: string; location: string | null; slug: string } | null
@@ -43,6 +44,7 @@ export default async function DashboardPage() {
     { data: eventTicketsRaw },
     { data: tripBookingsRaw },
     { data: myListingsRaw },
+    { data: myJobsRaw },
     { data: sponsorsRaw },
   ] = await Promise.all([
     supabase.from('users').select('full_name, avatar_url, role').eq('id', user.id).single(),
@@ -51,6 +53,7 @@ export default async function DashboardPage() {
     supabase.from('event_tickets').select('*, events(id, title, date, location, slug)').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('trip_bookings').select('*, trips(id, title, start_date, destination, slug, whatsapp_group_url)').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('housing_listings').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
+    supabase.from('job_listings').select('*').eq('posted_by_user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('sponsors').select('*').eq('status', 'active').eq('members_only', true).order('display_order', { ascending: true }),
   ])
 
@@ -61,7 +64,8 @@ export default async function DashboardPage() {
   const eventTickets = (eventTicketsRaw ?? []) as unknown as EventTicketWithEvent[]
   const tripBookings = (tripBookingsRaw ?? []) as unknown as TripBookingWithTrip[]
   const myListings   = (myListingsRaw ?? []) as HousingListingRow[]
-  const sponsors     = (sponsorsRaw ?? []) as SponsorRow[]
+  const myJobs       = (myJobsRaw    ?? []) as JobListingRow[]
+  const sponsors     = (sponsorsRaw  ?? []) as SponsorRow[]
   const activeMembership = membership as MembershipRow | null
   const profileData  = profile as ProfileRow | null
 
@@ -103,6 +107,7 @@ export default async function DashboardPage() {
               tripBookings={tripBookings}
             />
             <HousingListings myListings={myListings} />
+            <JobListings myJobs={myJobs} />
           </div>
 
           {/* Right — membership + discounts + profile */}

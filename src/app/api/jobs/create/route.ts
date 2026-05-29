@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { nanoid } from 'nanoid'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { sendJobManagementEmail } from '@/lib/email'
 import type { JobType, JobCategory, JobLanguage, JobStatus } from '@/types/database'
 
 interface Body {
@@ -19,6 +21,7 @@ interface Body {
   apply_email?:      string
   apply_whatsapp?:   string
   apply_url?:        string
+  poster_email:      string
   basePlan:          'standard' | 'featured' | 'employer_plan'
   withUrgent:        boolean
 }
@@ -32,6 +35,7 @@ export async function POST(request: NextRequest) {
     if (!body.company_name?.trim()) return NextResponse.json({ error: 'Company name is required.' }, { status: 400 })
     if (!body.description?.trim())  return NextResponse.json({ error: 'Description is required.'  }, { status: 400 })
     if (!body.contact_name?.trim()) return NextResponse.json({ error: 'Contact name is required.' }, { status: 400 })
+    if (!body.poster_email?.trim())  return NextResponse.json({ error: 'Your email is required.' }, { status: 400 })
 
     const hasApplyMethod = body.apply_email?.trim() || body.apply_whatsapp?.trim() || body.apply_url?.trim()
     if (!hasApplyMethod) {
@@ -42,6 +46,7 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
+    const managementToken = nanoid(32)
     const isFree      = body.basePlan === 'standard' && !body.withUrgent
     const isFeatured  = body.basePlan === 'featured' || body.basePlan === 'employer_plan'
     const status: JobStatus = isFree ? 'active' : 'draft'
@@ -69,6 +74,8 @@ export async function POST(request: NextRequest) {
         apply_whatsapp:    body.apply_whatsapp?.trim()  || null,
         apply_url:         body.apply_url?.trim()       || null,
         contact_name:      body.contact_name.trim(),
+        poster_email:      body.poster_email.trim(),
+        management_token:  managementToken,
         is_featured:       false,
         is_urgent:         false,
         status,
@@ -84,6 +91,23 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[api/jobs/create] created job', data.id, 'status:', status)
+
+    // Send management email (always — poster email is required)
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+    try {
+      await sendJobManagementEmail({
+        to:        body.poster_email.trim(),
+        jobTitle:  body.title.trim(),
+        company:   body.company_name.trim(),
+        viewUrl:   `${baseUrl}/jobs/${data.id}`,
+        manageUrl: `${baseUrl}/jobs/manage?token=${managementToken}`,
+        editUrl:   `${baseUrl}/jobs/edit/${data.id}?token=${managementToken}`,
+      })
+    } catch (emailErr) {
+      console.error('[api/jobs/create] management email failed:', emailErr)
+      // Non-fatal — job was created successfully
+    }
+
     return NextResponse.json({ jobId: data.id, isFree })
   } catch (err) {
     console.error('[api/jobs/create] unhandled error:', err)

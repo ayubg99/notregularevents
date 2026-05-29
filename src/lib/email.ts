@@ -1,6 +1,7 @@
 import { getResend } from '@/lib/resend'
 import { BookingConfirmationEmail } from '@/lib/emails/BookingConfirmationEmail'
 import { MembershipWelcomeEmail } from '@/lib/emails/MembershipWelcomeEmail'
+import { JobManagementEmail } from '@/lib/emails/JobManagementEmail'
 
 interface RefundEmailParams {
   email:     string
@@ -535,5 +536,31 @@ export async function sendMembershipWelcomeEmail(params: MembershipWelcomeParams
     if (error) console.error('[email membership] send failed:', error)
   } catch (err) {
     console.error('[email membership] unexpected error:', err)
+  }
+}
+
+interface JobManagementEmailParams {
+  to:        string
+  jobTitle:  string
+  company:   string
+  viewUrl:   string
+  manageUrl: string
+  editUrl:   string
+}
+
+export async function sendJobManagementEmail(params: JobManagementEmailParams) {
+  const from = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
+  const html = JobManagementEmail(params)
+
+  try {
+    const { error } = await getResend().emails.send({
+      from,
+      to:      params.to,
+      subject: `Manage your job listing — ${params.jobTitle}`,
+      html,
+    })
+    if (error) console.error('[email job management] send failed:', error)
+  } catch (err) {
+    console.error('[email job management] unexpected error:', err)
   }
 }

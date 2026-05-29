@@ -23,6 +23,7 @@ interface FormData {
   requirements:      string
   // Step 3
   contact_name:      string
+  poster_email:      string
   apply_email:       string
   apply_whatsapp:    string
   apply_url:         string
@@ -41,6 +42,7 @@ const INITIAL: FormData = {
   description:       '',
   requirements:      '',
   contact_name:      '',
+  poster_email:      '',
   apply_email:       '',
   apply_whatsapp:    '',
   apply_url:         '',
@@ -137,7 +139,8 @@ export default function PostJobClient() {
       if (!form.description.trim()) return 'Job description is required.'
     }
     if (step === 2) {
-      if (!form.contact_name.trim()) return 'Contact name is required.'
+      if (!form.contact_name.trim())  return 'Contact name is required.'
+      if (!form.poster_email.trim())  return 'Your email is required to manage your listing.'
       if (!form.apply_email.trim() && !form.apply_whatsapp.trim() && !form.apply_url.trim()) {
         return 'At least one apply method (email, WhatsApp, or URL) is required.'
       }
@@ -354,6 +357,13 @@ export default function PostJobClient() {
 
             <Field label="Your Name / Contact Name" required>
               <input style={inputStyle} value={form.contact_name} onChange={e => update('contact_name', e.target.value)} placeholder="e.g. Maria García" />
+            </Field>
+
+            <Field label="Your Email (for listing management)" required>
+              <input style={inputStyle} type="email" value={form.poster_email} onChange={e => update('poster_email', e.target.value)} placeholder="you@example.com" />
+              <p style={{ color: '#555', fontSize: '11px', marginTop: '5px' }}>
+                We&apos;ll email you a link to manage, edit or close your listing.
+              </p>
             </Field>
 
             <Field label="Apply by Email">
