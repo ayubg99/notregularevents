@@ -296,16 +296,21 @@ export default async function JobDetailPage({ params }: Props) {
                 {/* Apply by email */}
                 {job.apply_email && (
                   <a
-                    href={`mailto:${job.apply_email}?subject=Application: ${encodeURIComponent(job.title)}&body=Hi ${job.contact_name ?? 'there'},%0A%0AI found your job on Erasmus Vibe and I'm interested in applying.`}
+                    href={`mailto:${job.apply_email}?subject=${encodeURIComponent(`Application: ${job.title} — Erasmus Vibe`)}&body=${encodeURIComponent(`Hi ${job.contact_name || 'there'},\n\nI found your job posting "${job.title}" on Erasmus Vibe and I am interested in applying.\n\nName: \nNationality: \nUniversity: \nAvailable from: \n\nBest regards`)}`}
                     style={{
-                      display: 'block',
-                      background: '#F5A623',
-                      color: '#1A1A2E',
-                      padding: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      background: 'linear-gradient(135deg, #F5A623, #FF6B35)',
+                      color: '#1A1A0E',
+                      padding: '15px 24px',
                       borderRadius: '50px',
                       textDecoration: 'none',
                       fontWeight: 700,
-                      textAlign: 'center',
+                      fontSize: '15px',
+                      marginBottom: '10px',
+                      boxShadow: '0 4px 16px rgba(245,166,35,0.25)',
                     }}
                   >
                     📧 Apply by Email
@@ -315,18 +320,22 @@ export default async function JobDetailPage({ params }: Props) {
                 {/* Apply on WhatsApp */}
                 {job.apply_whatsapp && (
                   <a
-                    href={`https://wa.me/${whatsappNumber}?text=Hi! I found your job posting "${job.title}" on Erasmus Vibe and I'm interested in applying.`}
+                    href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi ${job.contact_name || 'there'}! I found your job posting "${job.title}" on Erasmus Vibe and I am interested. Is the position still available?`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
-                      display: 'block',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
                       background: '#25D366',
                       color: '#fff',
-                      padding: '14px',
+                      padding: '15px 24px',
                       borderRadius: '50px',
                       textDecoration: 'none',
                       fontWeight: 700,
-                      textAlign: 'center',
+                      fontSize: '15px',
+                      marginBottom: '10px',
                     }}
                   >
                     💬 Apply on WhatsApp
@@ -336,19 +345,23 @@ export default async function JobDetailPage({ params }: Props) {
                 {/* Apply online */}
                 {job.apply_url && (
                   <a
-                    href={job.apply_url}
+                    href={job.apply_url.startsWith('http') ? job.apply_url : `https://${job.apply_url}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
-                      display: 'block',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
                       background: 'rgba(255,255,255,0.05)',
                       color: '#fff',
-                      padding: '14px',
+                      padding: '14px 24px',
                       borderRadius: '50px',
                       textDecoration: 'none',
                       fontWeight: 600,
                       textAlign: 'center',
                       border: '1px solid rgba(255,255,255,0.1)',
+                      marginBottom: '10px',
                     }}
                   >
                     🌐 Apply Online

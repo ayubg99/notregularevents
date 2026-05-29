@@ -27,6 +27,8 @@ interface Body {
   upgradeType?: 'featured' | 'subscription'
   employerId?:  string
   jobId?:       string
+  isFeatured?:  boolean
+  isUrgent?:    boolean
 }
 
 function applyDiscount(price: number, type: 'percentage' | 'fixed', value: number): number {
@@ -546,14 +548,26 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
     if (upgradeType === 'featured') {
       if (!jobId) return NextResponse.json({ error: 'jobId required for featured upgrade.' }, { status: 400 })
 
+      const isFeat      = body.isFeatured ?? true
+      const isUrg       = body.isUrgent   ?? false
+      const featuredAmt = isFeat ? 2900 : 0
+      const urgentAmt   = isUrg  ? 900  : 0
+      const amount      = featuredAmt + urgentAmt
+
+      const productName = isFeat && isUrg
+        ? 'Featured + Urgent Job Listing — 60 days'
+        : isFeat
+          ? 'Featured Job Listing — 60 days'
+          : 'Urgent Job Badge'
+
       const session = await stripe.checkout.sessions.create({
         mode:           'payment',
         customer_email: user?.email ?? undefined,
         line_items: [{
           price_data: {
             currency:     'eur',
-            unit_amount:  2900,
-            product_data: { name: 'Featured Job Listing — 60 days' },
+            unit_amount:  amount,
+            product_data: { name: productName },
           },
           quantity: 1,
         }],
@@ -564,6 +578,8 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
           upgrade_type: 'featured',
           employer_id:  employerId,
           item_id:      jobId,
+          is_featured:  String(isFeat),
+          is_urgent:    String(isUrg),
           user_id:      user?.id ?? '',
         },
       })

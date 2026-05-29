@@ -577,6 +577,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         .update({
           is_featured: true,
           expires_at:  new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+          ...(meta.is_urgent === 'true' ? { is_urgent: true } : {}),
         })
         .eq('id', jobId)
       if (jobErr) console.error('[webhook job_upgrade] ❌ feature job failed:', jobErr.message)

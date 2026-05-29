@@ -12,6 +12,7 @@ function UpgradePage() {
 
   const [loadingType, setLoadingType] = useState<'featured' | 'subscription' | null>(null)
   const [error,       setError]       = useState('')
+  const [isUrgent,    setIsUrgent]    = useState(false)
 
   async function handleUpgrade(upgradeType: 'featured' | 'subscription') {
     setError('')
@@ -30,6 +31,8 @@ function UpgradePage() {
           upgradeType,
           employerId:  me.id,
           jobId:       upgradeType === 'featured' && jobId ? jobId : undefined,
+          isFeatured:  upgradeType === 'featured' ? true : undefined,
+          isUrgent:    upgradeType === 'featured' ? isUrgent : undefined,
         }),
       })
       const data = await res.json() as { url?: string; error?: string }
@@ -83,6 +86,44 @@ function UpgradePage() {
               ✓ Will feature the selected listing
             </p>
           )}
+
+          {/* Urgent add-on */}
+          <div
+            onClick={() => setIsUrgent(u => !u)}
+            style={{
+              marginTop:    '16px',
+              background:   isUrgent ? 'rgba(255,68,68,0.08)' : 'rgba(255,255,255,0.02)',
+              border:       isUrgent ? '2px solid rgba(255,68,68,0.3)' : '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '12px',
+              padding:      '14px 16px',
+              cursor:       'pointer',
+              display:      'flex',
+              justifyContent: 'space-between',
+              alignItems:   'center',
+            }}
+          >
+            <div>
+              <p style={{ color: isUrgent ? '#FF4444' : '#ccc', fontWeight: 600, margin: '0 0 4px', fontSize: '14px' }}>
+                🔥 Add Urgent Badge
+              </p>
+              <p style={{ color: '#888', fontSize: '12px', margin: 0 }}>
+                Red urgent badge • &quot;Hiring now&quot; label • More applications
+              </p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ color: isUrgent ? '#FF4444' : '#888', fontWeight: 700, fontSize: '15px' }}>+€9</span>
+              <div style={{
+                width: '22px', height: '22px', borderRadius: '6px',
+                border:      isUrgent ? 'none' : '2px solid rgba(255,255,255,0.2)',
+                background:  isUrgent ? '#FF4444' : 'transparent',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#fff', fontSize: '14px', fontWeight: 700,
+              }}>
+                {isUrgent ? '✓' : ''}
+              </div>
+            </div>
+          </div>
+
           <button
             onClick={() => handleUpgrade('featured')}
             disabled={loadingType !== null}
@@ -103,7 +144,9 @@ function UpgradePage() {
               gap:          '8px',
             }}
           >
-            {loadingType === 'featured' ? <><Loader2 size={16} className="animate-spin" /> Processing…</> : 'Feature This Listing — €29'}
+            {loadingType === 'featured'
+              ? <><Loader2 size={16} className="animate-spin" /> Processing…</>
+              : isUrgent ? 'Feature + Urgent — €38' : 'Feature This Listing — €29'}
           </button>
         </div>
 

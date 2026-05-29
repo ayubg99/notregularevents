@@ -45,7 +45,7 @@ const INITIAL: FormData = {
   apply_url:         '',
 }
 
-const STEPS = ['Job Details', 'Description', 'How to Apply']
+const STEPS = ['Job Details', 'Description', 'How to Apply', 'Listing Plan']
 
 const inputStyle: React.CSSProperties = {
   background:   'rgba(255,255,255,0.05)',
@@ -80,10 +80,14 @@ function Field({ label, required, children }: { label: string; required?: boolea
 
 export default function PostJobClient({ employerId }: Props) {
   const router = useRouter()
-  const [step,    setStep]    = useState(0)
-  const [form,    setForm]    = useState<FormData>(INITIAL)
-  const [error,   setError]   = useState('')
-  const [loading, setLoading] = useState(false)
+  const [step,        setStep]        = useState(0)
+  const [form,        setForm]        = useState<FormData>(INITIAL)
+  const [error,       setError]       = useState('')
+  const [loading,     setLoading]     = useState(false)
+  const [isFeatured,  setIsFeatured]  = useState(false)
+  const [isUrgent,    setIsUrgent]    = useState(false)
+
+  const totalPrice = (isFeatured ? 29 : 0) + (isUrgent ? 9 : 0)
 
   function update(field: keyof FormData, value: string) {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -130,6 +134,28 @@ export default function PostJobClient({ employerId }: Props) {
 
       if (!res.ok || !data.jobId) {
         setError(data.error ?? 'Failed to create listing. Please try again.')
+        return
+      }
+
+      if (isFeatured || isUrgent) {
+        const checkoutRes  = await fetch('/api/stripe/create-checkout', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            type:        'job_upgrade',
+            upgradeType: 'featured',
+            jobId:       data.jobId,
+            employerId,
+            isFeatured,
+            isUrgent,
+          }),
+        })
+        const checkoutData = await checkoutRes.json() as { url?: string; error?: string }
+        if (!checkoutRes.ok || !checkoutData.url) {
+          setError(checkoutData.error ?? 'Checkout failed. Please try again.')
+          return
+        }
+        window.location.href = checkoutData.url
         return
       }
 
@@ -247,6 +273,113 @@ export default function PostJobClient({ employerId }: Props) {
           </div>
         )}
 
+        {/* Step 4: Listing Plan */}
+        {step === 3 && (
+          <div>
+            <p style={{ color: '#fff', fontWeight: 600, fontSize: '15px', margin: '0 0 16px' }}>
+              Choose your listing plan
+            </p>
+
+            {/* Standard — Free */}
+            <div
+              onClick={() => { setIsFeatured(false); setIsUrgent(false) }}
+              style={{
+                background:   !isFeatured ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.02)',
+                border:       !isFeatured ? '2px solid rgba(255,255,255,0.2)' : '1px solid rgba(255,255,255,0.06)',
+                borderRadius: '12px', padding: '16px', cursor: 'pointer', marginBottom: '10px',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              }}
+            >
+              <div>
+                <p style={{ color: '#fff', fontWeight: 600, margin: '0 0 4px', fontSize: '15px' }}>🆓 Standard</p>
+                <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Active for 30 days • Normal position</p>
+              </div>
+              <span style={{ color: '#2ECC71', fontWeight: 700, fontSize: '16px' }}>Free</span>
+            </div>
+
+            {/* Featured — €29 */}
+            <div
+              onClick={() => setIsFeatured(f => !f)}
+              style={{
+                background:   isFeatured ? 'rgba(245,166,35,0.08)' : 'rgba(255,255,255,0.02)',
+                border:       isFeatured ? '2px solid rgba(245,166,35,0.4)' : '1px solid rgba(255,255,255,0.06)',
+                borderRadius: '12px', padding: '16px', cursor: 'pointer', marginBottom: '10px',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              }}
+            >
+              <div>
+                <p style={{ color: '#F5A623', fontWeight: 700, margin: '0 0 4px', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  ⭐ Featured
+                  <span style={{ background: 'rgba(245,166,35,0.2)', color: '#F5A623', padding: '1px 8px', borderRadius: '20px', fontSize: '11px' }}>Most popular</span>
+                </p>
+                <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Active 60 days • Appears first in results</p>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ color: '#F5A623', fontWeight: 700, fontSize: '16px' }}>€29</span>
+                <div style={{
+                  width: '22px', height: '22px', borderRadius: '6px',
+                  border:     isFeatured ? 'none' : '2px solid rgba(255,255,255,0.2)',
+                  background: isFeatured ? '#F5A623' : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#1A1A0E', fontSize: '14px', fontWeight: 700,
+                }}>
+                  {isFeatured ? '✓' : ''}
+                </div>
+              </div>
+            </div>
+
+            {/* Urgent Badge add-on — shown at same level if standard, indented if featured */}
+            <div
+              onClick={() => setIsUrgent(u => !u)}
+              style={{
+                background:   isUrgent ? 'rgba(255,68,68,0.08)' : 'rgba(255,255,255,0.02)',
+                border:       isUrgent ? '2px solid rgba(255,68,68,0.3)' : '1px solid rgba(255,255,255,0.06)',
+                borderRadius: '12px', padding: '14px 16px', cursor: 'pointer', marginBottom: '10px',
+                marginLeft:   isFeatured ? '16px' : '0',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              }}
+            >
+              <div>
+                <p style={{ color: isUrgent ? '#FF4444' : '#ccc', fontWeight: 600, margin: '0 0 4px', fontSize: '14px' }}>
+                  🔥 Add Urgent Badge
+                </p>
+                <p style={{ color: '#888', fontSize: '12px', margin: 0 }}>
+                  Red urgent badge • &quot;Hiring now&quot; label • More applications
+                </p>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ color: isUrgent ? '#FF4444' : '#888', fontWeight: 700, fontSize: '15px' }}>+€9</span>
+                <div style={{
+                  width: '22px', height: '22px', borderRadius: '6px',
+                  border:     isUrgent ? 'none' : '2px solid rgba(255,255,255,0.2)',
+                  background: isUrgent ? '#FF4444' : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#fff', fontSize: '14px', fontWeight: 700,
+                }}>
+                  {isUrgent ? '✓' : ''}
+                </div>
+              </div>
+            </div>
+
+            {/* Price summary */}
+            {totalPrice > 0 && (
+              <div style={{
+                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '12px', padding: '14px 16px',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              }}>
+                <div style={{ fontSize: '13px' }}>
+                  {isFeatured && <p style={{ color: '#888', margin: '0 0 2px' }}>⭐ Featured listing: €29</p>}
+                  {isUrgent   && <p style={{ color: '#888', margin: 0 }}>🔥 Urgent badge: €9</p>}
+                </div>
+                <p style={{ color: '#F5A623', fontWeight: 700, fontSize: '18px', margin: 0 }}>
+                  Total: €{totalPrice}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
         {error && (
           <p style={{ color: '#FF4444', fontSize: '13px', marginTop: '16px', background: 'rgba(255,68,68,0.1)', borderRadius: '8px', padding: '10px 14px' }}>{error}</p>
         )}
@@ -264,7 +397,7 @@ export default function PostJobClient({ employerId }: Props) {
             </button>
           ) : (
             <button type="button" onClick={handleSubmit} disabled={loading} style={{ background: loading ? 'rgba(245,166,35,0.5)' : '#F5A623', border: 'none', borderRadius: '50px', padding: '12px 28px', color: '#1A1A2E', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', fontSize: '14px' }}>
-              {loading ? 'Posting…' : 'Post Job →'}
+              {loading ? 'Posting…' : totalPrice > 0 ? `Post Job & Pay €${totalPrice} →` : 'Post Job for Free →'}
             </button>
           )}
         </div>
