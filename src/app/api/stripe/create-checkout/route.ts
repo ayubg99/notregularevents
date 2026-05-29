@@ -7,7 +7,7 @@ import { nanoid } from 'nanoid'
 import { sendBookingConfirmation } from '@/lib/email'
 import type { MembershipPlan, TripTier } from '@/types/database'
 
-type CheckoutType = 'event' | 'trip' | 'membership' | 'job_listing' | 'employer_subscription'
+type CheckoutType = 'event' | 'trip' | 'membership' | 'job_listing' | 'employer_subscription' | 'job_upgrade'
 
 interface Body {
   type:        CheckoutType
@@ -23,6 +23,10 @@ interface Body {
   // job listing specific
   basePlan?:   'standard' | 'featured' | 'employer_plan'
   withUrgent?: boolean
+  // job upgrade specific
+  upgradeType?: 'featured' | 'subscription'
+  employerId?:  string
+  jobId?:       string
 }
 
 function applyDiscount(price: number, type: 'percentage' | 'fixed', value: number): number {
@@ -527,6 +531,77 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
     })
 
     return NextResponse.json({ url: session.url })
+  }
+
+  // ── Job upgrade checkout ─────────────────────────────────────
+  if (type === 'job_upgrade') {
+    const upgradeType = body.upgradeType
+    const employerId  = body.employerId ?? itemId
+    const jobId       = body.jobId
+
+    if (!upgradeType) {
+      return NextResponse.json({ error: 'upgradeType is required.' }, { status: 400 })
+    }
+
+    if (upgradeType === 'featured') {
+      if (!jobId) return NextResponse.json({ error: 'jobId required for featured upgrade.' }, { status: 400 })
+
+      const session = await stripe.checkout.sessions.create({
+        mode:           'payment',
+        customer_email: user?.email ?? undefined,
+        line_items: [{
+          price_data: {
+            currency:     'eur',
+            unit_amount:  2900,
+            product_data: { name: 'Featured Job Listing — 60 days' },
+          },
+          quantity: 1,
+        }],
+        success_url: `${baseUrl}/employer/dashboard?upgraded=true`,
+        cancel_url:  `${baseUrl}/employer/upgrade`,
+        metadata: {
+          type:         'job_upgrade',
+          upgrade_type: 'featured',
+          employer_id:  employerId,
+          item_id:      jobId,
+          user_id:      user?.id ?? '',
+        },
+      })
+      return NextResponse.json({ url: session.url })
+    }
+
+    if (upgradeType === 'subscription') {
+      const session = await stripe.checkout.sessions.create({
+        mode:           'subscription',
+        customer_email: user?.email ?? undefined,
+        line_items: [{
+          price_data: {
+            currency:     'eur',
+            unit_amount:  4900,
+            product_data: { name: 'Employer Plan — Erasmus Vibe Jobs' },
+            recurring:    { interval: 'month' },
+          },
+          quantity: 1,
+        }],
+        subscription_data: {
+          metadata: {
+            type:         'job_upgrade',
+            upgrade_type: 'subscription',
+            employer_id:  employerId,
+            user_id:      user?.id ?? '',
+          },
+        },
+        success_url: `${baseUrl}/employer/dashboard?upgraded=true`,
+        cancel_url:  `${baseUrl}/employer/upgrade`,
+        metadata: {
+          type:         'job_upgrade',
+          upgrade_type: 'subscription',
+          employer_id:  employerId,
+          user_id:      user?.id ?? '',
+        },
+      })
+      return NextResponse.json({ url: session.url })
+    }
   }
 
   return NextResponse.json({ error: 'Invalid checkout type.' }, { status: 400 })

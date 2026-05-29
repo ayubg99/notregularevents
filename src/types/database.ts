@@ -438,6 +438,12 @@ export interface Database {
         Update:        JobListingUpdate
         Relationships: never[]
       }
+      employer_accounts: {
+        Row:           EmployerAccountRow
+        Insert:        EmployerAccountInsert
+        Update:        EmployerAccountUpdate
+        Relationships: never[]
+      }
     }
     Views:          { [_ in never]: never }
     Functions: {
@@ -698,20 +704,64 @@ export type JobListingRow = {
   expires_at:        string
   views:             number
   applications:      number
-  management_token:  string | null
-  poster_email:      string | null
-  created_at:        string
+  management_token:    string | null
+  poster_email:        string | null
+  employer_account_id: string | null
+  created_at:          string
   updated_at:        string
 }
 
-export type JobListingInsert = Omit<JobListingRow, 'id' | 'created_at' | 'updated_at' | 'views' | 'applications'> & {
-  status?:           JobStatus
-  is_featured?:      boolean
-  is_urgent?:        boolean
-  views?:            number
-  applications?:     number
-  management_token?: string | null
-  poster_email?:     string | null
+export type JobListingInsert = Omit<JobListingRow, 'id' | 'created_at' | 'updated_at' | 'views' | 'applications' | 'management_token' | 'poster_email' | 'employer_account_id'> & {
+  status?:             JobStatus
+  is_featured?:        boolean
+  is_urgent?:          boolean
+  views?:              number
+  applications?:       number
+  management_token?:   string | null
+  poster_email?:       string | null
+  employer_account_id?: string | null
 }
 
 export type JobListingUpdate = Partial<Omit<JobListingRow, 'id' | 'created_at' | 'updated_at'>>
+
+// ─── Employer Accounts ────────────────────────────────────────
+
+export type EmployerPlan   = 'free' | 'featured' | 'subscription'
+export type EmployerStatus = 'active' | 'suspended' | 'cancelled'
+
+export type EmployerAccountRow = {
+  id:                     string
+  user_id:                string | null
+  company_name:           string
+  company_logo_url:       string | null
+  contact_name:           string
+  email:                  string
+  phone:                  string | null
+  website:                string | null
+  description:            string | null
+  stripe_customer_id:     string | null
+  stripe_subscription_id: string | null
+  plan:                   EmployerPlan
+  plan_expires_at:        string | null
+  status:                 EmployerStatus
+  created_at:             string
+  updated_at:             string
+}
+
+export type EmployerAccountInsert = {
+  user_id:                  string | null
+  company_name:             string
+  contact_name:             string
+  email:                    string
+  company_logo_url?:        string | null
+  phone?:                   string | null
+  website?:                 string | null
+  description?:             string | null
+  stripe_customer_id?:      string | null
+  stripe_subscription_id?:  string | null
+  plan?:                    EmployerPlan
+  plan_expires_at?:         string | null
+  status?:                  EmployerStatus
+}
+
+export type EmployerAccountUpdate = Partial<Omit<EmployerAccountRow, 'id' | 'created_at' | 'updated_at'>>

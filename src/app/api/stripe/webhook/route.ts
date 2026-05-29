@@ -34,7 +34,7 @@ function membershipEndDate(plan: MembershipPlan): string {
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const admin = getAdminClient()
   const meta  = session.metadata ?? {}
-  const type       = meta.type    as 'event' | 'trip' | 'membership' | 'room_contact' | 'job_listing' | 'employer_subscription' | undefined
+  const type       = meta.type    as 'event' | 'trip' | 'membership' | 'room_contact' | 'job_listing' | 'employer_subscription' | 'job_upgrade' | undefined
   const userId     = meta.user_id  || null
   const itemId     = meta.item_id as string | undefined
   const guestName  = meta.guest_name  || null
@@ -556,6 +556,61 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         { onConflict: 'user_id', ignoreDuplicates: false },
       )
       if (memErr) console.error('[webhook employer_subscription membership]', memErr.message)
+    }
+  }
+
+  // ── Job upgrade (featured / employer subscription) ───────────
+  if (type === 'job_upgrade') {
+    const upgradeType = meta.upgrade_type
+    const employerId  = meta.employer_id
+    const jobId       = meta.item_id || null
+
+    if (upgradeType === 'featured' && jobId) {
+      const { error: jobErr } = await admin
+        .from('job_listings')
+        .update({
+          is_featured: true,
+          expires_at:  new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+        })
+        .eq('id', jobId)
+      if (jobErr) console.error('[webhook job_upgrade featured job]', jobErr.message)
+
+      await admin
+        .from('employer_accounts')
+        .update({ plan: 'featured' })
+        .eq('id', employerId)
+
+      console.log('[webhook job_upgrade] featured job', jobId)
+    }
+
+    if (upgradeType === 'subscription') {
+      const subscriptionId = typeof session.subscription === 'string'
+        ? session.subscription
+        : (session.subscription as Stripe.Subscription | null)?.id ?? null
+      const customerId     = typeof session.customer === 'string'
+        ? session.customer
+        : (session.customer as Stripe.Customer | null)?.id ?? null
+      const expiresAt      = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+
+      const { error: empErr } = await admin
+        .from('employer_accounts')
+        .update({
+          plan:                    'subscription',
+          stripe_subscription_id:  subscriptionId,
+          stripe_customer_id:      customerId,
+          plan_expires_at:         expiresAt,
+        })
+        .eq('id', employerId)
+      if (empErr) console.error('[webhook job_upgrade subscription employer]', empErr.message)
+
+      // Feature ALL active listings for this employer
+      await admin
+        .from('job_listings')
+        .update({ is_featured: true })
+        .eq('employer_account_id', employerId)
+        .eq('status', 'active')
+
+      console.log('[webhook job_upgrade] subscription for employer', employerId)
     }
   }
 

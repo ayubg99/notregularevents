@@ -11,33 +11,29 @@ const EDITABLE_FIELDS = new Set([
   'apply_email', 'apply_whatsapp', 'apply_url', 'contact_name', 'status',
 ])
 
-async function verifyOwnership(jobId: string, userId: string | null, token: string | null): Promise<boolean> {
+async function getOwnerUserId(jobId: string): Promise<string | null> {
   const admin = getAdminClient()
-  const { data: job } = await admin
+  const { data } = await admin
     .from('job_listings')
-    .select('posted_by_user_id, management_token')
+    .select('posted_by_user_id')
     .eq('id', jobId)
     .single()
-  if (!job) return false
-  return (!!userId && userId === job.posted_by_user_id) ||
-         (!!token  && token  === job.management_token)
+  return data?.posted_by_user_id ?? null
 }
 
 export async function PATCH(request: NextRequest, { params }: Params) {
   const { id } = await params
 
-  const body = await request.json() as Record<string, unknown> & { token?: string }
-  const { token, ...rawFields } = body
-
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const allowed = await verifyOwnership(id, user?.id ?? null, token ?? null)
-  if (!allowed) return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+  const ownerUserId = await getOwnerUserId(id)
+  if (ownerUserId !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  // Whitelist editable fields
+  const body = await request.json() as Record<string, unknown>
   const update: Record<string, unknown> = {}
-  for (const [k, v] of Object.entries(rawFields)) {
+  for (const [k, v] of Object.entries(body)) {
     if (EDITABLE_FIELDS.has(k)) update[k] = v
   }
 
@@ -62,14 +58,12 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 export async function DELETE(request: NextRequest, { params }: Params) {
   const { id } = await params
 
-  const body = await request.json() as { token?: string }
-  const { token } = body
-
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const allowed = await verifyOwnership(id, user?.id ?? null, token ?? null)
-  if (!allowed) return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+  const ownerUserId = await getOwnerUserId(id)
+  if (ownerUserId !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const admin = getAdminClient()
   const { error } = await admin.from('job_listings').delete().eq('id', id)

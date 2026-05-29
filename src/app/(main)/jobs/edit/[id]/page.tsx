@@ -11,13 +11,16 @@ export const metadata: Metadata = {
 }
 
 interface Props {
-  params:      Promise<{ id: string }>
-  searchParams:Promise<{ token?: string }>
+  params: Promise<{ id: string }>
 }
 
-export default async function EditJobPage({ params, searchParams }: Props) {
-  const { id }    = await params
-  const { token } = await searchParams
+export default async function EditJobPage({ params }: Props) {
+  const { id } = await params
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) redirect(`/employer/login?redirectTo=/jobs/edit/${id}`)
 
   const admin = getAdminClient()
   const { data: job } = await admin
@@ -28,14 +31,7 @@ export default async function EditJobPage({ params, searchParams }: Props) {
 
   if (!job) notFound()
 
-  // Check ownership
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  const isOwnerBySession = !!user && user.id === job.posted_by_user_id
-  const isOwnerByToken   = !!token && token === job.management_token
-
-  if (!isOwnerBySession && !isOwnerByToken) {
+  if (job.posted_by_user_id !== user.id) {
     redirect(`/jobs/${id}`)
   }
 
@@ -46,7 +42,7 @@ export default async function EditJobPage({ params, searchParams }: Props) {
           <h1 className="text-3xl font-bold text-white mb-2">Edit Job Listing</h1>
           <p className="text-white/50 text-sm">Changes take effect immediately.</p>
         </div>
-        <EditJobClient job={job} token={token ?? null} />
+        <EditJobClient job={job} token={null} />
       </div>
     </main>
   )
