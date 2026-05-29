@@ -426,6 +426,12 @@ export interface Database {
         Update:        Partial<RoomContactInsert>
         Relationships: never[]
       }
+      sponsors: {
+        Row:           SponsorRow
+        Insert:        SponsorInsert
+        Update:        SponsorUpdate
+        Relationships: never[]
+      }
     }
     Views:          { [_ in never]: never }
     Functions: {
@@ -605,6 +611,34 @@ export type RoomContactInsert = Omit<
   rejection_reason?:      string | null
   refund_id?:             string | null
 }
+
+// ─── Sponsors ─────────────────────────────────────────────────
+
+export type SponsorCategory = 'general' | 'food_drink' | 'fitness' | 'nightlife' | 'travel' | 'fashion' | 'tech' | 'other'
+export type SponsorStatus   = 'active' | 'inactive'
+
+export type SponsorRow = {
+  id:            string
+  name:          string
+  logo_url:      string | null
+  website_url:   string | null
+  description:   string | null
+  discount_text: string | null
+  category:      SponsorCategory
+  is_featured:   boolean
+  status:        SponsorStatus
+  display_order: number
+  created_at:    string
+}
+
+export type SponsorInsert = Omit<SponsorRow, 'id' | 'created_at'> & {
+  category?:      SponsorCategory
+  is_featured?:   boolean
+  status?:        SponsorStatus
+  display_order?: number
+}
+
+export type SponsorUpdate = Partial<Omit<SponsorRow, 'id' | 'created_at'>>
 
 // ─── Non-schema insert types (tables added via migration) ─────
 

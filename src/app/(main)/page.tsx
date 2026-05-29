@@ -23,6 +23,7 @@ import CommunitySection from '@/components/home/CommunitySection'
 import StatsSection from '@/components/home/StatsSection'
 import TestimonialsSection from '@/components/home/TestimonialsSection'
 import NewsletterSection from '@/components/home/NewsletterSection'
+import SponsorsSection from '@/components/home/SponsorsSection'
 
 // ─── Skeleton fallbacks shown while Supabase data loads ────────
 
@@ -96,7 +97,10 @@ export default function HomePage() {
       {/* 6. Community — WhatsApp + Instagram CTAs */}
       <CommunitySection />
 
-      {/* 7. Newsletter — server action + animated success */}
+      {/* 7. Sponsors — logo strip, renders nothing if no active sponsors */}
+      <SponsorsSection />
+
+      {/* 8. Newsletter — server action + animated success */}
       <NewsletterSection />
     </>
   )

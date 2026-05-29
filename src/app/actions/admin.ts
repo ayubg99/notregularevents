@@ -8,7 +8,7 @@ import type {
   EventInsert, EventUpdate, TripInsert, TripUpdate, UserRole, HousingStatus,
   HousingPartnerInsert, HousingPartnerUpdate, HousingPartnerStatus,
   PartnerRoomInsert, PartnerRoomUpdate, PartnerRoomStatus,
-  RoomContactStatus,
+  RoomContactStatus, SponsorInsert, SponsorUpdate,
 } from '@/types/database'
 
 async function verifyAdmin(): Promise<{ ok: true; userId: string } | { ok: false; error: string }> {
@@ -238,6 +238,50 @@ export async function updateRoomContactStatus(id: string, status: RoomContactSta
   if (error) return { success: false, error: error.message }
 
   revalidatePath('/admin/housing-partners/contacts')
+  return { success: true }
+}
+
+// ── Sponsors ──────────────────────────────────────────────────
+
+export async function createSponsor(data: SponsorInsert): Promise<{ success: boolean; id?: string; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { data: row, error } = await admin.from('sponsors').insert(data).select('id').single()
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/sponsors')
+  revalidatePath('/')
+  revalidatePath('/membership')
+  return { success: true, id: row?.id }
+}
+
+export async function updateSponsor(id: string, data: SponsorUpdate): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { error } = await admin.from('sponsors').update(data).eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/sponsors')
+  revalidatePath('/')
+  revalidatePath('/membership')
+  return { success: true }
+}
+
+export async function deleteSponsor(id: string): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { error } = await admin.from('sponsors').delete().eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/sponsors')
+  revalidatePath('/')
+  revalidatePath('/membership')
   return { success: true }
 }
 

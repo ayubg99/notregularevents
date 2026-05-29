@@ -1,8 +1,9 @@
 export const dynamic = 'force-dynamic'
 
 import { createClient } from '@/lib/supabase/server'
+import { getPublicClient } from '@/lib/supabase/public'
 import PricingCards from './PricingCards'
-import type { MembershipPlan, MembershipRow } from '@/types/database'
+import type { MembershipPlan, MembershipRow, SponsorRow } from '@/types/database'
 import { CheckCircle, ShieldCheck, Zap } from 'lucide-react'
 
 export const metadata = {
@@ -81,6 +82,15 @@ export default async function MembershipPage() {
     membership = data as MembershipRow | null
   }
 
+  const pub = getPublicClient()
+  const { data: sponsorsData } = await pub
+    .from('sponsors')
+    .select('*')
+    .eq('status', 'active')
+    .not('discount_text', 'is', null)
+    .order('display_order', { ascending: true })
+  const sponsors = (sponsorsData ?? []) as SponsorRow[]
+
   const currentPlan = membership?.plan ?? null
 
   return (
@@ -157,6 +167,44 @@ export default async function MembershipPage() {
           ))}
         </div>
       </section>
+
+      {/* ── Partner Discounts ─────────────────────────────────────── */}
+      {sponsors.length > 0 && (
+        <section className="max-w-6xl mx-auto px-4 pb-24">
+          <div className="text-center mb-10">
+            <h2 className="font-heading text-3xl font-bold text-white mb-2">Member Discounts</h2>
+            <p className="text-white/50 text-sm">Exclusive deals with our partners</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {sponsors.map(sponsor => (
+              <div
+                key={sponsor.id}
+                className="glass-card rounded-2xl p-5 text-center flex flex-col items-center gap-3"
+              >
+                {sponsor.logo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={sponsor.logo_url}
+                    alt={sponsor.name}
+                    className="h-12 w-auto object-contain"
+                  />
+                ) : (
+                  <p className="text-white font-bold text-base">{sponsor.name}</p>
+                )}
+                <span
+                  className="text-sm font-bold px-3 py-1 rounded-full"
+                  style={{ background: 'rgba(245,166,35,0.15)', color: '#F5A623' }}
+                >
+                  {sponsor.discount_text}
+                </span>
+                {sponsor.description && (
+                  <p className="text-white/40 text-xs leading-relaxed">{sponsor.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
     </div>
   )
