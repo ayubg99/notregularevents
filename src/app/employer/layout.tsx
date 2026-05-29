@@ -4,9 +4,9 @@ import type { ReactNode } from 'react'
 
 export default function EmployerLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-brand-dark">
+    <div className="min-h-screen" style={{ background: '#1A1209' }}>
       {/* Slim top bar */}
-      <header className="border-b border-white/8 bg-brand-dark/95 backdrop-blur-sm">
+      <header className="border-b border-white/8 backdrop-blur-sm" style={{ background: 'rgba(26,18,9,0.95)' }}>
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link href="/" className="flex-shrink-0">
             <Image src="/logo.png" alt="Erasmus Vibe" width={140} height={36} className="h-9 w-auto" priority />

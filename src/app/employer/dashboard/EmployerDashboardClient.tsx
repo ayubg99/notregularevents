@@ -11,19 +11,20 @@ interface Props {
 }
 
 function formatExpiry(iso: string) {
-  const d = new Date(iso)
-  const now = new Date()
-  const expired = d < now
+  const d       = new Date(iso)
+  const expired = d < new Date()
   return {
-    label:   expired ? '⚠️ Expired' : `Expires ${d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`,
+    label:   expired
+      ? '⚠️ Expired'
+      : `Expires ${d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`,
     expired,
   }
 }
 
 export default function EmployerDashboardClient({ employer, jobs: initial }: Props) {
-  const router  = useRouter()
-  const [jobs,   setJobs]   = useState<JobListingRow[]>(initial)
-  const [toast,  setToast]  = useState('')
+  const router = useRouter()
+  const [jobs,       setJobs]       = useState<JobListingRow[]>(initial)
+  const [toast,      setToast]      = useState('')
   const [cancelling, setCancelling] = useState(false)
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export default function EmployerDashboardClient({ employer, jobs: initial }: Pro
   }, [toast])
 
   async function patchJob(id: string, fields: Record<string, unknown>) {
-    const res = await fetch(`/api/jobs/${id}`, {
+    const res  = await fetch(`/api/jobs/${id}`, {
       method:  'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify(fields),
@@ -59,7 +60,7 @@ export default function EmployerDashboardClient({ employer, jobs: initial }: Pro
 
   async function handleDelete(id: string) {
     if (!confirm('Delete this job listing permanently?')) return
-    const res = await fetch(`/api/jobs/${id}`, {
+    const res  = await fetch(`/api/jobs/${id}`, {
       method:  'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({}),
@@ -88,69 +89,65 @@ export default function EmployerDashboardClient({ employer, jobs: initial }: Pro
 
   return (
     <div>
-      {/* Header */}
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '24px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <p style={{ color: '#888', fontSize: '13px', margin: '0 0 4px' }}>Welcome back</p>
-          <h1 style={{ color: '#fff', fontSize: '22px', fontWeight: 700, margin: '0 0 4px' }}>{employer.company_name}</h1>
-          <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>{employer.contact_name} · {employer.email}</p>
+      {/* ── Header card ─────────────────────────────────────────── */}
+      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '20px', padding: '24px 28px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          {/* Company initial avatar */}
+          <div style={{ width: '52px', height: '52px', borderRadius: '14px', background: 'linear-gradient(135deg, #F5A623, #FF6B35)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '22px', color: '#1A1A0E', flexShrink: 0 }}>
+            {employer.company_name.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <p style={{ color: '#888', fontSize: '12px', margin: '0 0 2px' }}>Welcome back</p>
+            <p style={{ color: '#fff', fontWeight: 700, fontSize: '18px', margin: '0 0 2px' }}>{employer.company_name}</p>
+            <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>{employer.contact_name} · {employer.email}</p>
+          </div>
         </div>
         <Link
           href="/jobs/post"
-          style={{ padding: '12px 20px', background: '#F5A623', color: '#1A1A2E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '14px', whiteSpace: 'nowrap' }}
+          style={{ padding: '12px 20px', background: '#F5A623', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '14px', whiteSpace: 'nowrap', boxShadow: '0 4px 16px rgba(245,166,35,0.25)' }}
         >
           + Post a Job
         </Link>
       </div>
 
-      {/* Plan card — free */}
+      {/* ── Plan status card ────────────────────────────────────── */}
+
       {employer.plan === 'free' && (
-        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '20px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '20px 24px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <div>
-            <p style={{ color: '#888', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 4px' }}>Current Plan</p>
-            <p style={{ color: '#fff', fontWeight: 600, fontSize: '16px', margin: '0 0 4px' }}>Free Plan</p>
-            <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Standard listings only · 30 days active</p>
+            <p style={{ color: '#888', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>Free Plan</p>
+            <p style={{ color: '#fff', fontWeight: 600, fontSize: '15px', margin: '0 0 4px' }}>Standard listings only</p>
+            <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Upgrade to get more visibility</p>
           </div>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <a
-              href="/employer/upgrade?type=featured"
-              style={{ padding: '10px 18px', background: 'rgba(245,166,35,0.1)', border: '1px solid rgba(245,166,35,0.3)', color: '#F5A623', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap' }}
-            >
-              ⭐ Feature a listing — €29
+            <a href="/employer/upgrade?type=featured" style={{ padding: '9px 16px', background: 'rgba(245,166,35,0.1)', border: '1px solid rgba(245,166,35,0.3)', color: '#F5A623', borderRadius: '50px', textDecoration: 'none', fontWeight: 600, fontSize: '13px', whiteSpace: 'nowrap' }}>
+              ⭐ Feature listing — €29
             </a>
-            <a
-              href="/employer/upgrade?type=subscription"
-              style={{ padding: '10px 18px', background: '#F5A623', color: '#1A1A2E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap' }}
-            >
+            <a href="/employer/upgrade?type=subscription" style={{ padding: '9px 16px', background: '#F5A623', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap' }}>
               🏢 Employer Plan — €49/mo
             </a>
           </div>
         </div>
       )}
 
-      {/* Plan card — featured (one-time) */}
       {employer.plan === 'featured' && (
-        <div style={{ background: 'rgba(245,166,35,0.05)', border: '1px solid rgba(245,166,35,0.15)', borderRadius: '16px', padding: '20px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ background: 'rgba(245,166,35,0.06)', border: '1px solid rgba(245,166,35,0.2)', borderRadius: '16px', padding: '20px 24px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <div>
-            <p style={{ color: '#F5A623', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 4px' }}>⭐ Featured Listing</p>
-            <p style={{ color: '#fff', fontWeight: 600, fontSize: '16px', margin: '0 0 4px' }}>One listing featured for 60 days</p>
-            <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Want unlimited featured listings?</p>
+            <p style={{ color: '#F5A623', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>⭐ Featured Plan</p>
+            <p style={{ color: '#fff', fontWeight: 600, fontSize: '15px', margin: '0 0 4px' }}>One listing featured for 60 days</p>
+            <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Want all listings featured automatically?</p>
           </div>
-          <a
-            href="/employer/upgrade?type=subscription"
-            style={{ padding: '10px 18px', background: '#F5A623', color: '#1A1A2E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap' }}
-          >
+          <a href="/employer/upgrade?type=subscription" style={{ padding: '10px 18px', background: '#F5A623', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap' }}>
             Upgrade to €49/mo →
           </a>
         </div>
       )}
 
-      {/* Plan card — subscription */}
       {employer.plan === 'subscription' && (
-        <div style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.1), rgba(255,107,53,0.05))', border: '1px solid rgba(245,166,35,0.2)', borderRadius: '16px', padding: '20px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.1), rgba(255,107,53,0.05))', border: '1px solid rgba(245,166,35,0.2)', borderRadius: '16px', padding: '20px 24px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <div>
-            <p style={{ color: '#F5A623', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 4px' }}>🏢 Employer Plan — Active</p>
-            <p style={{ color: '#fff', fontWeight: 600, fontSize: '16px', margin: '0 0 4px' }}>€49/month — All listings featured</p>
+            <p style={{ color: '#F5A623', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>🏢 Employer Plan — Active</p>
+            <p style={{ color: '#fff', fontWeight: 600, fontSize: '15px', margin: '0 0 4px' }}>€49/month — All listings featured automatically</p>
             {employer.plan_expires_at && (
               <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>
                 Renews {new Date(employer.plan_expires_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -167,28 +164,28 @@ export default function EmployerDashboardClient({ employer, jobs: initial }: Pro
         </div>
       )}
 
-      {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
+      {/* ── Stats grid ──────────────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '28px' }}>
         {[
-          { value: activeCount,  label: 'Active listings' },
-          { value: totalViews,   label: 'Total views'     },
-          { value: jobs.length,  label: 'Total posted'    },
-        ].map(({ value, label }) => (
-          <div key={label} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
-            <p style={{ color: '#F5A623', fontSize: '24px', fontWeight: 700, margin: '0 0 4px' }}>{value}</p>
-            <p style={{ color: '#888', fontSize: '12px', margin: 0 }}>{label}</p>
+          { label: 'Active listings', value: activeCount },
+          { label: 'Total views',     value: totalViews  },
+          { label: 'Total posted',    value: jobs.length },
+        ].map(stat => (
+          <div key={stat.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '20px', textAlign: 'center' }}>
+            <p style={{ color: '#F5A623', fontSize: '28px', fontWeight: 700, margin: '0 0 4px', lineHeight: 1 }}>{stat.value}</p>
+            <p style={{ color: '#888', fontSize: '12px', margin: 0 }}>{stat.label}</p>
           </div>
         ))}
       </div>
 
-      {/* Job listings */}
-      <h2 style={{ color: '#fff', fontSize: '18px', fontWeight: 700, margin: '0 0 16px' }}>My Job Listings</h2>
+      {/* ── Job listings ─────────────────────────────────────────── */}
+      <h2 style={{ color: '#fff', fontSize: '17px', fontWeight: 700, margin: '0 0 14px' }}>My Job Listings</h2>
 
       {jobs.length === 0 ? (
         <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '48px', textAlign: 'center' }}>
           <p style={{ fontSize: '40px', margin: '0 0 12px' }}>💼</p>
           <p style={{ color: '#888', margin: '0 0 20px' }}>No job listings yet</p>
-          <Link href="/jobs/post" style={{ display: 'inline-block', background: '#F5A623', color: '#1A1A2E', padding: '12px 24px', borderRadius: '50px', textDecoration: 'none', fontWeight: 700 }}>
+          <Link href="/jobs/post" style={{ display: 'inline-block', background: '#F5A623', color: '#1A1A0E', padding: '12px 24px', borderRadius: '50px', textDecoration: 'none', fontWeight: 700 }}>
             Post Your First Job
           </Link>
         </div>
@@ -196,45 +193,98 @@ export default function EmployerDashboardClient({ employer, jobs: initial }: Pro
         jobs.map(job => {
           const { label: expiryLabel, expired } = formatExpiry(job.expires_at)
           return (
-            <div key={job.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '20px', marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#888', textTransform: 'uppercase' }}>{job.job_type.replace(/_/g, ' ')}</span>
-                  <span style={{ background: job.status === 'active' ? 'rgba(46,204,113,0.15)' : job.status === 'draft' ? 'rgba(245,166,35,0.15)' : 'rgba(255,68,68,0.15)', color: job.status === 'active' ? '#2ECC71' : job.status === 'draft' ? '#F5A623' : '#FF4444', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700 }}>● {job.status}</span>
-                  {job.is_featured && <span style={{ background: 'rgba(245,166,35,0.15)', color: '#F5A623', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700 }}>⭐ Featured</span>}
-                  {job.is_urgent   && <span style={{ background: 'rgba(255,68,68,0.15)', color: '#FF4444', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700 }}>🔥 Urgent</span>}
+            <div key={job.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '20px', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
+
+                {/* Left: info */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  {/* Badges */}
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <span style={{ color: '#888', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      {job.job_type.replace(/_/g, ' ')}
+                    </span>
+                    <span style={{ background: job.status === 'active' ? 'rgba(46,204,113,0.15)' : job.status === 'draft' ? 'rgba(245,166,35,0.15)' : 'rgba(255,68,68,0.15)', color: job.status === 'active' ? '#2ECC71' : job.status === 'draft' ? '#F5A623' : '#FF4444', padding: '2px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700 }}>
+                      ● {job.status}
+                    </span>
+                    {job.is_featured && (
+                      <span style={{ background: 'rgba(245,166,35,0.15)', color: '#F5A623', padding: '2px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700 }}>
+                        ⭐ Featured
+                      </span>
+                    )}
+                    {job.is_urgent && (
+                      <span style={{ background: 'rgba(255,68,68,0.15)', color: '#FF4444', padding: '2px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700 }}>
+                        🔥 Urgent
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Title */}
+                  <p style={{ color: '#fff', fontWeight: 600, fontSize: '15px', margin: '0 0 10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {job.title}
+                  </p>
+
+                  {/* Meta */}
+                  <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                    <span style={{ color: '#555', fontSize: '12px' }}>👁️ {job.views ?? 0} views</span>
+                    <span style={{ color: '#555', fontSize: '12px' }}>📅 {new Date(job.created_at).toLocaleDateString('en-GB')}</span>
+                    <span style={{ color: expired ? '#FF4444' : '#555', fontSize: '12px' }}>{expiryLabel}</span>
+                  </div>
                 </div>
-                <p style={{ color: '#fff', fontWeight: 600, fontSize: '15px', margin: '0 0 8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{job.title}</p>
-                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                  <span style={{ color: '#555', fontSize: '12px' }}>👁️ {job.views ?? 0} views</span>
-                  <span style={{ color: '#555', fontSize: '12px' }}>📅 Posted {new Date(job.created_at).toLocaleDateString('en-GB')}</span>
-                  <span style={{ color: expired ? '#FF4444' : '#555', fontSize: '12px' }}>{expiryLabel}</span>
+
+                {/* Right: actions */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flexShrink: 0 }}>
+                  <a
+                    href={`/jobs/edit/${job.id}`}
+                    style={{ padding: '7px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', color: '#ccc', fontSize: '12px', textDecoration: 'none', textAlign: 'center', fontWeight: 500 }}
+                  >
+                    Edit
+                  </a>
+
+                  {!job.is_featured && employer.plan !== 'subscription' && (
+                    <a
+                      href={`/employer/upgrade?type=featured&job=${job.id}`}
+                      style={{ padding: '7px 14px', background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.25)', borderRadius: '20px', color: '#F5A623', fontSize: '12px', textDecoration: 'none', textAlign: 'center', fontWeight: 600 }}
+                    >
+                      ⭐ Feature
+                    </a>
+                  )}
+
+                  {employer.plan === 'subscription' && !job.is_featured && (
+                    <span style={{ padding: '7px 14px', background: 'rgba(245,166,35,0.05)', borderRadius: '20px', color: '#888', fontSize: '11px', textAlign: 'center', display: 'block' }}>
+                      Auto-featured ✓
+                    </span>
+                  )}
+
+                  {job.status === 'active' ? (
+                    <button
+                      onClick={() => handleClose(job.id)}
+                      style={{ padding: '7px 14px', background: 'transparent', border: '1px solid rgba(255,165,0,0.25)', borderRadius: '20px', color: '#FFA500', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}
+                    >
+                      Close
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleReopen(job.id)}
+                      style={{ padding: '7px 14px', background: 'transparent', border: '1px solid rgba(46,204,113,0.25)', borderRadius: '20px', color: '#2ECC71', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}
+                    >
+                      Reopen
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => handleDelete(job.id)}
+                    style={{ padding: '7px 14px', background: 'transparent', border: '1px solid rgba(255,68,68,0.2)', borderRadius: '20px', color: '#FF4444', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}
+                  >
+                    Delete
+                  </button>
                 </div>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flexShrink: 0 }}>
-                <a href={`/jobs/edit/${job.id}`} style={{ padding: '7px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', color: '#ccc', fontSize: '12px', textDecoration: 'none', textAlign: 'center', fontWeight: 500 }}>Edit</a>
-
-                {!job.is_featured && employer.plan !== 'subscription' && (
-                  <a href={`/employer/upgrade?type=featured&job=${job.id}`} style={{ padding: '7px 14px', background: 'rgba(245,166,35,0.1)', border: '1px solid rgba(245,166,35,0.3)', borderRadius: '20px', color: '#F5A623', fontSize: '12px', textDecoration: 'none', textAlign: 'center', fontWeight: 600 }}>⭐ Feature</a>
-                )}
-                {employer.plan === 'subscription' && !job.is_featured && (
-                  <span style={{ padding: '7px 14px', background: 'rgba(245,166,35,0.05)', borderRadius: '20px', color: '#888', fontSize: '11px', textAlign: 'center', display: 'block' }}>Auto-featured ✓</span>
-                )}
-
-                {job.status === 'active' ? (
-                  <button onClick={() => handleClose(job.id)} style={{ padding: '7px 14px', background: 'transparent', border: '1px solid rgba(255,165,0,0.3)', borderRadius: '20px', color: '#FFA500', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}>Close</button>
-                ) : (
-                  <button onClick={() => handleReopen(job.id)} style={{ padding: '7px 14px', background: 'transparent', border: '1px solid rgba(46,204,113,0.3)', borderRadius: '20px', color: '#2ECC71', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}>Reopen</button>
-                )}
-
-                <button onClick={() => handleDelete(job.id)} style={{ padding: '7px 14px', background: 'transparent', border: '1px solid rgba(255,68,68,0.2)', borderRadius: '20px', color: '#FF4444', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}>Delete</button>
               </div>
             </div>
           )
         })
       )}
 
+      {/* Toast */}
       {toast && (
         <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '13px', padding: '12px', borderRadius: '10px', background: toast.startsWith('Error') ? 'rgba(255,68,68,0.1)' : 'rgba(46,204,113,0.1)', color: toast.startsWith('Error') ? '#FF4444' : '#2ECC71', border: `1px solid ${toast.startsWith('Error') ? 'rgba(255,68,68,0.2)' : 'rgba(46,204,113,0.2)'}` }}>
           {toast}
