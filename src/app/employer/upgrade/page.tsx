@@ -7,17 +7,16 @@ import { Loader2 } from 'lucide-react'
 
 function UpgradePage() {
   const searchParams = useSearchParams()
-  const jobId = searchParams.get('job') ?? ''
+  const type  = searchParams.get('type')  ?? ''   // 'featured' | 'subscription'
+  const jobId = searchParams.get('job')   ?? ''
 
-  const [selected, setSelected]   = useState<'featured' | 'subscription'>(jobId ? 'featured' : 'subscription')
-  const [loading,  setLoading]    = useState(false)
-  const [error,    setError]      = useState('')
+  const [loadingType, setLoadingType] = useState<'featured' | 'subscription' | null>(null)
+  const [error,       setError]       = useState('')
 
-  async function handleUpgrade() {
+  async function handleUpgrade(upgradeType: 'featured' | 'subscription') {
     setError('')
-    setLoading(true)
+    setLoadingType(upgradeType)
     try {
-      // Get employer id from API
       const meRes = await fetch('/api/employer/me')
       if (!meRes.ok) { setError('Please log in to your employer account.'); return }
       const me = await meRes.json() as { id: string }
@@ -26,108 +25,141 @@ function UpgradePage() {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({
-          type:         'job_upgrade',
-          itemId:       me.id,
-          upgradeType:  selected,
-          employerId:   me.id,
-          jobId:        selected === 'featured' ? jobId : undefined,
+          type:        'job_upgrade',
+          itemId:      me.id,
+          upgradeType,
+          employerId:  me.id,
+          jobId:       upgradeType === 'featured' && jobId ? jobId : undefined,
         }),
       })
       const data = await res.json() as { url?: string; error?: string }
-      if (!res.ok || !data.url) { setError(data.error ?? 'Checkout failed.'); return }
+      if (!res.ok || !data.url) { setError(data.error ?? 'Checkout failed. Please try again.'); return }
       window.location.href = data.url
     } finally {
-      setLoading(false)
+      setLoadingType(null)
     }
   }
 
+  const featuredHighlighted    = type === 'featured'    || (!type && !!jobId)
+  const subscriptionHighlighted = type === 'subscription'
+
   return (
-    <main className="max-w-xl mx-auto px-4 py-16">
+    <main className="max-w-2xl mx-auto px-4 py-16">
       <div className="text-center mb-10">
         <h1 className="font-heading text-3xl font-bold text-white mb-2">Upgrade Your Plan</h1>
         <p className="text-white/50 text-sm">Get more visibility for your job listings</p>
       </div>
 
-      <div className="flex flex-col gap-4 mb-8">
-        {/* Featured listing option */}
-        <button
-          type="button"
-          onClick={() => setSelected('featured')}
-          style={{
-            background:   selected === 'featured' ? 'rgba(245,166,35,0.08)' : 'rgba(255,255,255,0.02)',
-            border:       selected === 'featured' ? '2px solid #F5A623' : '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '16px',
-            padding:      '20px 24px',
-            cursor:       'pointer',
-            textAlign:    'left',
-            display:      'flex',
-            alignItems:   'flex-start',
-            justifyContent: 'space-between',
-            gap:          '16px',
-            transition:   'all 0.15s',
-          }}
-        >
-          <div>
-            <p style={{ color: '#fff', fontWeight: 700, fontSize: '16px', margin: '0 0 6px' }}>⭐ Feature a Listing</p>
-            <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              {['Active for 60 days', 'Appears first in results', 'Highlighted card'].map(f => (
-                <li key={f} style={{ color: '#888', fontSize: '13px' }}>✓ {f}</li>
-              ))}
-            </ul>
-            {jobId && <p style={{ color: '#F5A623', fontSize: '12px', marginTop: '8px', fontWeight: 600 }}>✓ 1 specific listing pre-selected</p>}
-          </div>
-          <div style={{ textAlign: 'right', flexShrink: 0 }}>
-            <span style={{ color: '#F5A623', fontWeight: 800, fontSize: '22px' }}>€29</span>
-            <span style={{ color: '#555', fontSize: '12px', display: 'block' }}>one-time</span>
-          </div>
-        </button>
+      {error && (
+        <p style={{ color: '#FF4444', fontSize: '13px', textAlign: 'center', marginBottom: '20px', background: 'rgba(255,68,68,0.1)', borderRadius: '10px', padding: '12px' }}>
+          {error}
+        </p>
+      )}
 
-        {/* Employer plan option */}
-        <button
-          type="button"
-          onClick={() => setSelected('subscription')}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+        {/* Card 1 — Feature a Listing */}
+        <div
           style={{
-            background:   selected === 'subscription' ? 'rgba(245,166,35,0.08)' : 'rgba(255,255,255,0.02)',
-            border:       selected === 'subscription' ? '2px solid #F5A623' : '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '16px',
-            padding:      '20px 24px',
-            cursor:       'pointer',
-            textAlign:    'left',
-            display:      'flex',
-            alignItems:   'flex-start',
-            justifyContent: 'space-between',
-            gap:          '16px',
-            position:     'relative',
-            transition:   'all 0.15s',
+            background:   'rgba(255,255,255,0.03)',
+            border:       featuredHighlighted ? '2px solid #F5A623' : '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '20px',
+            padding:      '28px',
           }}
         >
-          <span style={{ position: 'absolute', top: '-1px', right: '16px', background: '#F5A623', color: '#1A1A2E', fontSize: '10px', fontWeight: 800, padding: '3px 10px', borderRadius: '0 0 8px 8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Best value</span>
-          <div>
-            <p style={{ color: '#fff', fontWeight: 700, fontSize: '16px', margin: '0 0 6px' }}>🏢 Employer Plan</p>
-            <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              {['Unlimited job postings', 'All listings featured automatically', 'Cancel anytime'].map(f => (
-                <li key={f} style={{ color: '#888', fontSize: '13px' }}>✓ {f}</li>
-              ))}
-            </ul>
+          <p style={{ color: '#F5A623', fontWeight: 700, fontSize: '18px', margin: '0 0 8px' }}>⭐ Feature a Listing</p>
+          <p style={{ color: '#fff', fontSize: '32px', fontWeight: 700, margin: '0 0 4px' }}>
+            €29{' '}
+            <span style={{ fontSize: '14px', color: '#888', fontWeight: 400 }}>one time</span>
+          </p>
+          <ul style={{ color: '#888', fontSize: '14px', margin: '16px 0 0', paddingLeft: '20px', lineHeight: '1.8' }}>
+            <li>Featured for 60 days</li>
+            <li>Appears first in search results</li>
+            <li>Highlighted card design</li>
+            <li>For one specific listing</li>
+          </ul>
+          {jobId && (
+            <p style={{ color: '#F5A623', fontSize: '13px', margin: '12px 0 0', fontWeight: 600 }}>
+              ✓ Will feature the selected listing
+            </p>
+          )}
+          <button
+            onClick={() => handleUpgrade('featured')}
+            disabled={loadingType !== null}
+            style={{
+              width:        '100%',
+              marginTop:    '20px',
+              padding:      '14px',
+              background:   loadingType ? 'rgba(245,166,35,0.5)' : '#F5A623',
+              color:        '#1A1A2E',
+              border:       'none',
+              borderRadius: '50px',
+              fontWeight:   700,
+              fontSize:     '15px',
+              cursor:       loadingType ? 'not-allowed' : 'pointer',
+              display:      'flex',
+              alignItems:   'center',
+              justifyContent: 'center',
+              gap:          '8px',
+            }}
+          >
+            {loadingType === 'featured' ? <><Loader2 size={16} className="animate-spin" /> Processing…</> : 'Feature This Listing — €29'}
+          </button>
+        </div>
+
+        {/* Card 2 — Employer Plan */}
+        <div
+          style={{
+            background:   'rgba(255,255,255,0.03)',
+            border:       subscriptionHighlighted ? '2px solid #F5A623' : '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '20px',
+            padding:      '28px',
+            position:     'relative',
+          }}
+        >
+          {/* Best value badge */}
+          <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: '#F5A623', color: '#1A1A2E', padding: '4px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 700, whiteSpace: 'nowrap' }}>
+            Best Value
           </div>
-          <div style={{ textAlign: 'right', flexShrink: 0 }}>
-            <span style={{ color: '#F5A623', fontWeight: 800, fontSize: '22px' }}>€49</span>
-            <span style={{ color: '#555', fontSize: '12px', display: 'block' }}>/month</span>
-          </div>
-        </button>
+
+          <p style={{ color: '#F5A623', fontWeight: 700, fontSize: '18px', margin: '0 0 8px' }}>🏢 Employer Plan</p>
+          <p style={{ color: '#fff', fontSize: '32px', fontWeight: 700, margin: '0 0 4px' }}>
+            €49{' '}
+            <span style={{ fontSize: '14px', color: '#888', fontWeight: 400 }}>/month</span>
+          </p>
+          <ul style={{ color: '#888', fontSize: '14px', margin: '16px 0 0', paddingLeft: '20px', lineHeight: '1.8' }}>
+            <li>Unlimited job postings</li>
+            <li>ALL listings featured automatically</li>
+            <li>New jobs auto-featured on posting</li>
+            <li>Priority support</li>
+            <li>Cancel anytime</li>
+          </ul>
+          <button
+            onClick={() => handleUpgrade('subscription')}
+            disabled={loadingType !== null}
+            style={{
+              width:        '100%',
+              marginTop:    '20px',
+              padding:      '14px',
+              background:   loadingType ? 'rgba(245,166,35,0.5)' : '#F5A623',
+              color:        '#1A1A2E',
+              border:       'none',
+              borderRadius: '50px',
+              fontWeight:   700,
+              fontSize:     '15px',
+              cursor:       loadingType ? 'not-allowed' : 'pointer',
+              display:      'flex',
+              alignItems:   'center',
+              justifyContent: 'center',
+              gap:          '8px',
+            }}
+          >
+            {loadingType === 'subscription' ? <><Loader2 size={16} className="animate-spin" /> Processing…</> : 'Start Employer Plan — €49/mo'}
+          </button>
+        </div>
       </div>
 
-      {error && <p style={{ color: '#FF4444', fontSize: '13px', textAlign: 'center', marginBottom: '16px' }}>{error}</p>}
-
-      <button
-        onClick={handleUpgrade}
-        disabled={loading}
-        className="w-full py-4 rounded-2xl bg-brand-primary hover:brightness-110 disabled:opacity-60 text-white font-bold text-base transition-all flex items-center justify-center gap-2"
-      >
-        {loading ? <><Loader2 size={16} className="animate-spin" /> Processing…</> : 'Continue to Payment →'}
-      </button>
-
-      <p className="text-center mt-4">
+      <p className="text-center mt-8">
         <Link href="/employer/dashboard" className="text-white/40 text-sm hover:text-white/70 transition-colors">
           ← Back to dashboard
         </Link>

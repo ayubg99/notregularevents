@@ -44,9 +44,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Employer account required.' }, { status: 401 })
     }
 
-    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-
     const admin = getAdminClient()
+
+    // Auto-feature if employer has active subscription
+    const { data: employerData } = await admin
+      .from('employer_accounts')
+      .select('plan')
+      .eq('user_id', user.id)
+      .single()
+
+    const isFeatured = employerData?.plan === 'subscription'
+    const daysActive = isFeatured ? 60 : 30
+    const expiresAt  = new Date(Date.now() + daysActive * 24 * 60 * 60 * 1000).toISOString()
+
     const { data, error } = await admin
       .from('job_listings')
       .insert({
@@ -65,7 +75,7 @@ export async function POST(request: NextRequest) {
         apply_whatsapp:      body.apply_whatsapp?.trim() || null,
         apply_url:           body.apply_url?.trim()      || null,
         contact_name:        body.contact_name.trim(),
-        is_featured:         false,
+        is_featured:         isFeatured,
         is_urgent:           false,
         status:              'active',
         posted_by_user_id:   user.id,
