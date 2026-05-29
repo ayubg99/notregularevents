@@ -45,7 +45,7 @@ export default async function SponsorsSection() {
                 <img
                   src={sponsor.logo_url}
                   alt={sponsor.name}
-                  style={{ height: 40, width: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)', maxWidth: 120 }}
+                  style={{ height: 40, width: 'auto', objectFit: 'contain', maxWidth: 120 }}
                 />
               ) : (
                 <span className="text-white/60 font-bold text-base">{sponsor.name}</span>
