@@ -213,7 +213,20 @@ export default async function MembershipPage() {
                 </span>
                 {/* Description */}
                 {sponsor.description && (
-                  <p className="text-white/40 text-xs leading-relaxed">{sponsor.description}</p>
+                  <p className="text-white/40 text-xs leading-relaxed mb-2">{sponsor.description}</p>
+                )}
+                {/* Discount code — members only */}
+                {sponsor.discount_code && (
+                  currentPlan ? (
+                    <div className="w-full mt-1 rounded-lg p-2" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                      <p className="text-white/30 text-[10px] uppercase tracking-wider mb-1">Your code</p>
+                      <p className="font-mono font-bold text-sm" style={{ color: '#F5A623' }}>{sponsor.discount_code}</p>
+                    </div>
+                  ) : (
+                    <div className="w-full mt-1 rounded-lg p-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                      <p className="text-white/20 text-xs">🔒 Members only</p>
+                    </div>
+                  )
                 )}
               </div>
             ))}

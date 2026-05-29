@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+import QRCode from 'qrcode'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata = {
@@ -12,7 +13,8 @@ export const metadata = {
 import ProfileForm from './ProfileForm'
 import BookingTabs from './BookingTabs'
 import HousingListings from './HousingListings'
-import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow, HousingListingRow } from '@/types/database'
+import MemberCard from './MemberCard'
+import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow, HousingListingRow, SponsorRow } from '@/types/database'
 
 type EventTicketWithEvent = EventTicketRow & {
   events: { id: string; title: string; date: string; location: string | null; slug: string } | null
@@ -27,47 +29,6 @@ function getInitials(name: string | null | undefined): string {
   return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
 }
 
-function MembershipCard({ membership }: { membership: MembershipRow | null }) {
-  if (!membership) {
-    return (
-      <div className="glass-card rounded-2xl p-6">
-        <h2 className="font-heading text-lg font-bold text-white mb-1">Membership</h2>
-        <p className="text-white/40 text-sm mb-4">No active membership</p>
-        <Link
-          href="/membership"
-          className="block w-full py-3 rounded-xl text-center bg-brand-primary hover:brightness-110 active:brightness-90 text-white font-semibold text-sm transition-all duration-200"
-        >
-          Upgrade Now
-        </Link>
-      </div>
-    )
-  }
-
-  const planColors: Record<string, string> = {
-    basic:   'bg-blue-500/15 text-blue-300 border-blue-500/30',
-    premium: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
-    vip:     'bg-amber-500/15 text-amber-300 border-amber-500/30',
-  }
-
-  return (
-    <div className="glass-card rounded-2xl p-6">
-      <h2 className="font-heading text-lg font-bold text-white mb-4">Membership</h2>
-      <div className="flex items-center justify-between">
-        <span
-          className={`px-3 py-1 rounded-full border text-sm font-semibold capitalize ${planColors[membership.plan] ?? planColors.basic}`}
-        >
-          {membership.plan}
-        </span>
-        <span className="text-white/40 text-xs capitalize">{membership.status}</span>
-      </div>
-      {membership.end_date && (
-        <p className="text-white/30 text-xs mt-3">
-          Expires {new Date(membership.end_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-        </p>
-      )}
-    </div>
-  )
-}
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -82,6 +43,7 @@ export default async function DashboardPage() {
     { data: eventTicketsRaw },
     { data: tripBookingsRaw },
     { data: myListingsRaw },
+    { data: sponsorsRaw },
   ] = await Promise.all([
     supabase.from('users').select('full_name, avatar_url, role').eq('id', user.id).single(),
     supabase.from('profiles').select('*').eq('user_id', user.id).single(),
@@ -89,6 +51,7 @@ export default async function DashboardPage() {
     supabase.from('event_tickets').select('*, events(id, title, date, location, slug)').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('trip_bookings').select('*, trips(id, title, start_date, destination, slug, whatsapp_group_url)').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('housing_listings').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
+    supabase.from('sponsors').select('*').eq('status', 'active').eq('members_only', true).order('display_order', { ascending: true }),
   ])
 
   const displayName = (userRow as Pick<UserRow, 'full_name'> | null)?.full_name ?? user.email?.split('@')[0] ?? 'Student'
@@ -98,6 +61,16 @@ export default async function DashboardPage() {
   const eventTickets = (eventTicketsRaw ?? []) as unknown as EventTicketWithEvent[]
   const tripBookings = (tripBookingsRaw ?? []) as unknown as TripBookingWithTrip[]
   const myListings   = (myListingsRaw ?? []) as HousingListingRow[]
+  const sponsors     = (sponsorsRaw ?? []) as SponsorRow[]
+  const activeMembership = membership as MembershipRow | null
+  const profileData  = profile as ProfileRow | null
+
+  const memberQrUrl = activeMembership
+    ? await QRCode.toDataURL(
+        `ERASMUSVIBE-${user.id.slice(0, 8).toUpperCase()}`,
+        { width: 120, margin: 1 },
+      )
+    : null
 
   return (
     <main className="min-h-screen bg-brand-dark pt-28 pb-16 px-4">
@@ -132,12 +105,75 @@ export default async function DashboardPage() {
             <HousingListings myListings={myListings} />
           </div>
 
-          {/* Right — membership + profile */}
+          {/* Right — membership + discounts + profile */}
           <div className="flex flex-col gap-6">
-            <MembershipCard membership={membership as MembershipRow | null} />
+
+            {/* Member card or upgrade prompt */}
+            {activeMembership ? (
+              <MemberCard
+                membership={activeMembership}
+                displayName={displayName}
+                nationality={profileData?.nationality ?? null}
+                university={profileData?.university ?? null}
+                qrCodeUrl={memberQrUrl}
+              />
+            ) : (
+              <div className="glass-card rounded-2xl p-6">
+                <h2 className="font-heading text-lg font-bold text-white mb-1">Membership</h2>
+                <p className="text-white/40 text-sm mb-4">No active membership</p>
+                <Link
+                  href="/membership"
+                  className="block w-full py-3 rounded-xl text-center bg-brand-primary hover:brightness-110 active:brightness-90 text-white font-semibold text-sm transition-all duration-200"
+                >
+                  Upgrade Now
+                </Link>
+              </div>
+            )}
+
+            {/* Member discounts */}
+            {activeMembership && sponsors.length > 0 && (
+              <div className="flex flex-col gap-3">
+                <h3 className="text-white font-bold text-sm">🎁 Your Member Discounts</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {sponsors.map(sponsor => (
+                    <div
+                      key={sponsor.id}
+                      className="glass-card rounded-xl p-3 text-center flex flex-col items-center gap-2"
+                    >
+                      {/* Logo */}
+                      <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: 8, padding: 10, height: 48, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {sponsor.logo_url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={sponsor.logo_url} alt={sponsor.name} style={{ maxHeight: 28, maxWidth: 80, objectFit: 'contain' }} />
+                        ) : (
+                          <span className="text-white font-bold text-xs text-center leading-tight">{sponsor.name}</span>
+                        )}
+                      </div>
+                      {/* Discount badge */}
+                      {sponsor.discount_text && (
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(245,166,35,0.15)', color: '#F5A623' }}>
+                          {sponsor.discount_text}
+                        </span>
+                      )}
+                      {/* Instructions */}
+                      {sponsor.redemption_instructions && (
+                        <p className="text-white/40 text-[10px] leading-snug">{sponsor.redemption_instructions}</p>
+                      )}
+                      {/* Code */}
+                      {sponsor.discount_code && (
+                        <span className="text-[12px] font-bold px-2 py-0.5 rounded" style={{ fontFamily: 'monospace', color: '#F5A623', background: 'rgba(255,255,255,0.05)' }}>
+                          {sponsor.discount_code}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <ProfileForm
               user={{ full_name: (userRow as Pick<UserRow, 'full_name'> | null)?.full_name ?? null }}
-              profile={profile as ProfileRow | null}
+              profile={profileData}
             />
           </div>
 

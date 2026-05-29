@@ -7,20 +7,24 @@ import ImageUpload from '@/components/admin/ImageUpload'
 import type { SponsorRow, SponsorCategory, SponsorStatus } from '@/types/database'
 
 interface FormState {
-  name:          string
-  logo_url:      string
-  website_url:   string
-  description:   string
-  discount_text: string
-  category:      SponsorCategory
-  is_featured:   boolean
-  display_order: string
-  status:        SponsorStatus
+  name:                    string
+  logo_url:                string
+  website_url:             string
+  description:             string
+  discount_text:           string
+  discount_code:           string
+  redemption_instructions: string
+  members_only:            boolean
+  category:                SponsorCategory
+  is_featured:             boolean
+  display_order:           string
+  status:                  SponsorStatus
 }
 
 const EMPTY_FORM: FormState = {
   name: '', logo_url: '', website_url: '', description: '',
-  discount_text: '', category: 'general', is_featured: false,
+  discount_text: '', discount_code: '', redemption_instructions: '',
+  members_only: true, category: 'general', is_featured: false,
   display_order: '0', status: 'active',
 }
 
@@ -65,15 +69,18 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
   function openEdit(s: SponsorRow) {
     setEditing(s)
     setForm({
-      name:          s.name,
-      logo_url:      s.logo_url      ?? '',
-      website_url:   s.website_url   ?? '',
-      description:   s.description   ?? '',
-      discount_text: s.discount_text ?? '',
-      category:      s.category,
-      is_featured:   s.is_featured,
-      display_order: String(s.display_order),
-      status:        s.status,
+      name:                    s.name,
+      logo_url:                s.logo_url                ?? '',
+      website_url:             s.website_url             ?? '',
+      description:             s.description             ?? '',
+      discount_text:           s.discount_text           ?? '',
+      discount_code:           s.discount_code           ?? '',
+      redemption_instructions: s.redemption_instructions ?? '',
+      members_only:            s.members_only,
+      category:                s.category,
+      is_featured:             s.is_featured,
+      display_order:           String(s.display_order),
+      status:                  s.status,
     })
     setModal('edit')
   }
@@ -82,15 +89,18 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
     e.preventDefault()
     startTransition(async () => {
       const data = {
-        name:          form.name,
-        logo_url:      form.logo_url      || null,
-        website_url:   form.website_url   || null,
-        description:   form.description   || null,
-        discount_text: form.discount_text || null,
-        category:      form.category,
-        is_featured:   form.is_featured,
-        display_order: parseInt(form.display_order, 10) || 0,
-        status:        form.status,
+        name:                    form.name,
+        logo_url:                form.logo_url                || null,
+        website_url:             form.website_url             || null,
+        description:             form.description             || null,
+        discount_text:           form.discount_text           || null,
+        discount_code:           form.discount_code           || null,
+        redemption_instructions: form.redemption_instructions || null,
+        members_only:            form.members_only,
+        category:                form.category,
+        is_featured:             form.is_featured,
+        display_order:           parseInt(form.display_order, 10) || 0,
+        status:                  form.status,
       }
       const result = editing
         ? await updateSponsor(editing.id, data)
@@ -263,6 +273,14 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
                 <label className={labelClass}>Discount text</label>
                 <input className={inputClass} placeholder="e.g. 10% off for members" value={form.discount_text} onChange={e => set('discount_text', e.target.value)} />
               </div>
+              <div>
+                <label className={labelClass}>Discount code</label>
+                <input className={inputClass} placeholder="e.g. BRAND10" value={form.discount_code} onChange={e => set('discount_code', e.target.value)} />
+              </div>
+              <div>
+                <label className={labelClass}>Redemption instructions</label>
+                <textarea className={`${inputClass} resize-none`} rows={2} placeholder="e.g. Show this code + member card at the venue" value={form.redemption_instructions} onChange={e => set('redemption_instructions', e.target.value)} />
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={labelClass}>Category</label>
@@ -285,7 +303,7 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
                   <label className={labelClass}>Display order</label>
                   <input type="number" className={inputClass} min={0} value={form.display_order} onChange={e => set('display_order', e.target.value)} />
                 </div>
-                <div className="flex items-end pb-1">
+                <div className="flex flex-col justify-end gap-2 pb-1">
                   <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input
                       type="checkbox"
@@ -294,6 +312,15 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
                       className="w-4 h-4 rounded accent-amber-400"
                     />
                     <span className="text-white/70 text-sm">Featured</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={form.members_only}
+                      onChange={e => set('members_only', e.target.checked)}
+                      className="w-4 h-4 rounded accent-amber-400"
+                    />
+                    <span className="text-white/70 text-sm">Members only</span>
                   </label>
                 </div>
               </div>

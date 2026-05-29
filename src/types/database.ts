@@ -618,17 +618,20 @@ export type SponsorCategory = 'general' | 'food_drink' | 'fitness' | 'nightlife'
 export type SponsorStatus   = 'active' | 'inactive'
 
 export type SponsorRow = {
-  id:            string
-  name:          string
-  logo_url:      string | null
-  website_url:   string | null
-  description:   string | null
-  discount_text: string | null
-  category:      SponsorCategory
-  is_featured:   boolean
-  status:        SponsorStatus
-  display_order: number
-  created_at:    string
+  id:                      string
+  name:                    string
+  logo_url:                string | null
+  website_url:             string | null
+  description:             string | null
+  discount_text:           string | null
+  discount_code:           string | null
+  redemption_instructions: string | null
+  members_only:            boolean
+  category:                SponsorCategory
+  is_featured:             boolean
+  status:                  SponsorStatus
+  display_order:           number
+  created_at:              string
 }
 
 export type SponsorInsert = Omit<SponsorRow, 'id' | 'created_at'> & {
@@ -636,6 +639,7 @@ export type SponsorInsert = Omit<SponsorRow, 'id' | 'created_at'> & {
   is_featured?:   boolean
   status?:        SponsorStatus
   display_order?: number
+  members_only?:  boolean
 }
 
 export type SponsorUpdate = Partial<Omit<SponsorRow, 'id' | 'created_at'>>
