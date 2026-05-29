@@ -588,6 +588,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
             type:         'job_upgrade',
             upgrade_type: 'subscription',
             employer_id:  employerId,
+            item_id:      employerId,   // fallback for webhook itemId guard
             user_id:      user?.id ?? '',
           },
         },
@@ -597,6 +598,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
           type:         'job_upgrade',
           upgrade_type: 'subscription',
           employer_id:  employerId,
+          item_id:      employerId,   // fallback for webhook itemId guard
           user_id:      user?.id ?? '',
         },
       })

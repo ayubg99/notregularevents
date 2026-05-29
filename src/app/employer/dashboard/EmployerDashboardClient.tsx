@@ -6,8 +6,9 @@ import { useRouter } from 'next/navigation'
 import type { EmployerAccountRow, JobListingRow } from '@/types/database'
 
 interface Props {
-  employer: EmployerAccountRow
-  jobs:     JobListingRow[]
+  employer:  EmployerAccountRow
+  jobs:      JobListingRow[]
+  upgraded?: boolean
 }
 
 function formatExpiry(iso: string) {
@@ -21,7 +22,7 @@ function formatExpiry(iso: string) {
   }
 }
 
-export default function EmployerDashboardClient({ employer, jobs: initial }: Props) {
+export default function EmployerDashboardClient({ employer, jobs: initial, upgraded }: Props) {
   const router = useRouter()
   const [jobs,       setJobs]       = useState<JobListingRow[]>(initial)
   const [toast,      setToast]      = useState('')
@@ -87,8 +88,23 @@ export default function EmployerDashboardClient({ employer, jobs: initial }: Pro
   const activeCount = jobs.filter(j => j.status === 'active').length
   const totalViews  = jobs.reduce((s, j) => s + (j.views ?? 0), 0)
 
+  const [showUpgraded, setShowUpgraded] = useState(upgraded ?? false)
+
   return (
     <div>
+      {/* ── Upgrade success banner ───────────────────────────────── */}
+      {showUpgraded && (
+        <div style={{ background: 'rgba(46,204,113,0.1)', border: '1px solid rgba(46,204,113,0.3)', borderRadius: '12px', padding: '16px 20px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '20px' }}>🎉</span>
+            <p style={{ color: '#2ECC71', fontWeight: 600, margin: 0, fontSize: '14px' }}>
+              Plan upgraded successfully! All your active listings are now featured.
+            </p>
+          </div>
+          <button onClick={() => setShowUpgraded(false)} style={{ background: 'transparent', border: 'none', color: '#2ECC71', cursor: 'pointer', fontSize: '18px', lineHeight: 1, padding: '0 4px', opacity: 0.7 }}>×</button>
+        </div>
+      )}
+
       {/* ── Header card ─────────────────────────────────────────── */}
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '20px', padding: '24px 28px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>

@@ -8,7 +8,13 @@ export const dynamic = 'force-dynamic'
 
 export const metadata = { title: 'Employer Dashboard — Erasmus Vibe Jobs' }
 
-export default async function EmployerDashboardPage() {
+interface Props {
+  searchParams: Promise<{ upgraded?: string }>
+}
+
+export default async function EmployerDashboardPage({ searchParams }: Props) {
+  const { upgraded } = await searchParams
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -28,7 +34,7 @@ export default async function EmployerDashboardPage() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-10">
-      <EmployerDashboardClient employer={employer} jobs={jobs} />
+      <EmployerDashboardClient employer={employer} jobs={jobs} upgraded={upgraded === 'true'} />
     </main>
   )
 }

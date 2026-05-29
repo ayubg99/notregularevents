@@ -56,8 +56,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return
   }
 
-  // room_contact and membership don't use itemId — event/trip/job_listing/employer_subscription do
-  if (type !== 'room_contact' && type !== 'membership' && !itemId) {
+  // room_contact, membership, and job_upgrade don't require item_id in all cases
+  if (type !== 'room_contact' && type !== 'membership' && type !== 'job_upgrade' && !itemId) {
     console.error('[webhook] missing itemId for type:', type, meta)
     return
   }
@@ -562,8 +562,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   // ── Job upgrade (featured / employer subscription) ───────────
   if (type === 'job_upgrade') {
     const upgradeType = meta.upgrade_type
-    const employerId  = meta.employer_id
+    const employerId  = meta.employer_id || meta.item_id   // item_id is fallback
     const jobId       = meta.item_id || null
+
+    console.log('[webhook job_upgrade] processing', { upgradeType, employerId, jobId, sessionId: session.id })
+
+    if (!employerId) {
+      console.error('[webhook job_upgrade] missing employer_id in metadata', meta)
+    }
 
     if (upgradeType === 'featured' && jobId) {
       const { error: jobErr } = await admin
@@ -573,17 +579,20 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           expires_at:  new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
         })
         .eq('id', jobId)
-      if (jobErr) console.error('[webhook job_upgrade featured job]', jobErr.message)
+      if (jobErr) console.error('[webhook job_upgrade] ❌ feature job failed:', jobErr.message)
+      else        console.log('[webhook job_upgrade] ✅ featured job', jobId)
 
-      await admin
-        .from('employer_accounts')
-        .update({ plan: 'featured' })
-        .eq('id', employerId)
-
-      console.log('[webhook job_upgrade] featured job', jobId)
+      if (employerId) {
+        const { error: empErr } = await admin
+          .from('employer_accounts')
+          .update({ plan: 'featured' })
+          .eq('id', employerId)
+        if (empErr) console.error('[webhook job_upgrade] ❌ employer plan update failed:', empErr.message)
+        else        console.log('[webhook job_upgrade] ✅ employer plan set to featured', employerId)
+      }
     }
 
-    if (upgradeType === 'subscription') {
+    if (upgradeType === 'subscription' && employerId) {
       const subscriptionId = typeof session.subscription === 'string'
         ? session.subscription
         : (session.subscription as Stripe.Subscription | null)?.id ?? null
@@ -592,7 +601,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         : (session.customer as Stripe.Customer | null)?.id ?? null
       const expiresAt      = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
 
-      const { error: empErr } = await admin
+      console.log('[webhook job_upgrade] upgrading employer to subscription', { employerId, subscriptionId, customerId })
+
+      const { data: empData, error: empErr } = await admin
         .from('employer_accounts')
         .update({
           plan:                    'subscription',
@@ -601,16 +612,18 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           plan_expires_at:         expiresAt,
         })
         .eq('id', employerId)
-      if (empErr) console.error('[webhook job_upgrade subscription employer]', empErr.message)
+        .select('id, plan')
+      if (empErr) console.error('[webhook job_upgrade] ❌ employer subscription update failed:', empErr.message, empErr)
+      else        console.log('[webhook job_upgrade] ✅ employer upgraded to subscription', empData)
 
       // Feature ALL active listings for this employer
-      await admin
+      const { error: featErr } = await admin
         .from('job_listings')
         .update({ is_featured: true })
         .eq('employer_account_id', employerId)
         .eq('status', 'active')
-
-      console.log('[webhook job_upgrade] subscription for employer', employerId)
+      if (featErr) console.error('[webhook job_upgrade] ❌ feature all listings failed:', featErr.message)
+      else         console.log('[webhook job_upgrade] ✅ all active listings featured for employer', employerId)
     }
   }
 
@@ -625,6 +638,41 @@ async function handleSubscriptionChange(
   forceStatus?: MembershipStatus,
 ) {
   const admin = getAdminClient()
+
+  // ── Employer subscription backup handler ─────────────────────
+  // checkout.session.completed should handle this, but this catches
+  // cases where that event is missed or metadata is absent there.
+  const subMeta = (subscription.metadata ?? {}) as Record<string, string>
+  if (subMeta.type === 'job_upgrade' && subMeta.upgrade_type === 'subscription') {
+    const employerId = subMeta.employer_id
+    console.log('[webhook subscription change] employer subscription event', { employerId, status: subscription.status })
+
+    if (employerId) {
+      const isActive = subscription.status === 'active' || subscription.status === 'trialing'
+      const periodEnd = (subscription as Stripe.Subscription & { current_period_end: number }).current_period_end
+
+      const { error: empErr } = await admin
+        .from('employer_accounts')
+        .update({
+          plan:                    isActive ? 'subscription' : 'free',
+          stripe_subscription_id:  subscription.id,
+          plan_expires_at:         new Date(periodEnd * 1000).toISOString(),
+        })
+        .eq('id', employerId)
+
+      if (empErr) console.error('[webhook subscription change] ❌ employer update failed:', empErr.message)
+      else        console.log('[webhook subscription change] ✅ employer plan synced', { employerId, isActive })
+
+      if (isActive) {
+        await admin
+          .from('job_listings')
+          .update({ is_featured: true })
+          .eq('employer_account_id', employerId)
+          .eq('status', 'active')
+      }
+      return  // don't touch the memberships table
+    }
+  }
 
   const statusMap: Record<string, MembershipStatus> = {
     active:            'active',
