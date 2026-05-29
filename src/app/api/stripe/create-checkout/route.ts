@@ -7,7 +7,7 @@ import { nanoid } from 'nanoid'
 import { sendBookingConfirmation } from '@/lib/email'
 import type { MembershipPlan, TripTier } from '@/types/database'
 
-type CheckoutType = 'event' | 'trip' | 'membership' | 'job_listing'
+type CheckoutType = 'event' | 'trip' | 'membership' | 'job_listing' | 'employer_subscription'
 
 interface Body {
   type:        CheckoutType
@@ -20,9 +20,9 @@ interface Body {
   guestEmail?: string
   guestPhone?: string
   attendees?:  { name: string; email: string }[]
-  // job_listing specific
-  isFeatured?: boolean
-  isUrgent?:   boolean
+  // job listing specific
+  basePlan?:   'standard' | 'featured' | 'employer_plan'
+  withUrgent?: boolean
 }
 
 function applyDiscount(price: number, type: 'percentage' | 'fixed', value: number): number {
@@ -42,9 +42,10 @@ function getBaseUrl(): string {
 }
 
 const MEMBERSHIP_PRICES: Record<MembershipPlan, string | undefined> = {
-  basic:   process.env.STRIPE_PRICE_BASIC,
-  premium: process.env.STRIPE_PRICE_PREMIUM,
-  vip:     process.env.STRIPE_PRICE_VIP,
+  basic:    process.env.STRIPE_PRICE_BASIC,
+  premium:  process.env.STRIPE_PRICE_PREMIUM,
+  vip:      process.env.STRIPE_PRICE_VIP,
+  employer: undefined, // employer plan uses inline price_data via employer_subscription type
 }
 
 export async function POST(request: NextRequest) {
@@ -452,8 +453,8 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
 
   // ── Job listing checkout ─────────────────────────────────────
   if (type === 'job_listing') {
-    const isFeatured = body.isFeatured ?? false
-    const isUrgent   = body.isUrgent   ?? false
+    const isFeatured = body.basePlan === 'featured'
+    const isUrgent   = body.withUrgent ?? false
     const amount     = (isFeatured ? 2900 : 0) + (isUrgent ? 900 : 0)
 
     if (amount === 0) {
@@ -485,6 +486,43 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
         user_id:     user?.id   ?? '',
         is_featured: String(isFeatured),
         is_urgent:   String(isUrgent),
+      },
+    })
+
+    return NextResponse.json({ url: session.url })
+  }
+
+  // ── Employer subscription checkout ───────────────────────────
+  if (type === 'employer_subscription') {
+    const isUrgent = body.withUrgent ?? false
+
+    const session = await stripe.checkout.sessions.create({
+      mode:           'subscription',
+      customer_email: user?.email ?? undefined,
+      line_items: [{
+        price_data: {
+          currency:     'eur',
+          unit_amount:  4900,
+          product_data: { name: 'Employer Plan — Erasmus Vibe Jobs' },
+          recurring:    { interval: 'month' },
+        },
+        quantity: 1,
+      }],
+      subscription_data: {
+        metadata: {
+          type:      'employer_subscription',
+          job_id:    itemId,
+          user_id:   user?.id ?? '',
+          is_urgent: String(isUrgent),
+        },
+      },
+      success_url: `${baseUrl}/jobs/${itemId}?payment=success`,
+      cancel_url:  `${baseUrl}/jobs/post`,
+      metadata: {
+        type:      'employer_subscription',
+        item_id:   itemId,
+        user_id:   user?.id ?? '',
+        is_urgent: String(isUrgent),
       },
     })
 

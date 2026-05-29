@@ -62,9 +62,10 @@ const TRUST = [
 ]
 
 const PLAN_LABELS: Record<MembershipPlan, string> = {
-  basic:   'Monthly',
-  premium: 'Semester',
-  vip:     'Annual',
+  basic:    'Monthly',
+  premium:  'Semester',
+  vip:      'Annual',
+  employer: 'Employer',
 }
 
 export default async function MembershipPage() {

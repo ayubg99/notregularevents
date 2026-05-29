@@ -19,7 +19,8 @@ interface Body {
   apply_email?:      string
   apply_whatsapp?:   string
   apply_url?:        string
-  listing_option:    'free' | 'featured' | 'urgent' | 'bundle'
+  basePlan:          'standard' | 'featured' | 'employer_plan'
+  withUrgent:        boolean
 }
 
 export async function POST(request: NextRequest) {
@@ -41,11 +42,11 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    const isFree      = body.listing_option === 'free'
-    const isFeatured  = body.listing_option === 'featured' || body.listing_option === 'bundle'
+    const isFree      = body.basePlan === 'standard' && !body.withUrgent
+    const isFeatured  = body.basePlan === 'featured' || body.basePlan === 'employer_plan'
     const status: JobStatus = isFree ? 'active' : 'draft'
 
-    // Featured listings get 60 days, others 30
+    // Featured/employer listings get 60 days, others 30
     const daysActive = isFeatured ? 60 : 30
     const expiresAt  = new Date(Date.now() + daysActive * 24 * 60 * 60 * 1000).toISOString()
 

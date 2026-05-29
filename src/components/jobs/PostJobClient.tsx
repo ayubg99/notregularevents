@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import ImageUpload from '@/components/admin/ImageUpload'
 import type { JobType, JobCategory, JobLanguage } from '@/types/database'
 
-type ListingOption = 'free' | 'featured' | 'urgent' | 'bundle'
+type BasePlan = 'standard' | 'featured' | 'employer_plan'
 
 interface FormData {
   // Step 1
@@ -26,8 +26,6 @@ interface FormData {
   apply_email:       string
   apply_whatsapp:    string
   apply_url:         string
-  // Step 4
-  listing_option:    ListingOption
 }
 
 const INITIAL: FormData = {
@@ -46,7 +44,6 @@ const INITIAL: FormData = {
   apply_email:       '',
   apply_whatsapp:    '',
   apply_url:         '',
-  listing_option:    'free',
 }
 
 const STEPS = ['Job Details', 'Description', 'How to Apply', 'Listing Options']
@@ -82,12 +79,50 @@ function Field({ label, required, children }: { label: string; required?: boolea
   )
 }
 
+const BASE_PLANS: Array<{
+  id:       BasePlan
+  icon:     string
+  title:    string
+  price:    string
+  sub:      string
+  features: string[]
+  popular?: boolean
+}> = [
+  {
+    id:       'standard',
+    icon:     '🆓',
+    title:    'Standard',
+    price:    'Free',
+    sub:      'One listing',
+    features: ['Active for 30 days', 'Normal position in results'],
+  },
+  {
+    id:       'featured',
+    icon:     '⭐',
+    title:    'Featured',
+    price:    '€29',
+    sub:      'one-time',
+    features: ['Active for 60 days', 'Appears first in results', 'Highlighted card'],
+    popular:  true,
+  },
+  {
+    id:       'employer_plan',
+    icon:     '🏢',
+    title:    'Employer Plan',
+    price:    '€49',
+    sub:      '/month',
+    features: ['Unlimited job postings', 'All listings featured automatically', 'Best for regular hirers'],
+  },
+]
+
 export default function PostJobClient() {
   const router = useRouter()
-  const [step,    setStep]    = useState(0)
-  const [form,    setForm]    = useState<FormData>(INITIAL)
-  const [error,   setError]   = useState('')
-  const [loading, setLoading] = useState(false)
+  const [step,       setStep]       = useState(0)
+  const [form,       setForm]       = useState<FormData>(INITIAL)
+  const [basePlan,   setBasePlan]   = useState<BasePlan>('standard')
+  const [withUrgent, setWithUrgent] = useState(false)
+  const [error,      setError]      = useState('')
+  const [loading,    setLoading]    = useState(false)
 
   function update(field: keyof FormData, value: string) {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -122,10 +157,13 @@ export default function PostJobClient() {
     setLoading(true)
 
     try {
+      const isFreeTotal = basePlan === 'standard' && !withUrgent
+
+      // Always create the job first to get a jobId
       const res  = await fetch('/api/jobs/create', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(form),
+        body:    JSON.stringify({ ...form, basePlan, withUrgent }),
       })
       const data = await res.json() as { jobId?: string; error?: string }
 
@@ -135,23 +173,23 @@ export default function PostJobClient() {
       }
 
       const { jobId } = data
-      const isFeatured = form.listing_option === 'featured' || form.listing_option === 'bundle'
-      const isUrgent   = form.listing_option === 'urgent'   || form.listing_option === 'bundle'
 
-      if (form.listing_option === 'free') {
+      if (isFreeTotal) {
         router.push(`/jobs/${jobId}?posted=true`)
         return
       }
 
-      // Paid: create Stripe checkout
+      // Paid path — go to Stripe
+      const checkoutType = basePlan === 'employer_plan' ? 'employer_subscription' : 'job_listing'
+
       const checkoutRes  = await fetch('/api/stripe/create-checkout', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({
-          type:        'job_listing',
-          itemId:      jobId,
-          isFeatured,
-          isUrgent,
+          type:       checkoutType,
+          itemId:     jobId,
+          basePlan,
+          withUrgent,
         }),
       })
       const checkoutData = await checkoutRes.json() as { url?: string; error?: string }
@@ -169,12 +207,16 @@ export default function PostJobClient() {
     }
   }
 
-  const OPTION_CARDS: Array<{ id: ListingOption; title: string; price: string; desc: string }> = [
-    { id: 'free',     title: 'Standard',        price: 'Free',  desc: 'Active for 30 days'              },
-    { id: 'featured', title: 'Featured',         price: '€29',  desc: 'Top position · 60 days · ⭐'    },
-    { id: 'urgent',   title: 'Urgent Badge',     price: '€9',   desc: '🔥 Red urgent badge · 30 days'  },
-    { id: 'bundle',   title: 'Featured + Urgent',price: '€35',  desc: 'Best visibility · 60 days · ⭐🔥' },
-  ]
+  const isFreeTotal   = basePlan === 'standard' && !withUrgent
+  const submitLabel   = loading
+    ? 'Submitting...'
+    : isFreeTotal
+      ? 'Post Job for Free'
+      : basePlan === 'employer_plan'
+        ? 'Continue to Subscription →'
+        : 'Continue to Payment →'
+
+  const urgentFee = basePlan === 'employer_plan' ? 'Included free' : '+€9'
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto' }}>
@@ -185,11 +227,11 @@ export default function PostJobClient() {
           <div key={s} style={{ flex: 1, textAlign: 'center' }}>
             <div
               style={{
-                height: '4px',
+                height:     '4px',
                 borderRadius: '4px',
-                background: i <= step ? '#F5A623' : 'rgba(255,255,255,0.1)',
+                background:  i <= step ? '#F5A623' : 'rgba(255,255,255,0.1)',
                 marginBottom: '6px',
-                transition: 'background 0.2s',
+                transition:  'background 0.2s',
               }}
             />
             <span style={{ color: i === step ? '#F5A623' : '#555', fontSize: '11px', fontWeight: 600 }}>
@@ -207,7 +249,7 @@ export default function PostJobClient() {
           padding:      '28px',
         }}
       >
-        <h2 style={{ color: '#fff', fontWeight: 700, fontSize: '20px', marginBottom: '24px', margin: '0 0 24px' }}>
+        <h2 style={{ color: '#fff', fontWeight: 700, fontSize: '20px', margin: '0 0 24px' }}>
           Step {step + 1}: {STEPS[step]}
         </h2>
 
@@ -334,36 +376,152 @@ export default function PostJobClient() {
             <p style={{ color: '#888', fontSize: '13px', marginBottom: '20px' }}>
               Choose how you&apos;d like your listing to appear on Erasmus Vibe.
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {OPTION_CARDS.map(opt => (
-                <button
-                  key={opt.id}
-                  type="button"
-                  onClick={() => update('listing_option', opt.id)}
-                  style={{
-                    background:   form.listing_option === opt.id ? 'rgba(245,166,35,0.1)' : 'rgba(255,255,255,0.03)',
-                    border:       form.listing_option === opt.id ? '2px solid #F5A623' : '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '14px',
-                    padding:      '16px 20px',
-                    cursor:       'pointer',
-                    textAlign:    'left',
-                    display:      'flex',
-                    alignItems:   'center',
-                    justifyContent: 'space-between',
-                    transition:   'all 0.15s',
-                  }}
-                >
-                  <div>
-                    <p style={{ color: '#fff', fontWeight: 700, fontSize: '15px', margin: '0 0 4px' }}>
-                      {opt.title}
-                    </p>
-                    <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>{opt.desc}</p>
-                  </div>
-                  <span style={{ color: opt.id === 'free' ? '#2ECC71' : '#F5A623', fontWeight: 700, fontSize: '18px' }}>
-                    {opt.price}
+
+            {/* Base plan cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+              {BASE_PLANS.map(plan => {
+                const active = basePlan === plan.id
+                return (
+                  <button
+                    key={plan.id}
+                    type="button"
+                    onClick={() => setBasePlan(plan.id)}
+                    style={{
+                      background:     active ? 'rgba(245,166,35,0.08)' : 'rgba(255,255,255,0.02)',
+                      border:         active ? '2px solid #F5A623' : '1px solid rgba(255,255,255,0.1)',
+                      borderRadius:   '14px',
+                      padding:        '16px 20px',
+                      cursor:         'pointer',
+                      textAlign:      'left',
+                      transition:     'all 0.15s',
+                      position:       'relative',
+                    }}
+                  >
+                    {/* Most popular badge */}
+                    {plan.popular && (
+                      <span
+                        style={{
+                          position:   'absolute',
+                          top:        '-1px',
+                          right:      '16px',
+                          background: '#F5A623',
+                          color:      '#1A1A2E',
+                          fontSize:   '10px',
+                          fontWeight: 800,
+                          padding:    '3px 10px',
+                          borderRadius: '0 0 8px 8px',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em',
+                        }}
+                      >
+                        Most popular
+                      </span>
+                    )}
+
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px' }}>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                        <span style={{ fontSize: '22px', lineHeight: 1 }}>{plan.icon}</span>
+                        <div>
+                          <p style={{ color: '#fff', fontWeight: 700, fontSize: '15px', margin: '0 0 6px' }}>
+                            {plan.title}
+                          </p>
+                          <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                            {plan.features.map(f => (
+                              <li key={f} style={{ color: '#888', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span style={{ color: active ? '#F5A623' : '#444', fontSize: '10px' }}>✓</span>
+                                {f}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                        <span style={{ color: plan.id === 'standard' ? '#2ECC71' : '#F5A623', fontWeight: 800, fontSize: '20px' }}>
+                          {plan.price}
+                        </span>
+                        <span style={{ color: '#555', fontSize: '12px', display: 'block' }}>
+                          {plan.sub}
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Urgent add-on */}
+            <button
+              type="button"
+              onClick={() => {
+                if (basePlan !== 'employer_plan') setWithUrgent(v => !v)
+              }}
+              style={{
+                width:        '100%',
+                background:   (withUrgent || basePlan === 'employer_plan') ? 'rgba(255,68,68,0.08)' : 'rgba(255,255,255,0.02)',
+                border:       (withUrgent || basePlan === 'employer_plan') ? '2px solid rgba(255,68,68,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '14px',
+                padding:      '14px 20px',
+                cursor:       basePlan === 'employer_plan' ? 'default' : 'pointer',
+                textAlign:    'left',
+                display:      'flex',
+                alignItems:   'center',
+                gap:          '14px',
+                transition:   'all 0.15s',
+              }}
+            >
+              {/* Checkbox visual */}
+              <div
+                style={{
+                  width:        '20px',
+                  height:       '20px',
+                  borderRadius: '6px',
+                  border:       (withUrgent || basePlan === 'employer_plan') ? '2px solid #FF4444' : '2px solid rgba(255,255,255,0.2)',
+                  background:   (withUrgent || basePlan === 'employer_plan') ? 'rgba(255,68,68,0.2)' : 'transparent',
+                  display:      'flex',
+                  alignItems:   'center',
+                  justifyContent: 'center',
+                  flexShrink:   0,
+                  fontSize:     '12px',
+                }}
+              >
+                {(withUrgent || basePlan === 'employer_plan') && '✓'}
+              </div>
+
+              <div style={{ flex: 1 }}>
+                <p style={{ color: '#fff', fontWeight: 700, fontSize: '14px', margin: '0 0 2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  🔥 Add Urgent badge
+                  <span style={{ color: '#FF4444', fontSize: '13px', fontWeight: 600 }}>
+                    {urgentFee}
                   </span>
-                </button>
-              ))}
+                </p>
+                <p style={{ color: '#888', fontSize: '12px', margin: 0 }}>
+                  Red &quot;Urgent&quot; badge · &quot;Hiring now&quot; label · Add to any plan
+                </p>
+              </div>
+            </button>
+
+            {/* Price summary */}
+            <div
+              style={{
+                marginTop:    '16px',
+                padding:      '12px 16px',
+                borderRadius: '10px',
+                background:   'rgba(255,255,255,0.03)',
+                border:       '1px solid rgba(255,255,255,0.06)',
+                display:      'flex',
+                justifyContent: 'space-between',
+                alignItems:   'center',
+              }}
+            >
+              <span style={{ color: '#888', fontSize: '13px' }}>Total today</span>
+              <span style={{ color: '#fff', fontWeight: 700, fontSize: '16px' }}>
+                {basePlan === 'standard' && !withUrgent && 'Free'}
+                {basePlan === 'standard' && withUrgent && '€9'}
+                {basePlan === 'featured' && !withUrgent && '€29'}
+                {basePlan === 'featured' && withUrgent && '€38'}
+                {basePlan === 'employer_plan' && '€49/month'}
+              </span>
             </div>
           </div>
         )}
@@ -431,7 +589,7 @@ export default function PostJobClient() {
                 fontSize:     '14px',
               }}
             >
-              {loading ? 'Submitting...' : form.listing_option === 'free' ? 'Post Job for Free' : 'Continue to Payment →'}
+              {submitLabel}
             </button>
           )}
         </div>

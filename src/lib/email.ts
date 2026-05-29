@@ -516,7 +516,7 @@ export async function sendGroupBookingConfirmation(params: GroupBookingEmailPara
 interface MembershipWelcomeParams {
   to:      string
   name:    string
-  plan:    'basic' | 'premium' | 'vip'
+  plan:    'basic' | 'premium' | 'vip' | 'employer'
   endDate: string
 }
 

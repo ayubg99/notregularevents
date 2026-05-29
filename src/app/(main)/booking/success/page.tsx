@@ -186,9 +186,10 @@ async function StripeSuccessContent({ sessionId }: { sessionId: string }) {
 // ── Membership success ───────────────────────────────────────────
 
 const PLAN_INFO: Record<MembershipPlan, { name: string; duration: string; perMonth: string }> = {
-  basic:   { name: 'Monthly',  duration: '30 days',  perMonth: '€9.99/mo'    },
-  premium: { name: 'Semester', duration: '6 months', perMonth: '≈€4.17/mo'   },
-  vip:     { name: 'Annual',   duration: '1 year',   perMonth: '≈€3.33/mo'   },
+  basic:    { name: 'Monthly',       duration: '30 days',  perMonth: '€9.99/mo'   },
+  premium:  { name: 'Semester',      duration: '6 months', perMonth: '≈€4.17/mo'  },
+  vip:      { name: 'Annual',        duration: '1 year',   perMonth: '≈€3.33/mo'  },
+  employer: { name: 'Employer Plan', duration: '1 month',  perMonth: '€49/mo'     },
 }
 
 function membershipEndDate(plan: MembershipPlan): string {

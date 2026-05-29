@@ -24,16 +24,17 @@ async function getUserEmail(admin: ReturnType<typeof getAdminClient>, userId: st
 // Calculate membership end_date based on plan
 function membershipEndDate(plan: MembershipPlan): string {
   const d = new Date()
-  if (plan === 'basic')   d.setDate(d.getDate() + 30)
-  if (plan === 'premium') d.setDate(d.getDate() + 180)
-  if (plan === 'vip')     d.setDate(d.getDate() + 365)
+  if (plan === 'basic')    d.setDate(d.getDate() + 30)
+  if (plan === 'premium')  d.setDate(d.getDate() + 180)
+  if (plan === 'vip')      d.setDate(d.getDate() + 365)
+  if (plan === 'employer') d.setMonth(d.getMonth() + 1)
   return d.toISOString()
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const admin = getAdminClient()
   const meta  = session.metadata ?? {}
-  const type       = meta.type    as 'event' | 'trip' | 'membership' | 'room_contact' | 'job_listing' | undefined
+  const type       = meta.type    as 'event' | 'trip' | 'membership' | 'room_contact' | 'job_listing' | 'employer_subscription' | undefined
   const userId     = meta.user_id  || null
   const itemId     = meta.item_id as string | undefined
   const guestName  = meta.guest_name  || null
@@ -55,7 +56,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return
   }
 
-  // room_contact and membership don't use itemId — only event/trip/job_listing do
+  // room_contact and membership don't use itemId — event/trip/job_listing/employer_subscription do
   if (type !== 'room_contact' && type !== 'membership' && !itemId) {
     console.error('[webhook] missing itemId for type:', type, meta)
     return
@@ -519,6 +520,43 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     if (jobErr) console.error('[webhook job_listing]', jobErr.message)
     else        console.log('[webhook job_listing] activated job', itemId, { isFeatured, isUrgent })
+  }
+
+  // ── Employer subscription ────────────────────────────────────
+  if (type === 'employer_subscription') {
+    const isUrgent       = meta.is_urgent === 'true'
+    const expiresAt      = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    const subscriptionId = typeof session.subscription === 'string'
+      ? session.subscription
+      : (session.subscription as Stripe.Subscription | null)?.id ?? null
+    const customerId     = typeof session.customer === 'string'
+      ? session.customer
+      : (session.customer as Stripe.Customer | null)?.id ?? null
+
+    // Activate the specific job listing
+    const { error: jobErr } = await admin
+      .from('job_listings')
+      .update({ status: 'active', is_featured: true, is_urgent: isUrgent, expires_at: expiresAt })
+      .eq('id', itemId!)
+    if (jobErr) console.error('[webhook employer_subscription job]', jobErr.message)
+    else        console.log('[webhook employer_subscription] activated job', itemId, { isUrgent })
+
+    // Store employer subscription in memberships table
+    if (userId) {
+      const { error: memErr } = await admin.from('memberships').upsert(
+        {
+          user_id:                userId,
+          plan:                   'employer' as MembershipPlan,
+          status:                 'active' as MembershipStatus,
+          stripe_subscription_id: subscriptionId,
+          stripe_customer_id:     customerId,
+          start_date:             new Date().toISOString(),
+          end_date:               expiresAt,
+        },
+        { onConflict: 'user_id', ignoreDuplicates: false },
+      )
+      if (memErr) console.error('[webhook employer_subscription membership]', memErr.message)
+    }
   }
 
   // ── Decrement promo code uses ────────────────────────────────
