@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { getPublicClient } from '@/lib/supabase/public'
 import type { TripRow } from '@/types/database'
-import TripCard from './TripCard'
+import TripCard from '@/components/trips/TripCard'
 
 async function getPublishedTrips(): Promise<TripRow[]> {
   try {

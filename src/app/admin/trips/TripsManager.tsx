@@ -316,7 +316,7 @@ export default function TripsManager({ initialTrips }: Props) {
                 fontWeight: 500,
               }}
             >
-              📋 Duplicate
+              Duplicate
             </button>
             <button onClick={() => openEdit(row as unknown as TripRow)} className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors"><Pencil size={14} /></button>
             <button

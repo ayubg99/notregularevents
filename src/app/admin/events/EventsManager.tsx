@@ -279,7 +279,7 @@ export default function EventsManager({ initialEvents }: Props) {
                 fontWeight: 500,
               }}
             >
-              📋 Duplicate
+              Duplicate
             </button>
             <button
               onClick={() => openEdit(row as unknown as EventRow)}
