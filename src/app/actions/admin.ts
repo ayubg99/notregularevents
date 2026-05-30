@@ -61,6 +61,46 @@ export async function deleteEvent(id: string): Promise<{ success: boolean; error
   return { success: true }
 }
 
+export async function duplicateEvent(eventId: string): Promise<{ success: boolean; id?: string; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+  const admin = getAdminClient()
+
+  const { data: orig, error: fetchErr } = await admin
+    .from('events').select('*').eq('id', eventId).single()
+  if (fetchErr || !orig) return { success: false, error: 'Event not found' }
+
+  const { data, error } = await admin
+    .from('events')
+    .insert({
+      title:               `${orig.title} (Copy)`,
+      slug:                `${orig.slug}-copy-${Date.now()}`,
+      description:         orig.description,
+      category:            orig.category,
+      date:                orig.date,
+      location:            orig.location,
+      image_url:           orig.image_url,
+      is_free:             orig.is_free,
+      members_only_free:   orig.members_only_free,
+      price:               orig.price,
+      price_early_bird:    orig.price_early_bird,
+      price_group:         orig.price_group,
+      early_bird_deadline: null,
+      early_bird_seats:    orig.early_bird_seats,
+      group_min_size:      orig.group_min_size,
+      capacity:            orig.capacity,
+      status:              'draft',
+      created_by:          auth.userId,
+    })
+    .select()
+    .single()
+
+  if (error) return { success: false, error: error.message }
+  revalidatePath('/admin/events')
+  revalidatePath('/events')
+  return { success: true, id: data.id }
+}
+
 // ── Trips ─────────────────────────────────────────────────────
 
 export async function createTrip(data: TripInsert): Promise<{ success: boolean; error?: string }> {
@@ -100,6 +140,50 @@ export async function deleteTrip(id: string): Promise<{ success: boolean; error?
   revalidatePath('/admin/trips')
   revalidatePath('/trips')
   return { success: true }
+}
+
+export async function duplicateTrip(tripId: string): Promise<{ success: boolean; id?: string; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+  const admin = getAdminClient()
+
+  const { data: orig, error: fetchErr } = await admin
+    .from('trips').select('*').eq('id', tripId).single()
+  if (fetchErr || !orig) return { success: false, error: 'Trip not found' }
+
+  const { data, error } = await admin
+    .from('trips')
+    .insert({
+      title:               `${orig.title} (Copy)`,
+      slug:                `${orig.slug}-copy-${Date.now()}`,
+      description:         orig.description,
+      category:            orig.category,
+      destination:         orig.destination,
+      start_date:          orig.start_date,
+      end_date:            orig.end_date,
+      price_standard:      orig.price_standard,
+      price_early_bird:    orig.price_early_bird,
+      price_group:         orig.price_group,
+      early_bird_deadline: null,
+      early_bird_seats:    orig.early_bird_seats,
+      group_min_size:      orig.group_min_size,
+      capacity:            orig.capacity,
+      image_url:           orig.image_url,
+      whatsapp_group_url:  orig.whatsapp_group_url,
+      itinerary:           orig.itinerary,
+      whats_included:      orig.whats_included,
+      whats_excluded:      orig.whats_excluded,
+      meeting_points:      orig.meeting_points,
+      status:              'draft',
+      created_by:          auth.userId,
+    })
+    .select()
+    .single()
+
+  if (error) return { success: false, error: error.message }
+  revalidatePath('/admin/trips')
+  revalidatePath('/trips')
+  return { success: true, id: data.id }
 }
 
 // ── Users ─────────────────────────────────────────────────────

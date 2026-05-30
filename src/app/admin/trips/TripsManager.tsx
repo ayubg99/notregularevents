@@ -6,7 +6,8 @@ import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2, ChevronDown,
 import Link from 'next/link'
 import DataTable from '@/components/admin/DataTable'
 import ImageUpload from '@/components/admin/ImageUpload'
-import { createTrip, updateTrip, deleteTrip } from '@/app/actions/admin'
+import { createClient } from '@/lib/supabase/client'
+import { createTrip, updateTrip, deleteTrip, duplicateTrip } from '@/app/actions/admin'
 import type { TripRow, TripInsert, TripStatus, ItineraryDay } from '@/types/database'
 
 const STATUS_COLORS: Record<string, string> = {
@@ -66,7 +67,8 @@ export default function TripsManager({ initialTrips }: Props) {
   const [modal,   setModal]   = useState<'create' | 'edit' | null>(null)
   const [editing, setEditing] = useState<TripRow | null>(null)
   const [form,    setForm]    = useState<FormState>(defaultForm())
-  const [toast,   setToast]   = useState('')
+  const [toast,          setToast]          = useState('')
+  const [toastIsSuccess, setToastIsSuccess] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [groupEnabled, setGroupEnabled] = useState(false)
 
@@ -80,8 +82,9 @@ export default function TripsManager({ initialTrips }: Props) {
   const [whatsIncluded, setWhatsIncluded] = useState<string[]>([])
   const [whatsExcluded, setWhatsExcluded] = useState<string[]>([])
 
-  function showToast(msg: string) {
+  function showToast(msg: string, success = false) {
     setToast(msg)
+    setToastIsSuccess(success)
     setTimeout(() => setToast(''), 3500)
   }
 
@@ -109,8 +112,8 @@ export default function TripsManager({ initialTrips }: Props) {
       slug:                trip.slug,
       description:         trip.description ?? '',
       destination:         trip.destination,
-      start_date:          trip.start_date.slice(0, 10),
-      end_date:            trip.end_date.slice(0, 10),
+      start_date:          trip.start_date?.slice(0, 10) ?? '',
+      end_date:            trip.end_date?.slice(0, 10) ?? '',
       price_standard:      String(trip.price_standard),
       price_early_bird:    trip.price_early_bird != null ? String(trip.price_early_bird) : '',
       price_group:         trip.price_group != null ? String(trip.price_group) : '',
@@ -196,6 +199,20 @@ export default function TripsManager({ initialTrips }: Props) {
   function handleDelete(trip: TripRow) {
     if (!confirm(`Delete "${trip.title}"? This cannot be undone.`)) return
     startTransition(async () => { await deleteTrip(trip.id); router.refresh() })
+  }
+
+  async function handleDuplicateTrip(trip: TripRow) {
+    const result = await duplicateTrip(trip.id)
+    if (!result.success || !result.id) {
+      showToast('Failed to duplicate trip')
+      return
+    }
+    const supabase = createClient()
+    const { data: newTrip } = await supabase
+      .from('trips').select('*').eq('id', result.id).single()
+    showToast('Duplicated! Set the new dates and title before publishing.', true)
+    if (newTrip) openEdit(newTrip as TripRow)
+    router.refresh()
   }
 
   async function handleCancelTrip(trip: TripRow) {
@@ -286,6 +303,21 @@ export default function TripsManager({ initialTrips }: Props) {
             <button onClick={() => handleToggleStatus(row as unknown as TripRow)} className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors" title={row.status === 'published' ? 'Unpublish' : 'Publish'}>
               {row.status === 'published' ? <ToggleRight size={15} className="text-green-400" /> : <ToggleLeft size={15} />}
             </button>
+            <button
+              onClick={() => handleDuplicateTrip(row as unknown as TripRow)}
+              style={{
+                padding: '6px 12px',
+                background: 'rgba(78,205,196,0.1)',
+                border: '1px solid rgba(78,205,196,0.2)',
+                borderRadius: '20px',
+                color: '#4ECDC4',
+                fontSize: '12px',
+                cursor: 'pointer',
+                fontWeight: 500,
+              }}
+            >
+              📋 Duplicate
+            </button>
             <button onClick={() => openEdit(row as unknown as TripRow)} className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors"><Pencil size={14} /></button>
             <button
               onClick={() => handleCancelTrip(row as unknown as TripRow)}
@@ -309,6 +341,23 @@ export default function TripsManager({ initialTrips }: Props) {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-6">
+
+              {editing?.title.includes('(Copy)') && (
+                <div style={{
+                  background: 'rgba(78,205,196,0.1)',
+                  border: '1px solid rgba(78,205,196,0.2)',
+                  borderRadius: '12px',
+                  padding: '12px 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                }}>
+                  <span style={{ fontSize: '18px' }}>📋</span>
+                  <p style={{ color: '#4ECDC4', fontSize: '14px', margin: 0 }}>
+                    This is a duplicate. Set the new dates and update the title before publishing.
+                  </p>
+                </div>
+              )}
 
               {/* Basic Info */}
               <Section title="Basic Info">
@@ -618,7 +667,7 @@ export default function TripsManager({ initialTrips }: Props) {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-[60] px-4 py-3 rounded-xl bg-red-500/90 text-white text-sm font-medium shadow-xl">
+        <div className={`fixed bottom-6 right-6 z-[60] px-4 py-3 rounded-xl text-white text-sm font-medium shadow-xl ${toastIsSuccess ? 'bg-teal-500/90' : 'bg-red-500/90'}`}>
           {toast}
         </div>
       )}

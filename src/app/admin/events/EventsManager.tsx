@@ -6,7 +6,8 @@ import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2, ChevronDown,
 import Link from 'next/link'
 import DataTable from '@/components/admin/DataTable'
 import ImageUpload from '@/components/admin/ImageUpload'
-import { createEvent, updateEvent, deleteEvent } from '@/app/actions/admin'
+import { createClient } from '@/lib/supabase/client'
+import { createEvent, updateEvent, deleteEvent, duplicateEvent } from '@/app/actions/admin'
 import type { EventRow, EventInsert, EventCategory, EventStatus } from '@/types/database'
 
 const CATEGORIES: EventCategory[] = ['party', 'cultural', 'sport', 'networking', 'trip', 'other']
@@ -66,13 +67,15 @@ export default function EventsManager({ initialEvents }: Props) {
   const [modal,   setModal]   = useState<'create' | 'edit' | null>(null)
   const [editing, setEditing] = useState<EventRow | null>(null)
   const [form,    setForm]    = useState<FormState>(defaultForm())
-  const [toast,   setToast]   = useState('')
+  const [toast,          setToast]          = useState('')
+  const [toastIsSuccess, setToastIsSuccess] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [groupEnabled, setGroupEnabled] = useState(false)
   const [eventPricing, setEventPricing] = useState<'paid' | 'free_all' | 'free_members'>('paid')
 
-  function showToast(msg: string) {
+  function showToast(msg: string, success = false) {
     setToast(msg)
+    setToastIsSuccess(success)
     setTimeout(() => setToast(''), 3500)
   }
 
@@ -94,7 +97,7 @@ export default function EventsManager({ initialEvents }: Props) {
       slug:                event.slug,
       description:         event.description ?? '',
       category:            event.category,
-      date:                event.date.slice(0, 16),
+      date:                event.date?.slice(0, 16) ?? '',
       location:            event.location ?? '',
       image_url:           event.image_url ?? '',
       price:               String(event.price),
@@ -188,6 +191,20 @@ export default function EventsManager({ initialEvents }: Props) {
     })
   }
 
+  async function handleDuplicateEvent(event: EventRow) {
+    const result = await duplicateEvent(event.id)
+    if (!result.success || !result.id) {
+      showToast('Failed to duplicate event')
+      return
+    }
+    const supabase = createClient()
+    const { data: newEvent } = await supabase
+      .from('events').select('*').eq('id', result.id).single()
+    showToast('Duplicated! Set the new date and title before publishing.', true)
+    if (newEvent) openEdit(newEvent as EventRow)
+    router.refresh()
+  }
+
   // Pricing preview values
   const stdNum = parseFloat(form.price) || 0
   const ebNum  = parseOptional(form.price_early_bird)
@@ -250,6 +267,21 @@ export default function EventsManager({ initialEvents }: Props) {
               {row.status === 'published' ? <ToggleRight size={15} className="text-green-400" /> : <ToggleLeft size={15} />}
             </button>
             <button
+              onClick={() => handleDuplicateEvent(row as unknown as EventRow)}
+              style={{
+                padding: '6px 12px',
+                background: 'rgba(78,205,196,0.1)',
+                border: '1px solid rgba(78,205,196,0.2)',
+                borderRadius: '20px',
+                color: '#4ECDC4',
+                fontSize: '12px',
+                cursor: 'pointer',
+                fontWeight: 500,
+              }}
+            >
+              📋 Duplicate
+            </button>
+            <button
               onClick={() => openEdit(row as unknown as EventRow)}
               className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors"
             >
@@ -279,6 +311,23 @@ export default function EventsManager({ initialEvents }: Props) {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-6">
+
+              {editing?.title.includes('(Copy)') && (
+                <div style={{
+                  background: 'rgba(78,205,196,0.1)',
+                  border: '1px solid rgba(78,205,196,0.2)',
+                  borderRadius: '12px',
+                  padding: '12px 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                }}>
+                  <span style={{ fontSize: '18px' }}>📋</span>
+                  <p style={{ color: '#4ECDC4', fontSize: '14px', margin: 0 }}>
+                    This is a duplicate. Set the new date and update the title before publishing.
+                  </p>
+                </div>
+              )}
 
               {/* Basic Info */}
               <Section title="Basic Info">
@@ -475,7 +524,7 @@ export default function EventsManager({ initialEvents }: Props) {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-[60] px-4 py-3 rounded-xl bg-red-500/90 text-white text-sm font-medium shadow-xl">
+        <div className={`fixed bottom-6 right-6 z-[60] px-4 py-3 rounded-xl text-white text-sm font-medium shadow-xl ${toastIsSuccess ? 'bg-teal-500/90' : 'bg-red-500/90'}`}>
           {toast}
         </div>
       )}
