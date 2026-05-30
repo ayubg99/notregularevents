@@ -198,10 +198,12 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
       <h2 style={{ color: '#fff', fontSize: '18px', fontWeight: 700, margin: '8px 0 20px' }}>My Job Listings</h2>
 
       {jobs.length === 0 ? (
-        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '48px', textAlign: 'center' }}>
-          <p style={{ fontSize: '40px', margin: '0 0 12px' }}>💼</p>
-          <p style={{ color: '#888', margin: '0 0 20px' }}>No job listings yet</p>
-          <Link href="/jobs/post" style={{ display: 'inline-block', background: '#F5A623', color: '#1A1A0E', padding: '12px 24px', borderRadius: '50px', textDecoration: 'none', fontWeight: 700 }}>
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', textAlign: 'center', padding: '48px 20px' }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(245,166,35,0.1)', border: '1px solid rgba(245,166,35,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '28px' }}>
+            💼
+          </div>
+          <p style={{ color: '#888', margin: '0 0 20px', fontSize: '15px' }}>No job listings yet</p>
+          <Link href="/jobs/post" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #F5A623, #FF6B35)', color: '#1A1A0E', padding: '12px 28px', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, boxShadow: '0 4px 16px rgba(245,166,35,0.25)' }}>
             Post Your First Job
           </Link>
         </div>
