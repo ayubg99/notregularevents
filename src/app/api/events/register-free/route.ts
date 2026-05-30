@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { nanoid } from 'nanoid'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 import { generateQR } from '@/lib/qr'
 import { sendBookingConfirmation, sendGroupBookingConfirmation } from '@/lib/email'
 
@@ -17,11 +18,31 @@ export async function POST(req: Request) {
     .from('events')
     .select('*')
     .eq('id', eventId)
-    .eq('is_free', true)
     .single()
 
   if (eventError || !event) {
+    return NextResponse.json({ error: 'Event not found' }, { status: 404 })
+  }
+
+  if (!event.is_free && !event.members_only_free) {
     return NextResponse.json({ error: 'Event not found or not a free event' }, { status: 404 })
+  }
+
+  if (event.members_only_free) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Login required' }, { status: 401 })
+    }
+    const { data: mem } = await admin
+      .from('memberships')
+      .select('status')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .maybeSingle()
+    if (!mem) {
+      return NextResponse.json({ error: 'Active membership required' }, { status: 403 })
+    }
   }
 
   const ticketAttendees: { name: string; email: string }[] =

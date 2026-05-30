@@ -69,7 +69,7 @@ export default function EventsManager({ initialEvents }: Props) {
   const [toast,   setToast]   = useState('')
   const [isPending, startTransition] = useTransition()
   const [groupEnabled, setGroupEnabled] = useState(false)
-  const [isFree, setIsFree] = useState(false)
+  const [eventPricing, setEventPricing] = useState<'paid' | 'free_all' | 'free_members'>('paid')
 
   function showToast(msg: string) {
     setToast(msg)
@@ -80,7 +80,7 @@ export default function EventsManager({ initialEvents }: Props) {
     setEditing(null)
     setForm(defaultForm())
     setGroupEnabled(false)
-    setIsFree(false)
+    setEventPricing('paid')
     setToast('')
     setModal('create')
   }
@@ -88,7 +88,7 @@ export default function EventsManager({ initialEvents }: Props) {
   function openEdit(event: EventRow) {
     setEditing(event)
     setGroupEnabled(event.price_group != null)
-    setIsFree(event.is_free ?? false)
+    setEventPricing(event.members_only_free ? 'free_members' : event.is_free ? 'free_all' : 'paid')
     setForm({
       title:               event.title,
       slug:                event.slug,
@@ -124,7 +124,7 @@ export default function EventsManager({ initialEvents }: Props) {
     // Validation
     const stdPrice = parseFloat(form.price) || 0
     const ebPrice  = parseOptional(form.price_early_bird)
-    if (!isFree) {
+    if (eventPricing === 'paid') {
       if (ebPrice !== null && ebPrice >= stdPrice) {
         showToast('Early bird price must be less than the standard price.')
         return
@@ -146,13 +146,14 @@ export default function EventsManager({ initialEvents }: Props) {
         date:                form.date,
         location:            form.location || null,
         image_url:           form.image_url || null,
-        is_free:             isFree,
-        price:               isFree ? 0 : stdPrice,
-        price_early_bird:    isFree ? null : ebPrice,
-        price_group:         isFree ? null : (groupEnabled ? parseOptional(form.price_group) : null),
-        early_bird_deadline: isFree ? null : (form.early_bird_deadline ? new Date(form.early_bird_deadline).toISOString() : null),
+        is_free:             eventPricing === 'free_all',
+        members_only_free:   eventPricing === 'free_members',
+        price:               eventPricing !== 'paid' ? 0 : stdPrice,
+        price_early_bird:    eventPricing !== 'paid' ? null : ebPrice,
+        price_group:         eventPricing !== 'paid' ? null : (groupEnabled ? parseOptional(form.price_group) : null),
+        early_bird_deadline: eventPricing !== 'paid' ? null : (form.early_bird_deadline ? new Date(form.early_bird_deadline).toISOString() : null),
         early_bird_seats:    parseInt(form.early_bird_seats) || 20,
-        group_min_size:      isFree ? null : (groupEnabled ? (parseInt(form.group_min_size) || 4) : null),
+        group_min_size:      eventPricing !== 'paid' ? null : (groupEnabled ? (parseInt(form.group_min_size) || 4) : null),
         capacity:            parseInt(form.capacity) || 100,
         status:              form.status,
         created_by:          null,
@@ -343,22 +344,41 @@ export default function EventsManager({ initialEvents }: Props) {
 
               {/* Pricing */}
               <Section title="Pricing">
-                {/* Free event toggle */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: isFree ? '1px solid rgba(46,204,113,0.3)' : '1px solid rgba(255,255,255,0.08)' }}>
-                  <div>
-                    <p style={{ color: '#fff', fontWeight: 600, margin: '0 0 4px', fontSize: '14px' }}>Free Event</p>
-                    <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>No payment required — students just register</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsFree(v => !v)}
-                    style={{ width: '48px', height: '26px', borderRadius: '13px', border: 'none', background: isFree ? '#F5A623' : 'rgba(255,255,255,0.1)', cursor: 'pointer', position: 'relative', transition: 'background 0.2s', flexShrink: 0 }}
-                  >
-                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#fff', position: 'absolute', top: '3px', left: isFree ? '25px' : '3px', transition: 'left 0.2s' }} />
-                  </button>
+                {/* Event type selector */}
+                <div className="flex flex-col gap-2">
+                  {([
+                    { id: 'paid',         label: '💳 Paid Event',            desc: 'Students pay to attend' },
+                    { id: 'free_all',     label: '🎉 Free for Everyone',     desc: 'Anyone can register for free' },
+                    { id: 'free_members', label: '👑 Free for Members Only', desc: 'Only active members can register' },
+                  ] as const).map(option => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => setEventPricing(option.id)}
+                      className={`flex items-center justify-between rounded-xl px-4 py-3 text-left transition-colors ${
+                        eventPricing === option.id
+                          ? 'border border-brand-primary/40 bg-brand-primary/5'
+                          : 'border border-white/8 bg-white/3 hover:border-white/15'
+                      }`}
+                    >
+                      <div>
+                        <p className={`text-sm font-semibold ${eventPricing === option.id ? 'text-brand-primary' : 'text-white'}`}>
+                          {option.label}
+                        </p>
+                        <p className="text-xs text-white/40 mt-0.5">{option.desc}</p>
+                      </div>
+                      <div className={`w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] transition-colors ${
+                        eventPricing === option.id
+                          ? 'bg-brand-primary text-white'
+                          : 'border border-white/20'
+                      }`}>
+                        {eventPricing === option.id ? '✓' : ''}
+                      </div>
+                    </button>
+                  ))}
                 </div>
 
-                {!isFree && (
+                {eventPricing === 'paid' && (
                   <>
                     <div className="grid grid-cols-3 gap-3">
                       {/* Early Bird */}

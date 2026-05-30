@@ -15,6 +15,7 @@ type EventProps = {
   slug:                  string
   title:                 string
   isFree?:               boolean
+  isMembersOnlyFree?:    boolean
   priceEarlyBird?:       number | null
   priceGroup?:           number | null
   earlyBirdDeadline?:    string | null
@@ -204,7 +205,7 @@ export default function BookingModal(props: Props) {
 
   const hasDiscount = isMember && !promoCode && basePrice > 0
   const isFree      = displayPrice === 0
-  const isFreePath  = props.type === 'event' && !!(props.isFree || props.price === 0)
+  const isFreePath  = props.type === 'event' && !!(props.isFree || props.price === 0 || (props.isMembersOnlyFree && isMember))
 
   const isGroupTier = (props.type === 'trip' && selectedTier === 'group')
     || (props.type === 'event' && eventTier === 'group')
@@ -383,9 +384,38 @@ export default function BookingModal(props: Props) {
                 Done ✓
               </button>
             </div>
+          ) : props.type === 'event' && props.isMembersOnlyFree && !authLoaded ? (
+            <div className="flex justify-center py-12">
+              <Loader2 size={24} className="animate-spin text-brand-primary" />
+            </div>
+          ) : props.type === 'event' && props.isMembersOnlyFree && !isMember ? (
+            <div className="flex flex-col items-center gap-5 text-center py-8">
+              <Crown size={40} className="text-brand-primary" />
+              <div>
+                <h3 className="font-heading text-xl font-bold text-white mb-2">Members Only Event</h3>
+                <p className="text-white/50 text-sm leading-relaxed">
+                  This event is free but exclusively for Erasmus Vibe members. Join to register.
+                </p>
+              </div>
+              <a
+                href="/membership"
+                className="w-full block py-4 rounded-full font-bold text-sm text-center shadow-brand-sm"
+                style={{ background: 'linear-gradient(135deg, #F5A623, #FF6B35)', color: '#1A1A0E' }}
+              >
+                Join for €9.99/month →
+              </a>
+              {!isLoggedIn && (
+                <p className="text-white/40 text-xs">
+                  Already a member?{' '}
+                  <a href="/auth/login" className="text-brand-primary hover:underline">Log in here</a>
+                </p>
+              )}
+            </div>
           ) : (
           <>
-          <MembershipBanner authLoaded={authLoaded} isLoggedIn={isLoggedIn} isMember={isMember} />
+          {!(props.type === 'event' && props.isMembersOnlyFree) && (
+            <MembershipBanner authLoaded={authLoaded} isLoggedIn={isLoggedIn} isMember={isMember} />
+          )}
 
           {/* Tier selector (trips) */}
           {props.type === 'trip' && (

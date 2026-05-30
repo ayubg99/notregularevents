@@ -11,6 +11,7 @@ interface Props {
   slug:                 string
   title:                string
   isFree?:              boolean
+  isMembersOnlyFree?:   boolean
   priceEarlyBird?:      number | null
   priceGroup?:          number | null
   earlyBirdDeadline?:   string | null
@@ -19,7 +20,7 @@ interface Props {
 }
 
 export default function TicketSelector({
-  eventId, price, capacity, sold, slug, title, isFree: isFreeprop,
+  eventId, price, capacity, sold, slug, title, isFree: isFreeprop, isMembersOnlyFree,
   priceEarlyBird, priceGroup, earlyBirdDeadline, earlyBirdSeats, earlyBirdSeatsSold,
 }: Props) {
   const [modalOpen, setModalOpen] = useState(false)
@@ -53,14 +54,14 @@ export default function TicketSelector({
         <div className="flex items-baseline justify-between">
           <div>
             <p className="font-heading text-2xl font-bold text-white">
-              {isFree ? 'Free Entry' : `€${displayPrice.toFixed(2)}`}
-              {!isFree && <span className="text-white/40 text-sm font-normal ml-1">/ ticket</span>}
+              {isMembersOnlyFree ? 'Members Only — Free' : isFree ? 'Free Entry' : `€${displayPrice.toFixed(2)}`}
+              {!isFree && !isMembersOnlyFree && <span className="text-white/40 text-sm font-normal ml-1">/ ticket</span>}
             </p>
             <p className="text-white/50 text-xs mt-0.5">
-              {spotsLeft} spot{spotsLeft === 1 ? '' : 's'} remaining
+              {isMembersOnlyFree ? 'Active membership required' : `${spotsLeft} spot${spotsLeft === 1 ? '' : 's'} remaining`}
             </p>
           </div>
-          {!isFree && (
+          {!isFree && !isMembersOnlyFree && (
             <span className="text-xs text-white/30 bg-white/5 border border-white/10 px-2 py-1 rounded-lg">
               {isEarlyBirdValid ? '🔥 Early Bird' : 'Standard'}
             </span>
@@ -71,11 +72,11 @@ export default function TicketSelector({
           onClick={() => setModalOpen(true)}
           className="w-full py-3.5 rounded-full btn-primary font-semibold text-sm shadow-brand-sm hover:brightness-105 transition-all"
         >
-          {isFree ? "RSVP — It's Free!" : 'Book Tickets'}
+          {isMembersOnlyFree ? '👑 Register — Members Only' : isFree ? "RSVP — It's Free!" : 'Book Tickets'}
         </button>
 
         <p className="text-center text-white/25 text-xs -mt-1">
-          {isFree ? 'Instant confirmation' : 'Secure checkout via Stripe'}
+          {isMembersOnlyFree ? 'Membership verified at checkout' : isFree ? 'Instant confirmation' : 'Secure checkout via Stripe'}
         </p>
       </div>
 
@@ -88,6 +89,7 @@ export default function TicketSelector({
         slug={slug}
         title={title}
         isFree={isFree}
+        isMembersOnlyFree={isMembersOnlyFree}
         priceEarlyBird={priceEarlyBird}
         priceGroup={priceGroup}
         earlyBirdDeadline={earlyBirdDeadline}

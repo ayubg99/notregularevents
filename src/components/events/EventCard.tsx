@@ -102,7 +102,11 @@ export default function EventCard({ event, className }: Props) {
         </span>
 
         {/* Price / Early Bird badge */}
-        {isFree ? (
+        {event.members_only_free ? (
+          <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: 'rgba(245,166,35,0.2)', color: '#F5A623', border: '1px solid rgba(245,166,35,0.4)' }}>
+            👑 Members Free
+          </span>
+        ) : isFree ? (
           <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: 'rgba(46,204,113,0.2)', color: '#2ECC71', border: '1px solid rgba(46,204,113,0.4)' }}>
             🎉 FREE
           </span>
@@ -177,7 +181,7 @@ export default function EventCard({ event, className }: Props) {
                 : 'btn-primary',
             )}
           >
-            {isSoldOut ? 'Sold Out' : isFree ? 'Register Free' : 'Book Now'}
+            {isSoldOut ? 'Sold Out' : event.members_only_free ? 'Members Only' : isFree ? 'Register Free' : 'Book Now'}
           </Link>
         </div>
       </div>

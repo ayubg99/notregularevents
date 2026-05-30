@@ -49,7 +49,7 @@ export default function EventCard({ event, className }: EventCardProps) {
   const formattedDate  = new Date(event.date).toLocaleDateString('en-GB', {
     day: 'numeric', month: 'short', year: 'numeric',
   })
-  const formattedPrice = event.price === 0 ? 'Free' : `€${event.price.toFixed(2)}`
+  const formattedPrice = event.members_only_free ? '👑 Members Free' : event.is_free || event.price === 0 ? 'Free' : `€${event.price.toFixed(2)}`
 
   return (
     <Link
