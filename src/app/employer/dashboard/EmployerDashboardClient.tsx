@@ -187,7 +187,7 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
           { label: 'Total views',     value: totalViews,   color: '#F5A623' },
           { label: 'Total posted',    value: jobs.length,  color: '#4ECDC4' },
         ].map(stat => (
-          <div key={stat.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '20px', textAlign: 'center' }}>
+          <div key={stat.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '24px 20px', textAlign: 'center' }}>
             <p style={{ color: stat.color, fontSize: '32px', fontWeight: 700, margin: '0 0 6px', lineHeight: 1 }}>{stat.value}</p>
             <p style={{ color: '#888', fontSize: '12px', margin: 0, fontWeight: 500 }}>{stat.label}</p>
           </div>
@@ -195,7 +195,7 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
       </div>
 
       {/* ── Job listings ─────────────────────────────────────────── */}
-      <h2 style={{ color: '#fff', fontSize: '18px', fontWeight: 700, margin: '0 0 16px' }}>My Job Listings</h2>
+      <h2 style={{ color: '#fff', fontSize: '18px', fontWeight: 700, margin: '8px 0 20px' }}>My Job Listings</h2>
 
       {jobs.length === 0 ? (
         <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '48px', textAlign: 'center' }}>
@@ -209,7 +209,12 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
         jobs.map(job => {
           const { label: expiryLabel, expired } = formatExpiry(job.expires_at)
           return (
-            <div key={job.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '20px', marginBottom: '10px' }}>
+            <div
+              key={job.id}
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '20px', marginBottom: '10px', transition: 'border 0.15s, background 0.15s' }}
+              onMouseEnter={e => { e.currentTarget.style.border = '1px solid rgba(245,166,35,0.15)'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+              onMouseLeave={e => { e.currentTarget.style.border = '1px solid rgba(255,255,255,0.07)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+            >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
 
                 {/* Left: info */}
@@ -251,7 +256,7 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flexShrink: 0 }}>
                   <a
                     href={`/jobs/edit/${job.id}`}
-                    style={{ padding: '7px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', color: '#ccc', fontSize: '12px', textDecoration: 'none', textAlign: 'center', fontWeight: 500 }}
+                    style={{ padding: '7px 16px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', color: '#ccc', fontSize: '12px', textDecoration: 'none', textAlign: 'center', fontWeight: 500, whiteSpace: 'nowrap' }}
                   >
                     Edit
                   </a>
@@ -274,14 +279,14 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
                   {job.status === 'active' ? (
                     <button
                       onClick={() => handleClose(job.id)}
-                      style={{ padding: '7px 14px', background: 'transparent', border: '1px solid rgba(255,165,0,0.25)', borderRadius: '20px', color: '#FFA500', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}
+                      style={{ padding: '7px 16px', background: 'transparent', border: '1px solid rgba(255,165,0,0.3)', borderRadius: '20px', color: '#FFA500', fontSize: '12px', cursor: 'pointer', fontWeight: 500, whiteSpace: 'nowrap' }}
                     >
                       Close
                     </button>
                   ) : (
                     <button
                       onClick={() => handleReopen(job.id)}
-                      style={{ padding: '7px 14px', background: 'transparent', border: '1px solid rgba(46,204,113,0.25)', borderRadius: '20px', color: '#2ECC71', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}
+                      style={{ padding: '7px 16px', background: 'transparent', border: '1px solid rgba(46,204,113,0.3)', borderRadius: '20px', color: '#2ECC71', fontSize: '12px', cursor: 'pointer', fontWeight: 500, whiteSpace: 'nowrap' }}
                     >
                       Reopen
                     </button>
@@ -289,7 +294,7 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
 
                   <button
                     onClick={() => handleDelete(job.id)}
-                    style={{ padding: '7px 14px', background: 'transparent', border: '1px solid rgba(255,68,68,0.2)', borderRadius: '20px', color: '#FF4444', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}
+                    style={{ padding: '7px 16px', background: 'transparent', border: '1px solid rgba(255,68,68,0.25)', borderRadius: '20px', color: '#FF4444', fontSize: '12px', cursor: 'pointer', fontWeight: 500, whiteSpace: 'nowrap' }}
                   >
                     Delete
                   </button>
