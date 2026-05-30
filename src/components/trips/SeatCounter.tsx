@@ -55,7 +55,7 @@ export default function SeatCounter({ tripId, initialSeats, capacity }: Props) {
             ? 'text-amber-400'
             : 'text-white/60'
         }`}>
-          {seatsLeft === 0 ? 'Fully booked' : `${seatsLeft} seat${seatsLeft === 1 ? '' : 's'} left`}
+          {seatsLeft === 0 ? 'Sold Out' : `${seatsLeft} seat${seatsLeft === 1 ? '' : 's'} left`}
         </span>
       </div>
       <div className="h-2 rounded-full bg-white/10 overflow-hidden">
