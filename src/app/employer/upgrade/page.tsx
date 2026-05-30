@@ -1,7 +1,6 @@
 'use client'
 
 import { Suspense, useState } from 'react'
-import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 
@@ -48,9 +47,22 @@ function UpgradePage() {
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-16">
-      <div className="text-center mb-10">
-        <h1 className="font-heading text-3xl font-bold text-white mb-2">Upgrade Your Plan</h1>
-        <p className="text-white/50 text-sm">Get more visibility for your job listings</p>
+      <a
+        href="/employer/dashboard"
+        style={{ color: '#888', fontSize: '13px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '24px' }}
+      >
+        ← Back to dashboard
+      </a>
+
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ color: '#fff', fontSize: '24px', fontWeight: 700, margin: '0 0 8px' }}>
+          {type === 'subscription'
+            ? 'Upgrade to Employer Plan'
+            : type === 'featured'
+              ? 'Feature Your Listing'
+              : 'Upgrade Your Plan'}
+        </h1>
+        <p style={{ color: '#888', fontSize: '14px', margin: 0 }}>Get more visibility for your job listings</p>
       </div>
 
       {error && (
@@ -62,7 +74,7 @@ function UpgradePage() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
         {/* Card 1 — Feature a Listing */}
-        <div
+        {(!type || type === 'featured') && <div
           style={{
             background:   'rgba(255,255,255,0.03)',
             border:       featuredHighlighted ? '2px solid #F5A623' : '1px solid rgba(255,255,255,0.08)',
@@ -148,10 +160,10 @@ function UpgradePage() {
               ? <><Loader2 size={16} className="animate-spin" /> Processing…</>
               : isUrgent ? 'Feature + Urgent — €38' : 'Feature This Listing — €29'}
           </button>
-        </div>
+        </div>}
 
         {/* Card 2 — Employer Plan */}
-        <div
+        {(!type || type === 'subscription') && <div
           style={{
             background:   'rgba(255,255,255,0.03)',
             border:       subscriptionHighlighted ? '2px solid #F5A623' : '1px solid rgba(255,255,255,0.08)',
@@ -199,14 +211,8 @@ function UpgradePage() {
           >
             {loadingType === 'subscription' ? <><Loader2 size={16} className="animate-spin" /> Processing…</> : 'Start Employer Plan — €49/mo'}
           </button>
-        </div>
+        </div>}
       </div>
-
-      <p className="text-center mt-8">
-        <Link href="/employer/dashboard" className="text-white/40 text-sm hover:text-white/70 transition-colors">
-          ← Back to dashboard
-        </Link>
-      </p>
     </main>
   )
 }
