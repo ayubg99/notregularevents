@@ -352,7 +352,6 @@ export default function TripsManager({ initialTrips }: Props) {
                   alignItems: 'center',
                   gap: '10px',
                 }}>
-                  <span style={{ fontSize: '18px' }}>📋</span>
                   <p style={{ color: '#4ECDC4', fontSize: '14px', margin: 0 }}>
                     This is a duplicate. Set the new dates and update the title before publishing.
                   </p>

@@ -105,6 +105,13 @@ export default function TripCard({ trip }: Props) {
             </span>
           </div>
 
+          {/* Fully booked overlay */}
+          {seatsLeft <= 0 && (
+            <div className="absolute inset-0 bg-brand-dark/70 flex items-center justify-center">
+              <span className="text-white font-bold text-lg tracking-widest uppercase">Fully Booked</span>
+            </div>
+          )}
+
           {/* Destination overlay */}
           <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-white/90 text-sm">
             <MapPin size={13} className="text-brand-accent flex-shrink-0" />
