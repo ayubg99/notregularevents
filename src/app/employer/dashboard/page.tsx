@@ -33,8 +33,6 @@ export default async function EmployerDashboardPage({ searchParams }: Props) {
   const jobs     = (jobsRaw ?? []) as JobListingRow[]
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-10">
-      <EmployerDashboardClient employer={employer} jobs={jobs} upgraded={upgraded === 'true'} />
-    </main>
+    <EmployerDashboardClient employer={employer} jobs={jobs} upgraded={upgraded === 'true'} />
   )
 }

@@ -106,21 +106,21 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
       )}
 
       {/* ── Header card ─────────────────────────────────────────── */}
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '20px', padding: '24px 28px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+      <div style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.08), rgba(255,107,53,0.04))', border: '1px solid rgba(245,166,35,0.15)', borderRadius: '20px', padding: '28px 32px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           {/* Company initial avatar */}
-          <div style={{ width: '52px', height: '52px', borderRadius: '14px', background: 'linear-gradient(135deg, #F5A623, #FF6B35)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '22px', color: '#1A1A0E', flexShrink: 0 }}>
+          <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'linear-gradient(135deg, #F5A623, #FF6B35)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '24px', color: '#1A1A0E', flexShrink: 0, boxShadow: '0 8px 24px rgba(245,166,35,0.25)' }}>
             {employer.company_name.charAt(0).toUpperCase()}
           </div>
           <div>
-            <p style={{ color: '#888', fontSize: '12px', margin: '0 0 2px' }}>Welcome back</p>
-            <p style={{ color: '#fff', fontWeight: 700, fontSize: '18px', margin: '0 0 2px' }}>{employer.company_name}</p>
-            <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>{employer.contact_name} · {employer.email}</p>
+            <p style={{ color: '#888', fontSize: '12px', margin: '0 0 4px', fontWeight: 500 }}>Welcome back</p>
+            <h1 style={{ color: '#fff', fontSize: '20px', fontWeight: 700, margin: '0 0 4px', lineHeight: 1.2 }}>{employer.company_name}</h1>
+            <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>{employer.contact_name} • {employer.email}</p>
           </div>
         </div>
         <Link
           href="/jobs/post"
-          style={{ padding: '12px 20px', background: '#F5A623', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '14px', whiteSpace: 'nowrap', boxShadow: '0 4px 16px rgba(245,166,35,0.25)' }}
+          style={{ padding: '13px 24px', background: 'linear-gradient(135deg, #F5A623, #FF6B35)', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '14px', whiteSpace: 'nowrap', boxShadow: '0 4px 20px rgba(245,166,35,0.3)', transition: 'transform 0.2s' }}
         >
           + Post a Job
         </Link>
@@ -129,17 +129,17 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
       {/* ── Plan status card ────────────────────────────────────── */}
 
       {employer.plan === 'free' && (
-        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '20px 24px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '20px 24px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <div>
-            <p style={{ color: '#888', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>Free Plan</p>
-            <p style={{ color: '#fff', fontWeight: 600, fontSize: '15px', margin: '0 0 4px' }}>Standard listings only</p>
-            <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Upgrade to get more visibility</p>
+            <p style={{ color: '#555', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>Current Plan</p>
+            <p style={{ color: '#fff', fontWeight: 600, fontSize: '16px', margin: '0 0 4px' }}>Free Plan</p>
+            <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Standard listings • 30 days active</p>
           </div>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <a href="/employer/upgrade?type=featured" style={{ padding: '9px 16px', background: 'rgba(245,166,35,0.1)', border: '1px solid rgba(245,166,35,0.3)', color: '#F5A623', borderRadius: '50px', textDecoration: 'none', fontWeight: 600, fontSize: '13px', whiteSpace: 'nowrap' }}>
+            <a href="/employer/upgrade?type=featured" style={{ padding: '10px 18px', background: 'transparent', border: '1px solid rgba(245,166,35,0.4)', color: '#F5A623', borderRadius: '50px', textDecoration: 'none', fontWeight: 600, fontSize: '13px', whiteSpace: 'nowrap' }}>
               ⭐ Feature listing — €29
             </a>
-            <a href="/employer/upgrade?type=subscription" style={{ padding: '9px 16px', background: '#F5A623', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap' }}>
+            <a href="/employer/upgrade?type=subscription" style={{ padding: '10px 18px', background: 'linear-gradient(135deg, #F5A623, #FF6B35)', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap', boxShadow: '0 4px 16px rgba(245,166,35,0.2)' }}>
               🏢 Employer Plan — €49/mo
             </a>
           </div>
@@ -147,23 +147,23 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
       )}
 
       {employer.plan === 'featured' && (
-        <div style={{ background: 'rgba(245,166,35,0.06)', border: '1px solid rgba(245,166,35,0.2)', borderRadius: '16px', padding: '20px 24px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ background: 'rgba(245,166,35,0.05)', border: '1px solid rgba(245,166,35,0.15)', borderRadius: '16px', padding: '20px 24px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <div>
             <p style={{ color: '#F5A623', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>⭐ Featured Plan</p>
-            <p style={{ color: '#fff', fontWeight: 600, fontSize: '15px', margin: '0 0 4px' }}>One listing featured for 60 days</p>
+            <p style={{ color: '#fff', fontWeight: 600, fontSize: '16px', margin: '0 0 4px' }}>One listing featured for 60 days</p>
             <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Want all listings featured automatically?</p>
           </div>
-          <a href="/employer/upgrade?type=subscription" style={{ padding: '10px 18px', background: '#F5A623', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap' }}>
+          <a href="/employer/upgrade?type=subscription" style={{ padding: '10px 18px', background: 'linear-gradient(135deg, #F5A623, #FF6B35)', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap', boxShadow: '0 4px 16px rgba(245,166,35,0.2)' }}>
             Upgrade to €49/mo →
           </a>
         </div>
       )}
 
       {employer.plan === 'subscription' && (
-        <div style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.1), rgba(255,107,53,0.05))', border: '1px solid rgba(245,166,35,0.2)', borderRadius: '16px', padding: '20px 24px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.08), rgba(255,107,53,0.04))', border: '1px solid rgba(245,166,35,0.2)', borderRadius: '16px', padding: '20px 24px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <div>
             <p style={{ color: '#F5A623', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>🏢 Employer Plan — Active</p>
-            <p style={{ color: '#fff', fontWeight: 600, fontSize: '15px', margin: '0 0 4px' }}>€49/month — All listings featured automatically</p>
+            <p style={{ color: '#fff', fontWeight: 600, fontSize: '16px', margin: '0 0 4px' }}>€49/month — Unlimited featured listings</p>
             {employer.plan_expires_at && (
               <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>
                 Renews {new Date(employer.plan_expires_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -173,7 +173,7 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
           <button
             onClick={handleCancelSubscription}
             disabled={cancelling}
-            style={{ padding: '8px 16px', background: 'transparent', border: '1px solid rgba(255,68,68,0.3)', color: '#FF4444', borderRadius: '50px', cursor: 'pointer', fontSize: '12px', fontWeight: 500 }}
+            style={{ padding: '9px 18px', background: 'transparent', border: '1px solid rgba(255,68,68,0.3)', color: '#FF4444', borderRadius: '50px', cursor: 'pointer', fontSize: '13px', fontWeight: 500 }}
           >
             {cancelling ? 'Cancelling…' : 'Cancel Plan'}
           </button>
@@ -181,21 +181,21 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
       )}
 
       {/* ── Stats grid ──────────────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '28px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '32px' }}>
         {[
-          { label: 'Active listings', value: activeCount },
-          { label: 'Total views',     value: totalViews  },
-          { label: 'Total posted',    value: jobs.length },
+          { label: 'Active listings', value: activeCount,  color: '#2ECC71' },
+          { label: 'Total views',     value: totalViews,   color: '#F5A623' },
+          { label: 'Total posted',    value: jobs.length,  color: '#4ECDC4' },
         ].map(stat => (
-          <div key={stat.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px', padding: '20px', textAlign: 'center' }}>
-            <p style={{ color: '#F5A623', fontSize: '28px', fontWeight: 700, margin: '0 0 4px', lineHeight: 1 }}>{stat.value}</p>
-            <p style={{ color: '#888', fontSize: '12px', margin: 0 }}>{stat.label}</p>
+          <div key={stat.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '20px', textAlign: 'center' }}>
+            <p style={{ color: stat.color, fontSize: '32px', fontWeight: 700, margin: '0 0 6px', lineHeight: 1 }}>{stat.value}</p>
+            <p style={{ color: '#888', fontSize: '12px', margin: 0, fontWeight: 500 }}>{stat.label}</p>
           </div>
         ))}
       </div>
 
       {/* ── Job listings ─────────────────────────────────────────── */}
-      <h2 style={{ color: '#fff', fontSize: '17px', fontWeight: 700, margin: '0 0 14px' }}>My Job Listings</h2>
+      <h2 style={{ color: '#fff', fontSize: '18px', fontWeight: 700, margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>💼 My Job Listings</h2>
 
       {jobs.length === 0 ? (
         <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '48px', textAlign: 'center' }}>
