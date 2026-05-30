@@ -121,7 +121,7 @@ export default function Navbar() {
                     className="flex items-center gap-1.5 px-3 py-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 text-sm font-medium transition-all duration-200"
                   >
                     <LayoutDashboard size={15} />
-                    {authUser.user_metadata?.role === 'employer' ? '💼 My Listings' : t('dashboard')}
+                    {authUser.user_metadata?.role === 'employer' ? 'My Listings' : t('dashboard')}
                   </Link>
                   <div className="w-8 h-8 rounded-full bg-brand-primary/20 border border-brand-primary/40 flex items-center justify-center flex-shrink-0">
                     <span className="font-bold text-brand-primary text-xs">
@@ -218,7 +218,7 @@ export default function Navbar() {
                 className="flex items-center gap-2 px-10 py-4 bg-white/10 text-white font-semibold text-lg rounded-full active:brightness-90 transition-all"
               >
                 <LayoutDashboard size={20} />
-                {authUser.user_metadata?.role === 'employer' ? '💼 My Listings' : t('dashboard')}
+                {authUser.user_metadata?.role === 'employer' ? 'My Listings' : t('dashboard')}
               </Link>
               <button
                 onClick={() => { closeMenu(); handleSignOut() }}
