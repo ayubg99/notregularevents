@@ -195,7 +195,7 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
       </div>
 
       {/* ── Job listings ─────────────────────────────────────────── */}
-      <h2 style={{ color: '#fff', fontSize: '18px', fontWeight: 700, margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>💼 My Job Listings</h2>
+      <h2 style={{ color: '#fff', fontSize: '18px', fontWeight: 700, margin: '0 0 16px' }}>My Job Listings</h2>
 
       {jobs.length === 0 ? (
         <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '48px', textAlign: 'center' }}>
@@ -241,8 +241,8 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
 
                   {/* Meta */}
                   <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                    <span style={{ color: '#555', fontSize: '12px' }}>👁️ {job.views ?? 0} views</span>
-                    <span style={{ color: '#555', fontSize: '12px' }}>📅 {new Date(job.created_at).toLocaleDateString('en-GB')}</span>
+                    <span style={{ color: '#555', fontSize: '12px' }}>{job.views ?? 0} views</span>
+                    <span style={{ color: '#555', fontSize: '12px' }}>{new Date(job.created_at).toLocaleDateString('en-GB')}</span>
                     <span style={{ color: expired ? '#FF4444' : '#555', fontSize: '12px' }}>{expiryLabel}</span>
                   </div>
                 </div>
