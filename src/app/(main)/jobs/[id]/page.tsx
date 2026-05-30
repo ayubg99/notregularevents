@@ -15,15 +15,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const admin = getAdminClient()
   const { data: job } = await admin
     .from('job_listings')
-    .select('title, company_name, description')
+    .select('title, company_name, description, job_type, location, salary_text, hours_per_week')
     .eq('id', id)
     .single()
 
   if (!job) return { title: 'Job Not Found | Erasmus Vibe' }
 
+  const title = `${job.title} — ${job.company_name} | Erasmus Vibe Valencia`
+  const description =
+    `${job.job_type.replace('_', ' ')} position at ` +
+    `${job.company_name} in ${job.location}. ` +
+    `${job.salary_text ? `${job.salary_text}. ` : ''}` +
+    `${job.hours_per_week ? `${job.hours_per_week}h/week. ` : ''}` +
+    `Apply now on Erasmus Vibe.`
+
   return {
-    title: `${job.title} at ${job.company_name} | Erasmus Vibe`,
-    description: job.description.slice(0, 160),
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/jobs/${id}`,
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+    },
   }
 }
 
@@ -71,8 +90,65 @@ export default async function JobDetailPage({ params }: Props) {
     .neq('id', job.id)
     .limit(3)
 
+  const jobSchema = {
+    '@context': 'https://schema.org/',
+    '@type': 'JobPosting',
+    title: job.title,
+    description: job.description,
+    identifier: {
+      '@type': 'PropertyValue',
+      name: job.company_name,
+      value: job.id,
+    },
+    datePosted: new Date(job.created_at).toISOString().split('T')[0],
+    validThrough: new Date(job.expires_at).toISOString().split('T')[0],
+    employmentType:
+      job.job_type === 'part_time'  ? 'PART_TIME'  :
+      job.job_type === 'full_time'  ? 'FULL_TIME'  :
+      job.job_type === 'internship' ? 'INTERN'     :
+      job.job_type === 'freelance'  ? 'CONTRACTOR' :
+      'OTHER',
+    hiringOrganization: {
+      '@type': 'Organization',
+      name: job.company_name,
+      sameAs: job.apply_url || `${process.env.NEXT_PUBLIC_SITE_URL}/jobs`,
+    },
+    jobLocation: {
+      '@type': 'Place',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: job.location || 'Valencia',
+        addressLocality: 'Valencia',
+        addressRegion: 'Valencia',
+        addressCountry: 'ES',
+      },
+    },
+    ...(job.salary_text ? {
+      baseSalary: {
+        '@type': 'MonetaryAmount',
+        currency: 'EUR',
+        value: {
+          '@type': 'QuantitativeValue',
+          value: job.salary_text,
+          unitText: 'MONTH',
+        },
+      },
+    } : {}),
+    ...(job.apply_email ? {
+      applicationContact: {
+        '@type': 'ContactPoint',
+        email: job.apply_email,
+        contactType: 'Application',
+      },
+    } : {}),
+  }
+
   return (
     <main className="min-h-screen pt-28 pb-28 px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobSchema) }}
+      />
       <div className="max-w-5xl mx-auto">
 
         {/* Back link */}

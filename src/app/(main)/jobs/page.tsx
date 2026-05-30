@@ -6,8 +6,18 @@ import JobsClient from '@/components/jobs/JobsClient'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Jobs for Internationals | Erasmus Vibe',
-  description: 'Find part-time jobs, internships and opportunities for international students in Valencia, Spain.',
+  title: 'Jobs for International Students in Valencia | Erasmus Vibe',
+  description:
+    'Find part-time jobs, internships and ' +
+    'opportunities for international students ' +
+    'in Valencia, Spain. English-friendly employers.',
+  openGraph: {
+    title: 'Jobs for International Students in Valencia',
+    description:
+      'Part-time jobs and internships for ' +
+      'Erasmus and international students in Valencia.',
+    type: 'website',
+  },
 }
 
 export default async function JobsPage() {

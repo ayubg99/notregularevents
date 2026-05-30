@@ -1,12 +1,19 @@
 import type { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://erasmusvibe.com'
   return {
     rules: {
       userAgent: '*',
-      allow:     '/',
-      disallow:  ['/dashboard', '/admin', '/api/'],
+      allow: '/',
+      disallow: [
+        '/admin/',
+        '/dashboard/',
+        '/employer/dashboard',
+        '/api/',
+        '/scanner/',
+      ],
     },
-    sitemap: 'https://erasmusvibe.com/sitemap.xml',
+    sitemap: `${base}/sitemap.xml`,
   }
 }
