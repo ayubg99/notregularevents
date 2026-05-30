@@ -230,39 +230,6 @@ export default async function JobDetailPage({ params }: Props) {
               </div>
             )}
 
-            {/* Similar jobs */}
-            {similarJobs && similarJobs.length > 0 && (
-              <div style={{ marginTop: '40px' }}>
-                <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: 700, margin: '0 0 16px' }}>
-                  Similar Jobs
-                </h3>
-                {similarJobs.map(similar => (
-                  <Link
-                    key={similar.id}
-                    href={`/jobs/${similar.id}`}
-                    style={{
-                      display: 'block',
-                      background: 'rgba(255,255,255,0.03)',
-                      border: '1px solid rgba(255,255,255,0.07)',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      textDecoration: 'none',
-                      marginBottom: '10px',
-                    }}
-                  >
-                    <p style={{ color: '#F5A623', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', margin: '0 0 6px' }}>
-                      {similar.job_type.replace(/_/g, ' ')}
-                    </p>
-                    <p style={{ color: '#fff', fontWeight: 600, fontSize: '15px', margin: '0 0 4px' }}>
-                      {similar.title}
-                    </p>
-                    <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>
-                      {similar.company_name} • {similar.location}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            )}
           </div>
 
           {/* ── Right column (35%) sticky ──────────────────────── */}
@@ -441,6 +408,40 @@ export default async function JobDetailPage({ params }: Props) {
               </Link>
             </div>
           </div>
+
+          {/* Similar jobs */}
+          {similarJobs && similarJobs.length > 0 && (
+            <div style={{ marginTop: '20px' }}>
+              <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: 700, margin: '0 0 12px' }}>
+                Similar Jobs
+              </h3>
+              {similarJobs.map(similar => (
+                <Link
+                  key={similar.id}
+                  href={`/jobs/${similar.id}`}
+                  style={{
+                    display: 'block',
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.07)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    textDecoration: 'none',
+                    marginBottom: '10px',
+                  }}
+                >
+                  <p style={{ color: '#F5A623', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', margin: '0 0 6px' }}>
+                    {similar.job_type.replace(/_/g, ' ')}
+                  </p>
+                  <p style={{ color: '#fff', fontWeight: 600, fontSize: '14px', margin: '0 0 4px' }}>
+                    {similar.title}
+                  </p>
+                  <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>
+                    {similar.company_name} • {similar.location}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </main>
