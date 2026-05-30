@@ -294,27 +294,31 @@ export default async function JobDetailPage({ params }: Props) {
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
 
                 {/* Apply by email */}
-                {job.apply_email && (
-                  <a
-                    href={`mailto:${job.apply_email}?subject=${encodeURIComponent(`Application: ${job.title} — Erasmus Vibe`)}&body=${encodeURIComponent(`Hi ${job.contact_name || 'there'},\n\nI found your job posting "${job.title}" on Erasmus Vibe and I am interested in applying.\n\nName: \nNationality: \nUniversity: \nAvailable from: \n\nBest regards`)}`}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      background: 'linear-gradient(135deg, #F5A623, #FF6B35)',
-                      color: '#1A1A0E',
-                      padding: '15px 24px',
-                      borderRadius: '50px',
-                      textDecoration: 'none',
-                      fontWeight: 700,
-                      fontSize: '15px',
-                      marginBottom: '10px',
-                      boxShadow: '0 4px 16px rgba(245,166,35,0.25)',
-                    }}
-                  >
-                    📧 Apply by Email
-                  </a>
+                {job.apply_email?.trim() && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <a
+                      href={`mailto:${job.apply_email.trim()}?subject=${encodeURIComponent(`Application: ${job.title} — Erasmus Vibe`)}&body=${encodeURIComponent(`Hi ${job.contact_name || 'there'},\n\nI found your job posting "${job.title}" on Erasmus Vibe and I am interested in applying.\n\nName: \nNationality: \nUniversity: \nAvailable from: \n\nBest regards`)}`}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        background: 'linear-gradient(135deg, #F5A623, #FF6B35)',
+                        color: '#1A1A0E',
+                        padding: '15px 24px',
+                        borderRadius: '50px',
+                        textDecoration: 'none',
+                        fontWeight: 700,
+                        fontSize: '15px',
+                        boxShadow: '0 4px 16px rgba(245,166,35,0.25)',
+                      }}
+                    >
+                      📧 Apply by Email
+                    </a>
+                    <p style={{ color: '#666', fontSize: '12px', textAlign: 'center', margin: 0, wordBreak: 'break-all' }}>
+                      {job.apply_email.trim()}
+                    </p>
+                  </div>
                 )}
 
                 {/* Apply on WhatsApp */}
