@@ -72,7 +72,7 @@ export default async function JobDetailPage({ params }: Props) {
     .limit(3)
 
   return (
-    <main className="min-h-screen pt-24 pb-28 px-4">
+    <main className="min-h-screen pt-28 pb-28 px-4">
       <div className="max-w-5xl mx-auto">
 
         {/* Back link */}
@@ -91,7 +91,7 @@ export default async function JobDetailPage({ params }: Props) {
           ← Back to Jobs
         </Link>
 
-        <div style={{ display: 'flex', gap: '28px', alignItems: 'flex-start' }}>
+        <div className="job-detail-grid">
 
           {/* ── Left column (65%) ─────────────────────────────── */}
           <div style={{ flex: '1 1 0', minWidth: 0 }}>
@@ -266,7 +266,7 @@ export default async function JobDetailPage({ params }: Props) {
           </div>
 
           {/* ── Right column (35%) sticky ──────────────────────── */}
-          <div style={{ width: '340px', flexShrink: 0, position: 'sticky', top: '100px' }}>
+          <div className="job-detail-sidebar">
             <div
               style={{
                 background: 'rgba(255,255,255,0.03)',

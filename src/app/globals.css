@@ -201,6 +201,28 @@ body {
     radial-gradient(ellipse 40% 30% at 80% 80%, rgba(232, 168, 124, 0.06) 0%, transparent 50%);
 }
 
+/* ── Job detail page — responsive two-column layout ───────────────── */
+.job-detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.job-detail-sidebar { width: 100%; }
+
+@media (min-width: 768px) {
+  .job-detail-grid {
+    flex-direction: row;
+    gap: 28px;
+    align-items: flex-start;
+  }
+  .job-detail-sidebar {
+    width: 340px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 100px;
+  }
+}
+
 /* ── Scrollbar hide ────────────────────────────────────────────────── */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
