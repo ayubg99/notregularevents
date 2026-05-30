@@ -63,7 +63,13 @@ export default async function JobDetailPage({ params }: Props) {
     .eq('id', id)
     .then(() => {})
 
-  const whatsappNumber = job.apply_whatsapp?.replace(/[^0-9]/g, '') ?? ''
+  const { data: similarJobs } = await admin
+    .from('job_listings')
+    .select('id, title, company_name, location, job_type')
+    .eq('status', 'active')
+    .eq('job_type', job.job_type)
+    .neq('id', job.id)
+    .limit(3)
 
   return (
     <main className="min-h-screen pt-24 pb-28 px-4">
@@ -223,6 +229,40 @@ export default async function JobDetailPage({ params }: Props) {
                 </p>
               </div>
             )}
+
+            {/* Similar jobs */}
+            {similarJobs && similarJobs.length > 0 && (
+              <div style={{ marginTop: '40px' }}>
+                <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: 700, margin: '0 0 16px' }}>
+                  Similar Jobs
+                </h3>
+                {similarJobs.map(similar => (
+                  <Link
+                    key={similar.id}
+                    href={`/jobs/${similar.id}`}
+                    style={{
+                      display: 'block',
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.07)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      textDecoration: 'none',
+                      marginBottom: '10px',
+                    }}
+                  >
+                    <p style={{ color: '#F5A623', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', margin: '0 0 6px' }}>
+                      {similar.job_type.replace(/_/g, ' ')}
+                    </p>
+                    <p style={{ color: '#fff', fontWeight: 600, fontSize: '15px', margin: '0 0 4px' }}>
+                      {similar.title}
+                    </p>
+                    <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>
+                      {similar.company_name} • {similar.location}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* ── Right column (35%) sticky ──────────────────────── */}
@@ -291,55 +331,61 @@ export default async function JobDetailPage({ params }: Props) {
                 </div>
               </div>
 
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '20px', display: 'flex', flexDirection: 'column' }}>
 
                 {/* Apply by email */}
                 {job.apply_email?.trim() && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <>
                     <a
                       href={`mailto:${job.apply_email.trim()}?subject=${encodeURIComponent(`Application: ${job.title} — Erasmus Vibe`)}&body=${encodeURIComponent(`Hi ${job.contact_name || 'there'},\n\nI found your job posting "${job.title}" on Erasmus Vibe and I am interested in applying.\n\nName: \nNationality: \nUniversity: \nAvailable from: \n\nBest regards`)}`}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '8px',
+                        gap: '10px',
                         background: 'linear-gradient(135deg, #F5A623, #FF6B35)',
                         color: '#1A1A0E',
-                        padding: '15px 24px',
+                        padding: '16px 24px',
                         borderRadius: '50px',
                         textDecoration: 'none',
                         fontWeight: 700,
                         fontSize: '15px',
-                        boxShadow: '0 4px 16px rgba(245,166,35,0.25)',
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        boxShadow: '0 4px 20px rgba(245,166,35,0.3)',
+                        marginBottom: '12px',
                       }}
                     >
                       📧 Apply by Email
                     </a>
-                    <p style={{ color: '#666', fontSize: '12px', textAlign: 'center', margin: 0, wordBreak: 'break-all' }}>
-                      {job.apply_email.trim()}
-                    </p>
-                  </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '16px' }}>
+                      <span style={{ color: '#555', fontSize: '12px' }}>Send to:</span>
+                      <span style={{ color: '#888', fontSize: '12px', fontFamily: 'monospace' }}>{job.apply_email.trim()}</span>
+                    </div>
+                  </>
                 )}
 
                 {/* Apply on WhatsApp */}
                 {job.apply_whatsapp && (
                   <a
-                    href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi ${job.contact_name || 'there'}! I found your job posting "${job.title}" on Erasmus Vibe and I am interested. Is the position still available?`)}`}
+                    href={`https://wa.me/${job.apply_whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi! I found your job "${job.title}" on Erasmus Vibe and I am interested.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '8px',
+                      gap: '10px',
                       background: '#25D366',
                       color: '#fff',
-                      padding: '15px 24px',
+                      padding: '14px 24px',
                       borderRadius: '50px',
                       textDecoration: 'none',
                       fontWeight: 700,
-                      fontSize: '15px',
-                      marginBottom: '10px',
+                      fontSize: '14px',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      marginBottom: '12px',
                     }}
                   >
                     💬 Apply on WhatsApp
@@ -356,16 +402,18 @@ export default async function JobDetailPage({ params }: Props) {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '8px',
+                      gap: '10px',
                       background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.1)',
                       color: '#fff',
-                      padding: '14px 24px',
+                      padding: '13px 24px',
                       borderRadius: '50px',
                       textDecoration: 'none',
                       fontWeight: 600,
-                      textAlign: 'center',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      marginBottom: '10px',
+                      fontSize: '14px',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      marginBottom: '12px',
                     }}
                   >
                     🌐 Apply Online
@@ -374,13 +422,15 @@ export default async function JobDetailPage({ params }: Props) {
               </div>
 
               {/* Meta */}
-              <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <p style={{ color: '#555', fontSize: '12px', margin: '0 0 4px' }}>
-                  Posted: {timeSince(job.created_at)}
-                </p>
-                <p style={{ color: '#555', fontSize: '12px', margin: 0 }}>
-                  Expires: {formatDate(job.expires_at)}
-                </p>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '12px', marginTop: '4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <span style={{ color: '#555', fontSize: '12px' }}>Posted</span>
+                  <span style={{ color: '#888', fontSize: '12px' }}>{formatDate(job.created_at)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#555', fontSize: '12px' }}>Expires</span>
+                  <span style={{ color: new Date(job.expires_at) < new Date() ? '#FF4444' : '#888', fontSize: '12px' }}>{formatDate(job.expires_at)}</span>
+                </div>
               </div>
             </div>
 
