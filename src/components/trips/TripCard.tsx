@@ -108,7 +108,7 @@ export default function TripCard({ trip }: Props) {
           {/* Fully booked overlay */}
           {seatsLeft <= 0 && (
             <div className="absolute inset-0 bg-brand-dark/70 flex items-center justify-center">
-              <span className="text-white font-bold text-lg tracking-widest uppercase">Fully Booked</span>
+              <span className="text-white font-bold text-lg tracking-widest uppercase">Sold Out</span>
             </div>
           )}
 
