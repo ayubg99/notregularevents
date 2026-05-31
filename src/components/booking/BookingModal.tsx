@@ -384,7 +384,11 @@ export default function BookingModal(props: Props) {
           ...(props.type === 'trip' ? { attendees: tripAttendees.map(a => ({ name: a.name.trim(), email: a.email.trim() })) } : {}),
           ...(tier                                       ? { tier }                                            : {}),
           ...(promoCode                                  ? { promoCode }                                       : {}),
-          ...(referralValid && referralAmbassador        ? { referralCode, ambassadorId: referralAmbassador.id } : {}),
+          // Send referral code from state, or fall back to localStorage — server validates
+          ...(() => {
+            const code = (referralValid && referralCode) ? referralCode : (localStorage.getItem('referral_code') ?? '')
+            return code ? { referralCode: code, ambassadorId: referralAmbassador?.id ?? '' } : {}
+          })(),
         }
 
         if (props.type === 'event') {

@@ -81,9 +81,21 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
   const { data: { user } } = await supabase.auth.getUser()
 
   const body: Body = await request.json()
-  const { type, itemId, tier, quantity = 1, groupSize, promoCode, guestName, guestEmail, guestPhone, attendees, referralCode, ambassadorId } = body
+  const { type, itemId, tier, quantity = 1, groupSize, promoCode, guestName, guestEmail, guestPhone, attendees, referralCode, ambassadorId: clientAmbassadorId } = body
 
-  console.log('[create-checkout]', { type, itemId, tier, quantity, hasUser: !!user })
+  // Resolve ambassadorId server-side from referral code — client state can be stale
+  let ambassadorId = clientAmbassadorId ?? ''
+  if (referralCode && !ambassadorId) {
+    const { data: amb } = await supabase
+      .from('ambassadors')
+      .select('id')
+      .eq('referral_code', referralCode.toUpperCase())
+      .eq('status', 'active')
+      .single()
+    if (amb) ambassadorId = amb.id
+  }
+
+  console.log('[create-checkout]', { type, itemId, tier, quantity, hasUser: !!user, referralCode: referralCode ?? '', ambassadorId })
 
   const baseUrl = getBaseUrl()
 
