@@ -673,12 +673,18 @@ async function recordAmbassadorCommission(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: ambassador } = await (admin as any)
     .from('ambassadors')
-    .select('commission_rate, total_referrals, total_earnings, pending_earnings')
+    .select('user_id, commission_rate, total_referrals, total_earnings, pending_earnings')
     .eq('id', ambassadorId)
     .single()
 
   if (!ambassador) {
     console.error('[webhook] ambassador not found for commission:', ambassadorId)
+    return
+  }
+
+  // Prevent self-referral
+  if (meta.user_id && meta.user_id === (ambassador as { user_id?: string }).user_id) {
+    console.log('[webhook] skipping commission — self-referral detected')
     return
   }
 
