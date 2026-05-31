@@ -115,7 +115,7 @@ export default function BookingConfirmation({
           <Crown size={20} className="text-brand-primary flex-shrink-0" />
           <div>
             <p className="text-white text-sm font-semibold group-hover:text-brand-primary transition-colors">
-              Save 15% on every future booking
+              Save 10% on every future booking
             </p>
             <p className="text-white/40 text-xs mt-0.5">
               Join Erasmus Vibe for €9.99/month →

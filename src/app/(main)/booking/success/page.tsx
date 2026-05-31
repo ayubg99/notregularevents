@@ -259,7 +259,7 @@ async function MembershipSuccess({ session }: { session: Stripe.Checkout.Session
 
       {/* Plan details card */}
       <div className="glass-card rounded-2xl px-8 py-6 w-full max-w-sm flex flex-col gap-3">
-        {(['15% off all events and trips', 'Priority access and member perks', ...(info ? [`Valid for ${info.duration} (${info.perMonth})`] : [])] as string[]).map((text) => (
+        {(['10% off all events and trips', 'Priority access and member perks', ...(info ? [`Valid for ${info.duration} (${info.perMonth})`] : [])] as string[]).map((text) => (
           <div key={text} className="flex items-center gap-3 text-sm text-white/70">
             <Check size={14} className="text-brand-primary flex-shrink-0" />
             {text}

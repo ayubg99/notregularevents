@@ -51,7 +51,7 @@ export default function BookingPolling({ sessionId }: Props) {
     return (
       <div className="flex flex-col items-center gap-6 py-16 text-center">
         <p className="text-white/70 text-lg font-medium">Membership activated!</p>
-        <p className="text-white/40 text-sm">Your 15% discount is now applied on all bookings.</p>
+        <p className="text-white/40 text-sm">Your 10% discount is now applied on all bookings.</p>
       </div>
     )
   }

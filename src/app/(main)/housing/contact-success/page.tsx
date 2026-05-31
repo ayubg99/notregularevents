@@ -83,7 +83,7 @@ export default async function ContactSuccessPage({
         <div className="rounded-2xl p-5 mb-4 border border-brand-accent/20 bg-brand-accent/5">
           <p className="text-brand-accent font-bold text-base mb-1">🎉 Welcome to Erasmus Vibe!</p>
           <p className="text-white/60 text-sm mb-4">
-            Join our membership for €9.99/month and save 15% on all events and trips.
+            Join our membership for €9.99/month and save 10% on all events and trips.
           </p>
           <Link
             href="/membership"

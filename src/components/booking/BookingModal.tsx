@@ -50,7 +50,7 @@ function MembershipBanner({
     return (
       <div className="flex items-center gap-2.5 rounded-xl bg-brand-primary/10 border border-brand-primary/25 px-4 py-3">
         <Crown size={15} className="text-brand-primary flex-shrink-0" />
-        <p className="text-brand-primary text-sm font-semibold">15% member discount applied</p>
+        <p className="text-brand-primary text-sm font-semibold">10% member discount applied</p>
       </div>
     )
   }
@@ -61,7 +61,7 @@ function MembershipBanner({
       >
         <Crown size={15} className="text-brand-primary/50 group-hover:text-brand-primary flex-shrink-0 mt-0.5 transition-colors" />
         <p className="text-white/50 group-hover:text-white/70 text-sm transition-colors">
-          Join membership for <span className="font-semibold text-white/70">€9.99/month</span> and save 15% on every booking
+          Join membership for <span className="font-semibold text-white/70">€9.99/month</span> and save 10% on every booking
         </p>
       </a>
     )
@@ -70,7 +70,7 @@ function MembershipBanner({
     <div className="flex items-start gap-2.5 rounded-xl bg-white/5 border border-white/10 px-4 py-3">
       <Crown size={15} className="text-brand-primary/50 flex-shrink-0 mt-0.5" />
       <p className="text-white/50 text-sm">
-        Members save 15% —{' '}
+        Members save 10% —{' '}
         <a href="/auth/login" className="text-brand-primary hover:underline font-medium">
           <LogIn size={11} className="inline mb-0.5 mr-0.5" />Log in
         </a>
@@ -808,7 +808,7 @@ export default function BookingModal(props: Props) {
                   <p className="text-white/30 text-xs line-through">€{(basePrice * effectiveQty).toFixed(2)}</p>
                 )}
                 <span className="font-heading text-2xl font-bold text-white">€{total.toFixed(2)}</span>
-                {hasDiscount && <p className="text-brand-primary text-xs mt-0.5">Member price (−15%)</p>}
+                {hasDiscount && <p className="text-brand-primary text-xs mt-0.5">Member price (−10%)</p>}
               </div>
             </div>
           )}

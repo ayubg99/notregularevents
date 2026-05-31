@@ -103,8 +103,8 @@ export function MembershipWelcomeEmail({ name, plan, endDate, baseUrl }: Props):
               <p style="margin:0 0 16px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">
                 Your Member Benefits
               </p>
-              <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">🎟️ &nbsp;15% discount on all events</p>
-              <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">✈️ &nbsp;15% discount on all trips</p>
+              <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">🎟️ &nbsp;10% discount on all events</p>
+              <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">✈️ &nbsp;10% discount on all trips</p>
               <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">⚡ &nbsp;Priority access to new events</p>
               <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">💬 &nbsp;Private WhatsApp member groups</p>
               <p style="margin:0;font-size:14px;color:#FFF8EE;">🎉 &nbsp;Exclusive members-only parties</p>

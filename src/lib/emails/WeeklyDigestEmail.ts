@@ -50,7 +50,7 @@ export function WeeklyDigestEmail({ events, trips, baseUrl, unsubscribeUrl, week
           <p style="margin:0 0 4px;font-size:13px;color:#B8A090;">📅 &nbsp;${fmt(e.date)}</p>
           ${e.location ? `<p style="margin:0 0 4px;font-size:13px;color:#B8A090;">📍 &nbsp;${e.location}</p>` : ''}
           <p style="margin:0 0 16px;font-size:13px;color:#B8A090;">
-            🎟️ &nbsp;${e.is_free ? 'Free entry' : e.price ? `From €${e.price} &nbsp;·&nbsp; Members −15%` : ''}
+            🎟️ &nbsp;${e.is_free ? 'Free entry' : e.price ? `From €${e.price} &nbsp;·&nbsp; Members −10%` : ''}
           </p>
           <a href="${baseUrl}/events/${e.slug}"
              style="display:inline-block;background:#F5A623;color:#1A1209;font-weight:700;
@@ -82,7 +82,7 @@ export function WeeklyDigestEmail({ events, trips, baseUrl, unsubscribeUrl, week
           <p style="margin:0 0 10px;font-size:16px;font-weight:700;color:#FFF8EE;">${t.title}</p>
           ${t.destination ? `<p style="margin:0 0 4px;font-size:13px;color:#B8A090;">✈️ &nbsp;${t.destination}</p>` : ''}
           <p style="margin:0 0 4px;font-size:13px;color:#B8A090;">📅 &nbsp;${dateRange}</p>
-          ${t.price_standard ? `<p style="margin:0 0 16px;font-size:13px;color:#B8A090;">💶 &nbsp;From €${t.price_standard} &nbsp;·&nbsp; Members −15%</p>` : '<div style="height:16px;"></div>'}
+          ${t.price_standard ? `<p style="margin:0 0 16px;font-size:13px;color:#B8A090;">💶 &nbsp;From €${t.price_standard} &nbsp;·&nbsp; Members −10%</p>` : '<div style="height:16px;"></div>'}
           <a href="${baseUrl}/trips/${t.slug}"
              style="display:inline-block;background:#FF6B35;color:#fff;font-weight:700;
                     font-size:13px;text-decoration:none;padding:10px 24px;border-radius:9999px;">
