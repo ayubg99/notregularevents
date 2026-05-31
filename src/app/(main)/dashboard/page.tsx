@@ -207,21 +207,41 @@ export default async function DashboardPage() {
             {!ambassador && (
               <Link
                 href="/ambassadors"
-                className="glass-card rounded-2xl p-5 flex items-start gap-3 hover:border-brand-accent/30 transition-all group"
-                style={{ borderColor: 'rgba(245,166,35,0.12)' }}
+                className="relative rounded-2xl p-5 flex items-start gap-4 overflow-hidden transition-all duration-300 group"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,107,53,0.10) 0%, rgba(245,166,35,0.08) 100%)',
+                  border: '1px solid rgba(255,107,53,0.25)',
+                  boxShadow: '0 0 24px rgba(255,107,53,0.08)',
+                }}
               >
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: 'rgba(245,166,35,0.12)', border: '1px solid rgba(245,166,35,0.2)' }}>
-                  <span className="text-base">🌟</span>
+                {/* subtle glow on hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl pointer-events-none"
+                  style={{ background: 'linear-gradient(135deg, rgba(255,107,53,0.08) 0%, rgba(245,166,35,0.06) 100%)' }} />
+
+                <div className="relative w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,107,53,0.25) 0%, rgba(245,166,35,0.20) 100%)',
+                    border: '1px solid rgba(255,107,53,0.35)',
+                  }}>
+                  <span className="text-lg">🌟</span>
                 </div>
-                <div>
-                  <p className="text-white font-semibold text-sm group-hover:text-brand-accent transition-colors">
-                    Become an Ambassador
-                  </p>
-                  <p className="text-white/40 text-xs mt-0.5 leading-relaxed">
+
+                <div className="relative flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <p className="text-white font-bold text-sm group-hover:text-brand-primary transition-colors">
+                      Become an Ambassador
+                    </p>
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                      style={{ background: 'rgba(255,107,53,0.2)', color: '#FF6B35', border: '1px solid rgba(255,107,53,0.3)' }}>
+                      NEW
+                    </span>
+                  </div>
+                  <p className="text-white/55 text-xs leading-relaxed">
                     Earn 5% commission sharing Erasmus Vibe with friends. Free tickets, cash bonuses and more.
                   </p>
-                  <p className="text-brand-accent text-xs font-semibold mt-2">Apply now →</p>
+                  <p className="text-brand-primary text-xs font-bold mt-2 group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                    Apply now <span>→</span>
+                  </p>
                 </div>
               </Link>
             )}
