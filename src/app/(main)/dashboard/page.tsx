@@ -203,6 +203,29 @@ export default async function DashboardPage() {
               </div>
             )}
 
+            {/* Ambassador apply prompt — only for non-ambassadors */}
+            {!ambassador && (
+              <Link
+                href="/ambassadors"
+                className="glass-card rounded-2xl p-5 flex items-start gap-3 hover:border-brand-accent/30 transition-all group"
+                style={{ borderColor: 'rgba(245,166,35,0.12)' }}
+              >
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+                  style={{ background: 'rgba(245,166,35,0.12)', border: '1px solid rgba(245,166,35,0.2)' }}>
+                  <span className="text-base">🌟</span>
+                </div>
+                <div>
+                  <p className="text-white font-semibold text-sm group-hover:text-brand-accent transition-colors">
+                    Become an Ambassador
+                  </p>
+                  <p className="text-white/40 text-xs mt-0.5 leading-relaxed">
+                    Earn 5% commission sharing Erasmus Vibe with friends. Free tickets, cash bonuses and more.
+                  </p>
+                  <p className="text-brand-accent text-xs font-semibold mt-2">Apply now →</p>
+                </div>
+              </Link>
+            )}
+
             <ProfileForm
               user={{ full_name: (userRow as Pick<UserRow, 'full_name'> | null)?.full_name ?? null }}
               profile={profileData}

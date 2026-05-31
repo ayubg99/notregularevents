@@ -24,6 +24,7 @@ import StatsSection from '@/components/home/StatsSection'
 import TestimonialsSection from '@/components/home/TestimonialsSection'
 import NewsletterSection from '@/components/home/NewsletterSection'
 import SponsorsSection from '@/components/home/SponsorsSection'
+import AmbassadorSection from '@/components/home/AmbassadorSection'
 
 // ─── Skeleton fallbacks shown while Supabase data loads ────────
 
@@ -91,16 +92,19 @@ export default function HomePage() {
         <FeaturedTrips />
       </Suspense>
 
-      {/* 5. Testimonials — auto-advance carousel */}
+      {/* 5. Ambassador program — earn by sharing */}
+      <AmbassadorSection />
+
+      {/* 6. Testimonials — auto-advance carousel */}
       <TestimonialsSection />
 
-      {/* 6. Community — WhatsApp + Instagram CTAs */}
+      {/* 7. Community — WhatsApp + Instagram CTAs */}
       <CommunitySection />
 
-      {/* 7. Sponsors — logo strip, renders nothing if no active sponsors */}
+      {/* 8. Sponsors — logo strip, renders nothing if no active sponsors */}
       <SponsorsSection />
 
-      {/* 8. Newsletter — server action + animated success */}
+      {/* 9. Newsletter — server action + animated success */}
       <NewsletterSection />
     </>
   )
