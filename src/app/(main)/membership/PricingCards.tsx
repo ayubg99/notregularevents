@@ -46,6 +46,7 @@ const PLANS: PlanDef[] = [
     perMonth: '≈€4.17/mo',
     perks:    [
       'Everything in Monthly',
+      'Partner promo codes & discounts',
       'Exclusive member WhatsApp groups',
     ],
     featured: true,
