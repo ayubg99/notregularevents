@@ -186,7 +186,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       ? applyDiscount(baseEventPrice, discountType, discountValue)
       : baseEventPrice
     if (memberDiscount) {
-      unitPrice = applyDiscount(unitPrice, 'percentage', 15)
+      unitPrice = applyDiscount(unitPrice, 'percentage', 10)
     }
 
     const cancelUrl = `${baseUrl}/events/${event.slug}`
@@ -318,7 +318,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       ? applyDiscount(basePrice, discountType, discountValue)
       : basePrice
     if (memberDiscount) {
-      unitPrice = applyDiscount(unitPrice, 'percentage', 15)
+      unitPrice = applyDiscount(unitPrice, 'percentage', 10)
     }
 
     const cancelUrl = `${baseUrl}/trips/${trip.slug}`

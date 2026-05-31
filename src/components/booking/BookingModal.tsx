@@ -223,7 +223,7 @@ export default function BookingModal(props: Props) {
   }
 
   let displayPrice = promoUnit ?? basePrice
-  if (isMember && !promoCode) displayPrice = +(displayPrice * 0.85).toFixed(2)
+  if (isMember && !promoCode) displayPrice = +(displayPrice * 0.90).toFixed(2)
 
   const hasDiscount = isMember && !promoCode && basePrice > 0
   const isFree      = displayPrice === 0
@@ -489,7 +489,7 @@ export default function BookingModal(props: Props) {
                 {(Object.keys(TIER_LABELS) as TripTier[]).map(t => {
                   const p = tripTierPrices[t]
                   if (p === undefined) return null
-                  const memberP = isMember ? +(p * 0.85).toFixed(2) : null
+                  const memberP = isMember ? +(p * 0.90).toFixed(2) : null
                   return (
                     <button key={t} onClick={() => setSelectedTier(t)}
                       className={`rounded-xl border px-3 py-2.5 text-left transition-all ${

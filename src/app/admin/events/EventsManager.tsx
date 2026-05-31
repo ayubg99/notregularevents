@@ -484,8 +484,8 @@ export default function EventsManager({ initialEvents }: Props) {
                       <div className="rounded-xl bg-white/5 border border-white/10 p-3 text-xs text-white/60 flex flex-col gap-1">
                         <span className="text-white/30 font-semibold uppercase tracking-wider text-[10px]">Preview</span>
                         <div className="flex gap-4 flex-wrap">
-                          {ebNum !== null && <span>🔥 Early Bird: <strong className="text-amber-400">€{ebNum.toFixed(2)}</strong> <span className="text-white/30">/ €{(ebNum * 0.85).toFixed(2)} members</span></span>}
-                          {stdNum > 0 && <span>💰 Standard: <strong className="text-white/80">€{stdNum.toFixed(2)}</strong> <span className="text-white/30">/ €{(stdNum * 0.85).toFixed(2)} members</span></span>}
+                          {ebNum !== null && <span>🔥 Early Bird: <strong className="text-amber-400">€{ebNum.toFixed(2)}</strong> <span className="text-white/30">/ €{(ebNum * 0.90).toFixed(2)} members</span></span>}
+                          {stdNum > 0 && <span>💰 Standard: <strong className="text-white/80">€{stdNum.toFixed(2)}</strong> <span className="text-white/30">/ €{(stdNum * 0.90).toFixed(2)} members</span></span>}
                           {grpNum !== null && <span>👥 Group: <strong className="text-green-400">€{grpNum!.toFixed(2)}/pp</strong> <span className="text-white/30">min {form.group_min_size}</span></span>}
                         </div>
                       </div>
