@@ -25,17 +25,25 @@ interface Props {
 function TabLink({ label, count, active, href }: { label: string; count?: number; active: boolean; href: string }) {
   return (
     <a href={href}
-      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
         active
-          ? 'bg-amber-500/20 text-amber-400 border border-amber-400/25'
-          : 'text-white/50 hover:text-white hover:bg-white/5 border border-transparent'
+          ? 'text-white border'
+          : 'text-white/45 hover:text-white/75 hover:bg-white/5 border border-transparent'
       }`}
+      style={active ? {
+        background: 'linear-gradient(135deg, rgba(255,107,53,0.15) 0%, rgba(245,166,35,0.10) 100%)',
+        borderColor: 'rgba(255,107,53,0.30)',
+      } : undefined}
     >
       {label}
       {count !== undefined && (
         <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
-          active ? 'bg-amber-400/20 text-amber-300' : 'bg-white/10 text-white/40'
-        }`}>
+          active
+            ? 'text-white'
+            : 'bg-white/10 text-white/40'
+        }`}
+          style={active ? { background: 'rgba(255,107,53,0.25)', color: '#FF6B35' } : undefined}
+        >
           {count}
         </span>
       )}
@@ -63,29 +71,38 @@ function ApplicationRow({ app }: { app: AmbassadorApplicationRow }) {
   }
 
   return (
-    <div className="rounded-xl border border-white/8 bg-white/3 p-4">
+    <div className="rounded-xl p-4 transition-all"
+      style={{
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.015) 100%)',
+        border: '1px solid rgba(255,255,255,0.08)',
+      }}
+    >
       <div className="flex items-start gap-4">
         {/* Avatar */}
-        <div className="w-10 h-10 rounded-full bg-brand-primary/20 border border-brand-primary/30 flex items-center justify-center flex-shrink-0">
-          <span className="text-brand-primary text-sm font-bold">{getInitials(app.name, app.email)}</span>
+        <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
+          style={{ background: 'linear-gradient(135deg, rgba(255,107,53,0.22), rgba(245,166,35,0.15))', border: '1px solid rgba(255,107,53,0.30)' }}
+        >
+          <span className="text-sm font-bold" style={{ color: '#FF6B35' }}>{getInitials(app.name, app.email)}</span>
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <p className="text-white font-semibold">{app.name}</p>
+          <p className="text-white font-bold">{app.name}</p>
           <p className="text-white/40 text-sm">{app.email}</p>
-          <div className="flex flex-wrap gap-3 mt-1.5">
+          <div className="flex flex-wrap gap-2 mt-2">
             {app.university && (
-              <span className="flex items-center gap-1 text-white/35 text-xs bg-white/5 px-2 py-0.5 rounded-full">
+              <span className="flex items-center gap-1 text-white/50 text-xs px-2.5 py-1 rounded-lg"
+                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}>
                 🎓 {app.university}
               </span>
             )}
             {app.instagram && (
-              <span className="flex items-center gap-1 text-white/35 text-xs bg-white/5 px-2 py-0.5 rounded-full">
+              <span className="flex items-center gap-1 text-white/50 text-xs px-2.5 py-1 rounded-lg"
+                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}>
                 📷 {app.instagram}
               </span>
             )}
-            <span className="text-white/25 text-xs">
+            <span className="text-white/25 text-xs flex items-center">
               {new Date(app.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
             </span>
           </div>
@@ -100,7 +117,8 @@ function ApplicationRow({ app }: { app: AmbassadorApplicationRow }) {
               else alert(res.error ?? 'Failed to approve')
             })}
             disabled={isPending}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/15 text-green-400 border border-green-500/25 text-xs font-bold hover:bg-green-500/25 transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
+            style={{ background: 'rgba(34,197,94,0.12)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.25)' }}
           >
             <Check size={12} /> Approve
           </button>
@@ -111,7 +129,8 @@ function ApplicationRow({ app }: { app: AmbassadorApplicationRow }) {
               else alert(res.error ?? 'Failed to reject')
             })}
             disabled={isPending}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400/80 border border-red-500/20 text-xs font-bold hover:bg-red-500/20 transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
+            style={{ background: 'rgba(239,68,68,0.08)', color: 'rgba(248,113,113,0.8)', border: '1px solid rgba(239,68,68,0.18)' }}
           >
             <X size={12} /> Reject
           </button>
@@ -120,7 +139,7 @@ function ApplicationRow({ app }: { app: AmbassadorApplicationRow }) {
 
       {/* Why join toggle */}
       {app.why_join && (
-        <div className="mt-3 ml-14">
+        <div className="mt-3 ml-15">
           <button onClick={() => setExpanded(e => !e)}
             className="flex items-center gap-1.5 text-white/35 text-xs hover:text-white/60 transition-colors"
           >
@@ -128,12 +147,32 @@ function ApplicationRow({ app }: { app: AmbassadorApplicationRow }) {
             {expanded ? 'Hide' : 'Read'} application message
           </button>
           {expanded && (
-            <p className="mt-2 text-white/55 text-sm leading-relaxed border-l-2 border-white/10 pl-3 italic">
+            <p className="mt-2 text-white/55 text-sm leading-relaxed border-l-2 pl-3 italic"
+              style={{ borderColor: 'rgba(255,107,53,0.30)' }}>
               &ldquo;{app.why_join}&rdquo;
             </p>
           )}
         </div>
       )}
+    </div>
+  )
+}
+
+function StatChip({ icon, label, value, highlight }: {
+  icon: React.ReactNode
+  label: string
+  value: string
+  highlight?: boolean
+}) {
+  return (
+    <div className="flex flex-col items-end gap-0.5 px-3 py-2 rounded-xl flex-shrink-0"
+      style={{
+        background: highlight ? 'rgba(34,197,94,0.08)' : 'rgba(255,255,255,0.04)',
+        border: `1px solid ${highlight ? 'rgba(34,197,94,0.18)' : 'rgba(255,255,255,0.07)'}`,
+      }}
+    >
+      <p className={`font-bold text-base ${highlight ? 'text-green-400' : 'text-white'}`}>{value}</p>
+      <p className="text-white/30 text-[10px] flex items-center gap-1">{icon} {label}</p>
     </div>
   )
 }
@@ -156,18 +195,26 @@ function ActiveRow({ amb }: { amb: AmbassadorWithUser }) {
   const hasPending = (amb.pending_earnings ?? 0) > 0
 
   return (
-    <div className="rounded-xl border border-white/8 bg-white/3 p-4">
-      <div className="flex items-start gap-4">
+    <div className="rounded-xl p-4 transition-all"
+      style={{
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.015) 100%)',
+        border: '1px solid rgba(255,255,255,0.08)',
+      }}
+    >
+      <div className="flex items-center gap-4">
         {/* Avatar */}
-        <div className="w-10 h-10 rounded-full bg-brand-accent/20 border border-brand-accent/30 flex items-center justify-center flex-shrink-0">
-          <span className="text-brand-accent text-sm font-bold">{getInitials(amb.user_name, amb.user_email)}</span>
+        <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
+          style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.22), rgba(255,107,53,0.15))', border: '1px solid rgba(245,166,35,0.30)' }}
+        >
+          <span className="text-sm font-bold" style={{ color: '#F5A623' }}>{getInitials(amb.user_name, amb.user_email)}</span>
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-white font-semibold">{amb.user_name ?? amb.user_email ?? '—'}</p>
-            <code className="text-brand-accent text-xs bg-brand-accent/10 border border-brand-accent/20 px-2 py-0.5 rounded-md font-mono">
+            <p className="text-white font-bold">{amb.user_name ?? amb.user_email ?? '—'}</p>
+            <code className="text-xs px-2 py-0.5 rounded-md font-mono"
+              style={{ background: 'rgba(245,166,35,0.12)', color: '#F5A623', border: '1px solid rgba(245,166,35,0.22)' }}>
               {amb.referral_code}
             </code>
           </div>
@@ -175,33 +222,25 @@ function ActiveRow({ amb }: { amb: AmbassadorWithUser }) {
         </div>
 
         {/* Stats */}
-        <div className="flex gap-4 flex-shrink-0 text-right">
-          <div>
-            <p className="text-white font-bold text-lg">{amb.total_referrals ?? 0}</p>
-            <p className="text-white/30 text-xs flex items-center gap-1 justify-end"><Users size={10} /> Referrals</p>
-          </div>
-          <div>
-            <p className="text-brand-accent font-bold text-lg">€{(amb.total_earnings ?? 0).toFixed(2)}</p>
-            <p className="text-white/30 text-xs flex items-center gap-1 justify-end"><TrendingUp size={10} /> Total</p>
-          </div>
-          <div>
-            <p className={`font-bold text-lg ${hasPending ? 'text-green-400' : 'text-white/20'}`}>
-              €{(amb.pending_earnings ?? 0).toFixed(2)}
-            </p>
-            <p className="text-white/30 text-xs flex items-center gap-1 justify-end"><Clock size={10} /> Pending</p>
-          </div>
+        <div className="flex gap-2 flex-shrink-0">
+          <StatChip icon={<Users size={9} />} label="Referrals" value={String(amb.total_referrals ?? 0)} />
+          <StatChip icon={<TrendingUp size={9} />} label="Total" value={`€${(amb.total_earnings ?? 0).toFixed(2)}`} />
+          <StatChip icon={<Clock size={9} />} label="Pending" value={`€${(amb.pending_earnings ?? 0).toFixed(2)}`} highlight={hasPending} />
         </div>
       </div>
 
       {/* Actions row */}
-      <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-white/6">
+      <div className="flex flex-wrap items-center gap-2 mt-3 pt-3"
+        style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+      >
         <div className="flex items-center gap-2">
           <label className="text-white/35 text-xs">Commission %</label>
           <input
             type="number" min="0" max="100"
             value={rate}
             onChange={e => { setRate(e.target.value); setSaved(false) }}
-            className="w-14 px-2 py-1.5 rounded-lg border border-white/10 bg-white/5 text-white text-sm text-center focus:outline-none focus:border-brand-primary/50 transition-colors"
+            className="w-14 px-2 py-1.5 rounded-lg text-white text-sm text-center focus:outline-none transition-colors"
+            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)' }}
           />
           <button
             onClick={() => startTransition(async () => {
@@ -210,9 +249,11 @@ function ActiveRow({ amb }: { amb: AmbassadorWithUser }) {
               else alert(res.error ?? 'Failed')
             })}
             disabled={isPending}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors disabled:opacity-50 ${
-              saved ? 'bg-green-500/15 text-green-400' : 'bg-white/8 text-white/60 hover:bg-white/12'
-            }`}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all disabled:opacity-50"
+            style={saved
+              ? { background: 'rgba(34,197,94,0.12)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.22)' }
+              : { background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.55)', border: '1px solid rgba(255,255,255,0.10)' }
+            }
           >
             {saved ? '✓ Saved' : 'Save'}
           </button>
@@ -225,7 +266,8 @@ function ActiveRow({ amb }: { amb: AmbassadorWithUser }) {
             else alert(res.error ?? 'Failed')
           })}
           disabled={isPending || !hasPending}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/12 text-green-400 border border-green-500/20 text-xs font-bold hover:bg-green-500/20 transition-colors disabled:opacity-30"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all disabled:opacity-25"
+          style={{ background: 'rgba(34,197,94,0.10)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.22)' }}
         >
           <DollarSign size={11} />
           {markedPaid ? '✓ Paid' : `Mark €${(amb.pending_earnings ?? 0).toFixed(2)} as Paid`}
@@ -241,7 +283,8 @@ function ActiveRow({ amb }: { amb: AmbassadorWithUser }) {
             })
           }}
           disabled={isPending}
-          className="ml-auto px-3 py-1.5 rounded-lg text-red-400/50 text-xs hover:bg-red-500/10 hover:text-red-400 transition-colors disabled:opacity-30"
+          className="ml-auto px-3 py-1.5 rounded-lg text-xs font-medium transition-all disabled:opacity-30"
+          style={{ color: 'rgba(248,113,113,0.45)' }}
         >
           Deactivate
         </button>
@@ -250,14 +293,21 @@ function ActiveRow({ amb }: { amb: AmbassadorWithUser }) {
   )
 }
 
+const RANK_STYLE: Record<number, { bg: string; color: string; label: string }> = {
+  0: { bg: 'rgba(255,215,0,0.15)',  color: '#FFD700', label: '1st' },
+  1: { bg: 'rgba(192,192,192,0.12)', color: '#C0C0C0', label: '2nd' },
+  2: { bg: 'rgba(205,127,50,0.12)',  color: '#CD7F32', label: '3rd' },
+}
+
 export default function AmbassadorsClient({ applications, ambassadors, tab }: Props) {
   const pending   = applications.filter(a => a.status === 'pending')
   const totalOwed = ambassadors.reduce((s, a) => s + (a.pending_earnings ?? 0), 0)
+  const owedAmbs  = ambassadors.filter(a => (a.pending_earnings ?? 0) > 0)
 
   return (
     <div>
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-white/6 pb-4">
+      <div className="flex gap-2 mb-6 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <TabLink label="Applications" count={pending.length} active={tab === 'applications'} href="?tab=applications" />
         <TabLink label="Active"       count={ambassadors.length} active={tab === 'active'}       href="?tab=active"       />
         <TabLink label="Payouts"      active={tab === 'payouts'}       href="?tab=payouts"      />
@@ -267,9 +317,11 @@ export default function AmbassadorsClient({ applications, ambassadors, tab }: Pr
       {tab === 'applications' && (
         <div className="flex flex-col gap-3">
           {pending.length === 0 ? (
-            <div className="rounded-xl border border-white/6 bg-white/2 p-10 text-center">
-              <p className="text-2xl mb-2">📭</p>
-              <p className="text-white/40 text-sm">No pending applications</p>
+            <div className="rounded-xl p-12 text-center"
+              style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
+            >
+              <p className="text-white/40 text-sm font-medium">No pending applications</p>
+              <p className="text-white/20 text-xs mt-1">New applications will appear here for review</p>
             </div>
           ) : (
             pending.map(app => <ApplicationRow key={app.id} app={app} />)
@@ -281,10 +333,11 @@ export default function AmbassadorsClient({ applications, ambassadors, tab }: Pr
       {tab === 'active' && (
         <div className="flex flex-col gap-3">
           {ambassadors.length === 0 ? (
-            <div className="rounded-xl border border-white/6 bg-white/2 p-10 text-center">
-              <p className="text-2xl mb-2">🌟</p>
-              <p className="text-white/40 text-sm">No active ambassadors yet</p>
-              <p className="text-white/25 text-xs mt-1">Approve applications from the Applications tab</p>
+            <div className="rounded-xl p-12 text-center"
+              style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
+            >
+              <p className="text-white/40 text-sm font-medium">No active ambassadors yet</p>
+              <p className="text-white/20 text-xs mt-1">Approve applications from the Applications tab</p>
             </div>
           ) : (
             ambassadors.map(amb => <ActiveRow key={amb.id} amb={amb} />)
@@ -296,47 +349,73 @@ export default function AmbassadorsClient({ applications, ambassadors, tab }: Pr
       {tab === 'payouts' && (
         <div>
           {/* Summary card */}
-          <div className="rounded-xl p-5 mb-5 flex items-center justify-between"
-            style={{ background: 'linear-gradient(135deg, rgba(46,204,113,0.08), rgba(245,166,35,0.04))', border: '1px solid rgba(46,204,113,0.2)' }}
+          <div className="rounded-2xl p-5 mb-5 flex items-center justify-between"
+            style={{
+              background: 'linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(245,166,35,0.05) 100%)',
+              border: '1px solid rgba(34,197,94,0.18)',
+              boxShadow: '0 0 32px rgba(34,197,94,0.06)',
+            }}
           >
             <div>
-              <p className="text-white/50 text-xs uppercase tracking-widest mb-1">Total pending payouts</p>
-              <p className="font-heading text-3xl font-bold text-green-400">€{totalOwed.toFixed(2)}</p>
+              <p className="text-white/40 text-[10px] uppercase tracking-widest mb-1.5">Total pending payouts</p>
+              <p className="font-heading text-4xl font-bold text-green-400">€{totalOwed.toFixed(2)}</p>
             </div>
             <div className="text-right">
-              <p className="text-white/40 text-sm">{ambassadors.filter(a => (a.pending_earnings ?? 0) > 0).length} ambassador{ambassadors.filter(a => (a.pending_earnings ?? 0) > 0).length !== 1 ? 's' : ''} owed</p>
-              <p className="text-white/25 text-xs mt-0.5">Use Active tab to mark individual payments</p>
+              <p className="text-white/50 text-sm font-medium">
+                {owedAmbs.length} ambassador{owedAmbs.length !== 1 ? 's' : ''} owed
+              </p>
+              <p className="text-white/25 text-xs mt-1">Use Active tab to mark individual payments</p>
             </div>
           </div>
 
-          {ambassadors.filter(a => (a.pending_earnings ?? 0) > 0).length === 0 ? (
-            <div className="rounded-xl border border-white/6 bg-white/2 p-10 text-center">
-              <p className="text-2xl mb-2">✅</p>
-              <p className="text-white/40 text-sm">All ambassadors paid up</p>
+          {owedAmbs.length === 0 ? (
+            <div className="rounded-xl p-12 text-center"
+              style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
+            >
+              <p className="text-white/40 text-sm font-medium">All ambassadors paid up</p>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
-              {ambassadors
-                .filter(a => (a.pending_earnings ?? 0) > 0)
+              {owedAmbs
                 .sort((a, b) => (b.pending_earnings ?? 0) - (a.pending_earnings ?? 0))
-                .map((amb, i) => (
-                  <div key={amb.id}
-                    className="rounded-xl border border-white/7 bg-white/2 px-4 py-3.5 flex items-center gap-4"
-                  >
-                    <span className="text-white/20 text-sm font-mono w-5 text-right flex-shrink-0">{i + 1}</span>
-                    <div className="w-8 h-8 rounded-full bg-brand-accent/15 border border-brand-accent/25 flex items-center justify-center flex-shrink-0">
-                      <span className="text-brand-accent text-xs font-bold">{getInitials(amb.user_name, amb.user_email)}</span>
+                .map((amb, i) => {
+                  const rank = RANK_STYLE[i]
+                  return (
+                    <div key={amb.id}
+                      className="rounded-xl px-4 py-3.5 flex items-center gap-4 transition-all"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.015) 100%)',
+                        border: '1px solid rgba(255,255,255,0.07)',
+                      }}
+                    >
+                      {/* Rank badge */}
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold"
+                        style={rank
+                          ? { background: rank.bg, color: rank.color, border: `1px solid ${rank.color}30` }
+                          : { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.25)', border: '1px solid rgba(255,255,255,0.08)' }
+                        }
+                      >
+                        {rank ? rank.label : i + 1}
+                      </div>
+
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                        style={{ background: 'rgba(245,166,35,0.15)', border: '1px solid rgba(245,166,35,0.25)' }}
+                      >
+                        <span className="text-xs font-bold" style={{ color: '#F5A623' }}>{getInitials(amb.user_name, amb.user_email)}</span>
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white font-semibold text-sm">{amb.user_name ?? amb.user_email ?? '—'}</p>
+                        <code className="text-xs" style={{ color: 'rgba(245,166,35,0.55)' }}>{amb.referral_code}</code>
+                      </div>
+
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-green-400 font-bold text-lg">€{(amb.pending_earnings ?? 0).toFixed(2)}</p>
+                        <p className="text-white/25 text-xs">{amb.total_referrals ?? 0} referrals</p>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-white font-semibold text-sm">{amb.user_name ?? amb.user_email ?? '—'}</p>
-                      <code className="text-brand-accent/60 text-xs">{amb.referral_code}</code>
-                    </div>
-                    <div className="text-right flex-shrink-0">
-                      <p className="text-green-400 font-bold text-lg">€{(amb.pending_earnings ?? 0).toFixed(2)}</p>
-                      <p className="text-white/25 text-xs">{amb.total_referrals ?? 0} referrals</p>
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
             </div>
           )}
         </div>
