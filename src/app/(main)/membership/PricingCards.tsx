@@ -47,7 +47,6 @@ const PLANS: PlanDef[] = [
     perks:    [
       'Everything in Monthly',
       'Exclusive member WhatsApp groups',
-      'Members-only parties & nights out',
     ],
     featured: true,
   },
