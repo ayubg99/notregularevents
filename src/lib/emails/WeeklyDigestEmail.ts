@@ -1,0 +1,117 @@
+import { emailLayout } from './emailLayout'
+
+export interface DigestEvent {
+  title:    string
+  slug:     string
+  date:     string
+  location: string | null
+  price:    number | null
+  is_free:  boolean
+}
+
+export interface DigestTrip {
+  title:          string
+  slug:           string
+  start_date:     string
+  end_date:       string | null
+  destination:    string | null
+  price_standard: number | null
+}
+
+interface Props {
+  events:         DigestEvent[]
+  trips:          DigestTrip[]
+  baseUrl:        string
+  unsubscribeUrl: string
+  weekLabel:      string
+}
+
+function fmt(iso: string) {
+  return new Date(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+}
+
+export function WeeklyDigestEmail({ events, trips, baseUrl, unsubscribeUrl, weekLabel }: Props): string {
+  const eventCards = events.map(e => `
+    <table width="100%" cellpadding="0" cellspacing="0"
+           style="background:#221608;border:1px solid rgba(255,248,238,0.09);border-radius:16px;margin-bottom:12px;">
+      <tr>
+        <td style="padding:20px 24px;">
+          <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">Event</p>
+          <p style="margin:0 0 10px;font-size:16px;font-weight:700;color:#FFF8EE;">${e.title}</p>
+          <p style="margin:0 0 4px;font-size:13px;color:#B8A090;">📅 &nbsp;${fmt(e.date)}</p>
+          ${e.location ? `<p style="margin:0 0 4px;font-size:13px;color:#B8A090;">📍 &nbsp;${e.location}</p>` : ''}
+          <p style="margin:0 0 16px;font-size:13px;color:#B8A090;">
+            🎟️ &nbsp;${e.is_free ? 'Free entry' : e.price ? `From €${e.price} &nbsp;·&nbsp; Members −15%` : ''}
+          </p>
+          <a href="${baseUrl}/events/${e.slug}"
+             style="display:inline-block;background:#F5A623;color:#1A1209;font-weight:700;
+                    font-size:13px;text-decoration:none;padding:10px 24px;border-radius:9999px;">
+            Book Now →
+          </a>
+        </td>
+      </tr>
+    </table>
+  `).join('')
+
+  const tripCards = trips.map(t => {
+    const start    = fmt(t.start_date)
+    const end      = t.end_date ? fmt(t.end_date) : null
+    const dateRange = end ? `${start} – ${end}` : start
+    return `
+    <table width="100%" cellpadding="0" cellspacing="0"
+           style="background:#221608;border:1px solid rgba(255,248,238,0.09);border-radius:16px;margin-bottom:12px;">
+      <tr>
+        <td style="padding:20px 24px;">
+          <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">Trip</p>
+          <p style="margin:0 0 10px;font-size:16px;font-weight:700;color:#FFF8EE;">${t.title}</p>
+          ${t.destination ? `<p style="margin:0 0 4px;font-size:13px;color:#B8A090;">✈️ &nbsp;${t.destination}</p>` : ''}
+          <p style="margin:0 0 4px;font-size:13px;color:#B8A090;">📅 &nbsp;${dateRange}</p>
+          ${t.price_standard ? `<p style="margin:0 0 16px;font-size:13px;color:#B8A090;">💶 &nbsp;From €${t.price_standard} &nbsp;·&nbsp; Members −15%</p>` : '<div style="height:16px;"></div>'}
+          <a href="${baseUrl}/trips/${t.slug}"
+             style="display:inline-block;background:#FF6B35;color:#fff;font-weight:700;
+                    font-size:13px;text-decoration:none;padding:10px 24px;border-radius:9999px;">
+            View Trip →
+          </a>
+        </td>
+      </tr>
+    </table>
+    `
+  }).join('')
+
+  const content = `
+    <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
+      What's on this week 🎉
+    </p>
+    <p style="margin:0 0 32px;font-size:15px;color:#B8A090;line-height:1.6;">
+      ${weekLabel} — here's everything happening in Valencia.
+    </p>
+
+    ${events.length ? `
+      <p style="margin:0 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">Events</p>
+      ${eventCards}
+    ` : ''}
+
+    ${trips.length ? `
+      <p style="margin:${events.length ? '24px' : '0'} 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">Trips</p>
+      ${tripCards}
+    ` : ''}
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:32px;margin-bottom:16px;">
+      <tr>
+        <td align="center">
+          <a href="${baseUrl}/events"
+             style="display:inline-block;background:#F5A623;color:#1A1209;font-weight:700;
+                    font-size:14px;text-decoration:none;padding:14px 32px;border-radius:9999px;">
+            See All Events &amp; Trips →
+          </a>
+        </td>
+      </tr>
+    </table>
+  `
+
+  return emailLayout(
+    content,
+    baseUrl,
+    `Erasmus Vibe Valencia — your international community<br /><a href="${unsubscribeUrl}" style="color:#B8A090;font-size:11px;">Unsubscribe from newsletter</a>`,
+  )
+}
