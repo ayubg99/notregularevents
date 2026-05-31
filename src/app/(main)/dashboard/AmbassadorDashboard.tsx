@@ -18,6 +18,12 @@ const MILESTONE_INFO: Record<number, { label: string; icon: string; color: strin
   50: { label: '€150 cash bonus',          icon: '🏆', color: 'text-brand-accent' },
 }
 
+function SectionHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-white/70 text-xs font-bold uppercase tracking-widest mb-3">{children}</p>
+  )
+}
+
 export default function AmbassadorDashboard({ ambassador, commissions, rewards }: Props) {
   const [copied, setCopied] = useState(false)
 
@@ -42,11 +48,11 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg"
-          style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.2), rgba(255,107,53,0.1))', border: '1px solid rgba(245,166,35,0.3)' }}>
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
+          style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.22), rgba(255,107,53,0.12))', border: '1px solid rgba(245,166,35,0.32)' }}>
           🌟
         </div>
         <div>
@@ -56,10 +62,11 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
       </div>
 
       {/* Referral link */}
-      <div className="rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.08), rgba(255,107,53,0.04))', border: '1px solid rgba(245,166,35,0.2)' }}>
-        <p className="text-brand-accent text-xs font-bold uppercase tracking-widest mb-3">Your Referral Link</p>
+      <div className="rounded-2xl p-4" style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.08), rgba(255,107,53,0.04))', border: '1px solid rgba(245,166,35,0.2)' }}>
+        <p className="text-brand-accent text-[10px] font-bold uppercase tracking-widest mb-3">Your Referral Link</p>
         <div className="flex gap-2 items-center mb-3">
-          <div className="flex-1 bg-black/40 rounded-xl px-3 py-2.5 min-w-0">
+          <div className="flex-1 rounded-xl px-3 py-2.5 min-w-0"
+            style={{ background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.06)' }}>
             <p className="text-brand-accent text-sm font-mono truncate">{referralUrl}</p>
           </div>
           <button onClick={copyLink}
@@ -76,22 +83,18 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-xl p-4 text-center" style={{ background: 'rgba(78,205,196,0.06)', border: '1px solid rgba(78,205,196,0.15)' }}>
-          <Users size={14} className="text-cyan-400 mx-auto mb-1.5 opacity-70" />
-          <p className="text-2xl font-bold font-heading text-cyan-400">{totalReferrals}</p>
-          <p className="text-white/40 text-xs mt-0.5">Referrals</p>
-        </div>
-        <div className="rounded-xl p-4 text-center" style={{ background: 'rgba(245,166,35,0.06)', border: '1px solid rgba(245,166,35,0.15)' }}>
-          <TrendingUp size={14} className="text-brand-accent mx-auto mb-1.5 opacity-70" />
-          <p className="text-2xl font-bold font-heading text-brand-accent">€{totalEarnings.toFixed(2)}</p>
-          <p className="text-white/40 text-xs mt-0.5">Total earned</p>
-        </div>
-        <div className="rounded-xl p-4 text-center" style={{ background: 'rgba(46,204,113,0.06)', border: '1px solid rgba(46,204,113,0.15)' }}>
-          <Clock size={14} className="text-green-400 mx-auto mb-1.5 opacity-70" />
-          <p className="text-2xl font-bold font-heading text-green-400">€{pendingEarnings.toFixed(2)}</p>
-          <p className="text-white/40 text-xs mt-0.5">Pending payout</p>
-        </div>
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          { icon: <Users size={13} />, color: 'text-cyan-400', bg: 'rgba(78,205,196,0.07)', border: 'rgba(78,205,196,0.18)', value: String(totalReferrals), label: 'Referrals' },
+          { icon: <TrendingUp size={13} />, color: 'text-brand-accent', bg: 'rgba(245,166,35,0.07)', border: 'rgba(245,166,35,0.18)', value: `€${totalEarnings.toFixed(2)}`, label: 'Total earned' },
+          { icon: <Clock size={13} />, color: 'text-green-400', bg: 'rgba(46,204,113,0.07)', border: 'rgba(46,204,113,0.18)', value: `€${pendingEarnings.toFixed(2)}`, label: 'Pending payout' },
+        ].map(({ icon, color, bg, border, value, label }) => (
+          <div key={label} className="rounded-xl p-4 text-center" style={{ background: bg, border: `1px solid ${border}` }}>
+            <div className={`${color} opacity-60 flex justify-center mb-2`}>{icon}</div>
+            <p className={`text-xl font-bold font-heading ${color}`}>{value}</p>
+            <p className="text-white/35 text-xs mt-1">{label}</p>
+          </div>
+        ))}
       </div>
 
       {/* Next milestone */}
@@ -105,11 +108,13 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
               </p>
             </div>
             <div className="text-right">
-              <p className={`text-lg font-bold font-heading ${MILESTONE_INFO[nextMilestone].color}`}>{totalReferrals}<span className="text-white/25 text-sm font-normal">/{nextMilestone}</span></p>
+              <p className={`text-lg font-bold font-heading ${MILESTONE_INFO[nextMilestone].color}`}>
+                {totalReferrals}<span className="text-white/25 text-sm font-normal">/{nextMilestone}</span>
+              </p>
               <p className="text-white/30 text-xs">{nextMilestone - totalReferrals} to go</p>
             </div>
           </div>
-          <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
             <div className="h-full rounded-full transition-all duration-500"
               style={{ width: `${Math.min(progress, 100)}%`, background: 'linear-gradient(90deg, #F5A623, #FF6B35)' }}
             />
@@ -129,9 +134,11 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
                 border: done ? '1px solid rgba(245,166,35,0.25)' : '1px solid rgba(255,255,255,0.06)',
               }}
             >
-              <p className="text-lg mb-1">{done ? '✅' : info.icon}</p>
+              <p className="text-base mb-1">{done ? '✅' : info.icon}</p>
               <p className={`text-xs font-bold ${done ? 'text-brand-accent' : 'text-white/30'}`}>{m} refs</p>
-              <p className={`text-xs mt-0.5 leading-tight ${done ? 'text-white/50' : 'text-white/20'}`}>{info.label.split(' ').slice(0, 2).join(' ')}</p>
+              <p className={`text-[10px] mt-0.5 leading-tight ${done ? 'text-white/50' : 'text-white/20'}`}>
+                {info.label.split(' ').slice(0, 2).join(' ')}
+              </p>
             </div>
           )
         })}
@@ -140,7 +147,7 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
       {/* Rewards */}
       {rewards.length > 0 && (
         <div>
-          <p className="text-white text-sm font-bold mb-2">🎁 Your Rewards</p>
+          <SectionHeading>Your Rewards</SectionHeading>
           <div className="flex flex-col gap-2">
             {rewards.map(reward => (
               <div key={reward.id} className="rounded-xl px-4 py-3 flex justify-between items-center"
@@ -172,32 +179,35 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
 
       {/* Commission history */}
       <div>
-        <p className="text-white text-sm font-bold mb-2">📋 Commission History</p>
+        <SectionHeading>Commission History</SectionHeading>
         {commissions.length === 0 ? (
-          <div className="rounded-xl p-8 text-center" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <p className="text-3xl mb-2">🔗</p>
-            <p className="text-white/50 text-sm font-medium">No commissions yet</p>
-            <p className="text-white/25 text-xs mt-1">Share your referral link to start earning</p>
+          <div className="rounded-xl p-8 text-center"
+            style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <p className="text-white/40 text-sm font-medium">No commissions yet</p>
+            <p className="text-white/20 text-xs mt-1">Share your referral link to start earning</p>
           </div>
         ) : (
           <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
             {commissions.map((c, i) => (
               <div key={c.id}
-                className="flex justify-between items-center px-4 py-3"
+                className="flex justify-between items-center px-4 py-3 relative"
                 style={{
-                  background: i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.015)',
+                  background: i % 2 === 0 ? 'rgba(255,255,255,0.025)' : 'rgba(255,255,255,0.015)',
                   borderTop: i > 0 ? '1px solid rgba(255,255,255,0.05)' : undefined,
                 }}
               >
-                <div>
+                {/* Status bar on left edge */}
+                <div className="absolute left-0 top-2 bottom-2 w-0.5 rounded-full"
+                  style={{ background: c.status === 'paid' ? 'rgba(74,222,128,0.5)' : 'rgba(245,166,35,0.6)' }} />
+                <div className="pl-2">
                   <p className="text-white text-sm font-semibold">{c.event_title ?? 'Booking'}</p>
                   <p className="text-white/35 text-xs mt-0.5 capitalize">
                     {c.booking_type} · {new Date(c.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' })}
                   </p>
                 </div>
                 <div className="text-right flex-shrink-0 ml-4">
-                  <p className="text-green-400 font-bold text-base">+€{c.commission_earned.toFixed(2)}</p>
-                  <span className={`text-xs font-semibold ${c.status === 'paid' ? 'text-green-400/60' : 'text-brand-accent/70'}`}>
+                  <p className="text-green-400 font-bold text-sm">+€{c.commission_earned.toFixed(2)}</p>
+                  <span className={`text-[10px] font-bold uppercase tracking-wide ${c.status === 'paid' ? 'text-green-400/55' : 'text-brand-accent/70'}`}>
                     {c.status}
                   </span>
                 </div>
