@@ -29,6 +29,7 @@ const PLANS: PlanDef[] = [
     perMonth: '€9.99/mo',
     perks:    [
       '10% off all events & trips',
+      'Free housing contact reveals',
       'Member card & dashboard access',
       'Weekly newsletter with deals',
       'Members-only social events',
@@ -45,9 +46,7 @@ const PLANS: PlanDef[] = [
     perMonth: '≈€4.17/mo',
     perks:    [
       'Everything in Monthly',
-      'Free housing contact reveals',
       'Exclusive member WhatsApp groups',
-      'Partner promo codes & discounts',
       'Members-only parties & nights out',
     ],
     featured: true,
@@ -65,7 +64,6 @@ const PLANS: PlanDef[] = [
       'Free guest pass (1× per year)',
       'Ambassador program eligibility',
       'Exclusive yearly member events',
-      'VIP treatment at all events',
     ],
     featured: false,
   },
