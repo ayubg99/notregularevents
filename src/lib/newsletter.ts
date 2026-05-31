@@ -22,13 +22,13 @@ export async function runWeeklyDigest(): Promise<DigestResult> {
 
   const [eventsRes, tripsRes, subsRes] = await Promise.all([
     admin.from('events')
-      .select('title, slug, date, location, price, is_free')
+      .select('title, slug, date, location, price, is_free, image_url')
       .eq('status', 'published')
       .gte('date', now.toISOString())
       .lte('date', nextWeek.toISOString())
       .order('date', { ascending: true }),
     admin.from('trips')
-      .select('title, slug, start_date, end_date, destination, price_standard')
+      .select('title, slug, start_date, end_date, destination, price_standard, image_url')
       .eq('status', 'published')
       .gte('start_date', now.toISOString())
       .lte('start_date', nextWeek.toISOString())

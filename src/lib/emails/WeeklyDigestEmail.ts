@@ -1,12 +1,13 @@
 import { emailLayout } from './emailLayout'
 
 export interface DigestEvent {
-  title:    string
-  slug:     string
-  date:     string
-  location: string | null
-  price:    number | null
-  is_free:  boolean
+  title:     string
+  slug:      string
+  date:      string
+  location:  string | null
+  price:     number | null
+  is_free:   boolean
+  image_url: string | null
 }
 
 export interface DigestTrip {
@@ -16,6 +17,7 @@ export interface DigestTrip {
   end_date:       string | null
   destination:    string | null
   price_standard: number | null
+  image_url:      string | null
 }
 
 interface Props {
@@ -34,6 +36,13 @@ export function WeeklyDigestEmail({ events, trips, baseUrl, unsubscribeUrl, week
   const eventCards = events.map(e => `
     <table width="100%" cellpadding="0" cellspacing="0"
            style="background:#221608;border:1px solid rgba(255,248,238,0.09);border-radius:16px;margin-bottom:12px;">
+      ${e.image_url ? `
+      <tr>
+        <td style="padding:0;line-height:0;">
+          <img src="${e.image_url}" width="100%" alt="${e.title}"
+               style="display:block;width:100%;height:180px;object-fit:cover;border-radius:16px 16px 0 0;" />
+        </td>
+      </tr>` : ''}
       <tr>
         <td style="padding:20px 24px;">
           <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">Event</p>
@@ -54,12 +63,19 @@ export function WeeklyDigestEmail({ events, trips, baseUrl, unsubscribeUrl, week
   `).join('')
 
   const tripCards = trips.map(t => {
-    const start    = fmt(t.start_date)
-    const end      = t.end_date ? fmt(t.end_date) : null
+    const start     = fmt(t.start_date)
+    const end       = t.end_date ? fmt(t.end_date) : null
     const dateRange = end ? `${start} – ${end}` : start
     return `
     <table width="100%" cellpadding="0" cellspacing="0"
            style="background:#221608;border:1px solid rgba(255,248,238,0.09);border-radius:16px;margin-bottom:12px;">
+      ${t.image_url ? `
+      <tr>
+        <td style="padding:0;line-height:0;">
+          <img src="${t.image_url}" width="100%" alt="${t.title}"
+               style="display:block;width:100%;height:180px;object-fit:cover;border-radius:16px 16px 0 0;" />
+        </td>
+      </tr>` : ''}
       <tr>
         <td style="padding:20px 24px;">
           <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">Trip</p>
