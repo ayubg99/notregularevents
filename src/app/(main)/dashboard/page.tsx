@@ -127,11 +127,13 @@ export default async function DashboardPage() {
             <HousingListings myListings={myListings} />
             <JobListings myJobs={myJobs} />
             {ambassador && (
-              <AmbassadorDashboard
-                ambassador={ambassador}
-                commissions={commissions}
-                rewards={rewards}
-              />
+              <div className="glass-card rounded-2xl p-6">
+                <AmbassadorDashboard
+                  ambassador={ambassador}
+                  commissions={commissions}
+                  rewards={rewards}
+                />
+              </div>
             )}
           </div>
 
