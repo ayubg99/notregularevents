@@ -15,7 +15,8 @@ import BookingTabs from './BookingTabs'
 import HousingListings from './HousingListings'
 import JobListings from './JobListings'
 import MemberCard from './MemberCard'
-import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow, HousingListingRow, JobListingRow, SponsorRow } from '@/types/database'
+import AmbassadorDashboard from './AmbassadorDashboard'
+import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow, HousingListingRow, JobListingRow, SponsorRow, AmbassadorRow, AmbassadorCommissionRow, AmbassadorRewardRow } from '@/types/database'
 
 type EventTicketWithEvent = EventTicketRow & {
   events: { id: string; title: string; date: string; location: string | null; slug: string } | null
@@ -46,6 +47,7 @@ export default async function DashboardPage() {
     { data: myListingsRaw },
     { data: myJobsRaw },
     { data: sponsorsRaw },
+    { data: ambassadorRaw },
   ] = await Promise.all([
     supabase.from('users').select('full_name, avatar_url, role').eq('id', user.id).single(),
     supabase.from('profiles').select('*').eq('user_id', user.id).single(),
@@ -55,7 +57,23 @@ export default async function DashboardPage() {
     supabase.from('housing_listings').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('job_listings').select('*').eq('posted_by_user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('sponsors').select('*').eq('status', 'active').eq('members_only', true).order('display_order', { ascending: true }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase as any).from('ambassadors').select('*').eq('user_id', user.id).eq('status', 'active').maybeSingle(),
   ])
+
+  const ambassador = ambassadorRaw as AmbassadorRow | null
+
+  const [{ data: commissionsRaw }, { data: rewardsRaw }] = ambassador
+    ? await Promise.all([
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase as any).from('ambassador_commissions').select('*').eq('ambassador_id', ambassador.id).order('created_at', { ascending: false }).limit(20),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase as any).from('ambassador_rewards').select('*').eq('ambassador_id', ambassador.id).order('created_at', { ascending: false }),
+      ])
+    : [{ data: [] }, { data: [] }]
+
+  const commissions = (commissionsRaw ?? []) as AmbassadorCommissionRow[]
+  const rewards     = (rewardsRaw     ?? []) as AmbassadorRewardRow[]
 
   const displayName = (userRow as Pick<UserRow, 'full_name'> | null)?.full_name ?? user.email?.split('@')[0] ?? 'Student'
   const initials    = getInitials(displayName)
@@ -108,6 +126,13 @@ export default async function DashboardPage() {
             />
             <HousingListings myListings={myListings} />
             <JobListings myJobs={myJobs} />
+            {ambassador && (
+              <AmbassadorDashboard
+                ambassador={ambassador}
+                commissions={commissions}
+                rewards={rewards}
+              />
+            )}
           </div>
 
           {/* Right — membership + discounts + profile */}

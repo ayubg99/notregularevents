@@ -14,6 +14,7 @@ const NAV = [
   { href: '/admin/housing-partners', label: 'Partner Rooms', icon: <Building2 size={16} /> },
   { href: '/admin/jobs',         label: 'Jobs',        icon: <Briefcase size={16} />      },
   { href: '/admin/employers',    label: 'Employers',   icon: <Building2 size={16} />      },
+  { href: '/admin/ambassadors', label: 'Ambassadors', icon: <Star size={16} />            },
   { href: '/admin/sponsors',    label: 'Sponsors',    icon: <Star size={16} />            },
   { href: '/admin/users',       label: 'Members',     icon: <Users size={16} />           },
   { href: '/admin/bookings',    label: 'Bookings',    icon: <Ticket size={16} />          },

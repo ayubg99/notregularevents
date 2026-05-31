@@ -98,6 +98,8 @@ export type EventTicketRow = {
   is_group_booking:  boolean | null
   lead_name:         string  | null
   lead_email:        string  | null
+  ambassador_id:     string  | null
+  referral_code:     string  | null
 }
 
 export type ItineraryDay = { day: number; title: string; description: string }
@@ -153,6 +155,8 @@ export type TripBookingRow = {
   checked_in_at:     string  | null
   created_at:        string
   updated_at:        string
+  ambassador_id:     string | null
+  referral_code:     string | null
 }
 
 export type MembershipRow = {
@@ -191,14 +195,53 @@ export type ReviewRow = {
 }
 
 export type AmbassadorRow = {
-  id:              string
-  user_id:         string
-  referral_code:   string
-  total_referrals: number
-  total_earnings:  number
-  status:          AmbassadorStatus
-  created_at:      string
-  updated_at:      string
+  id:               string
+  user_id:          string
+  referral_code:    string
+  total_referrals:  number
+  total_earnings:   number
+  pending_earnings: number
+  paid_earnings:    number
+  commission_rate:  number
+  status:           AmbassadorStatus
+  created_at:       string
+  updated_at:       string
+}
+
+export type AmbassadorCommissionRow = {
+  id:                string
+  ambassador_id:     string
+  booking_type:      'event' | 'trip'
+  booking_ref:       string | null
+  event_title:       string | null
+  amount_paid:       number
+  commission_rate:   number
+  commission_earned: number
+  status:            'pending' | 'paid' | 'cancelled'
+  paid_at:           string | null
+  created_at:        string
+}
+
+export type AmbassadorRewardRow = {
+  id:            string
+  ambassador_id: string
+  reward_type:   'free_ticket' | 'membership_upgrade' | 'cash_bonus' | 'discount_code'
+  description:   string | null
+  value:         number | null
+  status:        'pending' | 'claimed' | 'expired'
+  expires_at:    string | null
+  created_at:    string
+}
+
+export type AmbassadorApplicationRow = {
+  id:         string
+  name:       string
+  email:      string
+  university: string | null
+  instagram:  string | null
+  why_join:   string | null
+  status:     'pending' | 'approved' | 'rejected'
+  created_at: string
 }
 
 export type NotificationRow = {
@@ -232,7 +275,7 @@ export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 
   members_only_free?:    boolean
 }
 
-export type EventTicketInsert = Omit<EventTicketRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid' | 'checked_in' | 'checked_in_at' | 'group_booking_ref' | 'is_group_booking' | 'lead_name' | 'lead_email'> & {
+export type EventTicketInsert = Omit<EventTicketRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid' | 'checked_in' | 'checked_in_at' | 'group_booking_ref' | 'is_group_booking' | 'lead_name' | 'lead_email' | 'ambassador_id' | 'referral_code'> & {
   status?:            TicketStatus
   amount_paid?:       number | null
   checked_in?:        boolean | null
@@ -241,6 +284,8 @@ export type EventTicketInsert = Omit<EventTicketRow, 'id' | 'created_at' | 'upda
   is_group_booking?:  boolean | null
   lead_name?:         string  | null
   lead_email?:        string  | null
+  ambassador_id?:     string  | null
+  referral_code?:     string  | null
 }
 
 export type TripInsert = Omit<TripRow, 'id' | 'seats_sold' | 'created_at' | 'updated_at' | 'price_vip' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold' | 'group_min_size'> & {
@@ -253,13 +298,15 @@ export type TripInsert = Omit<TripRow, 'id' | 'seats_sold' | 'created_at' | 'upd
   group_min_size?:        number | null
 }
 
-export type TripBookingInsert = Omit<TripBookingRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid' | 'quantity' | 'checked_in' | 'checked_in_at'> & {
+export type TripBookingInsert = Omit<TripBookingRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid' | 'quantity' | 'checked_in' | 'checked_in_at' | 'ambassador_id' | 'referral_code'> & {
   status?:        BookingStatus
   deposit_paid?:  boolean
   amount_paid?:   number | null
   quantity?:      number
   checked_in?:    boolean | null
   checked_in_at?: string  | null
+  ambassador_id?: string  | null
+  referral_code?: string  | null
 }
 
 export type MembershipInsert = Omit<MembershipRow, 'id' | 'created_at' | 'updated_at' | 'stripe_customer_id'> & {
@@ -271,10 +318,23 @@ export type PromoCodeInsert = Omit<PromoCodeRow, 'id' | 'created_at' | 'updated_
 
 export type ReviewInsert = Omit<ReviewRow, 'id' | 'created_at' | 'updated_at'>
 
-export type AmbassadorInsert = Omit<AmbassadorRow, 'id' | 'total_referrals' | 'total_earnings' | 'created_at' | 'updated_at'> & {
-  total_referrals?: number
-  total_earnings?: number
-  status?: AmbassadorStatus
+export type AmbassadorInsert = Omit<AmbassadorRow, 'id' | 'total_referrals' | 'total_earnings' | 'pending_earnings' | 'paid_earnings' | 'created_at' | 'updated_at'> & {
+  total_referrals?:  number
+  total_earnings?:   number
+  pending_earnings?: number
+  paid_earnings?:    number
+  commission_rate?:  number
+  status?:           AmbassadorStatus
+}
+
+export type AmbassadorCommissionInsert = Omit<AmbassadorCommissionRow, 'id' | 'created_at' | 'paid_at'> & {
+  paid_at?: string | null
+}
+
+export type AmbassadorRewardInsert = Omit<AmbassadorRewardRow, 'id' | 'created_at'>
+
+export type AmbassadorApplicationInsert = Omit<AmbassadorApplicationRow, 'id' | 'created_at'> & {
+  status?: AmbassadorApplicationRow['status']
 }
 
 export type NotificationInsert = Omit<NotificationRow, 'id' | 'created_at' | 'updated_at'> & {
@@ -330,7 +390,10 @@ export type TripBookingUpdate = Partial<Omit<TripBookingRow, 'id' | 'trip_id' | 
 export type MembershipUpdate  = Partial<Omit<MembershipRow, 'id' | 'user_id' | 'created_at' | 'updated_at'>>
 export type PromoCodeUpdate   = Partial<Omit<PromoCodeRow, 'id' | 'created_at' | 'updated_at'>>
 export type ReviewUpdate      = Partial<Omit<ReviewRow, 'id' | 'user_id' | 'target_type' | 'target_id' | 'created_at' | 'updated_at'>>
-export type AmbassadorUpdate  = Partial<Omit<AmbassadorRow, 'id' | 'user_id' | 'created_at' | 'updated_at'>>
+export type AmbassadorUpdate           = Partial<Omit<AmbassadorRow, 'id' | 'user_id' | 'created_at' | 'updated_at'>>
+export type AmbassadorCommissionUpdate = Partial<Omit<AmbassadorCommissionRow, 'id' | 'ambassador_id' | 'created_at'>>
+export type AmbassadorRewardUpdate     = Partial<Omit<AmbassadorRewardRow, 'id' | 'ambassador_id' | 'created_at'>>
+export type AmbassadorApplicationUpdate = Partial<Omit<AmbassadorApplicationRow, 'id' | 'created_at'>>
 export type NotificationUpdate = Partial<Omit<NotificationRow, 'id' | 'user_id' | 'created_at' | 'updated_at'>>
 
 // ─── Supabase Database type (used to type the client) ─────────
@@ -396,6 +459,24 @@ export interface Database {
         Row:           AmbassadorRow
         Insert:        AmbassadorInsert
         Update:        AmbassadorUpdate
+        Relationships: never[]
+      }
+      ambassador_commissions: {
+        Row:           AmbassadorCommissionRow
+        Insert:        AmbassadorCommissionInsert
+        Update:        AmbassadorCommissionUpdate
+        Relationships: never[]
+      }
+      ambassador_rewards: {
+        Row:           AmbassadorRewardRow
+        Insert:        AmbassadorRewardInsert
+        Update:        AmbassadorRewardUpdate
+        Relationships: never[]
+      }
+      ambassador_applications: {
+        Row:           AmbassadorApplicationRow
+        Insert:        AmbassadorApplicationInsert
+        Update:        AmbassadorApplicationUpdate
         Relationships: never[]
       }
       notifications: {
@@ -665,14 +746,6 @@ export type ContactMessageInsert = {
   email:   string
   subject: string
   message: string
-}
-
-export type AmbassadorApplicationInsert = {
-  name:       string
-  email:      string
-  university: string
-  instagram?: string
-  why_join:   string
 }
 
 // ─── Jobs ─────────────────────────────────────────────────────

@@ -126,6 +126,13 @@ export default function BookingModal(props: Props) {
   const [showSuccess,  setShowSuccess]  = useState(false)
   const [bookingRef,   setBookingRef]   = useState('')
 
+  const [referralOpen,       setReferralOpen]       = useState(false)
+  const [referralInput,      setReferralInput]      = useState('')
+  const [referralCode,       setReferralCode]       = useState('')
+  const [referralValid,      setReferralValid]      = useState<boolean | null>(null)
+  const [referralAmbassador, setReferralAmbassador] = useState<{ id: string; referral_code: string } | null>(null)
+  const [referralLoading,    setReferralLoading]    = useState(false)
+
   useEffect(() => {
     if (!open) return
     const supabase = createClient()
@@ -164,6 +171,21 @@ export default function BookingModal(props: Props) {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose() }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return
+    const params = new URLSearchParams(window.location.search)
+    const urlRef = params.get('ref')?.toUpperCase()
+    const saved  = localStorage.getItem('referral_code')
+    const code   = urlRef ?? saved ?? ''
+    if (code && !referralCode) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setReferralInput(code)
+      setReferralCode(code)
+      validateReferralCode(code)
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
@@ -283,6 +305,39 @@ export default function BookingModal(props: Props) {
     setPromoCode(''); setPromoUnit(null); setPromoLabel(''); setPromoInput(''); setPromoError('')
   }
 
+  async function validateReferralCode(code: string) {
+    if (!code || code.length < 3) { setReferralValid(null); return }
+    setReferralLoading(true)
+    try {
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('ambassadors')
+        .select('id, referral_code')
+        .eq('referral_code', code.toUpperCase())
+        .eq('status', 'active')
+        .single()
+      if (data) {
+        setReferralValid(true)
+        setReferralAmbassador(data)
+        setReferralCode(code.toUpperCase())
+        localStorage.setItem('referral_code', code.toUpperCase())
+      } else {
+        setReferralValid(false)
+        setReferralAmbassador(null)
+        setReferralCode('')
+      }
+    } catch {
+      setReferralValid(false)
+    } finally {
+      setReferralLoading(false)
+    }
+  }
+
+  function clearReferral() {
+    setReferralCode(''); setReferralInput(''); setReferralValid(null); setReferralAmbassador(null)
+    localStorage.removeItem('referral_code')
+  }
+
   function handleBook() {
     const isMultiTicket   = props.type === 'event' && !isFreePath && quantity > 1
     const ticketAttendees = isMultiTicket
@@ -327,8 +382,9 @@ export default function BookingModal(props: Props) {
           guestPhone: phone.trim() || undefined,
           ...(isMultiTicket    ? { attendees: ticketAttendees.map(a => ({ name: a.name.trim(), email: a.email.trim() })) } : {}),
           ...(props.type === 'trip' ? { attendees: tripAttendees.map(a => ({ name: a.name.trim(), email: a.email.trim() })) } : {}),
-          ...(tier      ? { tier }      : {}),
-          ...(promoCode ? { promoCode } : {}),
+          ...(tier                                       ? { tier }                                            : {}),
+          ...(promoCode                                  ? { promoCode }                                       : {}),
+          ...(referralValid && referralAmbassador        ? { referralCode, ambassadorId: referralAmbassador.id } : {}),
         }
 
         if (props.type === 'event') {
@@ -340,8 +396,12 @@ export default function BookingModal(props: Props) {
 
         const res  = await fetch('/api/stripe/create-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
         const data = await res.json()
-        if (data.url) router.push(data.url)
-        else setError(data.error ?? 'Something went wrong.')
+        if (data.url) {
+          localStorage.removeItem('referral_code')
+          router.push(data.url)
+        } else {
+          setError(data.error ?? 'Something went wrong.')
+        }
       } catch {
         setError('Network error. Please try again.')
       }
@@ -584,6 +644,52 @@ export default function BookingModal(props: Props) {
                     {promoLabel}
                   </div>
                   <button onClick={clearPromo} className="text-white/40 hover:text-white transition-colors">
+                    <X size={13} />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Referral code */}
+          {!isFree && (
+            <div>
+              {!referralCode ? (
+                <>
+                  <button onClick={() => setReferralOpen(o => !o)}
+                    className="flex items-center gap-1.5 text-white/40 hover:text-white/70 text-xs transition-colors"
+                  >
+                    <Tag size={12} />
+                    Have a referral code?
+                  </button>
+                  {referralOpen && (
+                    <div className="flex gap-2 mt-2">
+                      <input
+                        type="text"
+                        value={referralInput}
+                        onChange={e => { setReferralInput(e.target.value.toUpperCase()); setReferralValid(null) }}
+                        onKeyDown={e => e.key === 'Enter' && validateReferralCode(referralInput)}
+                        placeholder="e.g. SOFIA2026"
+                        className="flex-1 px-3 py-2 rounded-xl text-sm uppercase border border-white/10 bg-white/5 text-white placeholder:text-white/25 tracking-widest focus:outline-none focus:border-brand-primary/50 transition-colors"
+                      />
+                      <button onClick={() => validateReferralCode(referralInput)} disabled={referralLoading || !referralInput.trim()}
+                        className="px-4 py-2 rounded-xl text-sm font-medium bg-white/10 hover:bg-white/15 text-white transition-colors disabled:opacity-40"
+                      >
+                        {referralLoading ? <Loader2 size={14} className="animate-spin" /> : 'Apply'}
+                      </button>
+                    </div>
+                  )}
+                  {referralValid === false && (
+                    <p className="text-red-400 text-xs mt-1.5">Invalid referral code.</p>
+                  )}
+                </>
+              ) : (
+                <div className="flex items-center justify-between rounded-xl bg-green-500/10 border border-green-500/30 px-3 py-2">
+                  <div className="flex items-center gap-2 text-green-400 text-xs font-semibold">
+                    <Check size={13} />
+                    Referral code: {referralCode}
+                  </div>
+                  <button onClick={clearReferral} className="text-white/40 hover:text-white transition-colors">
                     <X size={13} />
                   </button>
                 </div>

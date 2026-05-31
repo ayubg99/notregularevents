@@ -564,3 +564,116 @@ export async function sendJobManagementEmail(params: JobManagementEmailParams) {
     console.error('[email job management] unexpected error:', err)
   }
 }
+
+// ─── Ambassador Emails ────────────────────────────────────────
+
+interface AmbassadorApprovalEmailParams {
+  to:             string
+  name:           string
+  referralCode:   string
+  referralLink:   string
+  commissionRate: number
+}
+
+export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmailParams) {
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+
+  const html = `
+    <div style="font-family:Inter,sans-serif;background:#1A1A2E;color:#fff;padding:40px;max-width:600px;margin:0 auto;">
+      <h1 style="color:#FF6B35;margin:0 0 4px;font-size:28px;">Erasmus Vibe</h1>
+      <p style="color:#888;margin:0 0 28px;font-size:13px;">Valencia · Ambassador Program</p>
+      <div style="background:rgba(245,166,35,0.1);border:1px solid #F5A623;border-radius:12px;padding:24px;margin:0 0 24px;text-align:center;">
+        <p style="font-size:40px;margin:0 0 12px;">🌟</p>
+        <h2 style="color:#F5A623;margin:0 0 8px;">You're an Ambassador!</h2>
+        <p style="color:#aaa;margin:0;">Welcome to the Erasmus Vibe Ambassador Program</p>
+      </div>
+      <p>Hi ${params.name.split(' ')[0]},</p>
+      <p>Congratulations! Your application has been approved. You're now an official Erasmus Vibe Ambassador in Valencia.</p>
+      <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:20px;margin:20px 0;">
+        <p style="margin:0 0 8px;color:#888;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;">Your Referral Code</p>
+        <p style="margin:0;font-size:28px;font-weight:700;color:#F5A623;font-family:monospace;letter-spacing:0.1em;">${params.referralCode}</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:20px;margin:20px 0;">
+        <p style="margin:0 0 8px;color:#888;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;">Your Referral Link</p>
+        <p style="margin:0;font-size:13px;color:#4ECDC4;word-break:break-all;">${params.referralLink}</p>
+      </div>
+      <h3 style="color:#fff;margin:24px 0 12px;">How it works</h3>
+      <ul style="color:#888;padding-left:20px;line-height:1.8;">
+        <li>Share your referral link with friends interested in Erasmus Valencia</li>
+        <li>When they book an event or trip using your code, you earn <strong style="color:#F5A623;">${params.commissionRate}% commission</strong></li>
+        <li>Track your earnings and referrals in your <a href="${baseUrl}/dashboard" style="color:#FF6B35;">dashboard</a></li>
+        <li>Hit milestones for bonus rewards (free tickets, membership upgrades, cash bonuses)</li>
+      </ul>
+      <a href="${baseUrl}/dashboard" style="display:block;margin:28px 0 0;padding:14px 28px;background:linear-gradient(135deg,#F5A623,#FF6B35);color:#1A1A0E;text-align:center;border-radius:50px;font-weight:700;font-size:15px;text-decoration:none;">
+        View Your Dashboard →
+      </a>
+      <p style="color:#555;font-size:13px;margin:24px 0 0;">Questions? DM us on Instagram @erasmus_vibe or reply to this email.</p>
+    </div>
+  `
+
+  try {
+    const { error } = await getResend().emails.send({
+      from,
+      to:      params.to,
+      subject: "🌟 You're an Erasmus Vibe Ambassador!",
+      html,
+    })
+    if (error) console.error('[email ambassador approval] send failed:', error)
+  } catch (err) {
+    console.error('[email ambassador approval] unexpected error:', err)
+  }
+}
+
+interface AmbassadorCommissionEmailParams {
+  to:             string
+  name:           string
+  commissionEarned: number
+  bookingTitle:   string
+  totalEarnings:  number
+}
+
+export async function sendAmbassadorCommissionEmail(params: AmbassadorCommissionEmailParams) {
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+
+  const html = `
+    <div style="font-family:Inter,sans-serif;background:#1A1A2E;color:#fff;padding:40px;max-width:600px;margin:0 auto;">
+      <h1 style="color:#FF6B35;margin:0 0 4px;font-size:28px;">Erasmus Vibe</h1>
+      <p style="color:#888;margin:0 0 28px;font-size:13px;">Valencia · Ambassador Program</p>
+      <div style="background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.4);border-radius:12px;padding:24px;margin:0 0 24px;text-align:center;">
+        <p style="font-size:36px;margin:0 0 8px;">💶</p>
+        <h2 style="color:#2ECC71;margin:0 0 4px;">You earned a commission!</h2>
+        <p style="color:#888;margin:0;font-size:14px;">${params.bookingTitle}</p>
+      </div>
+      <p>Hi ${params.name.split(' ')[0]},</p>
+      <p>Someone just booked using your referral code — congratulations!</p>
+      <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:20px;margin:20px 0;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+          <span style="color:#888;">This booking</span>
+          <span style="color:#2ECC71;font-weight:700;font-size:20px;">+€${params.commissionEarned.toFixed(2)}</span>
+        </div>
+        <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;display:flex;justify-content:space-between;">
+          <span style="color:#888;">Total earned</span>
+          <span style="color:#F5A623;font-weight:700;">€${params.totalEarnings.toFixed(2)}</span>
+        </div>
+      </div>
+      <a href="${baseUrl}/dashboard" style="display:block;margin:20px 0 0;padding:14px 28px;background:linear-gradient(135deg,#F5A623,#FF6B35);color:#1A1A0E;text-align:center;border-radius:50px;font-weight:700;font-size:15px;text-decoration:none;">
+        View Dashboard →
+      </a>
+      <p style="color:#555;font-size:13px;margin:24px 0 0;">Keep sharing your link to earn more. 🚀</p>
+    </div>
+  `
+
+  try {
+    const { error } = await getResend().emails.send({
+      from,
+      to:      params.to,
+      subject: `💶 You earned €${params.commissionEarned.toFixed(2)} commission!`,
+      html,
+    })
+    if (error) console.error('[email ambassador commission] send failed:', error)
+  } catch (err) {
+    console.error('[email ambassador commission] unexpected error:', err)
+  }
+}

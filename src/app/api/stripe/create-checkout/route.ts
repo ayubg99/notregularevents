@@ -20,6 +20,8 @@ interface Body {
   guestEmail?: string
   guestPhone?: string
   attendees?:  { name: string; email: string }[]
+  referralCode?: string
+  ambassadorId?: string
   // job listing specific
   basePlan?:   'standard' | 'featured' | 'employer_plan'
   withUrgent?: boolean
@@ -79,7 +81,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
   const { data: { user } } = await supabase.auth.getUser()
 
   const body: Body = await request.json()
-  const { type, itemId, tier, quantity = 1, groupSize, promoCode, guestName, guestEmail, guestPhone, attendees } = body
+  const { type, itemId, tier, quantity = 1, groupSize, promoCode, guestName, guestEmail, guestPhone, attendees, referralCode, ambassadorId } = body
 
   console.log('[create-checkout]', { type, itemId, tier, quantity, hasUser: !!user })
 
@@ -239,17 +241,19 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  cancelUrl,
       metadata: {
-        type:        'event',
-        item_id:     event.id,
-        user_id:     user?.id     ?? '',
-        quantity:    String(quantity),
-        guest_name:  guestName    ?? '',
-        guest_email: guestEmail   ?? '',
-        guest_phone: guestPhone   ?? '',
-        event_title: event.title,
-        event_date:  event.date   ?? '',
-        location:    event.location ?? '',
-        attendees:   JSON.stringify(attendees ?? []),
+        type:          'event',
+        item_id:       event.id,
+        user_id:       user?.id      ?? '',
+        quantity:      String(quantity),
+        guest_name:    guestName     ?? '',
+        guest_email:   guestEmail    ?? '',
+        guest_phone:   guestPhone    ?? '',
+        event_title:   event.title,
+        event_date:    event.date    ?? '',
+        location:      event.location ?? '',
+        attendees:     JSON.stringify(attendees ?? []),
+        referral_code: referralCode  ?? '',
+        ambassador_id: ambassadorId  ?? '',
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
     })
@@ -386,6 +390,8 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
         destination:        trip.destination ?? '',
         whatsapp_group_url: trip.whatsapp_group_url ?? '',
         attendees:          JSON.stringify(attendees ?? []),
+        referral_code:      referralCode    ?? '',
+        ambassador_id:      ambassadorId    ?? '',
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
     })

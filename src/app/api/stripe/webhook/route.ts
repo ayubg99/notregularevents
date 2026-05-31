@@ -628,10 +628,87 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
   }
 
+  // ── Ambassador commission ────────────────────────────────────
+  if ((type === 'event' || type === 'trip') && meta.ambassador_id && meta.referral_code) {
+    await recordAmbassadorCommission(admin, meta, amountPaid, type)
+  }
+
   // ── Decrement promo code uses ────────────────────────────────
   if (meta.promo_code_id) {
     await admin.rpc('decrement_promo_uses', { p_id: meta.promo_code_id })
   }
+}
+
+async function checkMilestones(admin: ReturnType<typeof getAdminClient>, ambassadorId: string, totalReferrals: number) {
+  const milestones = [
+    { count: 5,  type: 'free_ticket'        as const, desc: 'Free ticket — 5 referrals!',             value: 1    },
+    { count: 10, type: 'membership_upgrade' as const, desc: 'Free membership upgrade — 10 referrals!', value: 9.99 },
+    { count: 25, type: 'cash_bonus'         as const, desc: '€50 cash bonus — 25 referrals!',          value: 50   },
+    { count: 50, type: 'cash_bonus'         as const, desc: '€150 cash bonus — 50 referrals!',         value: 150  },
+  ]
+  const milestone = milestones.find(m => m.count === totalReferrals)
+  if (!milestone) return
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (admin as any).from('ambassador_rewards').insert({
+    ambassador_id: ambassadorId,
+    reward_type:   milestone.type,
+    description:   milestone.desc,
+    value:         milestone.value,
+    status:        'pending',
+    expires_at:    new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+  })
+}
+
+async function recordAmbassadorCommission(
+  admin: ReturnType<typeof getAdminClient>,
+  meta: Record<string, string>,
+  amountPaid: number,
+  bookingType: 'event' | 'trip',
+) {
+  const ambassadorId = meta.ambassador_id
+  const referralCode = meta.referral_code
+  if (!ambassadorId || !referralCode) return
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: ambassador } = await (admin as any)
+    .from('ambassadors')
+    .select('commission_rate, total_referrals, total_earnings, pending_earnings')
+    .eq('id', ambassadorId)
+    .single()
+
+  if (!ambassador) {
+    console.error('[webhook] ambassador not found for commission:', ambassadorId)
+    return
+  }
+
+  const rate             = (ambassador.commission_rate as number) ?? 5
+  const commissionEarned = +((amountPaid * rate) / 100).toFixed(2)
+  const newReferrals     = ((ambassador.total_referrals as number) ?? 0) + 1
+  const newEarnings      = +(((ambassador.total_earnings  as number) ?? 0) + commissionEarned).toFixed(2)
+  const newPending       = +(((ambassador.pending_earnings as number) ?? 0) + commissionEarned).toFixed(2)
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (admin as any).from('ambassador_commissions').insert({
+    ambassador_id:     ambassadorId,
+    booking_type:      bookingType,
+    booking_ref:       meta.booking_ref || null,
+    event_title:       meta.event_title || meta.trip_title || null,
+    amount_paid:       amountPaid,
+    commission_rate:   rate,
+    commission_earned: commissionEarned,
+    status:            'pending',
+  })
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (admin as any)
+    .from('ambassadors')
+    .update({ total_referrals: newReferrals, total_earnings: newEarnings, pending_earnings: newPending })
+    .eq('id', ambassadorId)
+
+  await checkMilestones(admin, ambassadorId, newReferrals)
+
+  console.log(`✅ Ambassador commission: €${commissionEarned} → ${ambassadorId}`)
 }
 
 async function handleSubscriptionChange(
