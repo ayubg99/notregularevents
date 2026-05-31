@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Pencil, Trash2, X, Tag } from 'lucide-react'
 import DataTable from '@/components/admin/DataTable'
-import type { PromoCodeRow, PromoCodeInsert, PromoCodeUpdate, DiscountType } from '@/types/database'
+import type { PromoCodeRow, PromoCodeInsert, PromoCodeUpdate, DiscountType, PromoAppliesTo } from '@/types/database'
 
 type PromoTableRow = PromoCodeRow & Record<string, unknown>
 type PromoStatus   = 'active' | 'expired' | 'exhausted'
@@ -13,6 +13,7 @@ interface FormState {
   code:           string
   discount_type:  DiscountType
   discount_value: string
+  applies_to:     PromoAppliesTo
   uses_limited:   boolean
   uses_remaining: string
   has_expiry:     boolean
@@ -23,6 +24,7 @@ const defaultForm = (): FormState => ({
   code:           '',
   discount_type:  'percentage',
   discount_value: '',
+  applies_to:     'both',
   uses_limited:   false,
   uses_remaining: '',
   has_expiry:     false,
@@ -109,6 +111,7 @@ export default function PromoCodesClient({ promoCodes }: Props) {
       code:           row.code,
       discount_type:  row.discount_type,
       discount_value: String(row.discount_value),
+      applies_to:     row.applies_to ?? 'both',
       uses_limited:   row.uses_remaining !== null,
       uses_remaining: row.uses_remaining !== null ? String(row.uses_remaining) : '',
       has_expiry:     row.expires_at !== null,
@@ -142,6 +145,7 @@ export default function PromoCodesClient({ promoCodes }: Props) {
       code,
       discount_type:  form.discount_type,
       discount_value: value,
+      applies_to:     form.applies_to,
       uses_remaining: form.uses_limited ? parseInt(form.uses_remaining, 10) : null,
       expires_at:     form.has_expiry && form.expires_at
                         ? new Date(form.expires_at).toISOString()
@@ -209,6 +213,16 @@ export default function PromoCodesClient({ promoCodes }: Props) {
       render: (row) => row.discount_type === 'percentage'
         ? `${row.discount_value}%`
         : `€${Number(row.discount_value).toFixed(2)}`,
+    },
+    {
+      key:    'applies_to',
+      header: 'Applies To',
+      render: (row) => {
+        const val = (row.applies_to as PromoAppliesTo) ?? 'both'
+        const label = val === 'both' ? 'Events & Trips' : val === 'events' ? 'Events only' : 'Trips only'
+        const color = val === 'both' ? '#888' : val === 'events' ? '#4ECDC4' : '#F5A623'
+        return <span style={{ color, fontSize: '12px', fontWeight: 600 }}>{label}</span>
+      },
     },
     {
       key:    'uses_remaining',
@@ -368,6 +382,23 @@ export default function PromoCodesClient({ promoCodes }: Props) {
                     placeholder={form.discount_type === 'percentage' ? '10' : '5'}
                     className={inputClass}
                   />
+                </div>
+              </div>
+
+              {/* Applies to */}
+              <div>
+                <label className={labelClass}>Applies To *</label>
+                <div className="flex rounded-xl bg-white/5 border border-white/10 p-0.5">
+                  {(['both', 'events', 'trips'] as PromoAppliesTo[]).map(opt => (
+                    <button
+                      key={opt}
+                      type="button"
+                      onClick={() => setForm(f => ({ ...f, applies_to: opt }))}
+                      className={`flex-1 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${toggleClass(form.applies_to === opt)}`}
+                    >
+                      {opt === 'both' ? 'Events & Trips' : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    </button>
+                  ))}
                 </div>
               </div>
 

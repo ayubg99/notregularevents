@@ -172,11 +172,14 @@ export type MembershipRow = {
   updated_at:             string
 }
 
+export type PromoAppliesTo = 'events' | 'trips' | 'both'
+
 export type PromoCodeRow = {
   id:             string
   code:           string
   discount_type:  DiscountType
   discount_value: number
+  applies_to:     PromoAppliesTo
   uses_remaining: number | null
   expires_at:     string | null
   created_at:     string

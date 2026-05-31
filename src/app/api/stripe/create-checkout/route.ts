@@ -145,9 +145,13 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       .single()
 
     if (promo) {
-      promoCodeId = promo.id
-      discountType = promo.discount_type
-      discountValue = promo.discount_value
+      const appliesTo = promo.applies_to ?? 'both'
+      const validFor  = appliesTo === 'both' || (type === 'event' && appliesTo === 'events') || (type === 'trip' && appliesTo === 'trips')
+      if (validFor) {
+        promoCodeId   = promo.id
+        discountType  = promo.discount_type
+        discountValue = promo.discount_value
+      }
     }
   }
 

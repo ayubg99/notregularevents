@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
   const code     = searchParams.get('code')
   const price    = parseFloat(searchParams.get('price') ?? '0')
   const quantity = parseInt(searchParams.get('quantity') ?? '1', 10)
+  const itemType = searchParams.get('itemType') // 'event' | 'trip'
 
   if (!code) {
     return NextResponse.json({ valid: false, error: 'No code provided.' }, { status: 400 })
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest) {
 
   const { data: promo } = await supabase
     .from('promo_codes')
-    .select('id, discount_type, discount_value, expires_at, uses_remaining')
+    .select('id, discount_type, discount_value, applies_to, expires_at, uses_remaining')
     .ilike('code', code)
     .single()
 
@@ -37,6 +38,14 @@ export async function GET(request: NextRequest) {
 
   if (promo.uses_remaining !== null && promo.uses_remaining <= 0) {
     return NextResponse.json({ valid: false, error: 'This promo code has no uses remaining.' })
+  }
+
+  if (itemType && promo.applies_to !== 'both') {
+    const allowed = promo.applies_to === 'events' ? 'event' : 'trip'
+    if (itemType !== allowed) {
+      const label = promo.applies_to === 'events' ? 'events' : 'trips'
+      return NextResponse.json({ valid: false, error: `This promo code is only valid for ${label}.` })
+    }
   }
 
   const unitPrice = promo.discount_type === 'percentage'

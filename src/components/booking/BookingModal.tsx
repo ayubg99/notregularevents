@@ -287,7 +287,8 @@ export default function BookingModal(props: Props) {
     if (!promoInput.trim()) return
     setPromoLoading(true); setPromoError('')
     try {
-      const res  = await fetch(`/api/stripe/validate-promo?code=${encodeURIComponent(promoInput)}&price=${basePrice}&quantity=${effectiveQty}`)
+      const itemType = props.type === 'event' ? 'event' : 'trip'
+      const res  = await fetch(`/api/stripe/validate-promo?code=${encodeURIComponent(promoInput)}&price=${basePrice}&quantity=${effectiveQty}&itemType=${itemType}`)
       const data = await res.json()
       if (data.valid) {
         setPromoCode(promoInput.trim()); setPromoUnit(data.discountedUnit); setPromoLabel(data.discountLabel); setPromoError('')
