@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { ContactSection } from '@/components/marketplace/ContactSection'
+import PhotoGallery from '@/components/marketplace/PhotoGallery'
 import { CATEGORIES, CONDITIONS } from '@/lib/marketplace'
 import type { MarketplaceListingRow } from '@/types/database'
 
@@ -34,7 +35,6 @@ export default async function MarketplaceDetailPage({
 
   const cat       = CATEGORIES.find(c => c.id === listing.category)
   const condition = CONDITIONS.find(c => c.id === listing.condition)
-  const firstPhoto = listing.photos?.[0]
 
   return (
     <main className="min-h-screen pt-24 pb-28 px-4">
@@ -112,42 +112,11 @@ export default async function MarketplaceDetailPage({
           {/* LEFT column — main content */}
           <div>
             {/* Photo gallery */}
-            <div style={{
-              borderRadius:  '16px',
-              overflow:      'hidden',
-              marginBottom:  '20px',
-              background:    'linear-gradient(135deg, #4ECDC4, #2ECC71)',
-              height:        '320px',
-              display:       'flex',
-              alignItems:    'center',
-              justifyContent:'center',
-            }}>
-              {firstPhoto ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={firstPhoto}
-                  alt={listing.title}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              ) : (
-                <span style={{ fontSize: '80px' }}>{cat?.emoji ?? '📦'}</span>
-              )}
-            </div>
-
-            {/* Thumbnails */}
-            {listing.photos?.length > 1 && (
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', overflowX: 'auto' }}>
-                {listing.photos.map((photo, i) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    key={i}
-                    src={photo}
-                    alt={`Photo ${i + 1}`}
-                    style={{ width: '72px', height: '72px', objectFit: 'cover', borderRadius: '8px', flexShrink: 0, border: i === 0 ? '2px solid #4ECDC4' : '2px solid transparent' }}
-                  />
-                ))}
-              </div>
-            )}
+            <PhotoGallery
+              photos={listing.photos ?? []}
+              title={listing.title}
+              catEmoji={cat?.emoji ?? '📦'}
+            />
 
             {/* Title & price */}
             <h1 style={{ color: '#fff', fontSize: '24px', fontWeight: 700, margin: '0 0 8px' }}>
