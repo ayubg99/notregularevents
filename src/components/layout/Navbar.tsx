@@ -178,13 +178,13 @@ export default function Navbar() {
       {/* ── Mobile full-screen menu ───────────────────────────────── */}
       <div
         className={`
-          fixed inset-0 z-40 glass-dark flex flex-col items-center justify-center gap-2 md:hidden
+          fixed inset-0 z-40 glass-dark flex flex-col items-center justify-center gap-2 md:hidden overflow-y-auto
           transition-opacity duration-200
           ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
         `}
       >
         {/* Nav links with CSS stagger */}
-        <nav className="flex flex-col items-center gap-6">
+        <nav className="flex flex-col items-center gap-3 py-8">
           {NAV_HREFS.map((link, i) => (
             <div
               key={`${menuKey}-${link.href}`}
@@ -195,7 +195,7 @@ export default function Navbar() {
               <Link
                 href={link.href}
                 onClick={closeMenu}
-                className="font-heading text-4xl font-bold text-white hover:text-brand-primary transition-colors duration-200"
+                className="font-heading text-2xl font-bold text-white hover:text-brand-primary transition-colors duration-200"
               >
                 {t(link.key)}
               </Link>
@@ -206,7 +206,7 @@ export default function Navbar() {
         {/* CTA + theme toggle */}
         <div
           key={`${menuKey}-cta`}
-          className="flex flex-col items-center gap-5 mt-10"
+          className="flex flex-col items-center gap-4 mb-8"
           style={isMenuOpen ? {
             animation: `menuItemIn 0.3s ease-out ${0.05 + NAV_HREFS.length * 0.07}s both`,
           } : undefined}
@@ -216,7 +216,7 @@ export default function Navbar() {
               <Link
                 href={authUser.user_metadata?.role === 'employer' ? '/employer/dashboard' : '/dashboard'}
                 onClick={closeMenu}
-                className="flex items-center gap-2 px-10 py-4 bg-white/10 text-white font-semibold text-lg rounded-full active:brightness-90 transition-all"
+                className="flex items-center gap-2 px-8 py-3 bg-white/10 text-white font-semibold text-base rounded-full active:brightness-90 transition-all"
               >
                 <LayoutDashboard size={20} />
                 {authUser.user_metadata?.role === 'employer' ? 'My Listings' : t('dashboard')}
@@ -234,7 +234,7 @@ export default function Navbar() {
               <Link
                 href="/auth/register"
                 onClick={closeMenu}
-                className="flex items-center gap-2 px-10 py-4 btn-primary text-lg"
+                className="flex items-center gap-2 px-8 py-3 btn-primary text-base"
               >
                 {t('joinNow')}
                 <ChevronRight size={18} strokeWidth={2.5} />
