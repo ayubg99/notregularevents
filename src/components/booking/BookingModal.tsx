@@ -193,12 +193,15 @@ export default function BookingModal(props: Props) {
     const params = new URLSearchParams(window.location.search)
     const urlRef = params.get('ref')?.toUpperCase()
     const saved  = localStorage.getItem('referral_code')
-    const code   = urlRef ?? saved ?? ''
-    if (code && !referralCode) {
+    if (urlRef && !referralCode) {
+      // URL param = live referral link → auto-validate
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setReferralInput(code)
-      setReferralCode(code)
-      validateReferralCode(code)
+      setReferralInput(urlRef)
+      setReferralCode(urlRef)
+      validateReferralCode(urlRef)
+    } else if (saved && !referralCode) {
+      // localStorage = stale code → just pre-fill, don't auto-validate
+      setReferralInput(saved)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
@@ -238,14 +241,13 @@ export default function BookingModal(props: Props) {
     spotsLeft = props.seatsLeft
   }
 
-  const tripExtras      = props.type === 'trip' ? (props.selectedExtras ?? []) : []
-  const extrasTotal     = tripExtras.reduce((s, e) => s + e.price, 0)
+  const tripExtras  = props.type === 'trip' ? (props.selectedExtras ?? []) : []
 
   let displayPrice = promoUnit ?? basePrice
   if (isMember && !promoCode) displayPrice = +(displayPrice * 0.90).toFixed(2)
 
   const hasDiscount = isMember && !promoCode && basePrice > 0
-  const isFree      = displayPrice === 0 && extrasTotal === 0
+  const isFree      = displayPrice === 0 && tripExtras.reduce((s, e) => s + e.price, 0) === 0
   const isFreePath  = hasCustomTiers
     ? (ep?.ticketTiers?.[selectedTierIdx]?.price ?? 0) === 0
     : props.type === 'event' && !!(props.isFree || props.price === 0 || (props.isMembersOnlyFree && isMember))
@@ -259,6 +261,7 @@ export default function BookingModal(props: Props) {
     ? props.groupSize
     : quantity
 
+  const extrasTotal = tripExtras.reduce((s, e) => s + e.price, 0) * effectiveQty
   const total = displayPrice * effectiveQty
 
   // Trip tier prices for the compact selector (only valid tiers)

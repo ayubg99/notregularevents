@@ -336,7 +336,8 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       unitPrice = applyDiscount(unitPrice, 'percentage', 10)
     }
 
-    const extrasTotal = (selectedExtras ?? []).reduce((s, e) => s + e.price, 0)
+    const tripGroupSize0 = tier === 'group' ? (groupSize ?? 1) : 1
+    const extrasTotal = (selectedExtras ?? []).reduce((s, e) => s + e.price, 0) * tripGroupSize0
 
     const cancelUrl = `${baseUrl}/trips/${trip.slug}`
     const toEmail = guestEmail ?? user?.email
@@ -408,7 +409,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
           },
         },
         ...extrasItems.map(e => ({
-          quantity: 1,
+          quantity: tripGroupSize,
           price_data: {
             currency:     'eur' as const,
             unit_amount:  Math.round(e.price * 100),
