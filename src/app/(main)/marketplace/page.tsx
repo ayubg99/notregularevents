@@ -43,52 +43,55 @@ export default async function MarketplacePage() {
 
         {/* Hero banner */}
         <div style={{
-          background:    'linear-gradient(135deg, #4ECDC4 0%, #2ECC71 100%)',
-          borderRadius:  '20px',
-          padding:       '48px 32px',
-          marginBottom:  '32px',
-          position:      'relative',
-          overflow:      'hidden',
+          background:   'linear-gradient(135deg, #1A1A2E 0%, #2D1B00 100%)',
+          border:       '1px solid rgba(255,107,53,0.2)',
+          borderRadius: '20px',
+          padding:      '48px 32px',
+          marginBottom: '32px',
+          position:     'relative',
+          overflow:     'hidden',
+          boxShadow:    '0 0 60px rgba(255,107,53,0.06)',
         }}>
-          <div style={{ position: 'absolute', top: '-40px', right: '-40px', width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
-          <div style={{ position: 'absolute', bottom: '-30px', left: '20%', width: '120px', height: '120px', borderRadius: '50%', background: 'rgba(255,255,255,0.07)' }} />
+          {/* Decorative orbs */}
+          <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '240px', height: '240px', borderRadius: '50%', background: 'rgba(255,107,53,0.08)', filter: 'blur(40px)' }} />
+          <div style={{ position: 'absolute', bottom: '-40px', left: '10%', width: '160px', height: '160px', borderRadius: '50%', background: 'rgba(245,166,35,0.07)', filter: 'blur(30px)' }} />
 
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', margin: '0 0 8px' }}>
+            <p style={{ color: '#FF6B35', fontSize: '12px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', margin: '0 0 10px' }}>
               Erasmus Vibe
             </p>
             <h1 style={{ color: '#fff', fontSize: '32px', fontWeight: 800, margin: '0 0 8px', lineHeight: 1.1 }}>
-              Student Marketplace 🛍️
+              Student Marketplace
             </h1>
-            <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '15px', margin: '0 0 24px', maxWidth: '500px' }}>
+            <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '15px', margin: '0 0 28px', maxWidth: '500px' }}>
               Buy and sell with Erasmus students. Free to list. Members see contacts.
             </p>
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
               <Link
                 href="/marketplace/post"
                 style={{
                   display:        'inline-block',
-                  background:     '#fff',
-                  color:          '#2ECC71',
+                  background:     'linear-gradient(135deg, #FF6B35, #F5A623)',
+                  color:          '#1A1A0E',
                   padding:        '12px 24px',
                   borderRadius:   '50px',
                   textDecoration: 'none',
                   fontWeight:     700,
                   fontSize:       '14px',
-                  boxShadow:      '0 4px 16px rgba(0,0,0,0.15)',
+                  boxShadow:      '0 4px 20px rgba(255,107,53,0.3)',
                 }}
               >
                 + Sell Something
               </Link>
-              <div style={{ display: 'flex', gap: '20px' }}>
+              <div style={{ display: 'flex', gap: '24px' }}>
                 {[
                   { value: 'Free', label: 'To list' },
                   { value: '15+',  label: 'Categories' },
                   { value: '0%',   label: 'Commission' },
                 ].map(stat => (
                   <div key={stat.label}>
-                    <p style={{ color: '#fff', fontSize: '20px', fontWeight: 800, margin: '0 0 2px', lineHeight: 1 }}>{stat.value}</p>
-                    <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '12px', margin: 0 }}>{stat.label}</p>
+                    <p style={{ color: '#F5A623', fontSize: '20px', fontWeight: 800, margin: '0 0 2px', lineHeight: 1 }}>{stat.value}</p>
+                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', margin: 0 }}>{stat.label}</p>
                   </div>
                 ))}
               </div>
