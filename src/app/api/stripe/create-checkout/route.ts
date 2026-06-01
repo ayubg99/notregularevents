@@ -6,6 +6,7 @@ import { generateQR } from '@/lib/qr'
 import { nanoid } from 'nanoid'
 import { sendBookingConfirmation } from '@/lib/email'
 import type { MembershipPlan, TripTier } from '@/types/database'
+import { tierDefaults } from '@/types/database'
 
 type CheckoutType = 'event' | 'trip' | 'membership' | 'job_listing' | 'employer_subscription' | 'job_upgrade'
 
@@ -178,10 +179,71 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
     }
 
     // Resolve price — custom tiers take priority over early_bird/group
-    const eventTiers = event.ticket_tiers as { name: string; price: number; description: string }[] | null
-    const customTier = (eventTiers?.length && ticketTierIdx !== undefined)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const eventTiers = event.ticket_tiers as any[] | null
+    const customTierRaw = (eventTiers?.length && ticketTierIdx !== undefined)
       ? eventTiers[ticketTierIdx]
       : null
+    const customTier = customTierRaw ? tierDefaults(customTierRaw) : null
+
+    // ── Per-tier constraint validation ───────────────────────────
+    if (customTier) {
+      // Members-only gate
+      if (customTier.members_only && !memberDiscount) {
+        return NextResponse.json({ error: 'This ticket tier is for members only. Upgrade your membership to access it.' }, { status: 403 })
+      }
+
+      // Min group size
+      if (customTier.min_group_size && quantity < customTier.min_group_size) {
+        return NextResponse.json({ error: `This tier requires a minimum of ${customTier.min_group_size} people. Please increase your quantity.` }, { status: 400 })
+      }
+
+      // Time gate — valid_until_time "HH:MM"; times < "12:00" treated as next calendar day
+      if (customTier.valid_until_time && event.date) {
+        const [hh, mm]    = customTier.valid_until_time.split(':').map(Number)
+        const eventDay    = new Date(event.date)
+        const cutoff      = new Date(eventDay)
+        cutoff.setHours(hh, mm, 0, 0)
+        // If the cutoff hour is before noon, assume it wraps to the next calendar day
+        if (hh < 12) cutoff.setDate(cutoff.getDate() + 1)
+        if (new Date() > cutoff) {
+          return NextResponse.json({ error: 'This ticket tier is no longer available.' }, { status: 400 })
+        }
+      }
+
+      // activates_after — only available once the prerequisite tier is sold out
+      if (customTier.activates_after) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const prereqRaw = eventTiers?.find((t: any) => tierDefaults(t).id === customTier.activates_after)
+        if (prereqRaw) {
+          const prereq = tierDefaults(prereqRaw)
+          if (prereq.seats !== null) {
+            const { count } = await supabase
+              .from('event_tickets')
+              .select('id', { count: 'exact', head: true })
+              .eq('event_id', event.id)
+              .eq('ticket_tier_name', prereq.name)
+              .not('status', 'in', '("cancelled","refunded")')
+            if ((count ?? 0) < prereq.seats) {
+              return NextResponse.json({ error: 'This ticket tier is not yet available.' }, { status: 400 })
+            }
+          }
+        }
+      }
+
+      // Per-tier seat limit
+      if (customTier.seats !== null) {
+        const { count } = await supabase
+          .from('event_tickets')
+          .select('id', { count: 'exact', head: true })
+          .eq('event_id', event.id)
+          .eq('ticket_tier_name', customTier.name)
+          .not('status', 'in', '("cancelled","refunded")')
+        if ((count ?? 0) + quantity > customTier.seats) {
+          return NextResponse.json({ error: 'This ticket tier has sold out.' }, { status: 409 })
+        }
+      }
+    }
 
     const isEbValid =
       tier === 'early_bird' &&
@@ -221,6 +283,9 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
         guest_email:       guestEmail ?? null,
         guest_phone:       guestPhone ?? null,
         status:            'active' as const,
+        ticket_tier_name:  customTier?.name ?? null,
+        promo_code_used:   promoCode ?? null,
+        referral_code:     referralCode ?? null,
       }))
       const { error } = await supabase.from('event_tickets').insert(tickets)
       if (error) {

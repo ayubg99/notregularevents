@@ -10,6 +10,7 @@ import MultiImageUpload from '@/components/admin/MultiImageUpload'
 import { createClient } from '@/lib/supabase/client'
 import { createEvent, updateEvent, deleteEvent, duplicateEvent } from '@/app/actions/admin'
 import type { EventRow, EventInsert, EventCategory, EventStatus, EventTicketTier } from '@/types/database'
+import { tierDefaults } from '@/types/database'
 
 const CATEGORIES: EventCategory[] = ['party', 'cultural', 'sport', 'networking', 'trip', 'other']
 const STATUS_COLORS: Record<string, string> = {
@@ -100,7 +101,7 @@ export default function EventsManager({ initialEvents }: Props) {
     setGroupEnabled(event.price_group != null)
     setEventPricing(event.members_only_free ? 'free_members' : event.is_free ? 'free_all' : 'paid')
     setGalleryImages(event.gallery_images ?? [])
-    setTicketTiers(event.ticket_tiers ?? [])
+    setTicketTiers((event.ticket_tiers ?? []).map(tierDefaults))
     setForm({
       title:               event.title,
       slug:                event.slug,
@@ -531,51 +532,123 @@ export default function EventsManager({ initialEvents }: Props) {
               {/* Ticket Tiers */}
               <Section title="Ticket Tiers (optional — replaces standard pricing)">
                 <p className="text-white/30 text-xs -mt-1">
-                  If set, users pick from these tiers on the event page. Price 0 = free (no Stripe fee).
+                  If set, users pick from these tiers on the event page. Price 0 = free (no Stripe fee). Tier names must be unique.
                 </p>
-                <div className="flex flex-col gap-3">
-                  {ticketTiers.map((tier, i) => (
-                    <div key={i} className="rounded-xl border border-white/10 bg-white/3 p-3 flex flex-col gap-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold text-white/40">Tier {i + 1}</span>
-                        <button type="button" onClick={() => setTicketTiers(tt => tt.filter((_, j) => j !== i))} className="text-white/20 hover:text-red-400 transition-colors">
-                          <MinusCircle size={14} />
-                        </button>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="col-span-2">
-                          <input
-                            type="text"
-                            value={tier.name}
-                            onChange={e => setTicketTiers(tt => tt.map((t, j) => j === i ? { ...t, name: e.target.value } : t))}
-                            className={inputClass}
-                            placeholder="e.g. Free Entry, Drinks Package"
-                          />
+                <div className="flex flex-col gap-4">
+                  {ticketTiers.map((rawTier, i) => {
+                    const tier = tierDefaults(rawTier)
+                    const update = (patch: Partial<EventTicketTier>) =>
+                      setTicketTiers(tt => tt.map((t, j) => j === i ? { ...tierDefaults(t), ...patch } : t))
+                    const otherTiers = ticketTiers
+                      .map((t, j) => j !== i ? tierDefaults(t) : null)
+                      .filter(Boolean) as EventTicketTier[]
+                    return (
+                      <div key={i} className="rounded-xl border border-white/10 bg-white/3 p-4 flex flex-col gap-3">
+                        {/* Header */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-white/40">Tier {i + 1}</span>
+                          <button type="button" onClick={() => setTicketTiers(tt => tt.filter((_, j) => j !== i))} className="text-white/20 hover:text-red-400 transition-colors">
+                            <MinusCircle size={14} />
+                          </button>
                         </div>
+
+                        {/* Name + Price */}
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="col-span-2">
+                            <input type="text" value={tier.name}
+                              onChange={e => update({ name: e.target.value })}
+                              className={inputClass} placeholder="e.g. Free Entry, Guestlist, VIP Table" />
+                          </div>
+                          <div>
+                            <input type="number" min="0" step="0.01" value={tier.price}
+                              onChange={e => update({ price: parseFloat(e.target.value) || 0 })}
+                              className={inputClass} placeholder="€ price" />
+                          </div>
+                        </div>
+
+                        {/* Description */}
+                        <input type="text" value={tier.description}
+                          onChange={e => update({ description: e.target.value })}
+                          className={inputClass} placeholder="Short description" />
+
+                        {/* Seats + Min group size + Valid until */}
+                        <div className="grid grid-cols-3 gap-2">
+                          <div>
+                            <label className="text-[10px] text-white/30 uppercase tracking-wider block mb-1">Seats limit</label>
+                            <input type="number" min="1" value={tier.seats ?? ''}
+                              onChange={e => update({ seats: e.target.value ? parseInt(e.target.value) : null })}
+                              className={inputClass} placeholder="Unlimited" />
+                          </div>
+                          <div>
+                            <label className="text-[10px] text-white/30 uppercase tracking-wider block mb-1">Min group size</label>
+                            <input type="number" min="2" max="50" value={tier.min_group_size ?? ''}
+                              onChange={e => update({ min_group_size: e.target.value ? parseInt(e.target.value) : null })}
+                              className={inputClass} placeholder="None" />
+                          </div>
+                          <div>
+                            <label className="text-[10px] text-white/30 uppercase tracking-wider block mb-1">Valid until (HH:MM)</label>
+                            <input type="time" value={tier.valid_until_time ?? ''}
+                              onChange={e => update({ valid_until_time: e.target.value || null })}
+                              className={inputClass} />
+                          </div>
+                        </div>
+
+                        {/* Members only + Activates after */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <button type="button"
+                            onClick={() => update({ members_only: !tier.members_only })}
+                            className={`flex items-center justify-between px-3 py-2 rounded-lg border text-xs font-medium transition-all ${
+                              tier.members_only
+                                ? 'border-purple-500/40 bg-purple-500/10 text-purple-300'
+                                : 'border-white/10 bg-white/3 text-white/40 hover:border-white/20'
+                            }`}
+                          >
+                            <span>Members only</span>
+                            <span>{tier.members_only ? '✓' : '○'}</span>
+                          </button>
+                          <div>
+                            <select
+                              value={tier.activates_after ?? ''}
+                              onChange={e => update({ activates_after: e.target.value || null })}
+                              className={`${inputClass} text-xs`}
+                            >
+                              <option value="">Always visible</option>
+                              {otherTiers.filter(t => t.name.trim()).map(t => (
+                                <option key={t.id} value={t.id}>After &quot;{t.name}&quot; sells out</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* Benefits */}
                         <div>
-                          <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={tier.price}
-                            onChange={e => setTicketTiers(tt => tt.map((t, j) => j === i ? { ...t, price: parseFloat(e.target.value) || 0 } : t))}
-                            className={inputClass}
-                            placeholder="€ price"
-                          />
+                          <label className="text-[10px] text-white/30 uppercase tracking-wider block mb-1.5">Benefits (shown as checkmarks)</label>
+                          <div className="flex flex-col gap-1.5">
+                            {(tier.benefits ?? []).map((benefit, bi) => (
+                              <div key={bi} className="flex items-center gap-2">
+                                <input type="text" value={benefit}
+                                  onChange={e => update({ benefits: tier.benefits.map((b, bj) => bj === bi ? e.target.value : b) })}
+                                  className={`${inputClass} flex-1`} placeholder="e.g. Welcome drink" />
+                                <button type="button"
+                                  onClick={() => update({ benefits: tier.benefits.filter((_, bj) => bj !== bi) })}
+                                  className="text-white/20 hover:text-red-400 transition-colors flex-shrink-0">
+                                  <MinusCircle size={13} />
+                                </button>
+                              </div>
+                            ))}
+                            <button type="button"
+                              onClick={() => update({ benefits: [...(tier.benefits ?? []), ''] })}
+                              className="flex items-center gap-1 text-[11px] text-white/30 hover:text-white/60 transition-colors self-start">
+                              <PlusCircle size={12} /> Add benefit
+                            </button>
+                          </div>
                         </div>
                       </div>
-                      <input
-                        type="text"
-                        value={tier.description}
-                        onChange={e => setTicketTiers(tt => tt.map((t, j) => j === i ? { ...t, description: e.target.value } : t))}
-                        className={inputClass}
-                        placeholder="Short description, e.g. includes 2 drinks at the bar"
-                      />
-                    </div>
-                  ))}
+                    )
+                  })}
                   <button
                     type="button"
-                    onClick={() => setTicketTiers(tt => [...tt, { name: '', price: 0, description: '' }])}
+                    onClick={() => setTicketTiers(tt => [...tt, tierDefaults({ name: '', price: 0, description: '' })])}
                     className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors self-start"
                   >
                     <PlusCircle size={14} /> Add tier

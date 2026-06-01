@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { Calendar, MapPin, Users, ArrowLeft, ExternalLink } from 'lucide-react'
 import { getEventBySlug, getEventReviews } from '@/lib/supabase/queries'
 import { createClient } from '@/lib/supabase/server'
+import { getAdminClient } from '@/lib/supabase/admin'
 import CountdownTimer from '@/components/events/CountdownTimer'
 import TicketSelector from '@/components/events/TicketSelector'
 import ReviewsSection from '@/components/events/ReviewsSection'
@@ -70,6 +71,27 @@ export default async function EventDetailPage({ params }: Props) {
     createClient(),
   ])
   const { data: { user } } = await supabase.auth.getUser()
+
+  // Fetch per-tier sold counts and user membership in parallel
+  const admin = getAdminClient()
+  const [tierCountsResult, membershipResult] = await Promise.all([
+    admin
+      .from('event_tickets')
+      .select('ticket_tier_name')
+      .eq('event_id', event.id)
+      .not('status', 'in', '("cancelled","refunded")'),
+    user
+      ? supabase.from('memberships').select('status').eq('user_id', user.id).eq('status', 'active').maybeSingle()
+      : Promise.resolve({ data: null }),
+  ])
+
+  const tierSoldCounts: Record<string, number> = {}
+  for (const row of tierCountsResult.data ?? []) {
+    if (row.ticket_tier_name) {
+      tierSoldCounts[row.ticket_tier_name] = (tierSoldCounts[row.ticket_tier_name] ?? 0) + 1
+    }
+  }
+  const userIsMember = !!(membershipResult as { data: { status: string } | null }).data
 
   const isPast = new Date(event.date) < new Date()
   const spotsLeft = event.capacity - event.tickets_sold
@@ -228,6 +250,9 @@ export default async function EventDetailPage({ params }: Props) {
               earlyBirdSeats={event.early_bird_seats}
               earlyBirdSeatsSold={event.early_bird_seats_sold}
               ticketTiers={event.ticket_tiers ?? undefined}
+              userIsMember={userIsMember}
+              tierSoldCounts={tierSoldCounts}
+              eventDate={event.date}
             />
 
             {/* Capacity summary */}

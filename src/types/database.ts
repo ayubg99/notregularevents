@@ -106,9 +106,38 @@ export type EventTicketRow = {
   promo_code_used:   string  | null
 }
 
-export type ItineraryDay    = { day: number; title: string; description: string }
-export type EventTicketTier = { name: string; price: number; description: string }
-export type TripExtra       = { id: string; name: string; price: number; description: string }
+export type ItineraryDay = { day: number; title: string; description: string }
+
+export type EventTicketTier = {
+  id:               string
+  name:             string
+  price:            number
+  description:      string
+  seats:            number | null   // null = unlimited (only global capacity applies)
+  members_only:     boolean
+  min_group_size:   number | null
+  valid_until_time: string | null   // "HH:MM" 24h; times < "12:00" treated as next calendar day
+  benefits:         string[]
+  activates_after:  string | null   // tier id — hidden until that tier sells out
+}
+
+// Normalises old {name,price,description} tiers and fills in defaults for new fields
+export function tierDefaults(t: Partial<EventTicketTier> & { name: string; price: number; description: string }): EventTicketTier {
+  return {
+    id:               t.id               ?? t.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+    name:             t.name,
+    price:            t.price,
+    description:      t.description,
+    seats:            t.seats            ?? null,
+    members_only:     t.members_only     ?? false,
+    min_group_size:   t.min_group_size   ?? null,
+    valid_until_time: t.valid_until_time ?? null,
+    benefits:         t.benefits         ?? [],
+    activates_after:  t.activates_after  ?? null,
+  }
+}
+
+export type TripExtra = { id: string; name: string; price: number; description: string }
 
 export type TripRow = {
   id:                 string

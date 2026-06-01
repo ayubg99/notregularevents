@@ -78,8 +78,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     if (rawAttendees.length > 1) {
       // Multi-ticket: one row + QR per named attendee
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: seatResult } = await (admin as any).rpc('book_event_seats', {
-        p_event_id: itemId!,
+      const { data: seatResult } = await (admin as any).rpc('book_event_tier_seats', {
+        p_event_id:  itemId!,
+        p_tier_name: meta.ticket_tier_name || null,
         p_quantity:  rawAttendees.length,
       })
       if (!seatResult?.success) {
@@ -170,8 +171,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     } else {
       // Single-ticket path (backward compat)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: seatResult } = await (admin as any).rpc('book_event_seats', {
-        p_event_id: itemId!,
+      const { data: seatResult } = await (admin as any).rpc('book_event_tier_seats', {
+        p_event_id:  itemId!,
+        p_tier_name: meta.ticket_tier_name || null,
         p_quantity:  Number(meta.quantity ?? 1),
       })
       if (!seatResult?.success) {

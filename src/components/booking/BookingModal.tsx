@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { X, Loader2, Tag, Check, Minus, Plus, Zap, Users, Crown, User, LogIn } from 'lucide-react'
+import { X, Loader2, Tag, Check, Minus, Plus, Zap, Users, Crown, User, LogIn, Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { TripRow, TripTier, EventTicketTier, TripExtra } from '@/types/database'
+import { tierDefaults } from '@/types/database'
 
 type EventProps = {
   type:                  'event'
@@ -23,6 +24,9 @@ type EventProps = {
   earlyBirdSeatsSold?:   number
   ticketTiers?:          EventTicketTier[]
   initialTierIdx?:       number
+  userIsMember?:         boolean
+  tierSoldCounts?:       Record<string, number>
+  eventDate?:            string | null
 }
 
 type TripProps = {
@@ -254,7 +258,10 @@ export default function BookingModal(props: Props) {
 
   const isGroupTier = (props.type === 'trip' && selectedTier === 'group')
     || (props.type === 'event' && eventTier === 'group')
-  const minQty = isGroupTier ? 4 : 1
+  const customTierMinGroup = hasCustomTiers && ep?.ticketTiers
+    ? (tierDefaults(ep.ticketTiers[selectedTierIdx])?.min_group_size ?? null)
+    : null
+  const minQty = customTierMinGroup ?? (isGroupTier ? 4 : 1)
   const maxQty = isGroupTier ? Math.min(spotsLeft, 20) : Math.min(spotsLeft, 10)
 
   const effectiveQty = props.type === 'trip' && selectedTier === 'group' && props.groupSize
@@ -556,32 +563,64 @@ export default function BookingModal(props: Props) {
           {props.type === 'event' && hasCustomTiers && ep?.ticketTiers && (
             <div className="flex flex-col gap-2">
               <p className="text-white/50 text-xs uppercase tracking-widest">Select ticket</p>
-              {ep.ticketTiers.map((tier, i) => (
-                <button key={i} onClick={() => setSelectedTierIdx(i)}
-                  className={`rounded-xl border px-3 py-3 text-left transition-all ${
-                    selectedTierIdx === i
-                      ? 'border-brand-primary bg-brand-primary/10'
-                      : 'border-white/10 bg-white/5 hover:border-white/20'
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-white font-semibold text-sm">{tier.name}</span>
-                        {tier.price === 0 && (
-                          <span className="text-xs px-1.5 py-0.5 rounded-full bg-green-500/15 text-green-400 border border-green-500/25">Free</span>
+              {ep.ticketTiers.map((rawTier, i) => {
+                const tier       = tierDefaults(rawTier)
+                const soldCount  = ep.tierSoldCounts?.[tier.name] ?? 0
+                const isSoldOut  = tier.seats !== null && soldCount >= tier.seats
+                const isLocked   = tier.members_only && !ep.userIsMember
+                const isDisabled = isSoldOut || isLocked
+                return (
+                  <button key={tier.id} onClick={() => !isDisabled && setSelectedTierIdx(i)}
+                    disabled={isDisabled}
+                    className={`rounded-xl border px-3 py-3 text-left transition-all ${
+                      isDisabled
+                        ? 'border-white/5 bg-white/3 opacity-50 cursor-not-allowed'
+                        : selectedTierIdx === i
+                          ? 'border-brand-primary bg-brand-primary/10'
+                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="text-white font-semibold text-sm">{tier.name}</span>
+                          {tier.price === 0 && !isSoldOut && (
+                            <span className="text-xs px-1.5 py-0.5 rounded-full bg-green-500/15 text-green-400 border border-green-500/25">Free</span>
+                          )}
+                          {isLocked && (
+                            <span className="flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25">
+                              <Lock size={9} />Members only
+                            </span>
+                          )}
+                          {isSoldOut && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/10 text-white/40">Sold Out</span>
+                          )}
+                          {tier.min_group_size && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400/80 border border-cyan-500/20">
+                              Min {tier.min_group_size}
+                            </span>
+                          )}
+                        </div>
+                        {tier.description && (
+                          <p className="text-white/40 text-xs mt-0.5">{tier.description}</p>
+                        )}
+                        {tier.benefits.length > 0 && (
+                          <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-0">
+                            {tier.benefits.map(b => (
+                              <li key={b} className="text-[11px] text-white/35 before:content-['✓'] before:mr-1 before:text-green-400/60">
+                                {b}
+                              </li>
+                            ))}
+                          </ul>
                         )}
                       </div>
-                      {tier.description && (
-                        <p className="text-white/40 text-xs mt-0.5">{tier.description}</p>
-                      )}
+                      <span className={`font-bold flex-shrink-0 ${isDisabled ? 'text-white/30' : 'text-white'}`}>
+                        {isSoldOut ? '—' : tier.price === 0 ? 'Free' : `€${tier.price.toFixed(2)}`}
+                      </span>
                     </div>
-                    <span className="font-bold text-white flex-shrink-0">
-                      {tier.price === 0 ? 'Free' : `€${tier.price.toFixed(2)}`}
-                    </span>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                )
+              })}
             </div>
           )}
 
