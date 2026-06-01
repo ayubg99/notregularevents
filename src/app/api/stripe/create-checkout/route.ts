@@ -25,7 +25,7 @@ interface Body {
   // event ticket tiers
   ticketTierIdx?: number
   // trip extras
-  selectedExtras?: { id: string; name: string; price: number }[]
+  selectedExtras?: { id: string; name: string; price: number; description: string }[]
   // job listing specific
   basePlan?:   'standard' | 'featured' | 'employer_plan'
   withUrgent?: boolean
