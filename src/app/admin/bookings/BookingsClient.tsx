@@ -9,6 +9,13 @@ import type { Column } from '@/components/admin/DataTable'
 
 type BookingType = 'Event' | 'Trip'
 
+export interface BookingExtra {
+  id:          string
+  name:        string
+  price:       number
+  description: string
+}
+
 export interface Booking {
   id:                string
   type:              BookingType
@@ -30,6 +37,10 @@ export interface Booking {
   is_group_booking:  boolean
   lead_name:         string | null
   lead_email:        string | null
+  referral_code:     string | null
+  ticket_tier_name:  string | null
+  promo_code_used:   string | null
+  selected_extras:   BookingExtra[] | null
 }
 
 type BookingRow = Booking & Record<string, unknown>
@@ -214,10 +225,20 @@ function BookingDetailModal({
                   <span className="text-white/40 text-sm">Reference</span>
                   <span className="font-mono text-sm tracking-widest text-white/70">{booking.booking_ref}</span>
                 </div>
+                {/* Trip tier */}
                 {booking.tier && (
                   <div className="flex justify-between items-center">
                     <span className="text-white/40 text-sm">Tier</span>
                     <TierBadge tier={booking.tier} />
+                  </div>
+                )}
+                {/* Event ticket tier */}
+                {booking.ticket_tier_name && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/40 text-sm">Ticket tier</span>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-brand-primary/15 text-brand-primary">
+                      {booking.ticket_tier_name}
+                    </span>
                   </div>
                 )}
                 <div className="flex justify-between">
@@ -236,8 +257,48 @@ function BookingDetailModal({
                     {new Date(booking.created_at).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
+                {/* Promo code */}
+                {booking.promo_code_used && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/40 text-sm">Promo code</span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-brand-accent/15 text-brand-accent tracking-widest">
+                      {booking.promo_code_used}
+                    </span>
+                  </div>
+                )}
+                {/* Referral code */}
+                {booking.referral_code && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/40 text-sm">Referral code</span>
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-purple-500/15 text-purple-400 tracking-widest">
+                      {booking.referral_code}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
+
+            {/* Add-ons (trips only) */}
+            {booking.selected_extras && booking.selected_extras.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-2">Add-ons</p>
+                <div className="flex flex-col gap-1.5">
+                  {booking.selected_extras.map(extra => (
+                    <div key={extra.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-white/5 border border-white/8">
+                      <div>
+                        <p className="text-white/80 text-sm font-medium">{extra.name}</p>
+                        {extra.description && (
+                          <p className="text-white/35 text-xs">{extra.description}</p>
+                        )}
+                      </div>
+                      <span className="font-mono text-sm font-semibold text-brand-accent ml-3 shrink-0">
+                        +€{extra.price.toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Group booking */}
             {booking.is_group_booking && (() => {

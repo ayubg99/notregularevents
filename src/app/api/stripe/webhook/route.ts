@@ -42,6 +42,13 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const guestPhone = meta.guest_phone || null
   const amountPaid = (session.amount_total ?? 0) / 100
 
+  // Resolve promo code text for display in admin
+  let promoCodeUsed: string | null = null
+  if (meta.promo_code_id) {
+    const { data: promo } = await admin.from('promo_codes').select('code').eq('id', meta.promo_code_id).single()
+    promoCodeUsed = promo?.code ?? null
+  }
+
   console.log('[webhook checkout.session.completed]', {
     sessionId:    session.id,
     mode:         session.mode,
@@ -114,6 +121,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           is_group_booking:  true,
           lead_name:         guestName  || null,
           lead_email:        guestEmail || null,
+          referral_code:     meta.referral_code || null,
+          ticket_tier_name:  meta.ticket_tier_name || null,
+          promo_code_used:   promoCodeUsed,
         })
         if (insertErr) console.error(`[webhook event ticket #${i + 1}]`, insertErr.message)
 
@@ -197,7 +207,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         return
       }
 
-      await admin.from('event_tickets').update({ amount_paid: amountPaid }).eq('booking_ref', bookingRef)
+      await admin.from('event_tickets').update({
+        amount_paid:      amountPaid,
+        referral_code:    meta.referral_code    || null,
+        ticket_tier_name: meta.ticket_tier_name || null,
+        promo_code_used:  promoCodeUsed,
+      }).eq('booking_ref', bookingRef)
 
       if (userId) {
         await admin.from('notifications').insert({
@@ -288,6 +303,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         lead_name:         isGroup ? (guestName || null) : null,
         lead_email:        isGroup ? (guestEmail || null) : null,
         selected_extras:   selectedExtras?.length ? selectedExtras : null,
+        referral_code:     meta.referral_code || null,
+        promo_code_used:   promoCodeUsed,
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: insertErr } = await admin.from('trip_bookings').insert(tripRow as any)

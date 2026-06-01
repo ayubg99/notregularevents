@@ -10,11 +10,11 @@ export default async function AdminBookingsPage() {
   ] = await Promise.all([
     admin
       .from('event_tickets')
-      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, amount_paid, qr_code, group_booking_ref, is_group_booking, lead_name, lead_email, events(title, date, location)')
+      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, amount_paid, qr_code, group_booking_ref, is_group_booking, lead_name, lead_email, referral_code, ticket_tier_name, promo_code_used, events(title, date, location)')
       .order('created_at', { ascending: false }),
     admin
       .from('trip_bookings')
-      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, tier, amount_paid, quantity, qr_code, group_booking_ref, is_group_booking, lead_name, lead_email, trips(title, start_date, destination)')
+      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, tier, amount_paid, quantity, qr_code, group_booking_ref, is_group_booking, lead_name, lead_email, referral_code, selected_extras, promo_code_used, trips(title, start_date, destination)')
       .order('created_at', { ascending: false }),
   ])
 
@@ -43,6 +43,10 @@ export default async function AdminBookingsPage() {
       is_group_booking:  b.is_group_booking   ?? false,
       lead_name:         b.lead_name          ?? null,
       lead_email:        b.lead_email         ?? null,
+      referral_code:     b.referral_code      ?? null,
+      ticket_tier_name:  b.ticket_tier_name   ?? null,
+      promo_code_used:   b.promo_code_used    ?? null,
+      selected_extras:   null as { id: string; name: string; price: number; description: string }[] | null,
     })),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...((tripBookings ?? []) as any[]).map((b: any) => ({
@@ -66,6 +70,10 @@ export default async function AdminBookingsPage() {
       is_group_booking:  b.is_group_booking   ?? false,
       lead_name:         b.lead_name          ?? null,
       lead_email:        b.lead_email         ?? null,
+      referral_code:     b.referral_code      ?? null,
+      ticket_tier_name:  null as string | null,
+      promo_code_used:   b.promo_code_used    ?? null,
+      selected_extras:   b.selected_extras    ?? null,
     })),
   ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 

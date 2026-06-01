@@ -102,6 +102,8 @@ export type EventTicketRow = {
   lead_email:        string  | null
   ambassador_id:     string  | null
   referral_code:     string  | null
+  ticket_tier_name:  string  | null
+  promo_code_used:   string  | null
 }
 
 export type ItineraryDay    = { day: number; title: string; description: string }
@@ -164,6 +166,7 @@ export type TripBookingRow = {
   ambassador_id:     string | null
   referral_code:     string | null
   selected_extras:   TripExtra[] | null
+  promo_code_used:   string | null
 }
 
 export type MembershipRow = {
