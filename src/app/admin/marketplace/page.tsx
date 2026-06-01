@@ -33,7 +33,7 @@ export default async function AdminMarketplacePage() {
           { label: 'Total listings', value: String(total),  color: '#4ECDC4' },
           { label: 'Active',         value: String(active), color: '#2ECC71' },
           { label: 'Sold',           value: String(sold),   color: '#888'    },
-          { label: 'Top category',   value: topCat?.count ? `${topCat.emoji} ${topCat.label}` : '—', color: '#F5A623' },
+          { label: 'Top category',   value: topCat?.count ? topCat.label : '—', color: '#F5A623' },
         ].map(stat => (
           <div key={stat.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', padding: '16px' }}>
             <p style={{ color: stat.color, fontSize: '22px', fontWeight: 700, margin: '0 0 4px' }}>{stat.value}</p>

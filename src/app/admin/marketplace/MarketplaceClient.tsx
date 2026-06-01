@@ -81,7 +81,7 @@ export default function MarketplaceClient({ listings }: Props) {
                   </td>
                   {/* Category */}
                   <td style={{ padding: '12px 16px', color: '#888', fontSize: '12px', whiteSpace: 'nowrap' }}>
-                    {cat?.emoji} {cat?.label}
+                    {cat?.label}
                   </td>
                   {/* Price */}
                   <td style={{ padding: '12px 16px', color: listing.is_free ? '#2ECC71' : '#F5A623', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap' }}>
