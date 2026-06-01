@@ -28,11 +28,11 @@ const PLANS: PlanDef[] = [
     saving:   null,
     perMonth: '€9.99/mo',
     perks:    [
+      'Free entry to member night parties',
       '10% off all events & trips',
       'Free housing contact reveals',
       'Member card & dashboard access',
       'Weekly newsletter with deals',
-      'Members-only social events',
     ],
     featured: false,
   },
