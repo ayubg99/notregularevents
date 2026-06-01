@@ -196,11 +196,17 @@ export default async function DashboardPage() {
                       {sponsor.redemption_instructions && (
                         <p className="text-white/40 text-[10px] leading-snug">{sponsor.redemption_instructions}</p>
                       )}
-                      {/* Code */}
+                      {/* Code — Semester/Annual only */}
                       {sponsor.discount_code && (
-                        <span className="text-[12px] font-bold px-2 py-0.5 rounded" style={{ fontFamily: 'monospace', color: '#F5A623', background: 'rgba(255,255,255,0.05)' }}>
-                          {sponsor.discount_code}
-                        </span>
+                        (activeMembership?.plan === 'premium' || activeMembership?.plan === 'vip') ? (
+                          <span className="text-[12px] font-bold px-2 py-0.5 rounded" style={{ fontFamily: 'monospace', color: '#F5A623', background: 'rgba(255,255,255,0.05)' }}>
+                            {sponsor.discount_code}
+                          </span>
+                        ) : (
+                          <span className="text-[11px] text-white/25 px-2 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                            ⬆️ Semester+ only
+                          </span>
+                        )
                       )}
                     </div>
                   ))}
