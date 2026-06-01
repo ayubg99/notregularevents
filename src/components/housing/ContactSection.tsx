@@ -19,7 +19,7 @@ export default function ContactSection({ listing, hasMembership }: Props) {
           href="/membership"
           className="inline-block bg-yellow-500 text-black font-bold px-6 py-3 rounded-full text-sm hover:bg-yellow-400 transition-colors"
         >
-          Join for €9.99/month →
+          Join Membership →
         </Link>
       </div>
     )
