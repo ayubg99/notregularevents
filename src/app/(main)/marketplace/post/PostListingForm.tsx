@@ -1,6 +1,14 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import * as LucideIcons from 'lucide-react'
+
+function CatIcon({ name, size = 24, color }: { name: string; size?: number; color?: string }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Icon = (LucideIcons as any)[name] as React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }> | undefined
+  if (!Icon) return null
+  return <Icon size={size} color={color} strokeWidth={1.5} />
+}
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
@@ -296,19 +304,23 @@ export default function PostListingForm({ userId }: Props) {
                   key={cat.id}
                   onClick={() => set('category', cat.id)}
                   style={{
-                    background:   form.category === cat.id ? '#F5A623' : 'rgba(255,255,255,0.03)',
-                    border:       form.category === cat.id ? 'none'    : '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: '12px',
-                    padding:      '14px 8px',
-                    cursor:       'pointer',
-                    textAlign:    'center',
-                    transition:   'all 0.2s',
+                    background:    form.category === cat.id ? '#F5A623' : 'rgba(255,255,255,0.03)',
+                    border:        form.category === cat.id ? 'none'    : '1px solid rgba(255,255,255,0.08)',
+                    borderRadius:  '12px',
+                    padding:       '16px 8px',
+                    cursor:        'pointer',
+                    textAlign:     'center',
+                    transition:    'all 0.2s',
+                    display:       'flex',
+                    flexDirection: 'column',
+                    alignItems:    'center',
+                    gap:           '8px',
                   }}
                 >
-                  <p style={{ fontSize: '28px', margin: '0 0 4px' }}>{cat.emoji}</p>
-                  <p style={{ color: form.category === cat.id ? '#1A1A0E' : '#888', fontSize: '11px', fontWeight: 600, margin: 0, lineHeight: 1.3 }}>
+                  <CatIcon name={cat.icon} size={22} color={form.category === cat.id ? '#1A1A0E' : '#666'} />
+                  <span style={{ color: form.category === cat.id ? '#1A1A0E' : '#888', fontSize: '11px', fontWeight: 600, lineHeight: 1.3 }}>
                     {cat.label}
-                  </p>
+                  </span>
                 </button>
               ))}
             </div>

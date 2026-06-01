@@ -1,9 +1,18 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import * as LucideIcons from 'lucide-react'
+import { Store } from 'lucide-react'
 import { CATEGORIES, CONDITIONS } from '@/lib/marketplace'
 import ListingCard from './ListingCard'
 import type { MarketplaceListingRow } from '@/types/database'
+
+function CatIcon({ name, size = 20, color }: { name: string; size?: number; color?: string }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Icon = (LucideIcons as any)[name] as React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }> | undefined
+  if (!Icon) return null
+  return <Icon size={size} color={color} strokeWidth={1.5} />
+}
 
 interface Props {
   initialListings: MarketplaceListingRow[]
@@ -57,10 +66,10 @@ export default function MarketplaceClient({ initialListings }: Props) {
     <div>
       {/* Category grid */}
       <div style={{
-        display:               'grid',
-        gridTemplateColumns:   'repeat(auto-fill, minmax(88px, 1fr))',
-        gap:                   '8px',
-        marginBottom:          '24px',
+        display:             'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
+        gap:                 '6px',
+        marginBottom:        '24px',
       }}>
         {/* All */}
         <button
@@ -69,17 +78,22 @@ export default function MarketplaceClient({ initialListings }: Props) {
             ...btnBase,
             background: category === 'all' ? '#F5A623' : btnBase.background,
             border:     category === 'all' ? 'none'    : btnBase.border,
+            display:    'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap:        '6px',
+            padding:    '12px 6px',
           }}
         >
-          <p style={{ fontSize: '24px', margin: '0 0 4px' }}>🏪</p>
-          <p style={{
-            color:      category === 'all' ? '#1A1A0E' : '#888',
-            fontSize:   '11px',
+          <Store size={20} color={category === 'all' ? '#1A1A0E' : '#666'} strokeWidth={1.5} />
+          <span style={{
+            color:      category === 'all' ? '#1A1A0E' : '#666',
+            fontSize:   '10px',
             fontWeight: 600,
-            margin:     0,
+            lineHeight: 1.2,
           }}>
             All
-          </p>
+          </span>
         </button>
 
         {CATEGORIES.map(cat => (
@@ -88,20 +102,25 @@ export default function MarketplaceClient({ initialListings }: Props) {
             onClick={() => setCategory(cat.id)}
             style={{
               ...btnBase,
-              background: category === cat.id ? '#F5A623' : btnBase.background,
-              border:     category === cat.id ? 'none'    : btnBase.border,
+              background:    category === cat.id ? '#F5A623' : btnBase.background,
+              border:        category === cat.id ? 'none'    : btnBase.border,
+              display:       'flex',
+              flexDirection: 'column',
+              alignItems:    'center',
+              gap:           '6px',
+              padding:       '12px 6px',
             }}
           >
-            <p style={{ fontSize: '24px', margin: '0 0 4px' }}>{cat.emoji}</p>
-            <p style={{
-              color:      category === cat.id ? '#1A1A0E' : '#888',
-              fontSize:   '11px',
+            <CatIcon name={cat.icon} size={20} color={category === cat.id ? '#1A1A0E' : '#666'} />
+            <span style={{
+              color:      category === cat.id ? '#1A1A0E' : '#666',
+              fontSize:   '10px',
               fontWeight: 600,
-              margin:     0,
               lineHeight: 1.2,
+              textAlign:  'center',
             }}>
               {cat.label}
-            </p>
+            </span>
           </button>
         ))}
       </div>
