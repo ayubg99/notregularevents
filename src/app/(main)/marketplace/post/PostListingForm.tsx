@@ -338,7 +338,7 @@ export default function PostListingForm({ userId }: Props) {
         {step === 2 && (
           <div>
             <h2 style={{ color: '#fff', fontSize: '20px', fontWeight: 700, margin: '0 0 6px' }}>Item details</h2>
-            <p style={{ color: '#888', fontSize: '13px', margin: '0 0 24px' }}>{selectedCat?.emoji} {selectedCat?.label}</p>
+            <p style={{ color: '#888', fontSize: '13px', margin: '0 0 24px' }}>{selectedCat?.label}</p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
