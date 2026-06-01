@@ -11,9 +11,13 @@ export async function POST(req: Request) {
   const admin = getAdminClient()
   const table = type === 'event' ? 'event_tickets' : 'trip_bookings'
 
+  const update = type === 'event'
+    ? { checked_in: true, checked_in_at: new Date().toISOString(), status: 'used' as const }
+    : { checked_in: true, checked_in_at: new Date().toISOString() }
+
   const { error } = await admin
     .from(table)
-    .update({ checked_in: true, checked_in_at: new Date().toISOString() })
+    .update(update)
     .eq('id', bookingId)
 
   if (error) {
