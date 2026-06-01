@@ -56,7 +56,7 @@ export default function MarketplaceListings({ myItems }: Props) {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h2 className="font-heading" style={{ color: '#fff', fontSize: '18px', fontWeight: 700, margin: 0 }}>
-          🛍️ My Marketplace
+          My Marketplace
         </h2>
         <Link
           href="/marketplace/post"
@@ -68,7 +68,6 @@ export default function MarketplaceListings({ myItems }: Props) {
 
       {items.length === 0 ? (
         <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '40px 20px', textAlign: 'center' }}>
-          <p style={{ fontSize: '32px', margin: '0 0 8px' }}>🛍️</p>
           <p style={{ color: '#888', fontSize: '14px', margin: '0 0 20px' }}>No marketplace listings yet</p>
           <Link
             href="/marketplace/post"

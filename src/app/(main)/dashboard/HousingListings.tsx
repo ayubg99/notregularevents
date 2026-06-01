@@ -72,7 +72,6 @@ export default function HousingListings({ myListings }: Props) {
           padding: '40px 20px',
           textAlign: 'center',
         }}>
-          <p style={{ fontSize: '32px', margin: '0 0 8px' }}>🏠</p>
           <p style={{ color: '#888', fontSize: '14px', margin: '0 0 20px' }}>No housing listings yet</p>
           <a
             href="/housing/post"
