@@ -225,8 +225,8 @@ export default function PricingTiers({
 
       {/* Extras / Add-ons */}
       {(trip.extras?.length ?? 0) > 0 && (
-        <div className="flex flex-col gap-2">
-          <p className="text-white/50 text-xs uppercase tracking-widest">Optional Add-ons</p>
+        <div className="flex flex-col gap-2 pt-1 border-t border-white/8">
+          <p className="text-white/40 text-xs uppercase tracking-widest">Optional Add-ons</p>
           {trip.extras!.map(extra => {
             const checked = selectedExtras.some(e => e.id === extra.id)
             return (
@@ -235,34 +235,34 @@ export default function PricingTiers({
                 type="button"
                 onClick={() => toggleExtra(extra)}
                 disabled={soldOut || isPending}
-                className={`w-full text-left rounded-xl border p-3.5 transition-all ${
+                className={`w-full text-left rounded-xl border p-3.5 transition-all duration-200 ${
                   checked
-                    ? 'border-brand-accent bg-brand-accent/10'
+                    ? 'border-brand-primary bg-brand-primary/10'
                     : 'border-white/10 bg-white/5 hover:border-white/20'
                 } ${soldOut || isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-2.5 flex-1 min-w-0">
-                    <div className={`mt-0.5 w-4 h-4 rounded flex-shrink-0 border flex items-center justify-center transition-colors ${checked ? 'bg-brand-accent border-brand-accent' : 'border-white/30'}`}>
-                      {checked && <Check size={10} className="text-brand-dark" strokeWidth={3} />}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                    <div className={`w-4 h-4 rounded flex-shrink-0 border flex items-center justify-center transition-colors ${checked ? 'bg-brand-primary border-brand-primary' : 'border-white/30'}`}>
+                      {checked && <Check size={10} className="text-white" strokeWidth={3} />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white font-semibold text-sm">{extra.name}</p>
+                      <p className={`font-semibold text-sm ${checked ? 'text-white' : 'text-white/80'}`}>{extra.name}</p>
                       {extra.description && (
-                        <p className="text-white/50 text-xs mt-0.5">{extra.description}</p>
+                        <p className="text-white/40 text-xs mt-0.5">{extra.description}</p>
                       )}
                     </div>
                   </div>
-                  <span className="font-bold text-sm flex-shrink-0 text-white">
-                    {extra.price === 0 ? <span className="text-green-400">Free</span> : `+€${extra.price.toFixed(2)}`}
+                  <span className={`font-bold text-sm flex-shrink-0 ${checked ? 'text-white' : 'text-white/60'}`}>
+                    {extra.price === 0 ? <span className="text-green-400 text-xs font-semibold">Free</span> : `+€${extra.price.toFixed(2)}`}
                   </span>
                 </div>
               </button>
             )
           })}
           {extrasTotal > 0 && (
-            <p className="text-white/50 text-xs text-right">
-              Add-ons: <span className="text-white font-semibold">+€{extrasTotal.toFixed(2)}</span>
+            <p className="text-white/40 text-xs text-right">
+              Add-ons: <span className="text-brand-primary font-semibold">+€{extrasTotal.toFixed(2)}</span>
             </p>
           )}
         </div>
