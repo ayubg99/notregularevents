@@ -109,7 +109,7 @@ export function ContactSection({ listing }: Props) {
         )}
 
         <p style={{ color: '#555', fontSize: '12px', textAlign: 'center', margin: 0, lineHeight: 1.5 }}>
-          ⚠️ Always meet in a public place. Never send money in advance.
+          Always meet in a public place. Never send money in advance.
         </p>
       </div>
     )

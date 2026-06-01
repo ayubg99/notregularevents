@@ -65,7 +65,7 @@ export default async function MarketplaceDetailPage({
               marginBottom: '12px',
             }}>
               <p style={{ color: '#888', fontSize: '12px', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em', margin: '0 0 8px' }}>
-                {cat?.emoji} {cat?.label}
+                {cat?.label}
               </p>
               <p style={{
                 color:      listing.is_free ? '#2ECC71' : '#F5A623',
@@ -149,7 +149,7 @@ export default async function MarketplaceDetailPage({
               )}
               {listing.color && (
                 <span style={{ background: 'rgba(255,255,255,0.06)', color: '#ccc', padding: '4px 12px', borderRadius: '20px', fontSize: '12px' }}>
-                  🎨 {listing.color}
+                  {listing.color}
                 </span>
               )}
             </div>
@@ -166,7 +166,7 @@ export default async function MarketplaceDetailPage({
             {/* Details */}
             <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '16px', marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {listing.neighborhood && (
-                <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>📍 {listing.neighborhood}, Valencia</p>
+                <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>{listing.neighborhood}, Valencia</p>
               )}
               <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>
                 Posted {new Date(listing.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -179,22 +179,22 @@ export default async function MarketplaceDetailPage({
             {/* Ticket info card */}
             {listing.category === 'tickets_events' && (
               <div style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.2)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
-                <h3 style={{ color: '#F5A623', fontSize: '14px', fontWeight: 700, margin: '0 0 12px' }}>🎟️ Event Ticket Details</h3>
+                <h3 style={{ color: '#F5A623', fontSize: '14px', fontWeight: 700, margin: '0 0 12px' }}>Event Ticket Details</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {listing.event_date && (
                     <p style={{ color: '#ccc', fontSize: '13px', margin: 0 }}>
-                      📅 {new Date(listing.event_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      {new Date(listing.event_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
                   )}
                   {listing.event_venue && (
-                    <p style={{ color: '#ccc', fontSize: '13px', margin: 0 }}>📍 {listing.event_venue}</p>
+                    <p style={{ color: '#ccc', fontSize: '13px', margin: 0 }}>{listing.event_venue}</p>
                   )}
                   {listing.ticket_quantity && (
-                    <p style={{ color: '#ccc', fontSize: '13px', margin: 0 }}>🎟️ {listing.ticket_quantity} ticket{listing.ticket_quantity > 1 ? 's' : ''} available</p>
+                    <p style={{ color: '#ccc', fontSize: '13px', margin: 0 }}>{listing.ticket_quantity} ticket{listing.ticket_quantity > 1 ? 's' : ''} available</p>
                   )}
                 </div>
                 <p style={{ color: '#888', fontSize: '12px', margin: '12px 0 0', lineHeight: 1.5 }}>
-                  ⚠️ Verify ticket authenticity before completing any payment.
+                  Verify ticket authenticity before completing any payment.
                 </p>
               </div>
             )}
