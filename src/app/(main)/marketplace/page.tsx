@@ -120,7 +120,7 @@ export default async function MarketplacePage() {
               href="/membership"
               style={{ color: '#F5A623', fontSize: '13px', textDecoration: 'none', fontWeight: 700, whiteSpace: 'nowrap' }}
             >
-              Join €9.99/month →
+              Join Membership →
             </Link>
           </div>
         )}

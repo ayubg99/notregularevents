@@ -142,7 +142,7 @@ export function ContactSection({ listing }: Props) {
           boxShadow:      '0 4px 16px rgba(245,166,35,0.25)',
         }}
       >
-        Join for €9.99/month →
+        Join Membership →
       </a>
     </div>
   )
