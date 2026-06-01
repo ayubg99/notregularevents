@@ -154,8 +154,8 @@ export default function ListingCard({ listing }: Props) {
           alignItems:  'center',
           gap:         '6px',
         }}>
-          {cat?.emoji} {cat?.label}
-          {listing.neighborhood && ` • 📍 ${listing.neighborhood}`}
+          {cat?.label}
+          {listing.neighborhood && ` • ${listing.neighborhood}`}
         </p>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

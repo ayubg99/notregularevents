@@ -135,7 +135,7 @@ export default function MarketplaceClient({ initialListings }: Props) {
       }}>
         <input
           type="text"
-          placeholder="🔍 Search listings..."
+          placeholder="Search listings..."
           value={search}
           onChange={e => setSearch(e.target.value)}
           style={{

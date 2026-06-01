@@ -132,7 +132,7 @@ export default async function MarketplaceDetailPage({
             {/* Badges */}
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
               <span style={{ background: 'rgba(255,255,255,0.06)', color: '#ccc', padding: '4px 12px', borderRadius: '20px', fontSize: '12px' }}>
-                {cat?.emoji} {cat?.label}
+                {cat?.label}
               </span>
               <span style={{ background: 'rgba(0,0,0,0.4)', color: condition?.color, padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 600 }}>
                 {condition?.label}
