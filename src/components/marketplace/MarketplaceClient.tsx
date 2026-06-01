@@ -1,0 +1,175 @@
+'use client'
+
+import { useState, useMemo } from 'react'
+import { CATEGORIES, CONDITIONS } from '@/lib/marketplace'
+import ListingCard from './ListingCard'
+import type { MarketplaceListingRow } from '@/types/database'
+
+interface Props {
+  initialListings: MarketplaceListingRow[]
+}
+
+const btnBase: React.CSSProperties = {
+  background:   'rgba(255,255,255,0.03)',
+  border:       '1px solid rgba(255,255,255,0.08)',
+  borderRadius: '12px',
+  padding:      '12px 8px',
+  cursor:       'pointer',
+  textAlign:    'center',
+  transition:   'all 0.2s',
+}
+
+const selectStyle: React.CSSProperties = {
+  padding:    '10px 16px',
+  background: 'rgba(255,255,255,0.05)',
+  border:     '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '50px',
+  color:      '#888',
+  fontSize:   '14px',
+}
+
+export default function MarketplaceClient({ initialListings }: Props) {
+  const [category,  setCategory]  = useState('all')
+  const [search,    setSearch]    = useState('')
+  const [maxPrice,  setMaxPrice]  = useState('')
+  const [condition, setCondition] = useState('')
+  const [sortBy,    setSortBy]    = useState('newest')
+
+  const filtered = useMemo(() => {
+    let items = [...initialListings]
+    if (category !== 'all')   items = items.filter(l => l.category  === category)
+    if (search)                items = items.filter(l =>
+      l.title.toLowerCase().includes(search.toLowerCase()) ||
+      (l.description ?? '').toLowerCase().includes(search.toLowerCase()) ||
+      (l.brand ?? '').toLowerCase().includes(search.toLowerCase())
+    )
+    if (maxPrice)              items = items.filter(l => l.is_free || l.price <= Number(maxPrice))
+    if (condition)             items = items.filter(l => l.condition === condition)
+
+    if (sortBy === 'price_asc')  items.sort((a, b) => (a.is_free ? 0 : a.price) - (b.is_free ? 0 : b.price))
+    if (sortBy === 'price_desc') items.sort((a, b) => (b.is_free ? 0 : b.price) - (a.is_free ? 0 : a.price))
+    // 'newest' is default order from server
+
+    return items
+  }, [initialListings, category, search, maxPrice, condition, sortBy])
+
+  return (
+    <div>
+      {/* Category grid */}
+      <div style={{
+        display:               'grid',
+        gridTemplateColumns:   'repeat(auto-fill, minmax(88px, 1fr))',
+        gap:                   '8px',
+        marginBottom:          '24px',
+      }}>
+        {/* All */}
+        <button
+          onClick={() => setCategory('all')}
+          style={{
+            ...btnBase,
+            background: category === 'all' ? '#F5A623' : btnBase.background,
+            border:     category === 'all' ? 'none'    : btnBase.border,
+          }}
+        >
+          <p style={{ fontSize: '24px', margin: '0 0 4px' }}>🏪</p>
+          <p style={{
+            color:      category === 'all' ? '#1A1A0E' : '#888',
+            fontSize:   '11px',
+            fontWeight: 600,
+            margin:     0,
+          }}>
+            All
+          </p>
+        </button>
+
+        {CATEGORIES.map(cat => (
+          <button
+            key={cat.id}
+            onClick={() => setCategory(cat.id)}
+            style={{
+              ...btnBase,
+              background: category === cat.id ? '#F5A623' : btnBase.background,
+              border:     category === cat.id ? 'none'    : btnBase.border,
+            }}
+          >
+            <p style={{ fontSize: '24px', margin: '0 0 4px' }}>{cat.emoji}</p>
+            <p style={{
+              color:      category === cat.id ? '#1A1A0E' : '#888',
+              fontSize:   '11px',
+              fontWeight: 600,
+              margin:     0,
+              lineHeight: 1.2,
+            }}>
+              {cat.label}
+            </p>
+          </button>
+        ))}
+      </div>
+
+      {/* Filters */}
+      <div style={{
+        display:     'flex',
+        gap:         '12px',
+        marginBottom:'24px',
+        flexWrap:    'wrap',
+        alignItems:  'center',
+      }}>
+        <input
+          type="text"
+          placeholder="🔍 Search listings..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          style={{
+            flex:         1,
+            minWidth:     '200px',
+            padding:      '10px 16px',
+            background:   'rgba(255,255,255,0.05)',
+            border:       '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '50px',
+            color:        '#fff',
+            fontSize:     '14px',
+            outline:      'none',
+          }}
+        />
+        <select value={maxPrice}  onChange={e => setMaxPrice(e.target.value)}  style={selectStyle}>
+          <option value="">Any price</option>
+          <option value="10">Under €10</option>
+          <option value="25">Under €25</option>
+          <option value="50">Under €50</option>
+          <option value="100">Under €100</option>
+          <option value="200">Under €200</option>
+        </select>
+        <select value={condition} onChange={e => setCondition(e.target.value)} style={selectStyle}>
+          <option value="">Any condition</option>
+          {CONDITIONS.map(c => (
+            <option key={c.id} value={c.id}>{c.label}</option>
+          ))}
+        </select>
+        <select value={sortBy}    onChange={e => setSortBy(e.target.value)}    style={selectStyle}>
+          <option value="newest">Newest first</option>
+          <option value="price_asc">Price: Low to high</option>
+          <option value="price_desc">Price: High to low</option>
+        </select>
+      </div>
+
+      {/* Listings grid */}
+      {filtered.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <p style={{ fontSize: '48px', margin: '0 0 12px' }}>🔍</p>
+          <p style={{ color: '#888', fontSize: '16px', margin: '0 0 8px' }}>No listings found</p>
+          <p style={{ color: '#555', fontSize: '13px', margin: 0 }}>Try adjusting your filters</p>
+        </div>
+      ) : (
+        <div style={{
+          display:             'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+          gap:                 '16px',
+        }}>
+          {filtered.map(listing => (
+            <ListingCard key={listing.id} listing={listing} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

@@ -473,3 +473,29 @@ export async function rejectBookingAdmin(bookingRef: string): Promise<{ success:
   if (result.success) revalidatePath('/admin/housing-partners/contacts')
   return { success: result.success, error: result.error }
 }
+
+// ── Marketplace ───────────────────────────────────────────────
+
+export async function deactivateMarketplaceListing(id: string): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { error } = await admin.from('marketplace_listings').update({ status: 'inactive' }).eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/marketplace')
+  return { success: true }
+}
+
+export async function deleteMarketplaceListing(id: string): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { error } = await admin.from('marketplace_listings').delete().eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/marketplace')
+  return { success: true }
+}

@@ -16,7 +16,8 @@ import HousingListings from './HousingListings'
 import JobListings from './JobListings'
 import MemberCard from './MemberCard'
 import AmbassadorDashboard from './AmbassadorDashboard'
-import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow, HousingListingRow, JobListingRow, SponsorRow, AmbassadorRow, AmbassadorCommissionRow, AmbassadorRewardRow } from '@/types/database'
+import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow, HousingListingRow, JobListingRow, SponsorRow, AmbassadorRow, AmbassadorCommissionRow, AmbassadorRewardRow, MarketplaceListingRow } from '@/types/database'
+import MarketplaceListings from './MarketplaceListings'
 
 type EventTicketWithEvent = EventTicketRow & {
   events: { id: string; title: string; date: string; location: string | null; slug: string } | null
@@ -46,6 +47,7 @@ export default async function DashboardPage() {
     { data: tripBookingsRaw },
     { data: myListingsRaw },
     { data: myJobsRaw },
+    { data: myMarketplaceRaw },
     { data: sponsorsRaw },
     { data: ambassadorRaw },
   ] = await Promise.all([
@@ -56,6 +58,7 @@ export default async function DashboardPage() {
     supabase.from('trip_bookings').select('*, trips(id, title, start_date, destination, slug, whatsapp_group_url)').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('housing_listings').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('job_listings').select('*').eq('posted_by_user_id', user.id).order('created_at', { ascending: false }),
+    supabase.from('marketplace_listings').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('sponsors').select('*').eq('status', 'active').eq('members_only', true).order('display_order', { ascending: true }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (supabase as any).from('ambassadors').select('*').eq('user_id', user.id).eq('status', 'active').maybeSingle(),
@@ -82,7 +85,8 @@ export default async function DashboardPage() {
   const eventTickets = (eventTicketsRaw ?? []) as unknown as EventTicketWithEvent[]
   const tripBookings = (tripBookingsRaw ?? []) as unknown as TripBookingWithTrip[]
   const myListings   = (myListingsRaw ?? []) as HousingListingRow[]
-  const myJobs       = (myJobsRaw    ?? []) as JobListingRow[]
+  const myJobs            = (myJobsRaw        ?? []) as JobListingRow[]
+  const myMarketplaceItems = (myMarketplaceRaw ?? []) as MarketplaceListingRow[]
   const sponsors     = (sponsorsRaw  ?? []) as SponsorRow[]
   const activeMembership = membership as MembershipRow | null
   const profileData  = profile as ProfileRow | null
@@ -126,6 +130,7 @@ export default async function DashboardPage() {
             />
             <HousingListings myListings={myListings} />
             <JobListings myJobs={myJobs} />
+            <MarketplaceListings myItems={myMarketplaceItems} />
             {ambassador && (
               <div className="glass-card rounded-2xl p-6">
                 <AmbassadorDashboard

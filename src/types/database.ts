@@ -530,6 +530,12 @@ export interface Database {
         Update:        EmployerAccountUpdate
         Relationships: never[]
       }
+      marketplace_listings: {
+        Row:           MarketplaceListingRow
+        Insert:        MarketplaceListingInsert
+        Update:        MarketplaceListingUpdate
+        Relationships: never[]
+      }
     }
     Views:          { [_ in never]: never }
     Functions: {
@@ -843,3 +849,47 @@ export type EmployerAccountInsert = {
 }
 
 export type EmployerAccountUpdate = Partial<Omit<EmployerAccountRow, 'id' | 'created_at' | 'updated_at'>>
+
+// ─── Marketplace ──────────────────────────────────────────────
+
+export type MarketplaceCategory = 'clothes_women' | 'clothes_men' | 'shoes_women' | 'shoes_men' | 'bags_accessories' | 'electronics' | 'furniture' | 'books_studies' | 'kitchen_home' | 'sports_outdoors' | 'beauty_health' | 'bikes_transport' | 'tickets_events' | 'games_hobbies' | 'other'
+export type MarketplaceCondition = 'new_with_tags' | 'new_without_tags' | 'very_good' | 'good' | 'satisfactory'
+export type MarketplaceStatus = 'active' | 'sold' | 'reserved' | 'inactive'
+
+export type MarketplaceListingRow = {
+  id:                 string
+  user_id:            string | null
+  title:              string
+  description:        string | null
+  price:              number
+  category:           MarketplaceCategory
+  size_clothes:       string | null
+  size_shoes:         string | null
+  condition:          MarketplaceCondition
+  event_date:         string | null
+  event_venue:        string | null
+  ticket_quantity:    number | null
+  brand:              string | null
+  color:              string | null
+  photos:             string[]
+  location:           string | null
+  neighborhood:       string | null
+  contact_whatsapp:   string | null
+  contact_email:      string | null
+  seller_name:        string
+  seller_nationality: string | null
+  university:         string | null
+  is_free:            boolean
+  is_negotiable:      boolean
+  status:             MarketplaceStatus
+  views:              number
+  expires_at:         string
+  created_at:         string
+  updated_at:         string
+}
+
+export type MarketplaceListingInsert = Omit<MarketplaceListingRow, 'id' | 'views' | 'created_at' | 'updated_at'> & {
+  views?:      number
+  expires_at?: string
+}
+export type MarketplaceListingUpdate = Partial<Omit<MarketplaceListingRow, 'id' | 'created_at' | 'updated_at'>>
