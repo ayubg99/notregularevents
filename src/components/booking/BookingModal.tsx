@@ -174,6 +174,13 @@ export default function BookingModal(props: Props) {
   }, [open])
 
   useEffect(() => {
+    if (!open || props.type !== 'event') return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSelectedTierIdx((props as EventProps).initialTierIdx ?? 0)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
+
+  useEffect(() => {
     if (!open) return
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose() }
     window.addEventListener('keydown', handler)
