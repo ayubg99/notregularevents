@@ -284,14 +284,17 @@ function BookingDetailModal({
                 <p className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-2">Add-ons</p>
                 <div className="flex flex-col gap-1.5">
                   {booking.selected_extras.map(extra => (
-                    <div key={extra.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-white/5 border border-white/8">
-                      <div>
-                        <p className="text-white/80 text-sm font-medium">{extra.name}</p>
-                        {extra.description && (
-                          <p className="text-white/35 text-xs">{extra.description}</p>
-                        )}
+                    <div key={extra.id} className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-brand-accent/8 border border-brand-accent/20">
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-brand-accent/60 text-base leading-none">✦</span>
+                        <div>
+                          <p className="text-white/90 text-sm font-semibold">{extra.name}</p>
+                          {extra.description && (
+                            <p className="text-white/35 text-xs mt-0.5">{extra.description}</p>
+                          )}
+                        </div>
                       </div>
-                      <span className="font-mono text-sm font-semibold text-brand-accent ml-3 shrink-0">
+                      <span className="font-mono text-sm font-bold text-brand-accent ml-3 shrink-0">
                         +€{extra.price.toFixed(2)}
                       </span>
                     </div>
