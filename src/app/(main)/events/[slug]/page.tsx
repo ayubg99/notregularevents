@@ -227,6 +227,7 @@ export default async function EventDetailPage({ params }: Props) {
               earlyBirdDeadline={event.early_bird_deadline}
               earlyBirdSeats={event.early_bird_seats}
               earlyBirdSeatsSold={event.early_bird_seats_sold}
+              ticketTiers={event.ticket_tiers ?? undefined}
             />
 
             {/* Capacity summary */}

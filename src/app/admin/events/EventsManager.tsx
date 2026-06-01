@@ -2,14 +2,14 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2, ChevronDown, Users } from 'lucide-react'
+import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2, ChevronDown, Users, PlusCircle, MinusCircle } from 'lucide-react'
 import Link from 'next/link'
 import DataTable from '@/components/admin/DataTable'
 import ImageUpload from '@/components/admin/ImageUpload'
 import MultiImageUpload from '@/components/admin/MultiImageUpload'
 import { createClient } from '@/lib/supabase/client'
 import { createEvent, updateEvent, deleteEvent, duplicateEvent } from '@/app/actions/admin'
-import type { EventRow, EventInsert, EventCategory, EventStatus } from '@/types/database'
+import type { EventRow, EventInsert, EventCategory, EventStatus, EventTicketTier } from '@/types/database'
 
 const CATEGORIES: EventCategory[] = ['party', 'cultural', 'sport', 'networking', 'trip', 'other']
 const STATUS_COLORS: Record<string, string> = {
@@ -75,6 +75,7 @@ export default function EventsManager({ initialEvents }: Props) {
   const [eventPricing, setEventPricing] = useState<'paid' | 'free_all' | 'free_members'>('paid')
   const [notifySubscribers, setNotifySubscribers] = useState(false)
   const [galleryImages,    setGalleryImages]    = useState<string[]>([])
+  const [ticketTiers,      setTicketTiers]      = useState<EventTicketTier[]>([])
 
   function showToast(msg: string, success = false) {
     setToast(msg)
@@ -89,6 +90,7 @@ export default function EventsManager({ initialEvents }: Props) {
     setEventPricing('paid')
     setNotifySubscribers(false)
     setGalleryImages([])
+    setTicketTiers([])
     setToast('')
     setModal('create')
   }
@@ -98,6 +100,7 @@ export default function EventsManager({ initialEvents }: Props) {
     setGroupEnabled(event.price_group != null)
     setEventPricing(event.members_only_free ? 'free_members' : event.is_free ? 'free_all' : 'paid')
     setGalleryImages(event.gallery_images ?? [])
+    setTicketTiers(event.ticket_tiers ?? [])
     setForm({
       title:               event.title,
       slug:                event.slug,
@@ -166,6 +169,7 @@ export default function EventsManager({ initialEvents }: Props) {
         capacity:            parseInt(form.capacity) || 100,
         status:              form.status,
         gallery_images:      galleryImages.length ? galleryImages : null,
+        ticket_tiers:        ticketTiers.filter(t => t.name.trim()).length ? ticketTiers.filter(t => t.name.trim()) : null,
         created_by:          null,
       }
       const result = modal === 'edit' && editing
@@ -521,6 +525,61 @@ export default function EventsManager({ initialEvents }: Props) {
                     onChange={setGalleryImages}
                     folder="events"
                   />
+                </div>
+              </Section>
+
+              {/* Ticket Tiers */}
+              <Section title="Ticket Tiers (optional — replaces standard pricing)">
+                <p className="text-white/30 text-xs -mt-1">
+                  If set, users pick from these tiers on the event page. Price 0 = free (no Stripe fee).
+                </p>
+                <div className="flex flex-col gap-3">
+                  {ticketTiers.map((tier, i) => (
+                    <div key={i} className="rounded-xl border border-white/10 bg-white/3 p-3 flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-white/40">Tier {i + 1}</span>
+                        <button type="button" onClick={() => setTicketTiers(tt => tt.filter((_, j) => j !== i))} className="text-white/20 hover:text-red-400 transition-colors">
+                          <MinusCircle size={14} />
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="col-span-2">
+                          <input
+                            type="text"
+                            value={tier.name}
+                            onChange={e => setTicketTiers(tt => tt.map((t, j) => j === i ? { ...t, name: e.target.value } : t))}
+                            className={inputClass}
+                            placeholder="e.g. Free Entry, Drinks Package"
+                          />
+                        </div>
+                        <div>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={tier.price}
+                            onChange={e => setTicketTiers(tt => tt.map((t, j) => j === i ? { ...t, price: parseFloat(e.target.value) || 0 } : t))}
+                            className={inputClass}
+                            placeholder="€ price"
+                          />
+                        </div>
+                      </div>
+                      <input
+                        type="text"
+                        value={tier.description}
+                        onChange={e => setTicketTiers(tt => tt.map((t, j) => j === i ? { ...t, description: e.target.value } : t))}
+                        className={inputClass}
+                        placeholder="Short description, e.g. includes 2 drinks at the bar"
+                      />
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setTicketTiers(tt => [...tt, { name: '', price: 0, description: '' }])}
+                    className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors self-start"
+                  >
+                    <PlusCircle size={14} /> Add tier
+                  </button>
                 </div>
               </Section>
 

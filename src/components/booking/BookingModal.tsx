@@ -4,7 +4,7 @@ import { useState, useEffect, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { X, Loader2, Tag, Check, Minus, Plus, Zap, Users, Crown, User, LogIn } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import type { TripRow, TripTier } from '@/types/database'
+import type { TripRow, TripTier, EventTicketTier, TripExtra } from '@/types/database'
 
 type EventProps = {
   type:                  'event'
@@ -21,13 +21,16 @@ type EventProps = {
   earlyBirdDeadline?:    string | null
   earlyBirdSeats?:       number
   earlyBirdSeatsSold?:   number
+  ticketTiers?:          EventTicketTier[]
+  initialTierIdx?:       number
 }
 
 type TripProps = {
-  type:       'trip'
-  trip:       TripRow
-  seatsLeft:  number
-  groupSize?: number
+  type:            'trip'
+  trip:            TripRow
+  seatsLeft:       number
+  groupSize?:      number
+  selectedExtras?: TripExtra[]
 }
 
 type Props = (EventProps | TripProps) & {
@@ -95,7 +98,8 @@ export default function BookingModal(props: Props) {
     new Date(ep.earlyBirdDeadline) > new Date() &&
     ((ep.earlyBirdSeats ?? 0) - (ep.earlyBirdSeatsSold ?? 0)) > 0
   )
-  const hasEventTiers = props.type === 'event' && !!(ep?.priceEarlyBird || ep?.priceGroup)
+  const hasEventTiers    = props.type === 'event' && !!(ep?.priceEarlyBird || ep?.priceGroup)
+  const hasCustomTiers   = props.type === 'event' && !!(ep?.ticketTiers?.length)
 
   // ── All hooks (must be unconditional, before any early return) ──
   const [name,      setName]      = useState('')
@@ -113,6 +117,9 @@ export default function BookingModal(props: Props) {
   )
   const [eventTier, setEventTier] = useState<TripTier>(
     isEventEarlyBirdValid ? 'early_bird' : 'standard',
+  )
+  const [selectedTierIdx, setSelectedTierIdx] = useState<number>(
+    props.type === 'event' ? (ep?.initialTierIdx ?? 0) : 0,
   )
 
   const [promoOpen,    setPromoOpen]    = useState(false)
@@ -204,7 +211,9 @@ export default function BookingModal(props: Props) {
   let spotsLeft = 0
 
   if (props.type === 'event') {
-    if (hasEventTiers) {
+    if (hasCustomTiers && ep?.ticketTiers) {
+      basePrice = ep.ticketTiers[selectedTierIdx]?.price ?? 0
+    } else if (hasEventTiers) {
       if (eventTier === 'early_bird' && props.priceEarlyBird) basePrice = props.priceEarlyBird
       else if (eventTier === 'group' && props.priceGroup)     basePrice = props.priceGroup
       else                                                     basePrice = props.price
@@ -222,12 +231,17 @@ export default function BookingModal(props: Props) {
     spotsLeft = props.seatsLeft
   }
 
+  const tripExtras      = props.type === 'trip' ? (props.selectedExtras ?? []) : []
+  const extrasTotal     = tripExtras.reduce((s, e) => s + e.price, 0)
+
   let displayPrice = promoUnit ?? basePrice
   if (isMember && !promoCode) displayPrice = +(displayPrice * 0.90).toFixed(2)
 
   const hasDiscount = isMember && !promoCode && basePrice > 0
-  const isFree      = displayPrice === 0
-  const isFreePath  = props.type === 'event' && !!(props.isFree || props.price === 0 || (props.isMembersOnlyFree && isMember))
+  const isFree      = displayPrice === 0 && extrasTotal === 0
+  const isFreePath  = hasCustomTiers
+    ? (ep?.ticketTiers?.[selectedTierIdx]?.price ?? 0) === 0
+    : props.type === 'event' && !!(props.isFree || props.price === 0 || (props.isMembersOnlyFree && isMember))
 
   const isGroupTier = (props.type === 'trip' && selectedTier === 'group')
     || (props.type === 'event' && eventTier === 'group')
@@ -384,7 +398,9 @@ export default function BookingModal(props: Props) {
           ...(isMultiTicket    ? { attendees: ticketAttendees.map(a => ({ name: a.name.trim(), email: a.email.trim() })) } : {}),
           ...(props.type === 'trip' ? { attendees: tripAttendees.map(a => ({ name: a.name.trim(), email: a.email.trim() })) } : {}),
           ...(tier                                       ? { tier }                                            : {}),
+          ...(hasCustomTiers                             ? { ticketTierIdx: selectedTierIdx }                  : {}),
           ...(promoCode                                  ? { promoCode }                                       : {}),
+          ...(tripExtras.length > 0                      ? { selectedExtras: tripExtras }                      : {}),
           // Send referral code from state, or fall back to localStorage — server validates
           ...(() => {
             const code = (referralValid && referralCode) ? referralCode : (localStorage.getItem('referral_code') ?? '')
@@ -526,8 +542,41 @@ export default function BookingModal(props: Props) {
             </div>
           )}
 
-          {/* Tier selector (events with tiered pricing) */}
-          {props.type === 'event' && hasEventTiers && !isFreePath && (
+          {/* Custom ticket tiers (admin-defined) */}
+          {props.type === 'event' && hasCustomTiers && ep?.ticketTiers && (
+            <div className="flex flex-col gap-2">
+              <p className="text-white/50 text-xs uppercase tracking-widest">Select ticket</p>
+              {ep.ticketTiers.map((tier, i) => (
+                <button key={i} onClick={() => setSelectedTierIdx(i)}
+                  className={`rounded-xl border px-3 py-3 text-left transition-all ${
+                    selectedTierIdx === i
+                      ? 'border-brand-primary bg-brand-primary/10'
+                      : 'border-white/10 bg-white/5 hover:border-white/20'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-white font-semibold text-sm">{tier.name}</span>
+                        {tier.price === 0 && (
+                          <span className="text-xs px-1.5 py-0.5 rounded-full bg-green-500/15 text-green-400 border border-green-500/25">Free</span>
+                        )}
+                      </div>
+                      {tier.description && (
+                        <p className="text-white/40 text-xs mt-0.5">{tier.description}</p>
+                      )}
+                    </div>
+                    <span className="font-bold text-white flex-shrink-0">
+                      {tier.price === 0 ? 'Free' : `€${tier.price.toFixed(2)}`}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Legacy tier selector (events with early_bird / group pricing) */}
+          {props.type === 'event' && !hasCustomTiers && hasEventTiers && !isFreePath && (
             <div className="flex flex-col gap-2">
               <p className="text-white/50 text-xs uppercase tracking-widest">Select tier</p>
               {isEventEarlyBirdValid && (
@@ -800,15 +849,33 @@ export default function BookingModal(props: Props) {
           )}
 
           {/* Price summary */}
-          {!isFree && (
-            <div className="flex items-center justify-between border-t border-white/10 pt-4">
-              <span className="text-white/60 text-sm">Total</span>
-              <div className="text-right">
-                {(hasDiscount || promoCode) && (
-                  <p className="text-white/30 text-xs line-through">€{(basePrice * effectiveQty).toFixed(2)}</p>
-                )}
-                <span className="font-heading text-2xl font-bold text-white">€{total.toFixed(2)}</span>
-                {hasDiscount && <p className="text-brand-primary text-xs mt-0.5">Member price (−10%)</p>}
+          {!(isFree && extrasTotal === 0) && (
+            <div className="flex flex-col gap-2 border-t border-white/10 pt-4">
+              {tripExtras.length > 0 && (
+                <div className="flex flex-col gap-1 text-xs text-white/50">
+                  <div className="flex justify-between">
+                    <span>Base price × {effectiveQty}</span>
+                    <span>€{(displayPrice * effectiveQty).toFixed(2)}</span>
+                  </div>
+                  {tripExtras.map(e => (
+                    <div key={e.id} className="flex justify-between">
+                      <span>{e.name}</span>
+                      <span>{e.price === 0 ? 'Free' : `+€${e.price.toFixed(2)}`}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex items-center justify-between">
+                <span className="text-white/60 text-sm">Total</span>
+                <div className="text-right">
+                  {(hasDiscount || promoCode) && tripExtras.length === 0 && (
+                    <p className="text-white/30 text-xs line-through">€{(basePrice * effectiveQty).toFixed(2)}</p>
+                  )}
+                  <span className="font-heading text-2xl font-bold text-white">
+                    €{(total + extrasTotal).toFixed(2)}
+                  </span>
+                  {hasDiscount && <p className="text-brand-primary text-xs mt-0.5">Member price (−10%)</p>}
+                </div>
               </div>
             </div>
           )}

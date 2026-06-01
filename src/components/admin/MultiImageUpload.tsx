@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import Image from 'next/image'
-import { Upload, X, Loader2, ImageIcon } from 'lucide-react'
+import { X, Loader2, ImageIcon } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 interface Props {

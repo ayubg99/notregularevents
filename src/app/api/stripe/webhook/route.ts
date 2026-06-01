@@ -230,6 +230,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     const tier = (meta.tier ?? 'standard') as TripTier
     const rawAttendees: { name: string; email: string }[] =
       meta.attendees ? (JSON.parse(meta.attendees) as { name: string; email: string }[]) : []
+    const selectedExtras = meta.selected_extras_json
+      ? (JSON.parse(meta.selected_extras_json) as { id: string; name: string; price: number }[])
+      : null
 
     const tripAttendees = rawAttendees.length > 0
       ? rawAttendees
@@ -284,6 +287,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         is_group_booking:  isGroup,
         lead_name:         isGroup ? (guestName || null) : null,
         lead_email:        isGroup ? (guestEmail || null) : null,
+        selected_extras:   selectedExtras?.length ? selectedExtras : null,
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: insertErr } = await admin.from('trip_bookings').insert(tripRow as any)

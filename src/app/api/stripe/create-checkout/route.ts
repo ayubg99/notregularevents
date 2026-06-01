@@ -22,6 +22,10 @@ interface Body {
   attendees?:  { name: string; email: string }[]
   referralCode?: string
   ambassadorId?: string
+  // event ticket tiers
+  ticketTierIdx?: number
+  // trip extras
+  selectedExtras?: { id: string; name: string; price: number }[]
   // job listing specific
   basePlan?:   'standard' | 'featured' | 'employer_plan'
   withUrgent?: boolean
@@ -81,7 +85,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
   const { data: { user } } = await supabase.auth.getUser()
 
   const body: Body = await request.json()
-  const { type, itemId, tier, quantity = 1, groupSize, promoCode, guestName, guestEmail, guestPhone, attendees, referralCode, ambassadorId: clientAmbassadorId } = body
+  const { type, itemId, tier, quantity = 1, groupSize, promoCode, guestName, guestEmail, guestPhone, attendees, referralCode, ambassadorId: clientAmbassadorId, ticketTierIdx, selectedExtras } = body
 
   // Resolve ambassadorId server-side from referral code — client state can be stale
   let ambassadorId = clientAmbassadorId ?? ''
@@ -159,7 +163,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
   if (type === 'event') {
     const { data: event } = await supabase
       .from('events')
-      .select('id, title, price, price_early_bird, price_group, early_bird_deadline, early_bird_seats, early_bird_seats_sold, capacity, tickets_sold, slug, image_url, date, location')
+      .select('id, title, price, price_early_bird, price_group, early_bird_deadline, early_bird_seats, early_bird_seats_sold, capacity, tickets_sold, slug, image_url, date, location, ticket_tiers')
       .eq('id', itemId)
       .eq('status', 'published')
       .single()
@@ -173,7 +177,12 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: `Only ${spotsLeft} spot${spotsLeft === 1 ? '' : 's'} remaining.` }, { status: 409 })
     }
 
-    // Resolve tier-based price for events
+    // Resolve price — custom tiers take priority over early_bird/group
+    const eventTiers = event.ticket_tiers as { name: string; price: number; description: string }[] | null
+    const customTier = (eventTiers?.length && ticketTierIdx !== undefined)
+      ? eventTiers[ticketTierIdx]
+      : null
+
     const isEbValid =
       tier === 'early_bird' &&
       event.price_early_bird != null &&
@@ -181,8 +190,9 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       new Date(event.early_bird_deadline) > new Date() &&
       (event.early_bird_seats - event.early_bird_seats_sold) > 0
 
-    const baseEventPrice =
-      isEbValid                              ? (event.price_early_bird ?? event.price)
+    const baseEventPrice = customTier
+      ? customTier.price
+      : isEbValid                              ? (event.price_early_bird ?? event.price)
       : tier === 'group' && event.price_group != null ? event.price_group
       : event.price
 
@@ -257,19 +267,20 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  cancelUrl,
       metadata: {
-        type:          'event',
-        item_id:       event.id,
-        user_id:       user?.id      ?? '',
-        quantity:      String(quantity),
-        guest_name:    guestName     ?? '',
-        guest_email:   guestEmail    ?? '',
-        guest_phone:   guestPhone    ?? '',
-        event_title:   event.title,
-        event_date:    event.date    ?? '',
-        location:      event.location ?? '',
-        attendees:     JSON.stringify(attendees ?? []),
-        referral_code: referralCode  ?? '',
-        ambassador_id: ambassadorId  ?? '',
+        type:              'event',
+        item_id:           event.id,
+        user_id:           user?.id      ?? '',
+        quantity:          String(quantity),
+        guest_name:        guestName     ?? '',
+        guest_email:       guestEmail    ?? '',
+        guest_phone:       guestPhone    ?? '',
+        event_title:       event.title,
+        event_date:        event.date    ?? '',
+        location:          event.location ?? '',
+        attendees:         JSON.stringify(attendees ?? []),
+        referral_code:     referralCode  ?? '',
+        ambassador_id:     ambassadorId  ?? '',
+        ticket_tier_name:  customTier?.name ?? '',
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
     })
@@ -325,27 +336,31 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       unitPrice = applyDiscount(unitPrice, 'percentage', 10)
     }
 
+    const extrasTotal = (selectedExtras ?? []).reduce((s, e) => s + e.price, 0)
+
     const cancelUrl = `${baseUrl}/trips/${trip.slug}`
     const toEmail = guestEmail ?? user?.email
     const toName  = guestName  ?? user?.user_metadata?.full_name ?? 'there'
 
-    // Free path
-    if (unitPrice === 0) {
+    // Free path (base price + all extras = 0)
+    if (unitPrice === 0 && extrasTotal === 0) {
       const bookingRef = nanoid(8).toUpperCase()
       const qrCode = await generateQR(bookingRef)
-      const { error } = await supabase.from('trip_bookings').insert({
+      const freeBookingRow = {
         trip_id:           trip.id,
         user_id:           user?.id ?? null,
         tier:              tripTier,
         booking_ref:       bookingRef,
         qr_code:           qrCode,
-        stripe_payment_id: null,
+        stripe_payment_id: null as null,
         guest_name:        guestName  ?? null,
         guest_email:       guestEmail ?? null,
         guest_phone:       guestPhone ?? null,
         status:            'confirmed' as const,
         deposit_paid:      true,
-      })
+        selected_extras:   selectedExtras?.length ? selectedExtras : null,
+      }
+      const { error } = await supabase.from('trip_bookings').insert(freeBookingRow)
       if (error) {
         console.error('[create-checkout free trip]', error.message)
         return NextResponse.json({ error: 'Failed to create your booking.' }, { status: 500 })
@@ -374,40 +389,52 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ url: `${baseUrl}/booking/success?ref=${bookingRef}` })
     }
 
-    const tripGroupSize = tripTier === 'group' ? (groupSize ?? 1) : 1
+    const tripGroupSize  = tripTier === 'group' ? (groupSize ?? 1) : 1
+    const extrasItems    = (selectedExtras ?? []).filter(e => e.price > 0)
 
     const session = await stripe.checkout.sessions.create({
       mode:           'payment',
       customer_email: toEmail ?? undefined,
-      line_items: [{
-        quantity: tripGroupSize,
-        price_data: {
-          currency:     'eur',
-          unit_amount:  Math.round(unitPrice * 100),
-          product_data: {
-            name:   `${trip.title} — ${tripTier.replace('_', ' ')}`,
-            images: trip.image_url ? [trip.image_url] : [],
+      line_items: [
+        {
+          quantity: tripGroupSize,
+          price_data: {
+            currency:     'eur',
+            unit_amount:  Math.round(unitPrice * 100),
+            product_data: {
+              name:   `${trip.title} — ${tripTier.replace('_', ' ')}`,
+              images: trip.image_url ? [trip.image_url] : [],
+            },
           },
         },
-      }],
+        ...extrasItems.map(e => ({
+          quantity: 1,
+          price_data: {
+            currency:     'eur' as const,
+            unit_amount:  Math.round(e.price * 100),
+            product_data: { name: e.name },
+          },
+        })),
+      ],
       success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  cancelUrl,
       metadata: {
-        type:               'trip',
-        item_id:            trip.id,
-        user_id:            user?.id        ?? '',
-        tier:               tripTier,
-        quantity:           String(tripGroupSize),
-        guest_name:         guestName       ?? '',
-        guest_email:        guestEmail      ?? '',
-        guest_phone:        guestPhone      ?? '',
-        trip_title:         trip.title,
-        trip_date:          trip.start_date ?? '',
-        destination:        trip.destination ?? '',
-        whatsapp_group_url: trip.whatsapp_group_url ?? '',
-        attendees:          JSON.stringify(attendees ?? []),
-        referral_code:      referralCode    ?? '',
-        ambassador_id:      ambassadorId    ?? '',
+        type:                  'trip',
+        item_id:               trip.id,
+        user_id:               user?.id        ?? '',
+        tier:                  tripTier,
+        quantity:              String(tripGroupSize),
+        guest_name:            guestName       ?? '',
+        guest_email:           guestEmail      ?? '',
+        guest_phone:           guestPhone      ?? '',
+        trip_title:            trip.title,
+        trip_date:             trip.start_date ?? '',
+        destination:           trip.destination ?? '',
+        whatsapp_group_url:    trip.whatsapp_group_url ?? '',
+        attendees:             JSON.stringify(attendees ?? []),
+        referral_code:         referralCode    ?? '',
+        ambassador_id:         ambassadorId    ?? '',
+        selected_extras_json:  JSON.stringify(selectedExtras ?? []),
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
     })

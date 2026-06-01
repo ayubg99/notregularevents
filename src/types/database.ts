@@ -77,6 +77,7 @@ export type EventRow = {
   created_at:            string
   updated_at:            string
   gallery_images:        string[] | null
+  ticket_tiers:          EventTicketTier[] | null
 }
 
 export type EventTicketRow = {
@@ -103,7 +104,9 @@ export type EventTicketRow = {
   referral_code:     string  | null
 }
 
-export type ItineraryDay = { day: number; title: string; description: string }
+export type ItineraryDay    = { day: number; title: string; description: string }
+export type EventTicketTier = { name: string; price: number; description: string }
+export type TripExtra       = { id: string; name: string; price: number; description: string }
 
 export type TripRow = {
   id:                 string
@@ -136,6 +139,7 @@ export type TripRow = {
   meeting_points:     string[] | null
   whatsapp_group_url: string | null
   gallery_images:     string[] | null
+  extras:             TripExtra[] | null
 }
 
 export type TripBookingRow = {
@@ -159,6 +163,7 @@ export type TripBookingRow = {
   updated_at:        string
   ambassador_id:     string | null
   referral_code:     string | null
+  selected_extras:   TripExtra[] | null
 }
 
 export type MembershipRow = {
@@ -267,7 +272,7 @@ export type UserInsert = Omit<UserRow, 'created_at' | 'updated_at'> & {
 
 export type ProfileInsert = Omit<ProfileRow, 'id' | 'created_at' | 'updated_at'>
 
-export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 'updated_at' | 'price_early_bird' | 'price_group' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold' | 'group_min_size' | 'is_free' | 'members_only_free' | 'gallery_images'> & {
+export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 'updated_at' | 'price_early_bird' | 'price_group' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold' | 'group_min_size' | 'is_free' | 'members_only_free' | 'gallery_images' | 'ticket_tiers'> & {
   tickets_sold?:         number
   status?:               EventStatus
   price_early_bird?:     number | null
@@ -279,6 +284,7 @@ export type EventInsert = Omit<EventRow, 'id' | 'tickets_sold' | 'created_at' | 
   is_free?:              boolean
   members_only_free?:    boolean
   gallery_images?:       string[] | null
+  ticket_tiers?:         EventTicketTier[] | null
 }
 
 export type EventTicketInsert = Omit<EventTicketRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid' | 'checked_in' | 'checked_in_at' | 'group_booking_ref' | 'is_group_booking' | 'lead_name' | 'lead_email' | 'ambassador_id' | 'referral_code'> & {
@@ -294,7 +300,7 @@ export type EventTicketInsert = Omit<EventTicketRow, 'id' | 'created_at' | 'upda
   referral_code?:     string  | null
 }
 
-export type TripInsert = Omit<TripRow, 'id' | 'seats_sold' | 'created_at' | 'updated_at' | 'price_vip' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold' | 'group_min_size' | 'gallery_images'> & {
+export type TripInsert = Omit<TripRow, 'id' | 'seats_sold' | 'created_at' | 'updated_at' | 'price_vip' | 'early_bird_deadline' | 'early_bird_seats' | 'early_bird_seats_sold' | 'group_min_size' | 'gallery_images' | 'extras'> & {
   seats_sold?:            number
   status?:                TripStatus
   price_vip?:             number | null
@@ -303,17 +309,19 @@ export type TripInsert = Omit<TripRow, 'id' | 'seats_sold' | 'created_at' | 'upd
   early_bird_seats_sold?: number
   group_min_size?:        number | null
   gallery_images?:        string[] | null
+  extras?:                TripExtra[] | null
 }
 
-export type TripBookingInsert = Omit<TripBookingRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid' | 'quantity' | 'checked_in' | 'checked_in_at' | 'ambassador_id' | 'referral_code'> & {
-  status?:        BookingStatus
-  deposit_paid?:  boolean
-  amount_paid?:   number | null
-  quantity?:      number
-  checked_in?:    boolean | null
-  checked_in_at?: string  | null
-  ambassador_id?: string  | null
-  referral_code?: string  | null
+export type TripBookingInsert = Omit<TripBookingRow, 'id' | 'created_at' | 'updated_at' | 'amount_paid' | 'quantity' | 'checked_in' | 'checked_in_at' | 'ambassador_id' | 'referral_code' | 'selected_extras'> & {
+  status?:          BookingStatus
+  deposit_paid?:    boolean
+  amount_paid?:     number | null
+  quantity?:        number
+  checked_in?:      boolean | null
+  checked_in_at?:   string  | null
+  ambassador_id?:   string  | null
+  referral_code?:   string  | null
+  selected_extras?: TripExtra[] | null
 }
 
 export type MembershipInsert = Omit<MembershipRow, 'id' | 'created_at' | 'updated_at' | 'stripe_customer_id'> & {

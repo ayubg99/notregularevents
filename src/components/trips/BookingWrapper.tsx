@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import PricingTiers from '@/components/trips/PricingTiers'
 import BookingModal from '@/components/booking/BookingModal'
-import type { TripRow, TripTier } from '@/types/database'
+import type { TripRow, TripTier, TripExtra } from '@/types/database'
 
 interface Props {
   trip:      TripRow
@@ -11,11 +11,12 @@ interface Props {
 }
 
 export default function BookingWrapper({ trip, seatsLeft }: Props) {
-  const [modalOpen,    setModalOpen]    = useState(false)
-  const [selectedTier, setSelectedTier] = useState<TripTier>('standard')
-  const [groupSize,    setGroupSize]    = useState(4)
-  const [promoCode,    setPromoCode]    = useState('')
-  const [promoLabel,   setPromoLabel]   = useState('')
+  const [modalOpen,       setModalOpen]       = useState(false)
+  const [selectedTier,    setSelectedTier]    = useState<TripTier>('standard')
+  const [groupSize,       setGroupSize]       = useState(4)
+  const [selectedExtras,  setSelectedExtras]  = useState<TripExtra[]>([])
+  const [promoCode,       setPromoCode]       = useState('')
+  const [promoLabel,      setPromoLabel]      = useState('')
 
   function handlePromoApplied(code: string, label: string) {
     setPromoCode(code)
@@ -27,9 +28,10 @@ export default function BookingWrapper({ trip, seatsLeft }: Props) {
     setPromoLabel('')
   }
 
-  function handleBook(tier: TripTier, size?: number) {
+  function handleBook(tier: TripTier, size?: number, extras?: TripExtra[]) {
     setSelectedTier(tier)
     if (size !== undefined) setGroupSize(size)
+    if (extras !== undefined) setSelectedExtras(extras)
     setModalOpen(true)
   }
 
@@ -54,6 +56,7 @@ export default function BookingWrapper({ trip, seatsLeft }: Props) {
         onClose={() => setModalOpen(false)}
         initialTier={selectedTier}
         groupSize={groupSize}
+        selectedExtras={selectedExtras}
       />
     </>
   )

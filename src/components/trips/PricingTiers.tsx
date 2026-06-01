@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import { Check, Zap, Users, Tag, Loader2, X, Minus, Plus } from 'lucide-react'
-import type { TripRow, TripTier } from '@/types/database'
+import type { TripRow, TripTier, TripExtra } from '@/types/database'
 
 interface Props {
   trip:            TripRow
-  onBook:          (tier: TripTier, groupSize?: number) => void
+  onBook:          (tier: TripTier, groupSize?: number, extras?: TripExtra[]) => void
   isPending:       boolean
   seatsLeft:       number
   promoCode?:      string
@@ -37,7 +37,8 @@ export default function PricingTiers({
   const [selected, setSelected] = useState<TripTier>(
     isEarlyBirdValid ? 'early_bird' : 'standard',
   )
-  const [groupSize, setGroupSize]      = useState(4)
+  const [groupSize,      setGroupSize]      = useState(4)
+  const [selectedExtras, setSelectedExtras] = useState<TripExtra[]>([])
   const [promoOpen, setPromoOpen]      = useState(false)
   const [promoInput, setPromoInput]    = useState('')
   const [promoLoading, setPromoLoading] = useState(false)
@@ -76,9 +77,19 @@ export default function PricingTiers({
     }
   }
 
-  function handleBook() {
-    onBook(selected, selected === 'group' ? groupSize : undefined)
+  function toggleExtra(extra: TripExtra) {
+    setSelectedExtras(prev =>
+      prev.some(e => e.id === extra.id)
+        ? prev.filter(e => e.id !== extra.id)
+        : [...prev, extra],
+    )
   }
+
+  function handleBook() {
+    onBook(selected, selected === 'group' ? groupSize : undefined, selectedExtras)
+  }
+
+  const extrasTotal = selectedExtras.reduce((s, e) => s + e.price, 0)
 
   return (
     <div className="glass-card rounded-2xl p-5 flex flex-col gap-4">
@@ -211,6 +222,51 @@ export default function PricingTiers({
           </div>
         )}
       </div>
+
+      {/* Extras / Add-ons */}
+      {(trip.extras?.length ?? 0) > 0 && (
+        <div className="flex flex-col gap-2">
+          <p className="text-white/50 text-xs uppercase tracking-widest">Optional Add-ons</p>
+          {trip.extras!.map(extra => {
+            const checked = selectedExtras.some(e => e.id === extra.id)
+            return (
+              <button
+                key={extra.id}
+                type="button"
+                onClick={() => toggleExtra(extra)}
+                disabled={soldOut || isPending}
+                className={`w-full text-left rounded-xl border p-3.5 transition-all ${
+                  checked
+                    ? 'border-brand-accent bg-brand-accent/10'
+                    : 'border-white/10 bg-white/5 hover:border-white/20'
+                } ${soldOut || isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-2.5 flex-1 min-w-0">
+                    <div className={`mt-0.5 w-4 h-4 rounded flex-shrink-0 border flex items-center justify-center transition-colors ${checked ? 'bg-brand-accent border-brand-accent' : 'border-white/30'}`}>
+                      {checked && <Check size={10} className="text-brand-dark" strokeWidth={3} />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white font-semibold text-sm">{extra.name}</p>
+                      {extra.description && (
+                        <p className="text-white/50 text-xs mt-0.5">{extra.description}</p>
+                      )}
+                    </div>
+                  </div>
+                  <span className="font-bold text-sm flex-shrink-0 text-white">
+                    {extra.price === 0 ? <span className="text-green-400">Free</span> : `+€${extra.price.toFixed(2)}`}
+                  </span>
+                </div>
+              </button>
+            )
+          })}
+          {extrasTotal > 0 && (
+            <p className="text-white/50 text-xs text-right">
+              Add-ons: <span className="text-white font-semibold">+€{extrasTotal.toFixed(2)}</span>
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Promo code */}
       {onPromoApplied && (

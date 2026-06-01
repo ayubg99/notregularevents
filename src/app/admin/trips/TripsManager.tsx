@@ -9,7 +9,7 @@ import ImageUpload from '@/components/admin/ImageUpload'
 import MultiImageUpload from '@/components/admin/MultiImageUpload'
 import { createClient } from '@/lib/supabase/client'
 import { createTrip, updateTrip, deleteTrip, duplicateTrip } from '@/app/actions/admin'
-import type { TripRow, TripInsert, TripStatus, ItineraryDay } from '@/types/database'
+import type { TripRow, TripInsert, TripStatus, ItineraryDay, TripExtra } from '@/types/database'
 
 const STATUS_COLORS: Record<string, string> = {
   published: 'bg-green-500/15 text-green-400',
@@ -85,6 +85,7 @@ export default function TripsManager({ initialTrips }: Props) {
   const [whatsIncluded,  setWhatsIncluded]  = useState<string[]>([])
   const [whatsExcluded,  setWhatsExcluded]  = useState<string[]>([])
   const [galleryImages,  setGalleryImages]  = useState<string[]>([])
+  const [extras,         setExtras]         = useState<TripExtra[]>([])
 
   function showToast(msg: string, success = false) {
     setToast(msg)
@@ -102,6 +103,7 @@ export default function TripsManager({ initialTrips }: Props) {
     setWhatsIncluded([])
     setWhatsExcluded([])
     setGalleryImages([])
+    setExtras([])
     setToast('')
     setModal('create')
   }
@@ -114,6 +116,7 @@ export default function TripsManager({ initialTrips }: Props) {
     setWhatsIncluded(trip.whats_included ?? [])
     setWhatsExcluded(trip.whats_excluded ?? [])
     setGalleryImages(trip.gallery_images ?? [])
+    setExtras(trip.extras ?? [])
     setForm({
       title:               trip.title,
       slug:                trip.slug,
@@ -186,6 +189,7 @@ export default function TripsManager({ initialTrips }: Props) {
         whats_excluded:      whatsExcluded.filter(s => s.trim()).length ? whatsExcluded.filter(s => s.trim()) : null,
         meeting_points:      meetingPoints.filter(s => s.trim()).length ? meetingPoints.filter(s => s.trim()) : null,
         gallery_images:      galleryImages.length ? galleryImages : null,
+        extras:              extras.filter(e => e.name.trim()).length ? extras.filter(e => e.name.trim()) : null,
         created_by:          null,
       }
       const result = modal === 'edit' && editing
@@ -602,6 +606,60 @@ export default function TripsManager({ initialTrips }: Props) {
                     ))}
                     <button type="button" onClick={() => setWhatsExcluded(we => [...we, ''])} className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors self-start">
                       <PlusCircle size={14} /> Add item
+                    </button>
+                  </div>
+                </div>
+
+                {/* Optional Add-ons */}
+                <div>
+                  <label className={labelClass}>Optional Add-ons</label>
+                  <p className="text-white/25 text-xs mb-2">Extras users can select during booking (price 0 = free, no Stripe fee).</p>
+                  <div className="flex flex-col gap-3">
+                    {extras.map((extra, i) => (
+                      <div key={extra.id} className="rounded-xl border border-white/10 bg-white/3 p-3 flex flex-col gap-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-white/40">Add-on {i + 1}</span>
+                          <button type="button" onClick={() => setExtras(ex => ex.filter((_, j) => j !== i))} className="text-white/20 hover:text-red-400 transition-colors">
+                            <MinusCircle size={14} />
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="col-span-2">
+                            <input
+                              type="text"
+                              value={extra.name}
+                              onChange={e => setExtras(ex => ex.map((v, j) => j === i ? { ...v, name: e.target.value } : v))}
+                              className={inputClass}
+                              placeholder="e.g. Museum Entry, Travel Insurance"
+                            />
+                          </div>
+                          <div>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={extra.price}
+                              onChange={e => setExtras(ex => ex.map((v, j) => j === i ? { ...v, price: parseFloat(e.target.value) || 0 } : v))}
+                              className={inputClass}
+                              placeholder="€ price"
+                            />
+                          </div>
+                        </div>
+                        <input
+                          type="text"
+                          value={extra.description}
+                          onChange={e => setExtras(ex => ex.map((v, j) => j === i ? { ...v, description: e.target.value } : v))}
+                          className={inputClass}
+                          placeholder="Short description, e.g. entry to Sagrada Família"
+                        />
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setExtras(ex => [...ex, { id: Math.random().toString(36).slice(2, 8), name: '', price: 0, description: '' }])}
+                      className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors self-start"
+                    >
+                      <PlusCircle size={14} /> Add add-on
                     </button>
                   </div>
                 </div>
