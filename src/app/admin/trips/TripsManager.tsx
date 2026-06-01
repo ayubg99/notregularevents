@@ -72,6 +72,8 @@ export default function TripsManager({ initialTrips }: Props) {
   const [isPending, startTransition] = useTransition()
   const [groupEnabled, setGroupEnabled] = useState(false)
 
+  const [notifySubscribers, setNotifySubscribers] = useState(false)
+
   const [cancelTarget,  setCancelTarget]  = useState<TripRow | null>(null)
   const [cancelPreview, setCancelPreview] = useState<{ count: number; total: number } | null>(null)
   const [cancelLoading, setCancelLoading] = useState(false)
@@ -92,6 +94,7 @@ export default function TripsManager({ initialTrips }: Props) {
     setEditing(null)
     setForm(defaultForm())
     setGroupEnabled(false)
+    setNotifySubscribers(false)
     setMeetingPoints([])
     setItinerary([])
     setWhatsIncluded([])
@@ -182,10 +185,17 @@ export default function TripsManager({ initialTrips }: Props) {
       }
       const result = modal === 'edit' && editing
         ? await updateTrip(editing.id, data)
-        : await createTrip(data)
+        : await createTrip(data, notifySubscribers)
 
-      if (result.success) { setModal(null); router.refresh() }
-      else showToast(result.error ?? 'Failed to save trip.')
+      if (result.success) {
+        setModal(null)
+        router.refresh()
+        if (notifySubscribers && result.notified !== undefined) {
+          showToast(`Trip created · ${result.notified} subscriber${result.notified !== 1 ? 's' : ''} notified`, true)
+        }
+      } else {
+        showToast(result.error ?? 'Failed to save trip.')
+      }
     })
   }
 
@@ -613,6 +623,31 @@ export default function TripsManager({ initialTrips }: Props) {
               <Section title="Description">
                 <textarea rows={4} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className={`${inputClass} resize-none`} placeholder="Describe the trip…" />
               </Section>
+
+              {/* Notify subscribers — create only */}
+              {modal === 'create' && (
+                <button
+                  type="button"
+                  onClick={() => setNotifySubscribers(v => !v)}
+                  className={`flex items-center justify-between w-full rounded-xl px-4 py-3 text-left transition-colors ${
+                    notifySubscribers
+                      ? 'border border-brand-primary/40 bg-brand-primary/5'
+                      : 'border border-white/8 bg-white/3 hover:border-white/15'
+                  }`}
+                >
+                  <div>
+                    <p className={`text-sm font-semibold ${notifySubscribers ? 'text-brand-primary' : 'text-white/70'}`}>
+                      📣 Notify newsletter subscribers
+                    </p>
+                    <p className="text-xs text-white/40 mt-0.5">Send an announcement email to all subscribers when this trip is created</p>
+                  </div>
+                  <div className={`w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] transition-colors ml-3 ${
+                    notifySubscribers ? 'bg-brand-primary text-white' : 'border border-white/20'
+                  }`}>
+                    {notifySubscribers ? '✓' : ''}
+                  </div>
+                </button>
+              )}
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setModal(null)} className="flex-1 py-2.5 rounded-xl border border-white/15 text-white/60 hover:text-white text-sm font-medium transition-colors">Cancel</button>

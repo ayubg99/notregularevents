@@ -28,7 +28,7 @@ export default function FooterNewsletter() {
     return (
       <div className="flex items-center gap-2 text-green-400 text-sm font-medium">
         <CheckCircle size={16} />
-        You're subscribed!
+        You&apos;re subscribed!
       </div>
     )
   }

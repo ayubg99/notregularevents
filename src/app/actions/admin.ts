@@ -3,6 +3,8 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { getResend } from '@/lib/resend'
+import { NewEventAnnouncementEmail, NewTripAnnouncementEmail } from '@/lib/emails/AnnouncementEmail'
 import { confirmBooking, rejectBooking } from '@/lib/booking-utils'
 import type {
   EventInsert, EventUpdate, TripInsert, TripUpdate, UserRole, HousingStatus,
@@ -10,6 +12,27 @@ import type {
   PartnerRoomInsert, PartnerRoomUpdate, PartnerRoomStatus,
   RoomContactStatus, SponsorInsert, SponsorUpdate,
 } from '@/types/database'
+
+type Subscriber = { email: string; unsubscribe_token: string }
+
+async function fetchSubscribers(): Promise<Subscriber[]> {
+  const admin = getAdminClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (admin as any).from('newsletter_emails').select('email, unsubscribe_token')
+  return (data ?? []) as Subscriber[]
+}
+
+async function batchSend(emails: Parameters<ReturnType<typeof getResend>['batch']['send']>[0]): Promise<number> {
+  const BATCH = 100
+  let sent = 0
+  for (let i = 0; i < emails.length; i += BATCH) {
+    try {
+      const { error } = await getResend().batch.send(emails.slice(i, i + BATCH))
+      if (!error) sent += Math.min(BATCH, emails.length - i)
+    } catch { /* non-fatal */ }
+  }
+  return sent
+}
 
 async function verifyAdmin(): Promise<{ ok: true; userId: string } | { ok: false; error: string }> {
   const supabase = await createClient()
@@ -22,20 +45,52 @@ async function verifyAdmin(): Promise<{ ok: true; userId: string } | { ok: false
 
 // ── Events ────────────────────────────────────────────────────
 
-export async function createEvent(data: EventInsert): Promise<{ success: boolean; error?: string }> {
+export async function createEvent(data: EventInsert, notifySubscribers = false): Promise<{ success: boolean; error?: string; notified?: number }> {
   const auth = await verifyAdmin()
   if (!auth.ok) return { success: false, error: auth.error }
 
-  const admin = getAdminClient()
-  const { error } = await admin.from('events').insert({ ...data, created_by: auth.userId })
+  const admin   = getAdminClient()
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+  const from    = process.env.RESEND_FROM_EMAIL   ?? 'bookings@erasmusvibe.com'
+
+  const { data: row, error } = await admin
+    .from('events')
+    .insert({ ...data, created_by: auth.userId })
+    .select('title, slug, date, location, price, is_free, image_url')
+    .single()
   if (error) return { success: false, error: error.message }
 
   revalidatePath('/admin/events')
   revalidatePath('/events')
-  return { success: true }
+
+  if (!notifySubscribers) return { success: true }
+
+  const subscribers = await fetchSubscribers()
+  if (!subscribers.length) return { success: true, notified: 0 }
+
+  const subject = `🎉 New event: ${row.title}`
+  const emails  = subscribers.map(sub => ({
+    from,
+    to:      sub.email,
+    subject,
+    html: NewEventAnnouncementEmail({
+      title:          row.title,
+      slug:           row.slug,
+      date:           row.date,
+      location:       row.location,
+      price:          row.price,
+      isFree:         row.is_free,
+      imageUrl:       row.image_url,
+      baseUrl,
+      unsubscribeUrl: `${baseUrl}/api/newsletter/unsubscribe?token=${sub.unsubscribe_token}`,
+    }),
+  }))
+
+  const notified = await batchSend(emails)
+  return { success: true, notified }
 }
 
-export async function updateEvent(id: string, data: EventUpdate): Promise<{ success: boolean; error?: string }> {
+export async function updateEvent(id: string, data: EventUpdate): Promise<{ success: boolean; error?: string; notified?: number }> {
   const auth = await verifyAdmin()
   if (!auth.ok) return { success: false, error: auth.error }
 
@@ -103,20 +158,52 @@ export async function duplicateEvent(eventId: string): Promise<{ success: boolea
 
 // ── Trips ─────────────────────────────────────────────────────
 
-export async function createTrip(data: TripInsert): Promise<{ success: boolean; error?: string }> {
+export async function createTrip(data: TripInsert, notifySubscribers = false): Promise<{ success: boolean; error?: string; notified?: number }> {
   const auth = await verifyAdmin()
   if (!auth.ok) return { success: false, error: auth.error }
 
-  const admin = getAdminClient()
-  const { error } = await admin.from('trips').insert({ ...data, created_by: auth.userId })
+  const admin   = getAdminClient()
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+  const from    = process.env.RESEND_FROM_EMAIL   ?? 'bookings@erasmusvibe.com'
+
+  const { data: row, error } = await admin
+    .from('trips')
+    .insert({ ...data, created_by: auth.userId })
+    .select('title, slug, start_date, end_date, destination, price_standard, image_url')
+    .single()
   if (error) return { success: false, error: error.message }
 
   revalidatePath('/admin/trips')
   revalidatePath('/trips')
-  return { success: true }
+
+  if (!notifySubscribers) return { success: true }
+
+  const subscribers = await fetchSubscribers()
+  if (!subscribers.length) return { success: true, notified: 0 }
+
+  const subject = `✈️ New trip: ${row.title}`
+  const emails  = subscribers.map(sub => ({
+    from,
+    to:      sub.email,
+    subject,
+    html: NewTripAnnouncementEmail({
+      title:          row.title,
+      slug:           row.slug,
+      startDate:      row.start_date,
+      endDate:        row.end_date,
+      destination:    row.destination,
+      priceStandard:  row.price_standard,
+      imageUrl:       row.image_url,
+      baseUrl,
+      unsubscribeUrl: `${baseUrl}/api/newsletter/unsubscribe?token=${sub.unsubscribe_token}`,
+    }),
+  }))
+
+  const notified = await batchSend(emails)
+  return { success: true, notified }
 }
 
-export async function updateTrip(id: string, data: TripUpdate): Promise<{ success: boolean; error?: string }> {
+export async function updateTrip(id: string, data: TripUpdate): Promise<{ success: boolean; error?: string; notified?: number }> {
   const auth = await verifyAdmin()
   if (!auth.ok) return { success: false, error: auth.error }
 
