@@ -10,6 +10,7 @@ import ShareButtons from '@/components/events/ShareButtons'
 import SeatCounter from '@/components/trips/SeatCounter'
 import BookingWrapper from '@/components/trips/BookingWrapper'
 import TripTabs from '@/components/trips/TripTabs'
+import GalleryStrip from '@/components/shared/GalleryStrip'
 
 type Props = {
   params:       Promise<{ slug: string }>
@@ -109,6 +110,13 @@ export default async function TripDetailPage({ params, searchParams }: Props) {
           </div>
         </div>
       </div>
+
+      {/* ── Gallery strip ── */}
+      {(trip.gallery_images?.length ?? 0) > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+          <GalleryStrip images={trip.gallery_images!} />
+        </div>
+      )}
 
       {/* ── Content grid ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">

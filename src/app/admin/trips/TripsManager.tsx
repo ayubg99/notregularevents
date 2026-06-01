@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2, ChevronDown,
 import Link from 'next/link'
 import DataTable from '@/components/admin/DataTable'
 import ImageUpload from '@/components/admin/ImageUpload'
+import MultiImageUpload from '@/components/admin/MultiImageUpload'
 import { createClient } from '@/lib/supabase/client'
 import { createTrip, updateTrip, deleteTrip, duplicateTrip } from '@/app/actions/admin'
 import type { TripRow, TripInsert, TripStatus, ItineraryDay } from '@/types/database'
@@ -79,10 +80,11 @@ export default function TripsManager({ initialTrips }: Props) {
   const [cancelLoading, setCancelLoading] = useState(false)
 
   // Array-field state (parallel to FormState)
-  const [meetingPoints, setMeetingPoints] = useState<string[]>([])
-  const [itinerary,     setItinerary]     = useState<ItineraryDay[]>([])
-  const [whatsIncluded, setWhatsIncluded] = useState<string[]>([])
-  const [whatsExcluded, setWhatsExcluded] = useState<string[]>([])
+  const [meetingPoints,  setMeetingPoints]  = useState<string[]>([])
+  const [itinerary,      setItinerary]      = useState<ItineraryDay[]>([])
+  const [whatsIncluded,  setWhatsIncluded]  = useState<string[]>([])
+  const [whatsExcluded,  setWhatsExcluded]  = useState<string[]>([])
+  const [galleryImages,  setGalleryImages]  = useState<string[]>([])
 
   function showToast(msg: string, success = false) {
     setToast(msg)
@@ -99,6 +101,7 @@ export default function TripsManager({ initialTrips }: Props) {
     setItinerary([])
     setWhatsIncluded([])
     setWhatsExcluded([])
+    setGalleryImages([])
     setToast('')
     setModal('create')
   }
@@ -110,6 +113,7 @@ export default function TripsManager({ initialTrips }: Props) {
     setItinerary(trip.itinerary ?? [])
     setWhatsIncluded(trip.whats_included ?? [])
     setWhatsExcluded(trip.whats_excluded ?? [])
+    setGalleryImages(trip.gallery_images ?? [])
     setForm({
       title:               trip.title,
       slug:                trip.slug,
@@ -181,6 +185,7 @@ export default function TripsManager({ initialTrips }: Props) {
         whats_included:      whatsIncluded.filter(s => s.trim()).length ? whatsIncluded.filter(s => s.trim()) : null,
         whats_excluded:      whatsExcluded.filter(s => s.trim()).length ? whatsExcluded.filter(s => s.trim()) : null,
         meeting_points:      meetingPoints.filter(s => s.trim()).length ? meetingPoints.filter(s => s.trim()) : null,
+        gallery_images:      galleryImages.length ? galleryImages : null,
         created_by:          null,
       }
       const result = modal === 'edit' && editing
@@ -612,11 +617,22 @@ export default function TripsManager({ initialTrips }: Props) {
 
               {/* Media */}
               <Section title="Media">
-                <ImageUpload
-                  value={form.image_url}
-                  onChange={url => setForm(f => ({ ...f, image_url: url }))}
-                  folder="trips"
-                />
+                <div>
+                  <label className={labelClass}>Cover image</label>
+                  <ImageUpload
+                    value={form.image_url}
+                    onChange={url => setForm(f => ({ ...f, image_url: url }))}
+                    folder="trips"
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Gallery photos (shown as scrollable strip on the trip page)</label>
+                  <MultiImageUpload
+                    value={galleryImages}
+                    onChange={setGalleryImages}
+                    folder="trips"
+                  />
+                </div>
               </Section>
 
               {/* Description */}

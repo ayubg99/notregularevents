@@ -9,6 +9,7 @@ import CountdownTimer from '@/components/events/CountdownTimer'
 import TicketSelector from '@/components/events/TicketSelector'
 import ReviewsSection from '@/components/events/ReviewsSection'
 import ShareButtons from '@/components/events/ShareButtons'
+import GalleryStrip from '@/components/shared/GalleryStrip'
 
 // ─── Types ──────────────────────────────────────────────────────
 
@@ -132,6 +133,13 @@ export default async function EventDetailPage({ params }: Props) {
           </div>
         </div>
       </div>
+
+      {/* ── Gallery strip ── */}
+      {(event.gallery_images?.length ?? 0) > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+          <GalleryStrip images={event.gallery_images!} />
+        </div>
+      )}
 
       {/* ── Content grid ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">

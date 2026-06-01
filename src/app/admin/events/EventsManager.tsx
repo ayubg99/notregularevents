@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Loader2, ChevronDown,
 import Link from 'next/link'
 import DataTable from '@/components/admin/DataTable'
 import ImageUpload from '@/components/admin/ImageUpload'
+import MultiImageUpload from '@/components/admin/MultiImageUpload'
 import { createClient } from '@/lib/supabase/client'
 import { createEvent, updateEvent, deleteEvent, duplicateEvent } from '@/app/actions/admin'
 import type { EventRow, EventInsert, EventCategory, EventStatus } from '@/types/database'
@@ -73,6 +74,7 @@ export default function EventsManager({ initialEvents }: Props) {
   const [groupEnabled, setGroupEnabled] = useState(false)
   const [eventPricing, setEventPricing] = useState<'paid' | 'free_all' | 'free_members'>('paid')
   const [notifySubscribers, setNotifySubscribers] = useState(false)
+  const [galleryImages,    setGalleryImages]    = useState<string[]>([])
 
   function showToast(msg: string, success = false) {
     setToast(msg)
@@ -86,6 +88,7 @@ export default function EventsManager({ initialEvents }: Props) {
     setGroupEnabled(false)
     setEventPricing('paid')
     setNotifySubscribers(false)
+    setGalleryImages([])
     setToast('')
     setModal('create')
   }
@@ -94,6 +97,7 @@ export default function EventsManager({ initialEvents }: Props) {
     setEditing(event)
     setGroupEnabled(event.price_group != null)
     setEventPricing(event.members_only_free ? 'free_members' : event.is_free ? 'free_all' : 'paid')
+    setGalleryImages(event.gallery_images ?? [])
     setForm({
       title:               event.title,
       slug:                event.slug,
@@ -161,6 +165,7 @@ export default function EventsManager({ initialEvents }: Props) {
         group_min_size:      eventPricing !== 'paid' ? null : (groupEnabled ? (parseInt(form.group_min_size) || 4) : null),
         capacity:            parseInt(form.capacity) || 100,
         status:              form.status,
+        gallery_images:      galleryImages.length ? galleryImages : null,
         created_by:          null,
       }
       const result = modal === 'edit' && editing
@@ -501,11 +506,22 @@ export default function EventsManager({ initialEvents }: Props) {
 
               {/* Media */}
               <Section title="Media">
-                <ImageUpload
-                  value={form.image_url}
-                  onChange={url => setForm(f => ({ ...f, image_url: url }))}
-                  folder="events"
-                />
+                <div>
+                  <label className={labelClass}>Cover image</label>
+                  <ImageUpload
+                    value={form.image_url}
+                    onChange={url => setForm(f => ({ ...f, image_url: url }))}
+                    folder="events"
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Gallery photos (shown as scrollable strip on the event page)</label>
+                  <MultiImageUpload
+                    value={galleryImages}
+                    onChange={setGalleryImages}
+                    folder="events"
+                  />
+                </div>
               </Section>
 
               {/* Description */}
