@@ -43,18 +43,14 @@ export default async function MarketplacePage() {
 
         {/* Hero banner */}
         <div style={{
-          background:   'linear-gradient(135deg, #1A1A2E 0%, #2D1B00 100%)',
-          border:       '1px solid rgba(255,107,53,0.2)',
+          background:   '#16161E',
+          border:       '1px solid rgba(255,255,255,0.07)',
           borderRadius: '20px',
           padding:      '48px 32px',
           marginBottom: '32px',
           position:     'relative',
           overflow:     'hidden',
-          boxShadow:    '0 0 60px rgba(255,107,53,0.06)',
         }}>
-          {/* Decorative orbs */}
-          <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '240px', height: '240px', borderRadius: '50%', background: 'rgba(255,107,53,0.08)', filter: 'blur(40px)' }} />
-          <div style={{ position: 'absolute', bottom: '-40px', left: '10%', width: '160px', height: '160px', borderRadius: '50%', background: 'rgba(245,166,35,0.07)', filter: 'blur(30px)' }} />
 
           <div style={{ position: 'relative', zIndex: 1 }}>
             <p style={{ color: '#FF6B35', fontSize: '12px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', margin: '0 0 10px' }}>
