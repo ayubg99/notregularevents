@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { MessageCircle, Briefcase, Home, Languages, Mail } from 'lucide-react'
+import { MessageCircle, Briefcase, Home, Languages } from 'lucide-react'
 
 export const metadata: Metadata = {
   title:       'Community | Erasmus Vibe Valencia',
@@ -48,16 +48,6 @@ function ComingSoonCard({
         <h3 className="font-heading text-lg font-bold text-white mb-1">{title}</h3>
         <p className="text-white/50 text-sm leading-relaxed">{desc}</p>
       </div>
-      <span className="px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent text-xs font-semibold uppercase tracking-wide">
-        Coming Soon
-      </span>
-      <a
-        href="mailto:info@erasmusvibe.com"
-        className="flex items-center gap-1.5 text-white/40 hover:text-white/70 text-xs transition-colors duration-200"
-      >
-        <Mail size={12} />
-        Get notified
-      </a>
     </div>
   )
 }
