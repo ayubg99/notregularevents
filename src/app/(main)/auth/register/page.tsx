@@ -63,7 +63,7 @@ function RegisterForm() {
   }
 
   return (
-    <main className="min-h-screen bg-brand-dark flex items-center justify-center px-4 py-20">
+    <main className="min-h-screen bg-brand-dark flex items-center justify-center px-4 py-20 pt-28 md:pt-20">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
