@@ -193,19 +193,14 @@ export default function BookingModal(props: Props) {
   }, [open])
 
   useEffect(() => {
-    if (!open) return
+    if (!open || referralCode) return
     const params = new URLSearchParams(window.location.search)
     const urlRef = params.get('ref')?.toUpperCase()
     const saved  = localStorage.getItem('referral_code')
-    if (urlRef && !referralCode) {
-      // URL param = live referral link → auto-validate
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setReferralInput(urlRef)
-      setReferralCode(urlRef)
-      validateReferralCode(urlRef)
-    } else if (saved && !referralCode) {
-      // localStorage = stale code → just pre-fill, don't auto-validate
-      setReferralInput(saved)
+    const code   = urlRef ?? saved ?? null
+    if (code) {
+      setReferralInput(code)
+      validateReferralCode(code)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
@@ -341,22 +336,18 @@ export default function BookingModal(props: Props) {
     if (!code || code.length < 3) { setReferralValid(null); return }
     setReferralLoading(true)
     try {
-      const supabase = createClient()
-      const { data } = await supabase
-        .from('ambassadors')
-        .select('id, referral_code')
-        .eq('referral_code', code.toUpperCase())
-        .eq('status', 'active')
-        .single()
-      if (data) {
+      const res  = await fetch(`/api/stripe/validate-referral?code=${encodeURIComponent(code.toUpperCase())}`)
+      const data = await res.json()
+      if (data?.valid) {
         setReferralValid(true)
-        setReferralAmbassador(data)
+        setReferralAmbassador({ id: data.id, referral_code: data.referral_code })
         setReferralCode(code.toUpperCase())
         localStorage.setItem('referral_code', code.toUpperCase())
       } else {
         setReferralValid(false)
         setReferralAmbassador(null)
         setReferralCode('')
+        localStorage.removeItem('referral_code')
       }
     } catch {
       setReferralValid(false)
