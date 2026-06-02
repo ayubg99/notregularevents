@@ -45,8 +45,10 @@ export async function POST(req: NextRequest) {
         const session = await stripe.checkout.sessions.retrieve(stripePaymentId)
         if (session.payment_intent) {
           await stripe.refunds.create({
-            payment_intent: session.payment_intent as string,
-            reason:         'requested_by_customer',
+            payment_intent:          session.payment_intent as string,
+            reason:                  'requested_by_customer',
+            refund_application_fee: true,
+            reverse_transfer:       true,
           })
         }
       } catch (err) {
@@ -87,8 +89,10 @@ export async function POST(req: NextRequest) {
         const session = await stripe.checkout.sessions.retrieve(stripePaymentId)
         if (session.payment_intent) {
           await stripe.refunds.create({
-            payment_intent: session.payment_intent as string,
-            reason:         'requested_by_customer',
+            payment_intent:          session.payment_intent as string,
+            reason:                  'requested_by_customer',
+            refund_application_fee: true,
+            reverse_transfer:       true,
           })
         }
       } catch (err) {

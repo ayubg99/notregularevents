@@ -906,6 +906,39 @@ export async function POST(request: NextRequest) {
         await handleSubscriptionChange(event.data.object as Stripe.Subscription, 'expired')
         break
 
+      case 'invoice.payment_succeeded': {
+        const invoice = event.data.object as Stripe.Invoice
+        // Only process invoices from a subscription (v22 API: subscription info is in invoice.parent)
+        if (invoice.parent?.type !== 'subscription_details') break
+
+        const erasmusVibeAccountId = process.env.ERASMUS_VIBE_STRIPE_ACCOUNT_ID
+        if (!erasmusVibeAccountId) break
+
+        const platformFeeMembership = parseInt(process.env.PLATFORM_FEE_MEMBERSHIP || '50') / 100
+        const gross          = invoice.amount_paid
+        const net            = gross - Math.round(gross * 0.02) - 25
+        const transferAmount = Math.round(net * platformFeeMembership)
+
+        try {
+          await stripe.transfers.create({
+            amount:      transferAmount,
+            currency:    'eur',
+            destination: erasmusVibeAccountId,
+            metadata: {
+              type:             'membership_split',
+              invoice_id:       invoice.id,
+              gross_amount:     gross.toString(),
+              net_amount:       net.toString(),
+              transfer_percent: String(Math.round(platformFeeMembership * 100)),
+            },
+          })
+          console.log('✅ Membership split transferred:', transferAmount / 100, 'EUR → Erasmus Vibe')
+        } catch (err) {
+          console.error('❌ Membership transfer failed:', err)
+        }
+        break
+      }
+
       default:
         console.log('[webhook] unhandled event type:', event.type)
         break

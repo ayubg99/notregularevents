@@ -315,6 +315,16 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ url: `${baseUrl}/booking/success?ref=${bookingRef}` })
     }
 
+    const erasmusVibeAccountId = process.env.ERASMUS_VIBE_STRIPE_ACCOUNT_ID
+    if (!erasmusVibeAccountId) {
+      console.error('[create-checkout] ERASMUS_VIBE_STRIPE_ACCOUNT_ID not set')
+      return NextResponse.json({ error: 'Payment configuration error' }, { status: 500 })
+    }
+    const platformFeeEvents = parseInt(process.env.PLATFORM_FEE_EVENTS || '20') / 100
+    const eventGrossAmount = Math.round(unitPrice * quantity * 100)
+    const eventStripeFeeEst = Math.round(eventGrossAmount * 0.02) + 25
+    const eventAppFeeAmount = Math.round((eventGrossAmount - eventStripeFeeEst) * platformFeeEvents)
+
     const session = await stripe.checkout.sessions.create({
       mode:           'payment',
       customer_email: toEmail ?? undefined,
@@ -329,23 +339,29 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
           },
         },
       }],
+      payment_intent_data: {
+        application_fee_amount: eventAppFeeAmount,
+        transfer_data:          { destination: erasmusVibeAccountId },
+      },
       success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  cancelUrl,
       metadata: {
-        type:              'event',
-        item_id:           event.id,
-        user_id:           user?.id      ?? '',
-        quantity:          String(quantity),
-        guest_name:        guestName     ?? '',
-        guest_email:       guestEmail    ?? '',
-        guest_phone:       guestPhone    ?? '',
-        event_title:       event.title,
-        event_date:        event.date    ?? '',
-        location:          event.location ?? '',
-        attendees:         JSON.stringify(attendees ?? []),
-        referral_code:     referralCode  ?? '',
-        ambassador_id:     ambassadorId  ?? '',
-        ticket_tier_name:  customTier?.name ?? '',
+        type:                   'event',
+        item_id:                event.id,
+        user_id:                user?.id      ?? '',
+        quantity:               String(quantity),
+        guest_name:             guestName     ?? '',
+        guest_email:            guestEmail    ?? '',
+        guest_phone:            guestPhone    ?? '',
+        event_title:            event.title,
+        event_date:             event.date    ?? '',
+        location:               event.location ?? '',
+        attendees:              JSON.stringify(attendees ?? []),
+        referral_code:          referralCode  ?? '',
+        ambassador_id:          ambassadorId  ?? '',
+        ticket_tier_name:       customTier?.name ?? '',
+        application_fee_amount: eventAppFeeAmount.toString(),
+        destination_account:    erasmusVibeAccountId,
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
     })
@@ -458,6 +474,17 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
     const tripGroupSize  = tripTier === 'group' ? (groupSize ?? 1) : 1
     const extrasItems    = (selectedExtras ?? []).filter(e => e.price > 0)
 
+    const tripErasmusVibeAccountId = process.env.ERASMUS_VIBE_STRIPE_ACCOUNT_ID
+    if (!tripErasmusVibeAccountId) {
+      console.error('[create-checkout] ERASMUS_VIBE_STRIPE_ACCOUNT_ID not set')
+      return NextResponse.json({ error: 'Payment configuration error' }, { status: 500 })
+    }
+    const platformFeeTrips = parseInt(process.env.PLATFORM_FEE_TRIPS || '20') / 100
+    const tripGrossAmount = Math.round(unitPrice * tripGroupSize * 100)
+      + extrasItems.reduce((s, e) => s + Math.round(e.price * 100) * tripGroupSize, 0)
+    const tripStripeFeeEst = Math.round(tripGrossAmount * 0.02) + 25
+    const tripAppFeeAmount = Math.round((tripGrossAmount - tripStripeFeeEst) * platformFeeTrips)
+
     const session = await stripe.checkout.sessions.create({
       mode:           'payment',
       customer_email: toEmail ?? undefined,
@@ -482,25 +509,31 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
           },
         })),
       ],
+      payment_intent_data: {
+        application_fee_amount: tripAppFeeAmount,
+        transfer_data:          { destination: tripErasmusVibeAccountId },
+      },
       success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  cancelUrl,
       metadata: {
-        type:                  'trip',
-        item_id:               trip.id,
-        user_id:               user?.id        ?? '',
-        tier:                  tripTier,
-        quantity:              String(tripGroupSize),
-        guest_name:            guestName       ?? '',
-        guest_email:           guestEmail      ?? '',
-        guest_phone:           guestPhone      ?? '',
-        trip_title:            trip.title,
-        trip_date:             trip.start_date ?? '',
-        destination:           trip.destination ?? '',
-        whatsapp_group_url:    trip.whatsapp_group_url ?? '',
-        attendees:             JSON.stringify(attendees ?? []),
-        referral_code:         referralCode    ?? '',
-        ambassador_id:         ambassadorId    ?? '',
-        selected_extras_json:  JSON.stringify(selectedExtras ?? []),
+        type:                   'trip',
+        item_id:                trip.id,
+        user_id:                user?.id        ?? '',
+        tier:                   tripTier,
+        quantity:               String(tripGroupSize),
+        guest_name:             guestName       ?? '',
+        guest_email:            guestEmail      ?? '',
+        guest_phone:            guestPhone      ?? '',
+        trip_title:             trip.title,
+        trip_date:              trip.start_date ?? '',
+        destination:            trip.destination ?? '',
+        whatsapp_group_url:     trip.whatsapp_group_url ?? '',
+        attendees:              JSON.stringify(attendees ?? []),
+        referral_code:          referralCode    ?? '',
+        ambassador_id:          ambassadorId    ?? '',
+        selected_extras_json:   JSON.stringify(selectedExtras ?? []),
+        application_fee_amount: tripAppFeeAmount.toString(),
+        destination_account:    tripErasmusVibeAccountId,
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
     })
