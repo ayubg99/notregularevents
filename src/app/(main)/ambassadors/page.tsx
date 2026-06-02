@@ -2,10 +2,10 @@ import ApplicationForm from './ApplicationForm'
 
 export const metadata = {
   title:       'Ambassadors — Erasmus Vibe',
-  description: 'Become an Erasmus Vibe ambassador. Earn commissions, get free trips, and help internationals in Valencia make the most of their time here.',
+  description: 'Become an Erasmus Vibe ambassador. Earn 5% commission on every booking, unlock milestone rewards, and get exclusive access in Valencia.',
   openGraph: {
     title:       'Become an Ambassador — Erasmus Vibe Valencia',
-    description: 'Earn commissions, get free trips, and help internationals in Valencia make the most of their experience.',
+    description: 'Earn 5% commission on every booking, unlock milestone rewards, and get exclusive access in Valencia.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
@@ -19,18 +19,18 @@ export const metadata = {
 const BENEFITS = [
   {
     emoji: '💰',
-    title: 'Earn Commissions',
-    desc:  'Get 15% of every referral\'s first payment, paid out monthly with no minimum threshold.',
+    title: '5% Commission',
+    desc:  'Earn 5% on every booking made with your referral code — trips, events, and more.',
   },
   {
-    emoji: '✈️',
-    title: 'Free Trips',
-    desc:  'Join 2 trips per semester completely free. Explore Europe on us.',
+    emoji: '🎁',
+    title: 'Milestone Rewards',
+    desc:  'Free tickets, upgrades & cash bonuses as you hit referral milestones.',
   },
   {
     emoji: '🌟',
-    title: 'Exclusive Perks',
-    desc:  'VIP event access, free annual membership, and ambassador-only merch drops.',
+    title: 'Exclusive Access',
+    desc:  'Ambassador-only events and a private community of Erasmus Vibe reps.',
   },
 ]
 
