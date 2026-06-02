@@ -93,15 +93,15 @@ export default async function StripeStatusPage() {
               background:   accountStatus.chargesEnabled ? '#2ECC71' : '#FF4444',
             }} />
             <p style={{ color: '#fff', fontWeight: 600, margin: 0, fontSize: '16px' }}>
-              Erasmus Vibe — {accountStatus.chargesEnabled ? 'Active ✅' : 'Pending Setup ⏳'}
+              Erasmus Vibe — {accountStatus.chargesEnabled ? 'Active' : 'Pending Setup'}
             </p>
           </div>
 
           {/* Connection details */}
           {[
             { label: 'Account ID',      value: accountStatus.id                             },
-            { label: 'Charges enabled', value: accountStatus.chargesEnabled ? '✅ Yes' : '❌ No' },
-            { label: 'Payouts enabled', value: accountStatus.payoutsEnabled ? '✅ Yes' : '❌ No' },
+            { label: 'Charges enabled', value: accountStatus.chargesEnabled ? 'Yes' : 'No' },
+            { label: 'Payouts enabled', value: accountStatus.payoutsEnabled ? 'Yes' : 'No' },
           ].map(item => (
             <div
               key={item.label}
