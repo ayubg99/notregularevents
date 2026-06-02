@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
-import { Menu, X, ChevronRight, LogOut, LayoutDashboard } from 'lucide-react'
+import { Menu, X, ChevronRight, LogOut, LayoutDashboard, CreditCard } from 'lucide-react'
 import type { User } from '@supabase/supabase-js'
 import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
@@ -124,6 +124,13 @@ export default function Navbar() {
                     <LayoutDashboard size={15} />
                     {authUser.user_metadata?.role === 'employer' ? 'My Listings' : t('dashboard')}
                   </Link>
+                  <Link
+                    href="/member-card"
+                    className="flex items-center justify-center w-9 h-9 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all duration-200"
+                    title="Member Card"
+                  >
+                    <CreditCard size={16} />
+                  </Link>
                   <div className="w-8 h-8 rounded-full bg-brand-primary/20 border border-brand-primary/40 flex items-center justify-center flex-shrink-0">
                     <span className="font-bold text-brand-primary text-xs">
                       {getInitials(
@@ -220,6 +227,14 @@ export default function Navbar() {
               >
                 <LayoutDashboard size={20} />
                 {authUser.user_metadata?.role === 'employer' ? 'My Listings' : t('dashboard')}
+              </Link>
+              <Link
+                href="/member-card"
+                onClick={closeMenu}
+                className="flex items-center gap-2 px-8 py-3 bg-white/10 text-white font-semibold text-base rounded-full active:brightness-90 transition-all"
+              >
+                <CreditCard size={20} />
+                Member Card
               </Link>
               <button
                 onClick={() => { closeMenu(); handleSignOut() }}

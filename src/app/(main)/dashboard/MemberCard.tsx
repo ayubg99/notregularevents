@@ -162,6 +162,16 @@ export default function MemberCard({ membership, displayName, nationality, unive
           </button>
         </div>
 
+        {/* Link to full-screen card */}
+        <div style={{ borderTop: '1px solid rgba(0,0,0,0.12)', marginTop: 14, paddingTop: 12, textAlign: 'center' }}>
+          <a
+            href="/member-card"
+            style={{ color: darkMuted, fontSize: 12, fontWeight: 600, textDecoration: 'none' }}
+          >
+            Open full card →
+          </a>
+        </div>
+
       </div>
     </div>
   )

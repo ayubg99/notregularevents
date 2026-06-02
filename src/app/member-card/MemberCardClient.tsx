@@ -198,7 +198,6 @@ export default function MemberCardClient({ membership, displayName, nationality,
             border:     '1px solid rgba(255,255,255,0.10)',
           }}
         >
-          <span style={{ fontSize: 18 }}>📲</span>
           Add to Home Screen
         </button>
       ) : (

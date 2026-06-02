@@ -281,6 +281,14 @@ async function MembershipSuccess({ session }: { session: Stripe.Checkout.Session
         >
           Browse Trips
         </Link>
+        {activated && (
+          <Link
+            href="/member-card"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/10 text-sm font-semibold transition-colors"
+          >
+            View Member Card →
+          </Link>
+        )}
       </div>
     </div>
   )
