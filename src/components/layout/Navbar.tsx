@@ -185,11 +185,12 @@ export default function Navbar() {
       {/* ── Mobile full-screen menu ───────────────────────────────── */}
       <div
         className={`
-          fixed inset-0 z-40 glass-dark flex flex-col items-center justify-center gap-2 md:hidden overflow-y-auto py-20
+          fixed inset-0 z-40 glass-dark flex flex-col items-center md:hidden overflow-y-auto py-20
           transition-opacity duration-200
           ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
         `}
       >
+        <div className="flex flex-col items-center gap-2 my-auto w-full">
         {/* Nav links with CSS stagger */}
         <nav className="flex flex-col items-center gap-3 py-8">
           {NAV_HREFS.map((link, i) => (
@@ -264,6 +265,7 @@ export default function Navbar() {
             </div>
           )}
         </div>
+        </div>{/* end my-auto wrapper */}
 
         {/* Decorative gradient orbs */}
         <div className="absolute top-1/4 -left-20 w-64 h-64 rounded-full bg-brand-primary/10 blur-3xl pointer-events-none" />
