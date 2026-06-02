@@ -185,7 +185,7 @@ export default function Navbar() {
       {/* ── Mobile full-screen menu ───────────────────────────────── */}
       <div
         className={`
-          fixed inset-0 z-40 glass-dark flex flex-col items-center justify-center gap-2 md:hidden overflow-y-auto
+          fixed inset-0 z-40 glass-dark flex flex-col items-center justify-center gap-2 md:hidden overflow-y-auto py-20
           transition-opacity duration-200
           ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
         `}
