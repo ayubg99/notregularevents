@@ -1,5 +1,5 @@
-import { getAdminClient } from '@/lib/supabase/admin'
-import TripsManager from './TripsManager'
+import { getAdminClient } from'@/lib/supabase/admin'
+import TripsManager from'./TripsManager'
 
 export default async function AdminTripsPage() {
   const admin = getAdminClient()

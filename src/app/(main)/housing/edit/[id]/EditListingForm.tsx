@@ -1,63 +1,63 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import type { HousingListingRow, HousingRoomType, HousingGenderPref } from '@/types/database'
+import { useState, useRef } from'react'
+import Link from'next/link'
+import { useRouter } from'next/navigation'
+import { createClient } from'@/lib/supabase/client'
+import type { HousingListingRow, HousingRoomType, HousingGenderPref } from'@/types/database'
 
 const NEIGHBORHOODS = [
-  'Ruzafa', 'El Carmen', 'Benimaclet', 'Malvarrosa',
-  'Campanar', 'Mestalla', 'Patraix', 'Algirós', 'Quatre Carreres',
+'Ruzafa','El Carmen','Benimaclet','Malvarrosa',
+'Campanar','Mestalla','Patraix','Algirós','Quatre Carreres',
 ]
 
 const NATIONALITIES = [
-  'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Dutch',
-  'Polish', 'Romanian', 'Greek', 'American', 'British', 'Turkish',
-  'Moroccan', 'Brazilian', 'Mexican', 'Chinese', 'Japanese', 'Korean',
-  'Indian', 'Australian', 'Other',
+'Spanish','French','German','Italian','Portuguese','Dutch',
+'Polish','Romanian','Greek','American','British','Turkish',
+'Moroccan','Brazilian','Mexican','Chinese','Japanese','Korean',
+'Indian','Australian','Other',
 ]
 
 const AMENITIES = [
-  { id: 'wifi',      label: '📶 WiFi'             },
-  { id: 'ac',        label: '❄️ AC'               },
-  { id: 'washing',   label: '🧺 Washing machine'  },
-  { id: 'balcony',   label: '🌿 Balcony'          },
-  { id: 'bills',     label: '💡 Bills included'   },
-  { id: 'furnished', label: '🪑 Furnished'        },
-  { id: 'private_bath', label: '🚿 Private bathroom' },
-  { id: 'near_uni',  label: '🏫 Near university'  },
-  { id: 'parking',   label: '🅿️ Parking'         },
+  { id:'wifi', label:' WiFi' },
+  { id:'ac', label:' AC' },
+  { id:'washing', label:' Washing machine' },
+  { id:'balcony', label:' Balcony' },
+  { id:'bills', label:' Bills included' },
+  { id:'furnished', label:' Furnished' },
+  { id:'private_bath', label:' Private bathroom' },
+  { id:'near_uni', label:' Near university' },
+  { id:'parking', label:' Parking' },
 ]
 
 interface FormData {
-  title:                  string
-  neighborhood:           string
-  roomType:               string
-  price:                  string
-  availableFrom:          string
-  availableUntil:         string
-  flatmatesCount:         number
+  title: string
+  neighborhood: string
+  roomType: string
+  price: string
+  availableFrom: string
+  availableUntil: string
+  flatmatesCount: number
   flatmatesNationalities: string[]
-  genderPreference:       string
-  amenities:              string[]
-  description:            string
-  photos:                 string[]
-  neighborhoodPrefs:      string[]
-  moveInDate:             string
-  duration:               string
-  aboutMe:                string
-  contactName:            string
-  nationality:            string
-  university:             string
-  contactWhatsapp:        string
-  contactEmail:           string
-  status:                 string
+  genderPreference: string
+  amenities: string[]
+  description: string
+  photos: string[]
+  neighborhoodPrefs: string[]
+  moveInDate: string
+  duration: string
+  aboutMe: string
+  contactName: string
+  nationality: string
+  university: string
+  contactWhatsapp: string
+  contactEmail: string
+  status: string
 }
 
 interface Props {
   listing: HousingListingRow
-  userId:  string
+  userId: string
 }
 
 function StepIndicator({ step }: { step: number }) {
@@ -67,14 +67,14 @@ function StepIndicator({ step }: { step: number }) {
         <div key={n} className="flex items-center gap-2">
           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
             n === step
-              ? 'bg-brand-primary text-white'
+              ?'bg-brand-primary text-white'
               : n < step
-              ? 'bg-green-500 text-white'
-              : 'bg-white/10 text-white/40'
+              ?'bg-green-500 text-white'
+              :'bg-white/10 text-white/40'
           }`}>
-            {n < step ? '✓' : n}
+            {n < step ?'' : n}
           </div>
-          {n < 2 && <div className={`w-8 h-0.5 ${n < step ? 'bg-green-500' : 'bg-white/10'}`} />}
+          {n < 2 && <div className={`w-8 h-0.5 ${n < step ?'bg-green-500' :'bg-white/10'}`} />}
         </div>
       ))}
       <span className="ml-2 text-white/40 text-sm">Step {step} of 2</span>
@@ -91,35 +91,35 @@ export default function EditListingForm({ listing, userId }: Props) {
   const photoInputRef = useRef<HTMLInputElement>(null)
 
   const [form, setForm] = useState<FormData>({
-    title:                  listing.title,
-    neighborhood:           listing.neighborhood ?? '',
-    roomType:               listing.room_type ?? '',
-    price:                  listing.price != null ? String(listing.price) : '',
-    availableFrom:          listing.available_from ?? '',
-    availableUntil:         listing.available_until ?? '',
-    flatmatesCount:         listing.flatmates_count,
+    title: listing.title,
+    neighborhood: listing.neighborhood ??'',
+    roomType: listing.room_type ??'',
+    price: listing.price != null ? String(listing.price) :'',
+    availableFrom: listing.available_from ??'',
+    availableUntil: listing.available_until ??'',
+    flatmatesCount: listing.flatmates_count,
     flatmatesNationalities: listing.flatmates_nationalities,
-    genderPreference:       listing.gender_preference,
-    amenities:              listing.amenities,
-    description:            listing.description ?? '',
-    photos:                 listing.photos,
-    neighborhoodPrefs:      listing.neighborhood ? [listing.neighborhood] : [],
-    moveInDate:             listing.available_from ?? '',
-    duration:               '',
-    aboutMe:                listing.description ?? '',
-    contactName:            listing.contact_name,
-    nationality:            listing.nationality ?? '',
-    university:             listing.university ?? '',
-    contactWhatsapp:        listing.contact_whatsapp ?? '',
-    contactEmail:           listing.contact_email ?? '',
-    status:                 listing.status,
+    genderPreference: listing.gender_preference,
+    amenities: listing.amenities,
+    description: listing.description ??'',
+    photos: listing.photos,
+    neighborhoodPrefs: listing.neighborhood ? [listing.neighborhood] : [],
+    moveInDate: listing.available_from ??'',
+    duration:'',
+    aboutMe: listing.description ??'',
+    contactName: listing.contact_name,
+    nationality: listing.nationality ??'',
+    university: listing.university ??'',
+    contactWhatsapp: listing.contact_whatsapp ??'',
+    contactEmail: listing.contact_email ??'',
+    status: listing.status,
   })
 
   function update<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm(f => ({ ...f, [key]: value }))
   }
 
-  function toggleArrayItem(key: 'amenities' | 'flatmatesNationalities' | 'neighborhoodPrefs', val: string) {
+  function toggleArrayItem(key:'amenities' |'flatmatesNationalities' |'neighborhoodPrefs', val: string) {
     setForm(f => {
       const arr = f[key] as string[]
       return { ...f, [key]: arr.includes(val) ? arr.filter(x => x !== val) : [...arr, val] }
@@ -134,7 +134,7 @@ export default function EditListingForm({ listing, userId }: Props) {
 
     for (let i = 0; i < Math.min(files.length, 4 - form.photos.length); i++) {
       const file = files[i]
-      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`
+      const path =`${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`
       const { error: upErr } = await supabase.storage.from('housing-photos').upload(path, file)
       if (!upErr) {
         const { data: { publicUrl } } = supabase.storage.from('housing-photos').getPublicUrl(path)
@@ -150,27 +150,27 @@ export default function EditListingForm({ listing, userId }: Props) {
     setSubmitting(true)
     const supabase = createClient()
 
-    const isRoomAvailable = listing.type === 'room_available'
+    const isRoomAvailable = listing.type ==='room_available'
 
     const payload = {
-      title:                   form.title,
-      description:             isRoomAvailable ? form.description || null : form.aboutMe || null,
-      price:                   isRoomAvailable && form.price ? Number(form.price) : null,
-      neighborhood:            isRoomAvailable ? form.neighborhood || null : form.neighborhoodPrefs[0] ?? null,
-      room_type:               isRoomAvailable ? (form.roomType as HousingRoomType) || null : null,
-      available_from:          isRoomAvailable ? form.availableFrom || null : form.moveInDate || null,
-      available_until:         isRoomAvailable ? form.availableUntil || null : null,
-      flatmates_count:         form.flatmatesCount,
+      title: form.title,
+      description: isRoomAvailable ? form.description || null : form.aboutMe || null,
+      price: isRoomAvailable && form.price ? Number(form.price) : null,
+      neighborhood: isRoomAvailable ? form.neighborhood || null : form.neighborhoodPrefs[0] ?? null,
+      room_type: isRoomAvailable ? (form.roomType as HousingRoomType) || null : null,
+      available_from: isRoomAvailable ? form.availableFrom || null : form.moveInDate || null,
+      available_until: isRoomAvailable ? form.availableUntil || null : null,
+      flatmates_count: form.flatmatesCount,
       flatmates_nationalities: form.flatmatesNationalities,
-      amenities:               form.amenities,
-      contact_name:            form.contactName,
-      contact_whatsapp:        form.contactWhatsapp || null,
-      contact_email:           form.contactEmail || null,
-      nationality:             form.nationality || null,
-      university:              form.university || null,
-      gender_preference:       (form.genderPreference as HousingGenderPref) || 'any',
-      photos:                  form.photos,
-      status:                  form.status as 'active' | 'inactive' | 'rented',
+      amenities: form.amenities,
+      contact_name: form.contactName,
+      contact_whatsapp: form.contactWhatsapp || null,
+      contact_email: form.contactEmail || null,
+      nationality: form.nationality || null,
+      university: form.university || null,
+      gender_preference: (form.genderPreference as HousingGenderPref) ||'any',
+      photos: form.photos,
+      status: form.status as'active' |'inactive' |'rented',
     }
 
     const { error: updateErr } = await supabase
@@ -189,9 +189,9 @@ export default function EditListingForm({ listing, userId }: Props) {
     router.push('/dashboard')
   }
 
-  const inputCls = 'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-primary/50'
-  const labelCls = 'block text-xs text-white/50 mb-1.5 font-medium'
-  const isRoomAvailable = listing.type === 'room_available'
+  const inputCls ='w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-primary/50'
+  const labelCls ='block text-xs text-white/50 mb-1.5 font-medium'
+  const isRoomAvailable = listing.type ==='room_available'
 
   return (
     <main className="min-h-screen pt-24 pb-20 px-4">
@@ -204,21 +204,21 @@ export default function EditListingForm({ listing, userId }: Props) {
         </div>
         <h1 className="text-2xl font-bold text-white text-center mb-2 mt-4">Edit Listing</h1>
         <p className="text-white/40 text-center text-sm mb-4">
-          {isRoomAvailable ? '🏠 Room Available' : '👤 Looking for Room'}
+          {isRoomAvailable ?' Room Available' :' Looking for Room'}
         </p>
 
         {/* Status selector */}
         <div className="flex gap-2 justify-center mb-8">
-          {(['active', 'rented', 'inactive'] as const).map(s => (
+          {(['active','rented','inactive'] as const).map(s => (
             <button
               key={s}
               onClick={() => update('status', s)}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all capitalize border ${
                 form.status === s
-                  ? s === 'active'    ? 'bg-green-500/20 text-green-400 border-green-500/40'
-                  : s === 'rented'    ? 'bg-teal-500/20 text-teal-400 border-teal-500/40'
-                  :                    'bg-red-500/20 text-red-400 border-red-500/40'
-                  : 'bg-white/5 text-white/30 border-white/10 hover:border-white/20'
+                  ? s ==='active' ?'bg-green-500/20 text-green-400 border-green-500/40'
+                  : s ==='rented' ?'bg-teal-500/20 text-teal-400 border-teal-500/40'
+                  :'bg-red-500/20 text-red-400 border-red-500/40'
+                  :'bg-white/5 text-white/30 border-white/10 hover:border-white/20'
               }`}
             >
               {s}
@@ -228,7 +228,7 @@ export default function EditListingForm({ listing, userId }: Props) {
 
         <StepIndicator step={step} />
 
-        {/* ─── STEP 1 — listing details ──────────────────────── */}
+        {/* STEP 1 — listing details */}
         {step === 1 && isRoomAvailable && (
           <div className="space-y-5">
             <div>
@@ -296,8 +296,8 @@ export default function EditListingForm({ listing, userId }: Props) {
                     onClick={() => toggleArrayItem('flatmatesNationalities', n)}
                     className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
                       form.flatmatesNationalities.includes(n)
-                        ? 'bg-brand-primary text-white'
-                        : 'bg-white/5 text-white/50 hover:bg-white/10'
+                        ?'bg-brand-primary text-white'
+                        :'bg-white/5 text-white/50 hover:bg-white/10'
                     }`}
                   >
                     {n}
@@ -309,7 +309,7 @@ export default function EditListingForm({ listing, userId }: Props) {
               <label className={labelCls}>Amenities</label>
               <div className="grid grid-cols-2 gap-2">
                 {AMENITIES.map(a => (
-                  <label key={a.id} className={`flex items-center gap-2 p-2 rounded-xl cursor-pointer transition-colors ${form.amenities.includes(a.id) ? 'bg-brand-primary/10 border border-brand-primary/30' : 'bg-white/5 border border-transparent hover:bg-white/10'}`}>
+                  <label key={a.id} className={`flex items-center gap-2 p-2 rounded-xl cursor-pointer transition-colors ${form.amenities.includes(a.id) ?'bg-brand-primary/10 border border-brand-primary/30' :'bg-white/5 border border-transparent hover:bg-white/10'}`}>
                     <input type="checkbox" checked={form.amenities.includes(a.id)} onChange={() => toggleArrayItem('amenities', a.id)} className="sr-only" />
                     <span className="text-sm">{a.label}</span>
                   </label>
@@ -336,7 +336,7 @@ export default function EditListingForm({ listing, userId }: Props) {
                     disabled={uploading}
                     className="w-20 h-20 rounded-xl border-2 border-dashed border-white/20 flex items-center justify-center text-white/30 hover:border-white/40 hover:text-white/50 transition-colors disabled:opacity-40"
                   >
-                    {uploading ? '…' : '+'}
+                    {uploading ?'…' :'+'}
                   </button>
                 )}
               </div>
@@ -367,8 +367,8 @@ export default function EditListingForm({ listing, userId }: Props) {
                     onClick={() => toggleArrayItem('neighborhoodPrefs', n)}
                     className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
                       form.neighborhoodPrefs.includes(n)
-                        ? 'bg-brand-primary text-white'
-                        : 'bg-white/5 text-white/50 hover:bg-white/10'
+                        ?'bg-brand-primary text-white'
+                        :'bg-white/5 text-white/50 hover:bg-white/10'
                     }`}
                   >
                     {n}
@@ -432,7 +432,7 @@ export default function EditListingForm({ listing, userId }: Props) {
           </div>
         )}
 
-        {/* ─── STEP 2 — contact details ──────────────────────── */}
+        {/* STEP 2 — contact details */}
         {step === 2 && (
           <div className="space-y-5">
             <p className="text-white/50 text-sm text-center mb-4">Your contact details (shown to members only)</p>
@@ -471,7 +471,7 @@ export default function EditListingForm({ listing, userId }: Props) {
                 disabled={submitting || !form.contactName || !form.contactWhatsapp}
                 className="flex-1 btn-primary py-3 rounded-full font-semibold text-sm disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {submitting ? 'Saving…' : 'Save Changes'}
+                {submitting ?'Saving…' :'Save Changes'}
               </button>
             </div>
             <button

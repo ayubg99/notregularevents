@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { getAdminClient } from '@/lib/supabase/admin'
-import type { JobListingUpdate } from '@/types/database'
+import { NextRequest, NextResponse } from'next/server'
+import { createClient } from'@/lib/supabase/server'
+import { getAdminClient } from'@/lib/supabase/admin'
+import type { JobListingUpdate } from'@/types/database'
 
 interface Params { params: Promise<{ id: string }> }
 
 const EDITABLE_FIELDS = new Set([
-  'title', 'description', 'requirements', 'salary_text',
-  'hours_per_week', 'location', 'language_required',
-  'apply_email', 'apply_whatsapp', 'apply_url', 'contact_name', 'status',
+'title','description','requirements','salary_text',
+'hours_per_week','location','language_required',
+'apply_email','apply_whatsapp','apply_url','contact_name','status',
 ])
 
 async function getOwnerUserId(jobId: string): Promise<string | null> {
@@ -26,10 +26,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!user) return NextResponse.json({ error:'Unauthorized' }, { status: 401 })
 
   const ownerUserId = await getOwnerUserId(id)
-  if (ownerUserId !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (ownerUserId !== user.id) return NextResponse.json({ error:'Forbidden' }, { status: 403 })
 
   const body = await request.json() as Record<string, unknown>
   const update: Record<string, unknown> = {}
@@ -38,7 +38,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 
   if (Object.keys(update).length === 0) {
-    return NextResponse.json({ error: 'No editable fields provided.' }, { status: 400 })
+    return NextResponse.json({ error:'No editable fields provided.' }, { status: 400 })
   }
 
   const admin = getAdminClient()
@@ -60,10 +60,10 @@ export async function DELETE(request: NextRequest, { params }: Params) {
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!user) return NextResponse.json({ error:'Unauthorized' }, { status: 401 })
 
   const ownerUserId = await getOwnerUserId(id)
-  if (ownerUserId !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (ownerUserId !== user.id) return NextResponse.json({ error:'Forbidden' }, { status: 403 })
 
   const admin = getAdminClient()
   const { error } = await admin.from('job_listings').delete().eq('id', id)

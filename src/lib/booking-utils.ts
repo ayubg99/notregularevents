@@ -1,7 +1,7 @@
-import { createClient } from '@supabase/supabase-js'
-import { stripe } from '@/lib/stripe'
-import { sendRoomContactEmail, sendBookingRefundEmail } from '@/lib/email'
-import type { Database, HousingPartnerRow, PartnerRoomRow, RoomContactDbRow } from '@/types/database'
+import { createClient } from'@supabase/supabase-js'
+import { stripe } from'@/lib/stripe'
+import { sendRoomContactEmail, sendBookingRefundEmail } from'@/lib/email'
+import type { Database, HousingPartnerRow, PartnerRoomRow, RoomContactDbRow } from'@/types/database'
 
 type AdminClient = ReturnType<typeof getAdminClient>
 
@@ -13,7 +13,7 @@ function getAdminClient() {
 }
 
 type BookingWithJoins = RoomContactDbRow & {
-  partner_rooms:    PartnerRoomRow | null
+  partner_rooms: PartnerRoomRow | null
   housing_partners: HousingPartnerRow | null
 }
 
@@ -36,12 +36,12 @@ export async function confirmBooking(
   const db = admin ?? getAdminClient()
 
   const booking = await fetchBookingByRef(ref, db)
-  if (!booking) return { success: false, error: 'Booking not found' }
-  if (booking.status !== 'pending') return { success: false, error: `Already ${booking.status}` }
+  if (!booking) return { success: false, error:'Booking not found' }
+  if (booking.status !=='pending') return { success: false, error:`Already ${booking.status}` }
 
   const { error: updateErr } = await db
     .from('room_contacts')
-    .update({ status: 'confirmed', confirmed_at: new Date().toISOString() })
+    .update({ status:'confirmed', confirmed_at: new Date().toISOString() })
     .eq('booking_ref', ref)
 
   if (updateErr) return { success: false, error: updateErr.message }
@@ -52,18 +52,18 @@ export async function confirmBooking(
   const partner = booking.housing_partners
   if (partner) {
     await sendRoomContactEmail({
-      to:                 booking.guest_email,
-      guestName:          booking.guest_name,
-      roomTitle:          booking.partner_rooms?.title ?? '',
-      neighborhood:       booking.partner_rooms?.neighborhood ?? '',
-      partnerName:        partner.name,
-      partnerWhatsapp:    partner.whatsapp ?? '',
-      partnerEmail:       partner.contact_email,
-      partnerPhone:       partner.contact_phone ?? '',
+      to: booking.guest_email,
+      guestName: booking.guest_name,
+      roomTitle: booking.partner_rooms?.title ??'',
+      neighborhood: booking.partner_rooms?.neighborhood ??'',
+      partnerName: partner.name,
+      partnerWhatsapp: partner.whatsapp ??'',
+      partnerEmail: partner.contact_email,
+      partnerPhone: partner.contact_phone ??'',
       partnerContactName: partner.contact_name,
-      moveInDate:         booking.move_in_date ?? '',
-      duration:           String(booking.duration_months),
-      bookingRef:         ref,
+      moveInDate: booking.move_in_date ??'',
+      duration: String(booking.duration_months),
+      bookingRef: ref,
     })
   }
 
@@ -78,9 +78,9 @@ export async function rejectBooking(
   const db = admin ?? getAdminClient()
 
   const booking = await fetchBookingByRef(ref, db)
-  if (!booking) return { success: false, error: 'Booking not found' }
-  if (booking.status !== 'pending') return { success: false, error: `Already ${booking.status}` }
-  if (!booking.stripe_payment_id) return { success: false, error: 'No payment ID on booking' }
+  if (!booking) return { success: false, error:'Booking not found' }
+  if (booking.status !=='pending') return { success: false, error:`Already ${booking.status}` }
+  if (!booking.stripe_payment_id) return { success: false, error:'No payment ID on booking' }
 
   let refundId: string | undefined
 
@@ -89,21 +89,21 @@ export async function rejectBooking(
     if (session.payment_intent) {
       const refund = await stripe.refunds.create({
         payment_intent: session.payment_intent as string,
-        reason:         'requested_by_customer',
+        reason:'requested_by_customer',
       })
       refundId = refund.id
     }
   } catch (err) {
     console.error('[booking-utils rejectBooking] stripe refund failed:', err)
-    return { success: false, error: 'Stripe refund failed' }
+    return { success: false, error:'Stripe refund failed' }
   }
 
   await db
     .from('room_contacts')
     .update({
-      status:           'refunded',
-      rejected_at:      new Date().toISOString(),
-      refund_id:        refundId ?? null,
+      status:'refunded',
+      rejected_at: new Date().toISOString(),
+      refund_id: refundId ?? null,
       rejection_reason: reason,
     })
     .eq('booking_ref', ref)
@@ -111,15 +111,15 @@ export async function rejectBooking(
   if (booking.room_id) {
     await db
       .from('partner_rooms')
-      .update({ status: 'available' })
+      .update({ status:'available' })
       .eq('id', booking.room_id)
   }
 
   await sendBookingRefundEmail({
-    to:         booking.guest_email,
-    guestName:  booking.guest_name,
-    roomTitle:  booking.partner_rooms?.title ?? 'the room',
-    amount:     booking.platform_fee,
+    to: booking.guest_email,
+    guestName: booking.guest_name,
+    roomTitle: booking.partner_rooms?.title ??'the room',
+    amount: booking.platform_fee,
     bookingRef: ref,
     reason,
   })

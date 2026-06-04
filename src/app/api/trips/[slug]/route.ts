@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getTripBySlug } from '@/lib/supabase/queries'
+import { NextRequest, NextResponse } from'next/server'
+import { getTripBySlug } from'@/lib/supabase/queries'
 
 export async function GET(
   _request: NextRequest,
@@ -9,7 +9,7 @@ export async function GET(
   const trip = await getTripBySlug(slug)
 
   if (!trip) {
-    return NextResponse.json({ error: 'Trip not found' }, { status: 404 })
+    return NextResponse.json({ error:'Trip not found' }, { status: 404 })
   }
 
   return NextResponse.json(trip)

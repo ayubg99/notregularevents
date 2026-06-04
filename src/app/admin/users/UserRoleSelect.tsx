@@ -1,14 +1,14 @@
 'use client'
 
-import { useTransition } from 'react'
-import { useRouter } from 'next/navigation'
-import { updateUserRole } from '@/app/actions/admin'
-import type { UserRole } from '@/types/database'
+import { useTransition } from'react'
+import { useRouter } from'next/navigation'
+import { updateUserRole } from'@/app/actions/admin'
+import type { UserRole } from'@/types/database'
 
-const ROLES: UserRole[] = ['student', 'ambassador', 'admin']
+const ROLES: UserRole[] = ['student','ambassador','admin']
 
 interface Props {
-  userId:      string
+  userId: string
   currentRole: string
 }
 

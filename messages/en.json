@@ -1,35 +1,35 @@
 {
-  "nav": {
-    "events": "Events",
-    "trips": "Trips",
-    "community": "Community",
-    "housing": "Housing",
-    "jobs": "Jobs",
-    "marketplace": "Marketplace",
-    "membership": "Membership",
-    "about": "About",
-    "dashboard": "Dashboard",
-    "signIn": "Sign In",
-    "joinNow": "Join Now",
-    "signOut": "Sign Out",
-    "lightMode": "Light mode",
-    "darkMode": "Dark mode"
+"nav": {
+"events":"Events",
+"trips":"Trips",
+"community":"Community",
+"housing":"Housing",
+"jobs":"Jobs",
+"marketplace":"Marketplace",
+"membership":"Membership",
+"about":"About",
+"dashboard":"Dashboard",
+"signIn":"Sign In",
+"joinNow":"Join Now",
+"signOut":"Sign Out",
+"lightMode":"Light mode",
+"darkMode":"Dark mode"
   },
-  "hero": {
-    "headline": "Your Erasmus in Valencia Starts Here 🎓",
-    "subline": "The official platform for Erasmus students in Valencia. Events, trips, parties and everything you need for the best semester of your life.",
-    "cta": "Explore Events",
-    "ctaSecondary": "Join Membership"
+"hero": {
+"headline":"Your Erasmus in Valencia Starts Here",
+"subline":"The official platform for Erasmus students in Valencia. Events, trips, parties and everything you need for the best semester of your life.",
+"cta":"Explore Events",
+"ctaSecondary":"Join Membership"
   },
-  "common": {
-    "bookNow": "Book Now",
-    "learnMore": "Learn More",
-    "loading": "Loading...",
-    "error": "Something went wrong",
-    "retry": "Try again",
-    "noResults": "No results found",
-    "cancel": "Cancel",
-    "save": "Save Changes",
-    "close": "Close"
+"common": {
+"bookNow":"Book Now",
+"learnMore":"Learn More",
+"loading":"Loading...",
+"error":"Something went wrong",
+"retry":"Try again",
+"noResults":"No results found",
+"cancel":"Cancel",
+"save":"Save Changes",
+"close":"Close"
   }
 }

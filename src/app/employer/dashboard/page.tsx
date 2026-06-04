@@ -1,12 +1,12 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-import { getAdminClient } from '@/lib/supabase/admin'
-import EmployerDashboardClient from './EmployerDashboardClient'
-import type { EmployerAccountRow, JobListingRow } from '@/types/database'
+import { redirect } from'next/navigation'
+import { createClient } from'@/lib/supabase/server'
+import { getAdminClient } from'@/lib/supabase/admin'
+import EmployerDashboardClient from'./EmployerDashboardClient'
+import type { EmployerAccountRow, JobListingRow } from'@/types/database'
 
-export const dynamic = 'force-dynamic'
+export const dynamic ='force-dynamic'
 
-export const metadata = { title: 'Employer Dashboard — Erasmus Life Jobs' }
+export const metadata = { title:'Employer Dashboard — Erasmus Life Jobs' }
 
 interface Props {
   searchParams: Promise<{ upgraded?: string }>
@@ -30,9 +30,9 @@ export default async function EmployerDashboardPage({ searchParams }: Props) {
   if (!employerRaw) redirect('/employer/register')
 
   const employer = employerRaw as EmployerAccountRow
-  const jobs     = (jobsRaw ?? []) as JobListingRow[]
+  const jobs = (jobsRaw ?? []) as JobListingRow[]
 
   return (
-    <EmployerDashboardClient employer={employer} jobs={jobs} upgraded={upgraded === 'true'} />
+    <EmployerDashboardClient employer={employer} jobs={jobs} upgraded={upgraded ==='true'} />
   )
 }

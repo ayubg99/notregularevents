@@ -1,18 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import type { User } from '@supabase/supabase-js'
-import { createClient } from '@/lib/supabase/client'
-import type { ProfileRow } from '@/types/database'
+import { useState, useEffect } from'react'
+import type { User } from'@supabase/supabase-js'
+import { createClient } from'@/lib/supabase/client'
+import type { ProfileRow } from'@/types/database'
 
 interface UseUserResult {
-  user:    User | null
+  user: User | null
   profile: ProfileRow | null
   loading: boolean
 }
 
 export function useUser(): UseUserResult {
-  const [user,    setUser]    = useState<User | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<ProfileRow | null>(null)
   const [loading, setLoading] = useState(true)
 

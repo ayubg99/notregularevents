@@ -1,35 +1,35 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
-import { motion, useMotionValue, useTransform, animate, useInView } from 'framer-motion'
-import { Users, Globe, Calendar, MapPin } from 'lucide-react'
-import type { ElementType } from 'react'
+import { useRef, useEffect } from'react'
+import { motion, useMotionValue, useTransform, animate, useInView } from'framer-motion'
+import { Users, Globe, Calendar, MapPin } from'lucide-react'
+import type { ElementType } from'react'
 
 interface StatItem {
-  end:    number
+  end: number
   suffix: string
-  label:  string
-  desc:   string
-  icon:   ElementType
+  label: string
+  desc: string
+  icon: ElementType
 }
 
 const STATS: StatItem[] = [
-  { end: 5000, suffix: '+', label: 'Students',      desc: 'Across 50+ nationalities',      icon: Users    },
-  { end: 50,   suffix: '+', label: 'Nationalities', desc: 'All in one community',           icon: Globe    },
-  { end: 6,    suffix: '',  label: 'Events/Week',   desc: 'Parties, culture & more',        icon: Calendar },
-  { end: 1994, suffix: '',  label: 'Est.',          desc: 'The official Erasmus community', icon: MapPin   },
+  { end: 5000, suffix:'+', label:'Students', desc:'Across 50+ nationalities', icon: Users },
+  { end: 50, suffix:'+', label:'Nationalities', desc:'All in one community', icon: Globe },
+  { end: 6, suffix:'', label:'Events/Week', desc:'Parties, culture & more', icon: Calendar },
+  { end: 1994, suffix:'', label:'Est.', desc:'The official Erasmus community', icon: MapPin },
 ]
 
 function StatCard({ item }: { item: StatItem }) {
-  const ref     = useRef<HTMLDivElement>(null)
-  const count   = useMotionValue(0)
+  const ref = useRef<HTMLDivElement>(null)
+  const count = useMotionValue(0)
   const display = useTransform(count, (v) => Math.round(v).toLocaleString())
-  const inView  = useInView(ref, { once: true, margin: '-80px' })
-  const Icon    = item.icon
+  const inView = useInView(ref, { once: true, margin:'-80px' })
+  const Icon = item.icon
 
   useEffect(() => {
     if (inView) {
-      const controls = animate(count, item.end, { duration: 2.2, ease: 'easeOut' })
+      const controls = animate(count, item.end, { duration: 2.2, ease:'easeOut' })
       return controls.stop
     }
   }, [inView, count, item.end])

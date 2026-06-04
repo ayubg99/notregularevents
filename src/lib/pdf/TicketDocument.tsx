@@ -1,4 +1,4 @@
-import React from 'react'
+import React from'react'
 import {
   Document,
   Page,
@@ -6,56 +6,56 @@ import {
   Text,
   Image,
   StyleSheet,
-} from '@react-pdf/renderer'
+} from'@react-pdf/renderer'
 
 export type PdfTicket = {
-  guestName:  string
-  title:      string
-  date:       string
-  tier?:      string | null
+  guestName: string
+  title: string
+  date: string
+  tier?: string | null
   bookingRef: string
-  qrCode:     string | null
-  type:       'EVENT' | 'TRIP'
+  qrCode: string | null
+  type:'EVENT' |'TRIP'
 }
 
-const CORAL  = '#E91E8C'
-const NAVY   = '#0D0D0D'
-const GREY   = '#666680'
-const BORDER = '#E8E8F0'
+const CORAL ='#E91E8C'
+const NAVY ='#0D0D0D'
+const GREY ='#666680'
+const BORDER ='#E8E8F0'
 
 const styles = StyleSheet.create({
   page: {
-    fontFamily: 'Helvetica',
-    backgroundColor: '#F5F5FA',
+    fontFamily:'Helvetica',
+    backgroundColor:'#F5F5FA',
     padding: 24,
   },
   heading: {
     fontSize: 9,
     color: GREY,
     marginBottom: 12,
-    textTransform: 'uppercase',
+    textTransform:'uppercase',
     letterSpacing: 1,
   },
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection:'row',
+    flexWrap:'wrap',
     gap: 12,
   },
   card: {
-    width: '48%',
-    backgroundColor: '#FFFFFF',
+    width:'48%',
+    backgroundColor:'#FFFFFF',
     borderRadius: 8,
-    border: `1 solid ${BORDER}`,
-    overflow: 'hidden',
+    border:`1 solid ${BORDER}`,
+    overflow:'hidden',
     marginBottom: 0,
   },
   cardHeader: {
     backgroundColor: NAVY,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
   },
   typeBadge: {
     backgroundColor: CORAL,
@@ -65,18 +65,18 @@ const styles = StyleSheet.create({
   },
   typeBadgeText: {
     fontSize: 7,
-    fontFamily: 'Helvetica-Bold',
-    color: '#FFFFFF',
+    fontFamily:'Helvetica-Bold',
+    color:'#FFFFFF',
     letterSpacing: 0.5,
   },
   headerRef: {
     fontSize: 7,
-    color: 'rgba(255,255,255,0.4)',
-    fontFamily: 'Courier',
+    color:'rgba(255,255,255,0.4)',
+    fontFamily:'Courier',
   },
   cardBody: {
     padding: 12,
-    flexDirection: 'row',
+    flexDirection:'row',
     gap: 10,
   },
   infoCol: {
@@ -84,13 +84,13 @@ const styles = StyleSheet.create({
   },
   guestName: {
     fontSize: 13,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily:'Helvetica-Bold',
     color: NAVY,
     marginBottom: 4,
   },
   eventTitle: {
     fontSize: 9,
-    color: '#333355',
+    color:'#333355',
     marginBottom: 2,
   },
   eventDate: {
@@ -99,24 +99,24 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection:'row',
+    alignItems:'center',
     gap: 6,
     marginBottom: 4,
   },
   metaLabel: {
     fontSize: 7,
     color: GREY,
-    textTransform: 'uppercase',
+    textTransform:'uppercase',
     letterSpacing: 0.5,
   },
   metaValue: {
     fontSize: 8,
     color: NAVY,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily:'Helvetica-Bold',
   },
   tierBadge: {
-    backgroundColor: '#FFF3E8',
+    backgroundColor:'#FFF3E8',
     borderRadius: 3,
     paddingHorizontal: 5,
     paddingVertical: 1,
@@ -124,10 +124,10 @@ const styles = StyleSheet.create({
   tierText: {
     fontSize: 7,
     color: CORAL,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily:'Helvetica-Bold',
   },
   refBox: {
-    backgroundColor: '#F5F5FA',
+    backgroundColor:'#F5F5FA',
     borderRadius: 4,
     paddingHorizontal: 6,
     paddingVertical: 4,
@@ -136,20 +136,20 @@ const styles = StyleSheet.create({
   refLabel: {
     fontSize: 6,
     color: GREY,
-    textTransform: 'uppercase',
+    textTransform:'uppercase',
     letterSpacing: 0.5,
     marginBottom: 2,
   },
   refValue: {
     fontSize: 8,
-    fontFamily: 'Courier-Bold',
+    fontFamily:'Courier-Bold',
     color: NAVY,
     letterSpacing: 1,
   },
   qrCol: {
     width: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems:'center',
+    justifyContent:'center',
   },
   qrImage: {
     width: 76,
@@ -158,23 +158,23 @@ const styles = StyleSheet.create({
   qrPlaceholder: {
     width: 76,
     height: 76,
-    backgroundColor: '#F5F5FA',
-    border: `1 dashed ${BORDER}`,
+    backgroundColor:'#F5F5FA',
+    border:`1 dashed ${BORDER}`,
     borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems:'center',
+    justifyContent:'center',
   },
   qrPlaceholderText: {
     fontSize: 7,
     color: GREY,
-    textAlign: 'center',
+    textAlign:'center',
   },
   cardFooter: {
-    borderTop: `1 solid ${BORDER}`,
+    borderTop:`1 solid ${BORDER}`,
     paddingHorizontal: 12,
     paddingVertical: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection:'row',
+    justifyContent:'space-between',
   },
   footerText: {
     fontSize: 7,
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
 function formatDate(iso: string) {
   try {
     return new Date(iso).toLocaleDateString('en-GB', {
-      weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
+      weekday:'short', day:'numeric', month:'short', year:'numeric',
     })
   } catch {
     return iso
@@ -193,9 +193,9 @@ function formatDate(iso: string) {
 }
 
 function tierLabel(tier: string) {
-  if (tier === 'early_bird') return '🔥 Early Bird'
-  if (tier === 'group')      return '👥 Group'
-  return '💰 Standard'
+  if (tier ==='early_bird') return' Early Bird'
+  if (tier ==='group') return' Group'
+  return' Standard'
 }
 
 function TicketCard({ ticket }: { ticket: PdfTicket }) {
@@ -255,13 +255,13 @@ function TicketCard({ ticket }: { ticket: PdfTicket }) {
 }
 
 interface Props {
-  tickets:   PdfTicket[]
+  tickets: PdfTicket[]
   docTitle?: string
 }
 
 export default function TicketDocument({ tickets, docTitle }: Props) {
   return (
-    <Document title={docTitle ?? 'Tickets'} author="Erasmus Life Admin">
+    <Document title={docTitle ??'Tickets'} author="Erasmus Life Admin">
       <Page size="A4" style={styles.page}>
         {docTitle && <Text style={styles.heading}>{docTitle}</Text>}
         <View style={styles.grid}>

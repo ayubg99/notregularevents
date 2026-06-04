@@ -1,5 +1,5 @@
-import { getAdminClient } from '@/lib/supabase/admin'
-import HousingClient from './HousingClient'
+import { getAdminClient } from'@/lib/supabase/admin'
+import HousingClient from'./HousingClient'
 
 export default async function AdminHousingPage() {
   const admin = getAdminClient()

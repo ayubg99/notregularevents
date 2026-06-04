@@ -1,29 +1,29 @@
-import Link from 'next/link'
-import type { PartnerRoomRow } from '@/types/database'
+import Link from'next/link'
+import type { PartnerRoomRow } from'@/types/database'
 
 const ROOM_TYPE_LABELS: Record<string, string> = {
-  private_room:    'Private Room',
-  shared_room:     'Shared Room',
-  studio:          'Studio',
-  full_apartment:  'Full Apartment',
+  private_room:'Private Room',
+  shared_room:'Shared Room',
+  studio:'Studio',
+  full_apartment:'Full Apartment',
 }
 
 const AMENITY_ICONS: Record<string, string> = {
-  wifi:              '📶 WiFi',
-  ac:                '❄️ AC',
-  washing_machine:   '🧺 Washer',
-  balcony:           '🌿 Balcony',
-  bills_included:    '💡 Bills incl.',
-  furnished:         '🪑 Furnished',
-  private_bathroom:  '🚿 En-suite',
-  near_university:   '🏫 Near uni',
-  parking:           '🅿️ Parking',
-  elevator:          '🛗 Elevator',
-  heating:           '🔥 Heating',
+  wifi:' WiFi',
+  ac:' AC',
+  washing_machine:' Washer',
+  balcony:' Balcony',
+  bills_included:' Bills incl.',
+  furnished:' Furnished',
+  private_bathroom:' En-suite',
+  near_university:' Near uni',
+  parking:' Parking',
+  elevator:' Elevator',
+  heating:' Heating',
 }
 
 export default function PartnerRoomCard({ room }: { room: PartnerRoomRow }) {
-  const photo      = room.photos?.[0] ?? null
+  const photo = room.photos?.[0] ?? null
   const topAmenities = room.amenities.slice(0, 3)
 
   return (
@@ -46,7 +46,7 @@ export default function PartnerRoomCard({ room }: { room: PartnerRoomRow }) {
 
         {/* Verified badge */}
         <span className="absolute top-3 left-3 bg-amber-400 text-brand-dark text-xs font-bold px-2.5 py-1 rounded-full">
-          ⭐ VERIFIED
+           VERIFIED
         </span>
 
         {/* Price badge */}
@@ -62,7 +62,7 @@ export default function PartnerRoomCard({ room }: { room: PartnerRoomRow }) {
         {/* Pills */}
         <div className="flex flex-wrap gap-1.5 mb-3">
           <span className="text-xs text-white/60 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">
-            📍 {room.neighborhood}
+             {room.neighborhood}
           </span>
           <span className="text-xs text-white/60 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">
             {ROOM_TYPE_LABELS[room.room_type] ?? room.room_type}
@@ -77,9 +77,9 @@ export default function PartnerRoomCard({ room }: { room: PartnerRoomRow }) {
         {/* Available from */}
         {room.available_from && (
           <p className="text-white/50 text-xs mb-3">
-            Available from{' '}
+            Available from{''}
             {new Date(room.available_from).toLocaleDateString('en-GB', {
-              day: 'numeric', month: 'short', year: 'numeric',
+              day:'numeric', month:'short', year:'numeric',
             })}
           </p>
         )}

@@ -1,52 +1,52 @@
 'use client'
 
-import { useState, useEffect, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
-import { X, Loader2, Tag, Check, Minus, Plus, Zap, Users, Crown, User, LogIn, Lock } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
-import type { TripRow, TripTier, EventTicketTier, TripExtra } from '@/types/database'
-import { tierDefaults } from '@/types/database'
+import { useState, useEffect, useTransition } from'react'
+import { useRouter } from'next/navigation'
+import { X, Loader2, Tag, Check, Minus, Plus, Zap, Users, Crown, User, LogIn, Lock } from'lucide-react'
+import { createClient } from'@/lib/supabase/client'
+import type { TripRow, TripTier, EventTicketTier, TripExtra } from'@/types/database'
+import { tierDefaults } from'@/types/database'
 
 type EventProps = {
-  type:                  'event'
-  eventId:               string
-  price:                 number
-  capacity:              number
-  sold:                  number
-  slug:                  string
-  title:                 string
-  isFree?:               boolean
-  isMembersOnlyFree?:    boolean
-  priceEarlyBird?:       number | null
-  priceGroup?:           number | null
-  earlyBirdDeadline?:    string | null
-  earlyBirdSeats?:       number
-  earlyBirdSeatsSold?:   number
-  ticketTiers?:          EventTicketTier[]
-  initialTierIdx?:       number
-  userIsMember?:         boolean
-  tierSoldCounts?:       Record<string, number>
-  eventDate?:            string | null
+  type:'event'
+  eventId: string
+  price: number
+  capacity: number
+  sold: number
+  slug: string
+  title: string
+  isFree?: boolean
+  isMembersOnlyFree?: boolean
+  priceEarlyBird?: number | null
+  priceGroup?: number | null
+  earlyBirdDeadline?: string | null
+  earlyBirdSeats?: number
+  earlyBirdSeatsSold?: number
+  ticketTiers?: EventTicketTier[]
+  initialTierIdx?: number
+  userIsMember?: boolean
+  tierSoldCounts?: Record<string, number>
+  eventDate?: string | null
 }
 
 type TripProps = {
-  type:            'trip'
-  trip:            TripRow
-  seatsLeft:       number
-  groupSize?:      number
+  type:'trip'
+  trip: TripRow
+  seatsLeft: number
+  groupSize?: number
   selectedExtras?: TripExtra[]
 }
 
 type Props = (EventProps | TripProps) & {
-  open:         boolean
-  onClose:      () => void
+  open: boolean
+  onClose: () => void
   initialTier?: TripTier
 }
 
 const TIER_LABELS: Record<TripTier, string> = {
-  early_bird: 'Early Bird',
-  standard:   'Standard',
-  group:      'Group',
+  early_bird:'Early Bird',
+  standard:'Standard',
+  group:'Group',
 }
 
 function MembershipBanner({
@@ -77,13 +77,13 @@ function MembershipBanner({
     <div className="flex items-start gap-2.5 rounded-xl bg-white/5 border border-white/10 px-4 py-3">
       <Crown size={15} className="text-brand-primary/50 flex-shrink-0 mt-0.5" />
       <p className="text-white/50 text-sm">
-        Members save 10% —{' '}
+        Members save 10% —{''}
         <a href="/auth/login" className="text-brand-primary hover:underline font-medium">
           <LogIn size={11} className="inline mb-0.5 mr-0.5" />Log in
         </a>
-        {' '}or{' '}
+        {''}or{''}
         <a href="/membership" target="_blank" rel="noopener noreferrer" className="text-brand-primary hover:underline font-medium">join</a>
-        {' '}to get the discount
+        {''}to get the discount
       </p>
     </div>
   )
@@ -95,54 +95,54 @@ export default function BookingModal(props: Props) {
   const [isPending, startTransition] = useTransition()
 
   // Compute early bird validity for events — must happen before hooks
-  const ep = props.type === 'event' ? (props as EventProps) : null
+  const ep = props.type ==='event' ? (props as EventProps) : null
   const isEventEarlyBirdValid = !!(
     ep?.priceEarlyBird &&
     ep?.earlyBirdDeadline &&
     new Date(ep.earlyBirdDeadline) > new Date() &&
     ((ep.earlyBirdSeats ?? 0) - (ep.earlyBirdSeatsSold ?? 0)) > 0
   )
-  const hasEventTiers    = props.type === 'event' && !!(ep?.priceEarlyBird || ep?.priceGroup)
-  const hasCustomTiers   = props.type === 'event' && !!(ep?.ticketTiers?.length)
+  const hasEventTiers = props.type ==='event' && !!(ep?.priceEarlyBird || ep?.priceGroup)
+  const hasCustomTiers = props.type ==='event' && !!(ep?.ticketTiers?.length)
 
-  // ── All hooks (must be unconditional, before any early return) ──
-  const [name,      setName]      = useState('')
-  const [email,     setEmail]     = useState('')
-  const [phone,     setPhone]     = useState('')
+  // All hooks (must be unconditional, before any early return) 
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [authEmail, setAuthEmail] = useState<string | null>(null)
   const [authLoaded, setAuthLoaded] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [isMember,   setIsMember]   = useState(false)
-  const [quantity,   setQuantity]   = useState(1)
-  const [attendees,  setAttendees]  = useState<{ name: string; email: string }[]>([{ name: '', email: '' }])
+  const [isMember, setIsMember] = useState(false)
+  const [quantity, setQuantity] = useState(1)
+  const [attendees, setAttendees] = useState<{ name: string; email: string }[]>([{ name:'', email:'' }])
 
   const [selectedTier, setSelectedTier] = useState<TripTier>(
-    props.type === 'trip' ? (props.initialTier ?? 'standard') : 'standard',
+    props.type ==='trip' ? (props.initialTier ??'standard') :'standard',
   )
   const [eventTier, setEventTier] = useState<TripTier>(
-    isEventEarlyBirdValid ? 'early_bird' : 'standard',
+    isEventEarlyBirdValid ?'early_bird' :'standard',
   )
   const [selectedTierIdx, setSelectedTierIdx] = useState<number>(
-    props.type === 'event' ? (ep?.initialTierIdx ?? 0) : 0,
+    props.type ==='event' ? (ep?.initialTierIdx ?? 0) : 0,
   )
 
-  const [promoOpen,    setPromoOpen]    = useState(false)
-  const [promoInput,   setPromoInput]   = useState('')
-  const [promoCode,    setPromoCode]    = useState('')
-  const [promoLabel,   setPromoLabel]   = useState('')
-  const [promoUnit,    setPromoUnit]    = useState<number | null>(null)
+  const [promoOpen, setPromoOpen] = useState(false)
+  const [promoInput, setPromoInput] = useState('')
+  const [promoCode, setPromoCode] = useState('')
+  const [promoLabel, setPromoLabel] = useState('')
+  const [promoUnit, setPromoUnit] = useState<number | null>(null)
   const [promoLoading, setPromoLoading] = useState(false)
-  const [promoError,   setPromoError]   = useState('')
-  const [error,        setError]        = useState('')
-  const [showSuccess,  setShowSuccess]  = useState(false)
-  const [bookingRef,   setBookingRef]   = useState('')
+  const [promoError, setPromoError] = useState('')
+  const [error, setError] = useState('')
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [bookingRef, setBookingRef] = useState('')
 
-  const [referralOpen,       setReferralOpen]       = useState(false)
-  const [referralInput,      setReferralInput]      = useState('')
-  const [referralCode,       setReferralCode]       = useState('')
-  const [referralValid,      setReferralValid]      = useState<boolean | null>(null)
+  const [referralOpen, setReferralOpen] = useState(false)
+  const [referralInput, setReferralInput] = useState('')
+  const [referralCode, setReferralCode] = useState('')
+  const [referralValid, setReferralValid] = useState<boolean | null>(null)
   const [referralAmbassador, setReferralAmbassador] = useState<{ id: string; referral_code: string } | null>(null)
-  const [referralLoading,    setReferralLoading]    = useState(false)
+  const [referralLoading, setReferralLoading] = useState(false)
 
   useEffect(() => {
     if (!open) return
@@ -151,34 +151,34 @@ export default function BookingModal(props: Props) {
       if (!user) { setAuthLoaded(true); return }
       setIsLoggedIn(true)
       setAuthEmail(user.email ?? null)
-      const userEmail = user.email ?? ''
-      const userName  = user.user_metadata?.full_name ?? ''
+      const userEmail = user.email ??''
+      const userName = user.user_metadata?.full_name ??''
       if (userEmail && !email) setEmail(userEmail)
-      if (userName  && !name)  setName(userName)
+      if (userName && !name) setName(userName)
       setAttendees(prev => {
         const copy = [...prev]
         copy[0] = { name: copy[0]?.name || userName, email: copy[0]?.email || userEmail }
         return copy
       })
       const [{ data: mem }, { data: profile }] = await Promise.all([
-        supabase.from('memberships').select('status').eq('user_id', user.id).eq('status', 'active').maybeSingle(),
+        supabase.from('memberships').select('status').eq('user_id', user.id).eq('status','active').maybeSingle(),
         supabase.from('profiles').select('membership_status').eq('user_id', user.id).maybeSingle(),
       ])
-      if (mem || profile?.membership_status === 'active') setIsMember(true)
+      if (mem || profile?.membership_status ==='active') setIsMember(true)
       setAuthLoaded(true)
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   useEffect(() => {
-    if (!open || props.type !== 'trip') return
+    if (!open || props.type !=='trip') return
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSelectedTier(props.initialTier ?? 'standard')
+    setSelectedTier(props.initialTier ??'standard')
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   useEffect(() => {
-    if (!open || props.type !== 'event') return
+    if (!open || props.type !=='event') return
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedTierIdx((props as EventProps).initialTierIdx ?? 0)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -186,7 +186,7 @@ export default function BookingModal(props: Props) {
 
   useEffect(() => {
     if (!open) return
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose() }
+    const handler = (e: KeyboardEvent) => { if (e.key ==='Escape') handleClose() }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -196,8 +196,8 @@ export default function BookingModal(props: Props) {
     if (!open || referralCode) return
     const params = new URLSearchParams(window.location.search)
     const urlRef = params.get('ref')?.toUpperCase()
-    const saved  = localStorage.getItem('referral_code')
-    const code   = urlRef ?? saved ?? null
+    const saved = localStorage.getItem('referral_code')
+    const code = urlRef ?? saved ?? null
     if (code) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setReferralInput(code)
@@ -213,20 +213,20 @@ export default function BookingModal(props: Props) {
     onClose()
   }
 
-  // ── Early return after all hooks ─────────────────────────────
+  // Early return after all hooks 
   if (!open) return null
 
-  // ── Derived prices ───────────────────────────────────────────
+  // Derived prices 
   let basePrice = 0
   let spotsLeft = 0
 
-  if (props.type === 'event') {
+  if (props.type ==='event') {
     if (hasCustomTiers && ep?.ticketTiers) {
       basePrice = ep.ticketTiers[selectedTierIdx]?.price ?? 0
     } else if (hasEventTiers) {
-      if (eventTier === 'early_bird' && props.priceEarlyBird) basePrice = props.priceEarlyBird
-      else if (eventTier === 'group' && props.priceGroup)     basePrice = props.priceGroup
-      else                                                     basePrice = props.price
+      if (eventTier ==='early_bird' && props.priceEarlyBird) basePrice = props.priceEarlyBird
+      else if (eventTier ==='group' && props.priceGroup) basePrice = props.priceGroup
+      else basePrice = props.price
     } else {
       basePrice = props.price
     }
@@ -234,33 +234,33 @@ export default function BookingModal(props: Props) {
   } else {
     const tierPrices: Record<TripTier, number> = {
       early_bird: props.trip.price_early_bird ?? props.trip.price_standard,
-      standard:   props.trip.price_standard,
-      group:      props.trip.price_group      ?? props.trip.price_standard,
+      standard: props.trip.price_standard,
+      group: props.trip.price_group ?? props.trip.price_standard,
     }
     basePrice = tierPrices[selectedTier]
     spotsLeft = props.seatsLeft
   }
 
-  const tripExtras  = props.type === 'trip' ? (props.selectedExtras ?? []) : []
+  const tripExtras = props.type ==='trip' ? (props.selectedExtras ?? []) : []
 
   let displayPrice = promoUnit ?? basePrice
   if (isMember && !promoCode) displayPrice = +(displayPrice * 0.90).toFixed(2)
 
   const hasDiscount = isMember && !promoCode && basePrice > 0
-  const isFree      = displayPrice === 0 && tripExtras.reduce((s, e) => s + e.price, 0) === 0
-  const isFreePath  = hasCustomTiers
+  const isFree = displayPrice === 0 && tripExtras.reduce((s, e) => s + e.price, 0) === 0
+  const isFreePath = hasCustomTiers
     ? (ep?.ticketTiers?.[selectedTierIdx]?.price ?? 0) === 0
-    : props.type === 'event' && !!(props.isFree || props.price === 0 || (props.isMembersOnlyFree && isMember))
+    : props.type ==='event' && !!(props.isFree || props.price === 0 || (props.isMembersOnlyFree && isMember))
 
-  const isGroupTier = (props.type === 'trip' && selectedTier === 'group')
-    || (props.type === 'event' && eventTier === 'group')
+  const isGroupTier = (props.type ==='trip' && selectedTier ==='group')
+    || (props.type ==='event' && eventTier ==='group')
   const customTierMinGroup = hasCustomTiers && ep?.ticketTiers
     ? (tierDefaults(ep.ticketTiers[selectedTierIdx])?.min_group_size ?? null)
     : null
   const minQty = customTierMinGroup ?? (isGroupTier ? 4 : 1)
   const maxQty = isGroupTier ? Math.min(spotsLeft, 20) : Math.min(spotsLeft, 10)
 
-  const effectiveQty = props.type === 'trip' && selectedTier === 'group' && props.groupSize
+  const effectiveQty = props.type ==='trip' && selectedTier ==='group' && props.groupSize
     ? props.groupSize
     : quantity
 
@@ -268,7 +268,7 @@ export default function BookingModal(props: Props) {
   const total = displayPrice * effectiveQty
 
   // Trip tier prices for the compact selector (only valid tiers)
-  const tripTierPrices: Partial<Record<TripTier, number>> = props.type === 'trip' ? {
+  const tripTierPrices: Partial<Record<TripTier, number>> = props.type ==='trip' ? {
     ...(props.trip.price_early_bird != null
       && props.trip.early_bird_deadline
       && new Date(props.trip.early_bird_deadline) > new Date()
@@ -282,28 +282,28 @@ export default function BookingModal(props: Props) {
 
   function handleRegisterFree() {
     const ticketAttendees = quantity > 1
-      ? Array.from({ length: quantity }, (_, i) => attendees[i] ?? { name: '', email: '' })
+      ? Array.from({ length: quantity }, (_, i) => attendees[i] ?? { name:'', email:'' })
       : [{ name: name.trim(), email: email.trim() }]
     if (!ticketAttendees.every(a => a.name.trim())) { setError('Please enter a name for each ticket.'); return }
-    if (!ticketAttendees[0].email.trim())           { setError('Please enter your email.'); return }
+    if (!ticketAttendees[0].email.trim()) { setError('Please enter your email.'); return }
     setError('')
     startTransition(async () => {
       try {
-        const res  = await fetch('/api/events/register-free', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({
-            eventId:    (props as EventProps).eventId,
-            guestName:  ticketAttendees[0].name,
+        const res = await fetch('/api/events/register-free', {
+          method:'POST',
+          headers: {'Content-Type':'application/json' },
+          body: JSON.stringify({
+            eventId: (props as EventProps).eventId,
+            guestName: ticketAttendees[0].name,
             guestEmail: ticketAttendees[0].email,
             guestPhone: phone.trim() || undefined,
-            attendees:  ticketAttendees,
+            attendees: ticketAttendees,
             quantity,
           }),
         })
         const data = await res.json()
-        if (data.bookingRef || data.success) { setBookingRef(data.bookingRef ?? ''); setShowSuccess(true) }
-        else setError(data.error ?? 'Registration failed.')
+        if (data.bookingRef || data.success) { setBookingRef(data.bookingRef ??''); setShowSuccess(true) }
+        else setError(data.error ??'Registration failed.')
       } catch {
         setError('Network error. Please try again.')
       }
@@ -314,13 +314,13 @@ export default function BookingModal(props: Props) {
     if (!promoInput.trim()) return
     setPromoLoading(true); setPromoError('')
     try {
-      const itemType = props.type === 'event' ? 'event' : 'trip'
-      const res  = await fetch(`/api/stripe/validate-promo?code=${encodeURIComponent(promoInput)}&price=${basePrice}&quantity=${effectiveQty}&itemType=${itemType}`)
+      const itemType = props.type ==='event' ?'event' :'trip'
+      const res = await fetch(`/api/stripe/validate-promo?code=${encodeURIComponent(promoInput)}&price=${basePrice}&quantity=${effectiveQty}&itemType=${itemType}`)
       const data = await res.json()
       if (data.valid) {
         setPromoCode(promoInput.trim()); setPromoUnit(data.discountedUnit); setPromoLabel(data.discountLabel); setPromoError('')
       } else {
-        setPromoError(data.error ?? 'Invalid promo code.')
+        setPromoError(data.error ??'Invalid promo code.')
       }
     } catch {
       setPromoError('Could not validate code. Try again.')
@@ -337,7 +337,7 @@ export default function BookingModal(props: Props) {
     if (!code || code.length < 3) { setReferralValid(null); return }
     setReferralLoading(true)
     try {
-      const res  = await fetch(`/api/stripe/validate-referral?code=${encodeURIComponent(code.toUpperCase())}`)
+      const res = await fetch(`/api/stripe/validate-referral?code=${encodeURIComponent(code.toUpperCase())}`)
       const data = await res.json()
       if (data?.valid) {
         setReferralValid(true)
@@ -363,74 +363,74 @@ export default function BookingModal(props: Props) {
   }
 
   function handleBook() {
-    const isMultiTicket   = props.type === 'event' && !isFreePath && quantity > 1
+    const isMultiTicket = props.type ==='event' && !isFreePath && quantity > 1
     const ticketAttendees = isMultiTicket
-      ? Array.from({ length: quantity }, (_, i) => attendees[i] ?? { name: '', email: '' })
+      ? Array.from({ length: quantity }, (_, i) => attendees[i] ?? { name:'', email:'' })
       : []
-    const isTripMulti   = props.type === 'trip' && effectiveQty > 1
-    const tripAttendees = props.type === 'trip'
-      ? Array.from({ length: effectiveQty }, (_, i) => attendees[i] ?? { name: '', email: '' })
+    const isTripMulti = props.type ==='trip' && effectiveQty > 1
+    const tripAttendees = props.type ==='trip'
+      ? Array.from({ length: effectiveQty }, (_, i) => attendees[i] ?? { name:'', email:'' })
       : []
 
     if (isMultiTicket) {
       if (!ticketAttendees.every(a => a.name.trim())) { setError('Please enter a name for each ticket.'); return }
-      if (!ticketAttendees[0].email.trim())           { setError('Please enter your email for ticket 1.'); return }
-    } else if (props.type === 'trip') {
-      if (!tripAttendees[0]?.name.trim())  { setError('Please enter your name.'); return }
+      if (!ticketAttendees[0].email.trim()) { setError('Please enter your email for ticket 1.'); return }
+    } else if (props.type ==='trip') {
+      if (!tripAttendees[0]?.name.trim()) { setError('Please enter your name.'); return }
       if (!tripAttendees[0]?.email.trim()) { setError('Please enter your email.'); return }
       if (isTripMulti && !tripAttendees.every(a => a.name.trim())) { setError('Please enter a name for each traveller.'); return }
     } else {
-      if (!name.trim())  { setError('Please enter your name.');  return }
+      if (!name.trim()) { setError('Please enter your name.'); return }
       if (!email.trim()) { setError('Please enter your email.'); return }
     }
     setError('')
 
     startTransition(async () => {
       try {
-        const tier = props.type === 'trip'
+        const tier = props.type ==='trip'
           ? selectedTier
           : hasEventTiers ? eventTier : undefined
 
-        const leadName  = isMultiTicket
+        const leadName = isMultiTicket
           ? ticketAttendees[0].name.trim()
-          : props.type === 'trip' ? (tripAttendees[0]?.name.trim() || '') : name.trim()
+          : props.type ==='trip' ? (tripAttendees[0]?.name.trim() ||'') : name.trim()
         const leadEmail = isMultiTicket
           ? ticketAttendees[0].email.trim()
-          : props.type === 'trip' ? (tripAttendees[0]?.email.trim() || '') : email.trim()
+          : props.type ==='trip' ? (tripAttendees[0]?.email.trim() ||'') : email.trim()
 
         const body: Record<string, unknown> = {
-          type:       props.type,
-          itemId:     props.type === 'event' ? props.eventId : props.trip.id,
-          guestName:  leadName,
+          type: props.type,
+          itemId: props.type ==='event' ? props.eventId : props.trip.id,
+          guestName: leadName,
           guestEmail: leadEmail,
           guestPhone: phone.trim() || undefined,
-          ...(isMultiTicket    ? { attendees: ticketAttendees.map(a => ({ name: a.name.trim(), email: a.email.trim() })) } : {}),
-          ...(props.type === 'trip' ? { attendees: tripAttendees.map(a => ({ name: a.name.trim(), email: a.email.trim() })) } : {}),
-          ...(tier                                       ? { tier }                                            : {}),
-          ...(hasCustomTiers                             ? { ticketTierIdx: selectedTierIdx }                  : {}),
-          ...(promoCode                                  ? { promoCode }                                       : {}),
-          ...(tripExtras.length > 0                      ? { selectedExtras: tripExtras }                      : {}),
+          ...(isMultiTicket ? { attendees: ticketAttendees.map(a => ({ name: a.name.trim(), email: a.email.trim() })) } : {}),
+          ...(props.type ==='trip' ? { attendees: tripAttendees.map(a => ({ name: a.name.trim(), email: a.email.trim() })) } : {}),
+          ...(tier ? { tier } : {}),
+          ...(hasCustomTiers ? { ticketTierIdx: selectedTierIdx } : {}),
+          ...(promoCode ? { promoCode } : {}),
+          ...(tripExtras.length > 0 ? { selectedExtras: tripExtras } : {}),
           // Send referral code from state, or fall back to localStorage — server validates
           ...(() => {
-            const code = (referralValid && referralCode) ? referralCode : (localStorage.getItem('referral_code') ?? '')
-            return code ? { referralCode: code, ambassadorId: referralAmbassador?.id ?? '' } : {}
+            const code = (referralValid && referralCode) ? referralCode : (localStorage.getItem('referral_code') ??'')
+            return code ? { referralCode: code, ambassadorId: referralAmbassador?.id ??'' } : {}
           })(),
         }
 
-        if (props.type === 'event') {
+        if (props.type ==='event') {
           body.quantity = effectiveQty
         } else {
           body.quantity = effectiveQty
-          if (selectedTier === 'group') body.groupSize = effectiveQty
+          if (selectedTier ==='group') body.groupSize = effectiveQty
         }
 
-        const res  = await fetch('/api/stripe/create-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+        const res = await fetch('/api/stripe/create-checkout', { method:'POST', headers: {'Content-Type':'application/json' }, body: JSON.stringify(body) })
         const data = await res.json()
         if (data.url) {
           localStorage.removeItem('referral_code')
           router.push(data.url)
         } else {
-          setError(data.error ?? 'Something went wrong.')
+          setError(data.error ??'Something went wrong.')
         }
       } catch {
         setError('Network error. Please try again.')
@@ -438,7 +438,7 @@ export default function BookingModal(props: Props) {
     })
   }
 
-  const title = props.type === 'event' ? props.title : props.trip.title
+  const title = props.type ==='event' ? props.title : props.trip.title
 
   return (
     <div
@@ -451,7 +451,7 @@ export default function BookingModal(props: Props) {
         <div className="sticky top-0 bg-[#0D0D0D] z-10 flex items-center justify-between px-6 pt-5 pb-4 border-b border-white/8">
           <div>
             <p className="text-white/40 text-xs uppercase tracking-widest mb-0.5">
-              {props.type === 'trip' ? 'Book Trip' : 'Get Tickets'}
+              {props.type ==='trip' ?'Book Trip' :'Get Tickets'}
             </p>
             <h2 className="font-heading text-lg font-bold text-white leading-tight line-clamp-1">{title}</h2>
           </div>
@@ -462,23 +462,23 @@ export default function BookingModal(props: Props) {
 
         <div className="px-6 pb-8 pt-5 flex flex-col gap-5">
           {showSuccess ? (
-            <div style={{ textAlign: 'center', padding: '32px' }}>
-              <p style={{ fontSize: '48px', margin: '0 0 16px' }}>🎉</p>
-              <h2 style={{ color: '#2ECC71', margin: '0 0 8px' }}>You&apos;re registered!</h2>
-              <p style={{ color: '#888', margin: '0 0 16px' }}>Check your email for your QR ticket</p>
-              <p style={{ color: '#FF6B00', fontFamily: 'monospace', fontSize: '18px', fontWeight: 700 }}>{bookingRef}</p>
+            <div style={{ textAlign:'center', padding:'32px' }}>
+              <p style={{ fontSize:'48px', margin:'0 0 16px' }}></p>
+              <h2 style={{ color:'#2ECC71', margin:'0 0 8px' }}>You&apos;re registered!</h2>
+              <p style={{ color:'#888', margin:'0 0 16px' }}>Check your email for your QR ticket</p>
+              <p style={{ color:'#FF6B00', fontFamily:'monospace', fontSize:'18px', fontWeight: 700 }}>{bookingRef}</p>
               <button
                 onClick={handleClose}
-                style={{ marginTop: '24px', padding: '12px 32px', background: '#FF6B00', color: '#0D0D0D', border: 'none', borderRadius: '50px', fontWeight: 700, cursor: 'pointer' }}
+                style={{ marginTop:'24px', padding:'12px 32px', background:'#FF6B00', color:'#0D0D0D', border:'none', borderRadius:'50px', fontWeight: 700, cursor:'pointer' }}
               >
-                Done ✓
+                Done 
               </button>
             </div>
-          ) : props.type === 'event' && props.isMembersOnlyFree && !authLoaded ? (
+          ) : props.type ==='event' && props.isMembersOnlyFree && !authLoaded ? (
             <div className="flex justify-center py-12">
               <Loader2 size={24} className="animate-spin text-brand-primary" />
             </div>
-          ) : props.type === 'event' && props.isMembersOnlyFree && !isMember ? (
+          ) : props.type ==='event' && props.isMembersOnlyFree && !isMember ? (
             <div className="flex flex-col items-center gap-5 text-center py-8">
               <Crown size={40} className="text-brand-primary" />
               <div>
@@ -490,25 +490,25 @@ export default function BookingModal(props: Props) {
               <a
                 href="/membership"
                 className="w-full block py-4 rounded-full font-bold text-sm text-center shadow-brand-sm"
-                style={{ background: 'linear-gradient(135deg, #FF6B00, #E91E8C)', color: '#1A1A0E' }}
+                style={{ background:'linear-gradient(135deg, #FF6B00, #E91E8C)', color:'#1A1A0E' }}
               >
                 Join for €9.99/month →
               </a>
               {!isLoggedIn && (
                 <p className="text-white/40 text-xs">
-                  Already a member?{' '}
+                  Already a member?{''}
                   <a href="/auth/login" className="text-brand-primary hover:underline">Log in here</a>
                 </p>
               )}
             </div>
           ) : (
           <>
-          {!(props.type === 'event' && props.isMembersOnlyFree) && (
+          {!(props.type ==='event' && props.isMembersOnlyFree) && (
             <MembershipBanner authLoaded={authLoaded} isLoggedIn={isLoggedIn} isMember={isMember} />
           )}
 
           {/* Tier selector (trips) */}
-          {props.type === 'trip' && (
+          {props.type ==='trip' && (
             <div className="flex flex-col gap-2">
               <p className="text-white/50 text-xs uppercase tracking-widest">Select tier</p>
               <div className="grid grid-cols-2 gap-2">
@@ -520,15 +520,15 @@ export default function BookingModal(props: Props) {
                     <button key={t} onClick={() => setSelectedTier(t)}
                       className={`rounded-xl border px-3 py-2.5 text-left transition-all ${
                         selectedTier === t
-                          ? 'border-brand-primary bg-brand-primary/10 text-white'
-                          : 'border-white/10 bg-white/5 text-white/60 hover:border-white/20'
+                          ?'border-brand-primary bg-brand-primary/10 text-white'
+                          :'border-white/10 bg-white/5 text-white/60 hover:border-white/20'
                       }`}
                     >
                       <div className="flex items-center gap-1.5 mb-0.5">
-                        {t === 'early_bird' && <Zap size={12} className="text-brand-accent" />}
-                        {t === 'group'      && <Users size={12} className="text-green-400" />}
+                        {t ==='early_bird' && <Zap size={12} className="text-brand-accent" />}
+                        {t ==='group' && <Users size={12} className="text-green-400" />}
                         <p className="text-xs font-semibold">{TIER_LABELS[t]}</p>
-                        {t === 'group' && <span className="text-white/30 text-xs">/person</span>}
+                        {t ==='group' && <span className="text-white/30 text-xs">/person</span>}
                       </div>
                       {memberP ? (
                         <div className="flex items-baseline gap-1.5">
@@ -542,9 +542,9 @@ export default function BookingModal(props: Props) {
                   )
                 })}
               </div>
-              {selectedTier === 'group' && (
+              {selectedTier ==='group' && (
                 <p className="text-white/40 text-xs">
-                  Group of {effectiveQty} · €{displayPrice} × {effectiveQty} ={' '}
+                  Group of {effectiveQty} · €{displayPrice} × {effectiveQty} ={''}
                   <span className="text-white font-semibold">€{total.toFixed(2)}</span>
                 </p>
               )}
@@ -552,24 +552,24 @@ export default function BookingModal(props: Props) {
           )}
 
           {/* Custom ticket tiers (admin-defined) */}
-          {props.type === 'event' && hasCustomTiers && ep?.ticketTiers && (
+          {props.type ==='event' && hasCustomTiers && ep?.ticketTiers && (
             <div className="flex flex-col gap-2">
               <p className="text-white/50 text-xs uppercase tracking-widest">Select ticket</p>
               {ep.ticketTiers.map((rawTier, i) => {
-                const tier       = tierDefaults(rawTier)
-                const soldCount  = ep.tierSoldCounts?.[tier.name] ?? 0
-                const isSoldOut  = tier.seats !== null && soldCount >= tier.seats
-                const isLocked   = tier.members_only && !ep.userIsMember
+                const tier = tierDefaults(rawTier)
+                const soldCount = ep.tierSoldCounts?.[tier.name] ?? 0
+                const isSoldOut = tier.seats !== null && soldCount >= tier.seats
+                const isLocked = tier.members_only && !ep.userIsMember
                 const isDisabled = isSoldOut || isLocked
                 return (
                   <button key={tier.id} onClick={() => !isDisabled && setSelectedTierIdx(i)}
                     disabled={isDisabled}
                     className={`rounded-xl border px-3 py-3 text-left transition-all ${
                       isDisabled
-                        ? 'border-white/5 bg-white/3 opacity-50 cursor-not-allowed'
+                        ?'border-white/5 bg-white/3 opacity-50 cursor-not-allowed'
                         : selectedTierIdx === i
-                          ? 'border-brand-primary bg-brand-primary/10'
-                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                          ?'border-brand-primary bg-brand-primary/10'
+                          :'border-white/10 bg-white/5 hover:border-white/20'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -599,15 +599,15 @@ export default function BookingModal(props: Props) {
                         {tier.benefits.length > 0 && (
                           <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-0">
                             {tier.benefits.map(b => (
-                              <li key={b} className="text-[11px] text-white/35 before:content-['✓'] before:mr-1 before:text-green-400/60">
+                              <li key={b} className="text-[11px] text-white/35 before:content-[''] before:mr-1 before:text-green-400/60">
                                 {b}
                               </li>
                             ))}
                           </ul>
                         )}
                       </div>
-                      <span className={`font-bold flex-shrink-0 ${isDisabled ? 'text-white/30' : 'text-white'}`}>
-                        {isSoldOut ? '—' : tier.price === 0 ? 'Free' : `€${tier.price.toFixed(2)}`}
+                      <span className={`font-bold flex-shrink-0 ${isDisabled ?'text-white/30' :'text-white'}`}>
+                        {isSoldOut ?'—' : tier.price === 0 ?'Free' :`€${tier.price.toFixed(2)}`}
                       </span>
                     </div>
                   </button>
@@ -617,22 +617,22 @@ export default function BookingModal(props: Props) {
           )}
 
           {/* Legacy tier selector (events with early_bird / group pricing) */}
-          {props.type === 'event' && !hasCustomTiers && hasEventTiers && !isFreePath && (
+          {props.type ==='event' && !hasCustomTiers && hasEventTiers && !isFreePath && (
             <div className="flex flex-col gap-2">
               <p className="text-white/50 text-xs uppercase tracking-widest">Select tier</p>
               {isEventEarlyBirdValid && (
                 <button onClick={() => setEventTier('early_bird')}
                   className={`rounded-xl border px-3 py-2.5 text-left transition-all ${
-                    eventTier === 'early_bird'
-                      ? 'border-brand-primary bg-brand-primary/10'
-                      : 'border-white/10 bg-white/5 hover:border-white/20'
+                    eventTier ==='early_bird'
+                      ?'border-brand-primary bg-brand-primary/10'
+                      :'border-white/10 bg-white/5 hover:border-white/20'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Zap size={13} className="text-brand-accent" />
                       <span className="text-white text-sm font-semibold">Early Bird</span>
-                      <span className="text-xs px-1.5 py-0.5 rounded-full bg-brand-accent/15 text-brand-accent border border-brand-accent/25">🔥</span>
+                      <span className="text-xs px-1.5 py-0.5 rounded-full bg-brand-accent/15 text-brand-accent border border-brand-accent/25"></span>
                     </div>
                     <span className="text-white font-bold">€{props.priceEarlyBird}</span>
                   </div>
@@ -640,9 +640,9 @@ export default function BookingModal(props: Props) {
               )}
               <button onClick={() => setEventTier('standard')}
                 className={`rounded-xl border px-3 py-2.5 text-left transition-all ${
-                  eventTier === 'standard'
-                    ? 'border-brand-primary bg-brand-primary/10'
-                    : 'border-white/10 bg-white/5 hover:border-white/20'
+                  eventTier ==='standard'
+                    ?'border-brand-primary bg-brand-primary/10'
+                    :'border-white/10 bg-white/5 hover:border-white/20'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -654,9 +654,9 @@ export default function BookingModal(props: Props) {
                 <button
                   onClick={() => { setEventTier('group'); setQuantity(q => Math.max(4, q)) }}
                   className={`rounded-xl border px-3 py-2.5 text-left transition-all ${
-                    eventTier === 'group'
-                      ? 'border-brand-primary bg-brand-primary/10'
-                      : 'border-white/10 bg-white/5 hover:border-white/20'
+                    eventTier ==='group'
+                      ?'border-brand-primary bg-brand-primary/10'
+                      :'border-white/10 bg-white/5 hover:border-white/20'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -674,10 +674,10 @@ export default function BookingModal(props: Props) {
           )}
 
           {/* Quantity stepper for events */}
-          {props.type === 'event' && (isFreePath || !isFree) && (
+          {props.type ==='event' && (isFreePath || !isFree) && (
             <div className="flex items-center justify-between">
               <span className="text-white/60 text-sm">
-                {isGroupTier ? 'Group size' : 'Quantity'}
+                {isGroupTier ?'Group size' :'Quantity'}
                 {isGroupTier && <span className="text-white/30 text-xs ml-1">(min 4)</span>}
               </span>
               <div className="flex items-center gap-3">
@@ -698,12 +698,12 @@ export default function BookingModal(props: Props) {
 
           {spotsLeft <= 10 && spotsLeft > 0 && (
             <p className="text-brand-primary text-xs font-semibold text-center -mt-2">
-              ⚡ Only {spotsLeft} spot{spotsLeft === 1 ? '' : 's'} left!
+               Only {spotsLeft} spot{spotsLeft === 1 ?'' :'s'} left!
             </p>
           )}
           {spotsLeft <= 0 && (
             <p className="text-red-400 text-sm font-bold text-center">
-              {props.type === 'trip' ? 'Fully booked!' : 'Sold out!'}
+              {props.type ==='trip' ?'Fully booked!' :'Sold out!'}
             </p>
           )}
 
@@ -720,13 +720,13 @@ export default function BookingModal(props: Props) {
                   </button>
                   {promoOpen && (
                     <div className="flex gap-2 mt-2">
-                      <input type="text" value={promoInput} onChange={e => setPromoInput(e.target.value.toUpperCase())} onKeyDown={e => e.key === 'Enter' && applyPromo()} placeholder="PROMO CODE"
+                      <input type="text" value={promoInput} onChange={e => setPromoInput(e.target.value.toUpperCase())} onKeyDown={e => e.key ==='Enter' && applyPromo()} placeholder="PROMO CODE"
                         className="flex-1 px-3 py-2 rounded-xl text-sm uppercase border border-white/10 bg-white/5 text-white placeholder:text-white/25 tracking-widest focus:outline-none focus:border-brand-primary/50 transition-colors"
                       />
                       <button onClick={applyPromo} disabled={promoLoading || !promoInput.trim()}
                         className="px-4 py-2 rounded-xl text-sm font-medium bg-white/10 hover:bg-white/15 text-white transition-colors disabled:opacity-40"
                       >
-                        {promoLoading ? <Loader2 size={14} className="animate-spin" /> : 'Apply'}
+                        {promoLoading ? <Loader2 size={14} className="animate-spin" /> :'Apply'}
                       </button>
                     </div>
                   )}
@@ -763,14 +763,14 @@ export default function BookingModal(props: Props) {
                         type="text"
                         value={referralInput}
                         onChange={e => { setReferralInput(e.target.value.toUpperCase()); setReferralValid(null) }}
-                        onKeyDown={e => e.key === 'Enter' && validateReferralCode(referralInput)}
+                        onKeyDown={e => e.key ==='Enter' && validateReferralCode(referralInput)}
                         placeholder="e.g. SOFIA2026"
                         className="flex-1 px-3 py-2 rounded-xl text-sm uppercase border border-white/10 bg-white/5 text-white placeholder:text-white/25 tracking-widest focus:outline-none focus:border-brand-primary/50 transition-colors"
                       />
                       <button onClick={() => validateReferralCode(referralInput)} disabled={referralLoading || !referralInput.trim()}
                         className="px-4 py-2 rounded-xl text-sm font-medium bg-white/10 hover:bg-white/15 text-white transition-colors disabled:opacity-40"
                       >
-                        {referralLoading ? <Loader2 size={14} className="animate-spin" /> : 'Apply'}
+                        {referralLoading ? <Loader2 size={14} className="animate-spin" /> :'Apply'}
                       </button>
                     </div>
                   )}
@@ -793,16 +793,16 @@ export default function BookingModal(props: Props) {
           )}
 
           {/* Guest details */}
-          {props.type === 'event' && quantity > 1 ? (
+          {props.type ==='event' && quantity > 1 ? (
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-2 text-white/40 text-xs uppercase tracking-widest">
                 <User size={12} />
                 Ticket details
               </div>
-              {Array.from({ length: quantity }, (_, i) => attendees[i] ?? { name: '', email: '' }).map((attendee, i) => (
+              {Array.from({ length: quantity }, (_, i) => attendees[i] ?? { name:'', email:'' }).map((attendee, i) => (
                 <div key={i} className="rounded-xl border border-white/8 bg-white/3 p-4 flex flex-col gap-2.5">
                   <p className="text-brand-primary text-xs font-bold uppercase tracking-wide">
-                    Ticket {i + 1}{i === 0 ? ' (You)' : ''}
+                    Ticket {i + 1}{i === 0 ?' (You)' :''}
                   </p>
                   <input
                     type="text"
@@ -810,7 +810,7 @@ export default function BookingModal(props: Props) {
                     value={attendee.name}
                     onChange={e => {
                       const updated = [...attendees]
-                      while (updated.length <= i) updated.push({ name: '', email: '' })
+                      while (updated.length <= i) updated.push({ name:'', email:'' })
                       updated[i] = { ...updated[i], name: e.target.value }
                       setAttendees(updated)
                     }}
@@ -818,12 +818,12 @@ export default function BookingModal(props: Props) {
                   />
                   <input
                     type="email"
-                    placeholder={i === 0 ? 'Your email * (confirmation sent here)' : 'Their email (optional)'}
+                    placeholder={i === 0 ?'Your email * (confirmation sent here)' :'Their email (optional)'}
                     value={attendee.email}
                     disabled={i === 0 && !!authEmail}
                     onChange={e => {
                       const updated = [...attendees]
-                      while (updated.length <= i) updated.push({ name: '', email: '' })
+                      while (updated.length <= i) updated.push({ name:'', email:'' })
                       updated[i] = { ...updated[i], email: e.target.value }
                       setAttendees(updated)
                     }}
@@ -832,20 +832,20 @@ export default function BookingModal(props: Props) {
                 </div>
               ))}
             </div>
-          ) : props.type === 'trip' ? (
+          ) : props.type ==='trip' ? (
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-2 text-white/40 text-xs uppercase tracking-widest">
                 <User size={12} />
-                {effectiveQty > 1 ? 'Traveller details' : 'Your details'}
+                {effectiveQty > 1 ?'Traveller details' :'Your details'}
               </div>
               {effectiveQty > 1 && (
                 <p className="text-white/40 text-xs -mt-1">Enter details for each traveller</p>
               )}
-              {Array.from({ length: effectiveQty }, (_, i) => attendees[i] ?? { name: '', email: '' }).map((attendee, i) => (
-                <div key={i} className={effectiveQty > 1 ? 'rounded-xl border border-white/8 bg-white/3 p-4 flex flex-col gap-2.5' : 'flex flex-col gap-2.5'}>
+              {Array.from({ length: effectiveQty }, (_, i) => attendees[i] ?? { name:'', email:'' }).map((attendee, i) => (
+                <div key={i} className={effectiveQty > 1 ?'rounded-xl border border-white/8 bg-white/3 p-4 flex flex-col gap-2.5' :'flex flex-col gap-2.5'}>
                   {effectiveQty > 1 && (
                     <p className="text-brand-accent text-xs font-bold uppercase tracking-wide">
-                      ✈️ Traveller {i + 1}{i === 0 ? ' (You)' : ''}
+                       Traveller {i + 1}{i === 0 ?' (You)' :''}
                     </p>
                   )}
                   <input
@@ -854,7 +854,7 @@ export default function BookingModal(props: Props) {
                     value={attendee.name}
                     onChange={e => {
                       const updated = [...attendees]
-                      while (updated.length <= i) updated.push({ name: '', email: '' })
+                      while (updated.length <= i) updated.push({ name:'', email:'' })
                       updated[i] = { ...updated[i], name: e.target.value }
                       setAttendees(updated)
                     }}
@@ -862,12 +862,12 @@ export default function BookingModal(props: Props) {
                   />
                   <input
                     type="email"
-                    placeholder={i === 0 ? 'Your email * (QR ticket sent here)' : 'Their email (optional)'}
+                    placeholder={i === 0 ?'Your email * (QR ticket sent here)' :'Their email (optional)'}
                     value={attendee.email}
                     disabled={i === 0 && !!authEmail}
                     onChange={e => {
                       const updated = [...attendees]
-                      while (updated.length <= i) updated.push({ name: '', email: '' })
+                      while (updated.length <= i) updated.push({ name:'', email:'' })
                       updated[i] = { ...updated[i], email: e.target.value }
                       setAttendees(updated)
                     }}
@@ -883,9 +883,9 @@ export default function BookingModal(props: Props) {
                 <User size={12} />
                 Your details
               </div>
-              <input type="text"  value={name}  onChange={e => setName(e.target.value)}  placeholder="Full name *"      className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors" />
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address *"  disabled={!!authEmail} className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" />
-              <input type="tel"   value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone (optional)" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors" />
+              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Full name *" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors" />
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address *" disabled={!!authEmail} className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" />
+              <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone (optional)" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors" />
             </div>
           )}
 
@@ -901,7 +901,7 @@ export default function BookingModal(props: Props) {
                   {tripExtras.map(e => (
                     <div key={e.id} className="flex justify-between">
                       <span>{e.name}</span>
-                      <span>{e.price === 0 ? 'Free' : `+€${e.price.toFixed(2)}`}</span>
+                      <span>{e.price === 0 ?'Free' :`+€${e.price.toFixed(2)}`}</span>
                     </div>
                   ))}
                 </div>
@@ -929,16 +929,16 @@ export default function BookingModal(props: Props) {
             {isPending ? (
               <><Loader2 size={15} className="animate-spin" /> Processing…</>
             ) : spotsLeft <= 0 ? (
-              'Sold Out'
+'Sold Out'
             ) : isFreePath ? (
-              'Register for Free →'
+'Register for Free →'
             ) : (
-              'Proceed to Payment →'
+'Proceed to Payment →'
             )}
           </button>
 
           <p className="text-center text-white/25 text-xs -mt-2">
-            {isFreePath ? 'Instant confirmation, no payment needed' : 'Secure checkout via Stripe'}
+            {isFreePath ?'Instant confirmation, no payment needed' :'Secure checkout via Stripe'}
           </p>
           </>
           )}

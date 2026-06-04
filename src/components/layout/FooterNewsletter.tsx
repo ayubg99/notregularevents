@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { ArrowRight, Mail, CheckCircle } from 'lucide-react'
-import { subscribeToNewsletter } from '@/app/actions/newsletter'
+import { useState } from'react'
+import { ArrowRight, Mail, CheckCircle } from'lucide-react'
+import { subscribeToNewsletter } from'@/app/actions/newsletter'
 
 export default function FooterNewsletter() {
   const [email, setEmail] = useState('')
@@ -56,7 +56,7 @@ export default function FooterNewsletter() {
               text-white placeholder-white/30
               focus:outline-none focus:border-brand-primary/60 focus:bg-white/10
               transition-all duration-200
-            "
+"
           />
         </div>
         <button
@@ -64,7 +64,7 @@ export default function FooterNewsletter() {
           disabled={loading}
           className="flex items-center gap-1.5 px-5 py-2.5 bg-brand-primary hover:brightness-110 active:brightness-90 disabled:opacity-60 text-white text-sm font-semibold rounded-full transition-all duration-200 flex-shrink-0"
         >
-          {loading ? 'Subscribing…' : 'Subscribe'}
+          {loading ?'Subscribing…' :'Subscribe'}
           {!loading && <ArrowRight size={14} strokeWidth={2.5} />}
         </button>
       </form>

@@ -1,22 +1,22 @@
 'use client'
 
-import { useState } from 'react'
-import PricingTiers from '@/components/trips/PricingTiers'
-import BookingModal from '@/components/booking/BookingModal'
-import type { TripRow, TripTier, TripExtra } from '@/types/database'
+import { useState } from'react'
+import PricingTiers from'@/components/trips/PricingTiers'
+import BookingModal from'@/components/booking/BookingModal'
+import type { TripRow, TripTier, TripExtra } from'@/types/database'
 
 interface Props {
-  trip:      TripRow
+  trip: TripRow
   seatsLeft: number
 }
 
 export default function BookingWrapper({ trip, seatsLeft }: Props) {
-  const [modalOpen,       setModalOpen]       = useState(false)
-  const [selectedTier,    setSelectedTier]    = useState<TripTier>('standard')
-  const [groupSize,       setGroupSize]       = useState(4)
-  const [selectedExtras,  setSelectedExtras]  = useState<TripExtra[]>([])
-  const [promoCode,       setPromoCode]       = useState('')
-  const [promoLabel,      setPromoLabel]      = useState('')
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedTier, setSelectedTier] = useState<TripTier>('standard')
+  const [groupSize, setGroupSize] = useState(4)
+  const [selectedExtras, setSelectedExtras] = useState<TripExtra[]>([])
+  const [promoCode, setPromoCode] = useState('')
+  const [promoLabel, setPromoLabel] = useState('')
 
   function handlePromoApplied(code: string, label: string) {
     setPromoCode(code)

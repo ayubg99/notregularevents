@@ -1,15 +1,15 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, ArrowRight, CheckCircle } from 'lucide-react'
-import { subscribeToNewsletter } from '@/app/actions/newsletter'
+import { useState, useTransition } from'react'
+import { motion, AnimatePresence } from'framer-motion'
+import { Mail, ArrowRight, CheckCircle } from'lucide-react'
+import { subscribeToNewsletter } from'@/app/actions/newsletter'
 
 export default function NewsletterSection() {
-  const [email,        setEmail]        = useState('')
-  const [status,       setStatus]       = useState<'idle' | 'success' | 'error'>('idle')
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState<'idle' |'success' |'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
-  const [isPending,    startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition()
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -20,7 +20,7 @@ export default function NewsletterSection() {
         setEmail('')
       } else {
         setStatus('error')
-        setErrorMessage(result.error ?? 'Something went wrong. Please try again.')
+        setErrorMessage(result.error ??'Something went wrong. Please try again.')
       }
     })
   }
@@ -30,21 +30,21 @@ export default function NewsletterSection() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
 
         <AnimatePresence mode="wait">
-          {status === 'success' ? (
+          {status ==='success' ? (
 
             <motion.div
               key="success"
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{    opacity: 0 }}
-              transition={{ duration: 0.4, ease: 'easeOut' }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, ease:'easeOut' }}
               className="flex flex-col items-center gap-4"
             >
               <div className="w-16 h-16 rounded-full bg-brand-success/15 flex items-center justify-center">
                 <CheckCircle size={32} className="text-brand-success" />
               </div>
               <h3 className="font-heading text-2xl font-bold text-[var(--text-base)]">
-                You&apos;re in! 🎉
+                You&apos;re in! 
               </h3>
               <p className="text-[var(--text-muted)] max-w-sm">
                 Thanks for subscribing. You&apos;ll be the first to know about upcoming events and trips.
@@ -56,9 +56,9 @@ export default function NewsletterSection() {
             <motion.div
               key="form"
               initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0  }}
-              exit={{    opacity: 0, y: -24 }}
-              transition={{ duration: 0.4, ease: 'easeOut' }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -24 }}
+              transition={{ duration: 0.4, ease:'easeOut' }}
             >
               <p className="text-brand-primary text-sm font-semibold uppercase tracking-widest mb-2">
                 Stay Updated
@@ -92,7 +92,7 @@ export default function NewsletterSection() {
                       text-[var(--text-base)] placeholder:text-[var(--text-muted)]
                       focus:outline-none focus:border-brand-primary/60
                       transition-all duration-200 disabled:opacity-50
-                    "
+"
                   />
                 </div>
 
@@ -109,7 +109,7 @@ export default function NewsletterSection() {
                 </button>
               </form>
 
-              {status === 'error' && (
+              {status ==='error' && (
                 <p className="mt-3 text-sm text-red-400">{errorMessage}</p>
               )}
             </motion.div>

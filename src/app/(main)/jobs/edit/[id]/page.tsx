@@ -1,13 +1,13 @@
-import type { Metadata } from 'next'
-import { notFound, redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-import { getAdminClient } from '@/lib/supabase/admin'
-import EditJobClient from '@/components/jobs/EditJobClient'
+import type { Metadata } from'next'
+import { notFound, redirect } from'next/navigation'
+import { createClient } from'@/lib/supabase/server'
+import { getAdminClient } from'@/lib/supabase/admin'
+import EditJobClient from'@/components/jobs/EditJobClient'
 
-export const dynamic = 'force-dynamic'
+export const dynamic ='force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Edit Job Listing | Erasmus Life',
+  title:'Edit Job Listing | Erasmus Life',
 }
 
 interface Props {

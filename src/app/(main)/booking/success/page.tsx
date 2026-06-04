@@ -1,18 +1,18 @@
-export const dynamic = 'force-dynamic'
+export const dynamic ='force-dynamic'
 
-import type { Metadata } from 'next'
-import Link from 'next/link'
-import { ArrowLeft, Crown, Check } from 'lucide-react'
-import { createClient as createAdminClient } from '@supabase/supabase-js'
-import { createClient } from '@/lib/supabase/server'
-import type { Database, MembershipPlan } from '@/types/database'
-import type Stripe from 'stripe'
-import { stripe } from '@/lib/stripe'
-import BookingConfirmation from './BookingConfirmation'
-import BookingPolling from './BookingPolling'
+import type { Metadata } from'next'
+import Link from'next/link'
+import { ArrowLeft, Crown, Check } from'lucide-react'
+import { createClient as createAdminClient } from'@supabase/supabase-js'
+import { createClient } from'@/lib/supabase/server'
+import type { Database, MembershipPlan } from'@/types/database'
+import type Stripe from'stripe'
+import { stripe } from'@/lib/stripe'
+import BookingConfirmation from'./BookingConfirmation'
+import BookingPolling from'./BookingPolling'
 
 export const metadata: Metadata = {
-  title: 'Booking Confirmed | Erasmus Life Valencia',
+  title:'Booking Confirmed | Erasmus Life Valencia',
 }
 
 type Props = {
@@ -27,27 +27,27 @@ function getAdminClient() {
 }
 
 function buildIcs(params: {
-  title:    string
-  start:    string
-  end:      string
+  title: string
+  start: string
+  end: string
   location: string
-  ref:      string
+  ref: string
 }): string {
   const fmt = (d: string) =>
-    new Date(d).toISOString().replace(/[-:]/g, '').replace('.000Z', 'Z')
+    new Date(d).toISOString().replace(/[-:]/g,'').replace('.000Z','Z')
 
   return [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Erasmus Life//EN',
-    'BEGIN:VEVENT',
-    `DTSTART:${fmt(params.start)}`,
-    `DTEND:${fmt(params.end)}`,
-    `SUMMARY:${params.title}`,
-    `LOCATION:${params.location}`,
-    `DESCRIPTION:Booking ref: ${params.ref}`,
-    'END:VEVENT',
-    'END:VCALENDAR',
+'BEGIN:VCALENDAR',
+'VERSION:2.0',
+'PRODID:-//Erasmus Life//EN',
+'BEGIN:VEVENT',
+`DTSTART:${fmt(params.start)}`,
+`DTEND:${fmt(params.end)}`,
+`SUMMARY:${params.title}`,
+`LOCATION:${params.location}`,
+`DESCRIPTION:Booking ref: ${params.ref}`,
+'END:VEVENT',
+'END:VCALENDAR',
   ].join('\r\n')
 }
 
@@ -83,7 +83,7 @@ export default async function BookingSuccessPage({ searchParams }: Props) {
   )
 }
 
-// ── Paid booking (Stripe session_id) ─────────────────────────────
+// Paid booking (Stripe session_id) 
 
 async function StripeSuccessContent({ sessionId }: { sessionId: string }) {
   const admin = getAdminClient()
@@ -113,11 +113,11 @@ async function StripeSuccessContent({ sessionId }: { sessionId: string }) {
 
     const icsContent = event
       ? buildIcs({
-          title:    event.title,
-          start:    event.date,
-          end:      new Date(new Date(event.date).getTime() + 3 * 60 * 60 * 1000).toISOString(),
-          location: event.location ?? 'Valencia',
-          ref:      booking.booking_ref,
+          title: event.title,
+          start: event.date,
+          end: new Date(new Date(event.date).getTime() + 3 * 60 * 60 * 1000).toISOString(),
+          location: event.location ??'Valencia',
+          ref: booking.booking_ref,
         })
       : undefined
 
@@ -144,11 +144,11 @@ async function StripeSuccessContent({ sessionId }: { sessionId: string }) {
 
     const icsContent = trip
       ? buildIcs({
-          title:    trip.title,
-          start:    trip.start_date,
-          end:      trip.end_date,
+          title: trip.title,
+          start: trip.start_date,
+          end: trip.end_date,
           location: trip.destination,
-          ref:      booking.booking_ref,
+          ref: booking.booking_ref,
         })
       : undefined
 
@@ -168,7 +168,7 @@ async function StripeSuccessContent({ sessionId }: { sessionId: string }) {
   let membershipSession: Stripe.Checkout.Session | null = null
   try {
     const stripeSession = await stripe.checkout.sessions.retrieve(sessionId)
-    if (stripeSession.mode === 'subscription' && stripeSession.metadata?.type === 'membership') {
+    if (stripeSession.mode ==='subscription' && stripeSession.metadata?.type ==='membership') {
       membershipSession = stripeSession
     }
   } catch (err) {
@@ -183,27 +183,27 @@ async function StripeSuccessContent({ sessionId }: { sessionId: string }) {
   return <BookingPolling sessionId={sessionId} />
 }
 
-// ── Membership success ───────────────────────────────────────────
+// Membership success 
 
 const PLAN_INFO: Record<MembershipPlan, { name: string; duration: string; perMonth: string }> = {
-  basic:    { name: 'Monthly',       duration: '30 days',  perMonth: '€9.99/mo'   },
-  premium:  { name: 'Semester',      duration: '6 months', perMonth: '≈€4.17/mo'  },
-  vip:      { name: 'Annual',        duration: '1 year',   perMonth: '≈€3.33/mo'  },
-  employer: { name: 'Employer Plan', duration: '1 month',  perMonth: '€49/mo'     },
+  basic: { name:'Monthly', duration:'30 days', perMonth:'€9.99/mo' },
+  premium: { name:'Semester', duration:'6 months', perMonth:'≈€4.17/mo' },
+  vip: { name:'Annual', duration:'1 year', perMonth:'≈€3.33/mo' },
+  employer: { name:'Employer Plan', duration:'1 month', perMonth:'€49/mo' },
 }
 
 function membershipEndDate(plan: MembershipPlan): string {
   const d = new Date()
-  if (plan === 'basic')   d.setDate(d.getDate() + 30)
-  if (plan === 'premium') d.setDate(d.getDate() + 180)
-  if (plan === 'vip')     d.setDate(d.getDate() + 365)
+  if (plan ==='basic') d.setDate(d.getDate() + 30)
+  if (plan ==='premium') d.setDate(d.getDate() + 180)
+  if (plan ==='vip') d.setDate(d.getDate() + 365)
   return d.toISOString()
 }
 
 async function MembershipSuccess({ session }: { session: Stripe.Checkout.Session }) {
-  const admin     = getAdminClient()
-  const userId    = session.metadata?.user_id || null
-  const plan      = (session.metadata?.item_id ?? '') as MembershipPlan
+  const admin = getAdminClient()
+  const userId = session.metadata?.user_id || null
+  const plan = (session.metadata?.item_id ??'') as MembershipPlan
   const validPlan = plan in PLAN_INFO ? plan : null
 
   console.log('[booking-success membership]', { userId, plan, validPlan, sessionId: session.id })
@@ -211,20 +211,20 @@ async function MembershipSuccess({ session }: { session: Stripe.Checkout.Session
   let activated = false
 
   if (userId && validPlan) {
-    const subscriptionId = typeof session.subscription === 'string'
+    const subscriptionId = typeof session.subscription ==='string'
       ? session.subscription
       : (session.subscription as Stripe.Subscription | null)?.id ?? null
 
     const { error } = await admin.from('memberships').upsert(
       {
-        user_id:                userId,
-        plan:                   validPlan,
-        status:                 'active',
+        user_id: userId,
+        plan: validPlan,
+        status:'active',
         stripe_subscription_id: subscriptionId,
-        start_date:             new Date().toISOString(),
-        end_date:               membershipEndDate(validPlan),
+        start_date: new Date().toISOString(),
+        end_date: membershipEndDate(validPlan),
       },
-      { onConflict: 'user_id' },
+      { onConflict:'user_id' },
     )
 
     if (error) {
@@ -232,7 +232,7 @@ async function MembershipSuccess({ session }: { session: Stripe.Checkout.Session
     } else {
       activated = true
       console.log('[booking-success membership] upsert succeeded for user', userId)
-      await admin.from('profiles').update({ membership_status: 'active' }).eq('user_id', userId)
+      await admin.from('profiles').update({ membership_status:'active' }).eq('user_id', userId)
     }
   } else {
     console.error('[booking-success membership] missing userId or plan — skipping upsert', { userId, plan })
@@ -248,18 +248,18 @@ async function MembershipSuccess({ session }: { session: Stripe.Checkout.Session
           <Crown size={28} className="text-brand-primary" />
         </div>
         <h1 className="font-heading text-3xl font-bold text-white text-center">
-          {activated ? 'Membership Activated!' : 'Payment Received!'}
+          {activated ?'Membership Activated!' :'Payment Received!'}
         </h1>
         <p className="text-white/50 text-center max-w-xs">
           {activated
-            ? `Welcome to Erasmus Life${info ? ` — ${info.name} plan` : ''}.`
-            : 'Your membership is being set up. Check your email or refresh in a moment.'}
+            ?`Welcome to Erasmus Life${info ?` — ${info.name} plan` :''}.`
+            :'Your membership is being set up. Check your email or refresh in a moment.'}
         </p>
       </div>
 
       {/* Plan details card */}
       <div className="glass-card rounded-2xl px-8 py-6 w-full max-w-sm flex flex-col gap-3">
-        {(['10% off all events and trips', 'Priority access and member perks', ...(info ? [`Valid for ${info.duration} (${info.perMonth})`] : [])] as string[]).map((text) => (
+        {(['10% off all events and trips','Priority access and member perks', ...(info ? [`Valid for ${info.duration} (${info.perMonth})`] : [])] as string[]).map((text) => (
           <div key={text} className="flex items-center gap-3 text-sm text-white/70">
             <Check size={14} className="text-brand-primary flex-shrink-0" />
             {text}
@@ -294,13 +294,13 @@ async function MembershipSuccess({ session }: { session: Stripe.Checkout.Session
   )
 }
 
-// ── Free booking (ref query param) ───────────────────────────────
+// Free booking (ref query param) 
 
 async function FreeBookingContent({ bookingRef }: { bookingRef: string }) {
   // Use server client (may be authed or not) — RLS allows reading own bookings
   // Fall back to admin for guest bookings
   const supabase = await createClient()
-  const admin    = getAdminClient()
+  const admin = getAdminClient()
 
   const { data: ticket } = await admin
     .from('event_tickets')
@@ -318,11 +318,11 @@ async function FreeBookingContent({ bookingRef }: { bookingRef: string }) {
 
     const icsContent = event
       ? buildIcs({
-          title:    event.title,
-          start:    event.date,
-          end:      new Date(new Date(event.date).getTime() + 3 * 60 * 60 * 1000).toISOString(),
-          location: event.location ?? 'Valencia',
-          ref:      ticket.booking_ref,
+          title: event.title,
+          start: event.date,
+          end: new Date(new Date(event.date).getTime() + 3 * 60 * 60 * 1000).toISOString(),
+          location: event.location ??'Valencia',
+          ref: ticket.booking_ref,
         })
       : undefined
 
@@ -353,11 +353,11 @@ async function FreeBookingContent({ bookingRef }: { bookingRef: string }) {
 
     const icsContent = trip
       ? buildIcs({
-          title:    trip.title,
-          start:    trip.start_date,
-          end:      trip.end_date,
+          title: trip.title,
+          start: trip.start_date,
+          end: trip.end_date,
           location: trip.destination,
-          ref:      tripBooking.booking_ref,
+          ref: tripBooking.booking_ref,
         })
       : undefined
 

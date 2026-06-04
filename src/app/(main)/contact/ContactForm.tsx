@@ -1,25 +1,25 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { Loader2, Send } from 'lucide-react'
-import { submitContact } from '@/app/actions/contact'
+import { useState, useTransition } from'react'
+import { Loader2, Send } from'lucide-react'
+import { submitContact } from'@/app/actions/contact'
 
 const SUBJECTS = [
-  'General enquiry',
-  'Event question',
-  'Trip question',
-  'Partnership',
-  'Press & media',
-  'Other',
+'General enquiry',
+'Event question',
+'Trip question',
+'Partnership',
+'Press & media',
+'Other',
 ]
 
 export default function ContactForm() {
-  const [name,    setName]    = useState('')
-  const [email,   setEmail]   = useState('')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
-  const [error,   setError]   = useState('')
-  const [sent,    setSent]    = useState(false)
+  const [error, setError] = useState('')
+  const [sent, setSent] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   function handleSubmit(e: React.FormEvent) {
@@ -30,18 +30,18 @@ export default function ContactForm() {
       if (result.success) {
         setSent(true)
       } else {
-        setError(result.error ?? 'Something went wrong.')
+        setError(result.error ??'Something went wrong.')
       }
     })
   }
 
-  const inputClass = 'w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
+  const inputClass ='w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
 
   if (sent) {
     return (
       <div className="glass-card rounded-2xl p-8 flex flex-col items-center justify-center gap-4 text-center min-h-[320px]">
         <div className="w-14 h-14 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center text-2xl">
-          ✓
+          
         </div>
         <div>
           <p className="font-heading text-xl font-bold text-white mb-1">Message sent!</p>

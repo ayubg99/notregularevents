@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getAdminClient } from '@/lib/supabase/admin'
+import { NextRequest, NextResponse } from'next/server'
+import { getAdminClient } from'@/lib/supabase/admin'
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get('code')?.toUpperCase()
@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     .from('ambassadors')
     .select('id, referral_code')
     .eq('referral_code', code)
-    .eq('status', 'active')
+    .eq('status','active')
     .single()
 
   if (!data) return NextResponse.json({ valid: false })

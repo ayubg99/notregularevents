@@ -1,15 +1,15 @@
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
-import { getAdminClient } from '@/lib/supabase/admin'
-import ContactsClient, { type ContactRow } from '../ContactsClient'
+import { redirect } from'next/navigation'
+import Link from'next/link'
+import { createClient } from'@/lib/supabase/server'
+import { getAdminClient } from'@/lib/supabase/admin'
+import ContactsClient, { type ContactRow } from'../ContactsClient'
 
 export default async function ContactsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login?redirectTo=/admin/housing-partners/contacts')
   const { data: userRow } = await supabase.from('users').select('role').eq('id', user.id).single()
-  if (userRow?.role !== 'admin') redirect('/')
+  if (userRow?.role !=='admin') redirect('/')
 
   const admin = getAdminClient()
 

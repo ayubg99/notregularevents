@@ -1,19 +1,19 @@
-import type { MetadataRoute } from 'next'
+import type { MetadataRoute } from'next'
 
 export default function robots(): MetadataRoute.Robots {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://erasmuslifevalencia.com'
+  const base = process.env.NEXT_PUBLIC_SITE_URL ??'https://erasmuslifevalencia.com'
   return {
     rules: {
-      userAgent: '*',
-      allow: '/',
+      userAgent:'*',
+      allow:'/',
       disallow: [
-        '/admin/',
-        '/dashboard/',
-        '/employer/dashboard',
-        '/api/',
-        '/scanner/',
+'/admin/',
+'/dashboard/',
+'/employer/dashboard',
+'/api/',
+'/scanner/',
       ],
     },
-    sitemap: `${base}/sitemap.xml`,
+    sitemap:`${base}/sitemap.xml`,
   }
 }

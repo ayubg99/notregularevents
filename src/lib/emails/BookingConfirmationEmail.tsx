@@ -1,23 +1,23 @@
 interface Props {
-  name:         string
-  bookingRef:   string
-  title:        string
-  type:         'event' | 'trip'
-  date?:        string
-  location?:    string
+  name: string
+  bookingRef: string
+  title: string
+  type:'event' |'trip'
+  date?: string
+  location?: string
   whatsappUrl?: string
-  baseUrl:      string
-  isFree?:      boolean
+  baseUrl: string
+  isFree?: boolean
 }
 
 export function BookingConfirmationEmail({
   name, bookingRef, title, type, date, location, whatsappUrl, baseUrl, isFree,
 }: Props): string {
   const formattedDate = date
-    ? new Date(date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    ? new Date(date).toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
     : null
 
-  return `<!DOCTYPE html>
+  return`<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -42,12 +42,12 @@ export function BookingConfirmationEmail({
 
         <!-- Greeting -->
         <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
-          Hey ${name} 👋
+          Hey ${name} 
         </p>
-        <p style="margin:0 0 ${isFree ? '16' : '32'}px;font-size:15px;color:#B8A090;line-height:1.6;">
-          ${isFree ? "You're registered! See you there 🎉" : `Your ${type === 'trip' ? 'trip' : 'event'} booking is confirmed. See you there!`}
+        <p style="margin:0 0 ${isFree ?'16' :'32'}px;font-size:15px;color:#B8A090;line-height:1.6;">
+          ${isFree ?"You're registered! See you there" :`Your ${type ==='trip' ?'trip' :'event'} booking is confirmed. See you there!`}
         </p>
-        ${isFree ? '<p style="margin:0 0 32px;font-size:20px;font-weight:700;color:#2ECC71;">FREE EVENT ✓</p>' : ''}
+        ${isFree ?'<p style="margin:0 0 32px;font-size:20px;font-weight:700;color:#2ECC71;">FREE EVENT </p>' :''}
 
         <!-- Booking ref card -->
         <table width="100%" cellpadding="0" cellspacing="0"
@@ -85,19 +85,19 @@ export function BookingConfirmationEmail({
           <tr>
             <td style="padding:24px;">
               <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">
-                ${type === 'trip' ? 'Trip' : 'Event'}
+                ${type ==='trip' ?'Trip' :'Event'}
               </p>
               <p style="margin:0 0 16px;font-size:18px;font-weight:700;color:#FFF8EE;">${title}</p>
 
-              ${formattedDate ? `
+              ${formattedDate ?`
               <p style="margin:0 0 8px;font-size:14px;color:#B8A090;">
-                📅 &nbsp;${formattedDate}
-              </p>` : ''}
+                 &nbsp;${formattedDate}
+              </p>` :''}
 
-              ${location ? `
+              ${location ?`
               <p style="margin:0;font-size:14px;color:#B8A090;">
-                📍 &nbsp;${location}
-              </p>` : ''}
+                 &nbsp;${location}
+              </p>` :''}
             </td>
           </tr>
         </table>
@@ -113,16 +113,16 @@ export function BookingConfirmationEmail({
               </a>
             </td>
           </tr>
-          ${whatsappUrl ? `
+          ${whatsappUrl ?`
           <tr>
             <td align="center" style="padding-bottom:12px;">
               <a href="${whatsappUrl}"
                  style="display:inline-block;background:#25D366;color:#fff;font-weight:700;
                         font-size:14px;text-decoration:none;padding:14px 32px;border-radius:9999px;">
-                💬 &nbsp;Join WhatsApp Group
+                 &nbsp;Join WhatsApp Group
               </a>
             </td>
-          </tr>` : ''}
+          </tr>` :''}
           <tr>
             <td align="center">
               <a href="${baseUrl}/auth/register"

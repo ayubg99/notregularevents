@@ -1,43 +1,43 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { createHousingPartner, updateHousingPartner, deleteHousingPartner, togglePartnerStatus } from '@/app/actions/admin'
-import type { HousingPartnerRow, HousingPartnerStatus } from '@/types/database'
+import { useState, useTransition } from'react'
+import { useRouter } from'next/navigation'
+import Link from'next/link'
+import { createHousingPartner, updateHousingPartner, deleteHousingPartner, togglePartnerStatus } from'@/app/actions/admin'
+import type { HousingPartnerRow, HousingPartnerStatus } from'@/types/database'
 
 interface PartnerWithCount extends HousingPartnerRow {
   room_count: number
 }
 
 interface FormState {
-  name:          string
-  contact_name:  string
+  name: string
+  contact_name: string
   contact_email: string
   contact_phone: string
-  whatsapp:      string
-  description:   string
-  logo_url:      string
-  status:        HousingPartnerStatus
+  whatsapp: string
+  description: string
+  logo_url: string
+  status: HousingPartnerStatus
 }
 
 const EMPTY_FORM: FormState = {
-  name: '', contact_name: '', contact_email: '',
-  contact_phone: '', whatsapp: '', description: '',
-  logo_url: '', status: 'active',
+  name:'', contact_name:'', contact_email:'',
+  contact_phone:'', whatsapp:'', description:'',
+  logo_url:'', status:'active',
 }
 
-const inputClass  = 'w-full px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
-const labelClass  = 'text-white/50 text-xs mb-1.5 block'
+const inputClass ='w-full px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
+const labelClass ='text-white/50 text-xs mb-1.5 block'
 
 export default function PartnersClient({ partners }: { partners: PartnerWithCount[] }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [modal, setModal]   = useState<'add' | 'edit' | null>(null)
+  const [modal, setModal] = useState<'add' |'edit' | null>(null)
   const [editing, setEditing] = useState<HousingPartnerRow | null>(null)
-  const [form, setForm]     = useState<FormState>(EMPTY_FORM)
+  const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
-  const [toast, setToast]   = useState('')
+  const [toast, setToast] = useState('')
 
   function showToast(msg: string) {
     setToast(msg)
@@ -57,14 +57,14 @@ export default function PartnersClient({ partners }: { partners: PartnerWithCoun
   function openEdit(p: HousingPartnerRow) {
     setEditing(p)
     setForm({
-      name:          p.name,
-      contact_name:  p.contact_name,
+      name: p.name,
+      contact_name: p.contact_name,
       contact_email: p.contact_email,
-      contact_phone: p.contact_phone ?? '',
-      whatsapp:      p.whatsapp ?? '',
-      description:   p.description ?? '',
-      logo_url:      p.logo_url ?? '',
-      status:        p.status,
+      contact_phone: p.contact_phone ??'',
+      whatsapp: p.whatsapp ??'',
+      description: p.description ??'',
+      logo_url: p.logo_url ??'',
+      status: p.status,
     })
     setModal('edit')
   }
@@ -73,14 +73,14 @@ export default function PartnersClient({ partners }: { partners: PartnerWithCoun
     e.preventDefault()
     startTransition(async () => {
       const data = {
-        name:          form.name,
-        contact_name:  form.contact_name,
+        name: form.name,
+        contact_name: form.contact_name,
         contact_email: form.contact_email,
         contact_phone: form.contact_phone || null,
-        whatsapp:      form.whatsapp      || null,
-        description:   form.description   || null,
-        logo_url:      form.logo_url      || null,
-        status:        form.status,
+        whatsapp: form.whatsapp || null,
+        description: form.description || null,
+        logo_url: form.logo_url || null,
+        status: form.status,
       }
       const result = editing
         ? await updateHousingPartner(editing.id, data)
@@ -89,19 +89,19 @@ export default function PartnersClient({ partners }: { partners: PartnerWithCoun
       if (result.success) {
         setModal(null)
         router.refresh()
-        showToast(editing ? 'Partner updated.' : 'Partner added.')
+        showToast(editing ?'Partner updated.' :'Partner added.')
       } else {
-        showToast(result.error ?? 'Failed to save partner.')
+        showToast(result.error ??'Failed to save partner.')
       }
     })
   }
 
   function handleToggleStatus(p: HousingPartnerRow) {
     startTransition(async () => {
-      const newStatus: HousingPartnerStatus = p.status === 'active' ? 'inactive' : 'active'
+      const newStatus: HousingPartnerStatus = p.status ==='active' ?'inactive' :'active'
       const result = await togglePartnerStatus(p.id, newStatus)
       if (result.success) router.refresh()
-      else showToast(result.error ?? 'Failed to update status.')
+      else showToast(result.error ??'Failed to update status.')
     })
   }
 
@@ -113,7 +113,7 @@ export default function PartnersClient({ partners }: { partners: PartnerWithCoun
         router.refresh()
         showToast('Partner deleted.')
       } else {
-        showToast(result.error ?? 'Failed to delete.')
+        showToast(result.error ??'Failed to delete.')
       }
     })
   }
@@ -131,7 +131,7 @@ export default function PartnersClient({ partners }: { partners: PartnerWithCoun
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white">Verified Partners</h1>
-          <p className="text-white/40 text-sm mt-1">{partners.length} partner{partners.length !== 1 ? 's' : ''}</p>
+          <p className="text-white/40 text-sm mt-1">{partners.length} partner{partners.length !== 1 ?'s' :''}</p>
         </div>
         <div className="flex gap-3">
           <Link
@@ -192,7 +192,7 @@ export default function PartnersClient({ partners }: { partners: PartnerWithCoun
                       href={`/admin/housing-partners/${p.id}`}
                       className="text-brand-accent text-sm hover:underline"
                     >
-                      {p.room_count} room{p.room_count !== 1 ? 's' : ''} →
+                      {p.room_count} room{p.room_count !== 1 ?'s' :''} →
                     </Link>
                   </td>
                   <td className="px-5 py-4">
@@ -200,9 +200,9 @@ export default function PartnersClient({ partners }: { partners: PartnerWithCoun
                       onClick={() => handleToggleStatus(p)}
                       disabled={isPending}
                       className={`text-xs px-2.5 py-1 rounded-full border font-medium transition-colors ${
-                        p.status === 'active'
-                          ? 'text-green-400 bg-green-400/10 border-green-400/20 hover:bg-green-400/20'
-                          : 'text-orange-400 bg-yellow-400/10 border-yellow-400/20 hover:bg-yellow-400/20'
+                        p.status ==='active'
+                          ?'text-green-400 bg-green-400/10 border-green-400/20 hover:bg-green-400/20'
+                          :'text-orange-400 bg-yellow-400/10 border-yellow-400/20 hover:bg-yellow-400/20'
                       }`}
                     >
                       {p.status}
@@ -236,7 +236,7 @@ export default function PartnersClient({ partners }: { partners: PartnerWithCoun
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="glass-card rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <h2 className="text-white font-bold text-lg mb-5">
-              {modal === 'edit' ? 'Edit Partner' : 'Add Partner'}
+              {modal ==='edit' ?'Edit Partner' :'Add Partner'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -283,7 +283,7 @@ export default function PartnersClient({ partners }: { partners: PartnerWithCoun
                   Cancel
                 </button>
                 <button type="submit" disabled={isPending} className="flex-1 btn-primary py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50">
-                  {isPending ? 'Saving…' : 'Save'}
+                  {isPending ?'Saving…' :'Save'}
                 </button>
               </div>
             </form>
@@ -302,7 +302,7 @@ export default function PartnersClient({ partners }: { partners: PartnerWithCoun
                 Cancel
               </button>
               <button onClick={() => handleDelete(confirmDelete)} disabled={isPending} className="flex-1 py-2.5 rounded-xl text-sm bg-red-500/80 hover:bg-red-500 text-white font-semibold transition-colors disabled:opacity-50">
-                {isPending ? 'Deleting…' : 'Delete'}
+                {isPending ?'Deleting…' :'Delete'}
               </button>
             </div>
           </div>

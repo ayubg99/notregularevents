@@ -1,7 +1,7 @@
-export const dynamic = 'force-dynamic'
+export const dynamic ='force-dynamic'
 
-import { getAdminClient } from '@/lib/supabase/admin'
-import PromoCodesClient from './PromoCodesClient'
+import { getAdminClient } from'@/lib/supabase/admin'
+import PromoCodesClient from'./PromoCodesClient'
 
 export default async function AdminPromoCodesPage() {
   const admin = getAdminClient()

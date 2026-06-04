@@ -1,15 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getPublishedEvents } from '@/lib/supabase/queries'
-import type { EventCategory } from '@/types/database'
+import { NextRequest, NextResponse } from'next/server'
+import { getPublishedEvents } from'@/lib/supabase/queries'
+import type { EventCategory } from'@/types/database'
 
 const VALID_CATEGORIES = new Set<string>([
-  'party', 'cultural', 'sport', 'networking', 'trip', 'other',
+'party','cultural','sport','networking','trip','other',
 ])
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl
   const rawCategory = searchParams.get('category')
-  const rawLimit    = searchParams.get('limit')
+  const rawLimit = searchParams.get('limit')
 
   const category = rawCategory && VALID_CATEGORIES.has(rawCategory)
     ? (rawCategory as EventCategory)

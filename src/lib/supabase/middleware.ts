@@ -1,6 +1,6 @@
-import { createServerClient } from '@supabase/ssr'
-import { type NextRequest, NextResponse } from 'next/server'
-import type { Database } from '@/types/database'
+import { createServerClient } from'@supabase/ssr'
+import { type NextRequest, NextResponse } from'next/server'
+import type { Database } from'@/types/database'
 
 // Refreshes the user session on every request so Server Components always see
 // a valid session without the user needing to re-login after token expiry.

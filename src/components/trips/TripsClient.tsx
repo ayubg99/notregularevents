@@ -1,36 +1,36 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { Search } from 'lucide-react'
-import type { TripRow } from '@/types/database'
-import TripCard from '@/components/trips/TripCard'
+import { useMemo, useState } from'react'
+import { useQuery } from'@tanstack/react-query'
+import { Search } from'lucide-react'
+import type { TripRow } from'@/types/database'
+import TripCard from'@/components/trips/TripCard'
 
 const CATEGORIES = [
-  { value: 'all',       label: 'All Trips' },
-  { value: 'beach',     label: 'Beach' },
-  { value: 'city',      label: 'City Break' },
-  { value: 'adventure', label: 'Adventure' },
-  { value: 'festival',  label: 'Festival' },
-  { value: 'cultural',  label: 'Cultural' },
-  { value: 'mountain',  label: 'Mountain' },
-  { value: 'ski',       label: 'Ski' },
+  { value:'all', label:'All Trips' },
+  { value:'beach', label:'Beach' },
+  { value:'city', label:'City Break' },
+  { value:'adventure', label:'Adventure' },
+  { value:'festival', label:'Festival' },
+  { value:'cultural', label:'Cultural' },
+  { value:'mountain', label:'Mountain' },
+  { value:'ski', label:'Ski' },
 ]
 
 const DURATION_OPTIONS = [
-  { value: 'all',      label: 'Any Duration' },
-  { value: 'weekend',  label: 'Weekend (1–3d)' },
-  { value: 'week',     label: 'Week (4–7d)' },
-  { value: 'extended', label: 'Extended (8d+)' },
+  { value:'all', label:'Any Duration' },
+  { value:'weekend', label:'Weekend (1–3d)' },
+  { value:'week', label:'Week (4–7d)' },
+  { value:'extended', label:'Extended (8d+)' },
 ]
 
-function getDurationBucket(start: string, end: string): 'weekend' | 'week' | 'extended' {
+function getDurationBucket(start: string, end: string):'weekend' |'week' |'extended' {
   const days = Math.round(
     (new Date(end).getTime() - new Date(start).getTime()) / 86_400_000,
   )
-  if (days <= 3) return 'weekend'
-  if (days <= 7) return 'week'
-  return 'extended'
+  if (days <= 3) return'weekend'
+  if (days <= 7) return'week'
+  return'extended'
 }
 
 function TripsSkeleton() {
@@ -41,8 +41,8 @@ function TripsSkeleton() {
           <div className="h-52 bg-white/5" />
           <div className="p-5 flex flex-col gap-3">
             <div className="h-5 w-3/4 bg-white/10 rounded" />
-            <div className="h-3 w-1/2 bg-white/5  rounded" />
-            <div className="h-2 w-full bg-white/5  rounded-full" />
+            <div className="h-3 w-1/2 bg-white/5 rounded" />
+            <div className="h-2 w-full bg-white/5 rounded-full" />
             <div className="flex justify-between">
               <div className="h-5 w-16 bg-white/10 rounded" />
               <div className="h-8 w-24 bg-white/10 rounded-full" />
@@ -55,14 +55,14 @@ function TripsSkeleton() {
 }
 
 export default function TripsClient() {
-  const [category,    setCategory]    = useState('all')
+  const [category, setCategory] = useState('all')
   const [destination, setDestination] = useState('all')
-  const [duration,    setDuration]    = useState('all')
-  const [search,      setSearch]      = useState('')
+  const [duration, setDuration] = useState('all')
+  const [search, setSearch] = useState('')
 
   const { data: trips = [], isLoading, isError } = useQuery<TripRow[]>({
     queryKey: ['trips'],
-    queryFn:  () => fetch('/api/trips').then(r => r.json()),
+    queryFn: () => fetch('/api/trips').then(r => r.json()),
     staleTime: 60_000,
   })
 
@@ -73,15 +73,15 @@ export default function TripsClient() {
 
   const filtered = useMemo(() => {
     return trips.filter(trip => {
-      if (category !== 'all' && trip.category !== category) return false
-      if (destination !== 'all' && trip.destination !== destination) return false
-      if (duration !== 'all' && getDurationBucket(trip.start_date, trip.end_date) !== duration) return false
+      if (category !=='all' && trip.category !== category) return false
+      if (destination !=='all' && trip.destination !== destination) return false
+      if (duration !=='all' && getDurationBucket(trip.start_date, trip.end_date) !== duration) return false
       if (search) {
         const q = search.toLowerCase()
         if (
           !trip.title.toLowerCase().includes(q) &&
           !trip.destination.toLowerCase().includes(q) &&
-          !(trip.description ?? '').toLowerCase().includes(q)
+          !(trip.description ??'').toLowerCase().includes(q)
         ) return false
       }
       return true
@@ -90,7 +90,7 @@ export default function TripsClient() {
 
   return (
     <div className="flex flex-col gap-8">
-      {/* ── Filter bar ── */}
+      {/* Filter bar */}
       <div className="flex flex-col gap-4">
         {/* Category tabs */}
         <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
@@ -100,8 +100,8 @@ export default function TripsClient() {
               onClick={() => setCategory(value)}
               className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 category === value
-                  ? 'bg-brand-primary text-brand-dark'
-                  : 'bg-white/5 text-white/60 hover:bg-white/10 border border-white/10'
+                  ?'bg-brand-primary text-brand-dark'
+                  :'bg-white/5 text-white/60 hover:bg-white/10 border border-white/10'
               }`}
             >
               {label}
@@ -124,7 +124,7 @@ export default function TripsClient() {
                 text-white placeholder:text-white/30
                 focus:outline-none focus:border-brand-primary/50
                 transition-colors
-              "
+"
             />
           </div>
 
@@ -137,7 +137,7 @@ export default function TripsClient() {
               text-white/70
               focus:outline-none focus:border-brand-primary/50
               transition-colors
-            "
+"
           >
             <option value="all">All Destinations</option>
             {destinations.map(d => (
@@ -154,7 +154,7 @@ export default function TripsClient() {
               text-white/70
               focus:outline-none focus:border-brand-primary/50
               transition-colors
-            "
+"
           >
             {DURATION_OPTIONS.map(({ value, label }) => (
               <option key={value} value={value}>{label}</option>
@@ -163,7 +163,7 @@ export default function TripsClient() {
         </div>
       </div>
 
-      {/* ── Results ── */}
+      {/* Results */}
       {isLoading ? (
         <TripsSkeleton />
       ) : isError ? (

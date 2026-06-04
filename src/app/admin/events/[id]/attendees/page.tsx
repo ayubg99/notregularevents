@@ -1,6 +1,6 @@
-import { getAdminClient } from '@/lib/supabase/admin'
-import { notFound } from 'next/navigation'
-import EventAttendeesClient from './EventAttendeesClient'
+import { getAdminClient } from'@/lib/supabase/admin'
+import { notFound } from'next/navigation'
+import EventAttendeesClient from'./EventAttendeesClient'
 
 export default async function EventAttendeesPage({
   params,
@@ -8,7 +8,7 @@ export default async function EventAttendeesPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const admin   = getAdminClient()
+  const admin = getAdminClient()
 
   const [{ data: event, error: eventError }, { data: tickets }] = await Promise.all([
     admin
@@ -43,7 +43,7 @@ export default async function EventAttendeesPage({
         guest_email: string | null
         guest_phone: string | null
         amount_paid: number | null
-        qr_code:     string | null
+        qr_code: string | null
         created_at: string
         checked_in: boolean | null
         checked_in_at: string | null

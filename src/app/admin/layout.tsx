@@ -1,8 +1,8 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-import AdminSidebar from '@/components/admin/AdminSidebar'
+import { redirect } from'next/navigation'
+import { createClient } from'@/lib/supabase/server'
+import AdminSidebar from'@/components/admin/AdminSidebar'
 
-export const metadata = { title: 'Admin — Erasmus Life' }
+export const metadata = { title:'Admin — Erasmus Life' }
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -16,7 +16,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     .eq('id', user.id)
     .single()
 
-  if (userRow?.role !== 'admin') redirect('/')
+  if (userRow?.role !=='admin') redirect('/')
 
   return (
     <div className="flex h-screen bg-brand-dark overflow-hidden">

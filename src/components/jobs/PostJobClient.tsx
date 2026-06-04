@@ -1,77 +1,77 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import ImageUpload from '@/components/admin/ImageUpload'
-import type { JobType, JobCategory, JobLanguage } from '@/types/database'
+import { useState } from'react'
+import { useRouter } from'next/navigation'
+import ImageUpload from'@/components/admin/ImageUpload'
+import type { JobType, JobCategory, JobLanguage } from'@/types/database'
 
 interface Props {
   employerId: string
 }
 
 interface FormData {
-  title:             string
-  company_name:      string
-  company_logo_url:  string
-  job_type:          JobType
-  category:          JobCategory
-  location:          string
-  hours_per_week:    string
-  salary_text:       string
+  title: string
+  company_name: string
+  company_logo_url: string
+  job_type: JobType
+  category: JobCategory
+  location: string
+  hours_per_week: string
+  salary_text: string
   language_required: JobLanguage
-  description:       string
-  requirements:      string
-  contact_name:      string
-  apply_email:       string
-  apply_whatsapp:    string
-  apply_url:         string
+  description: string
+  requirements: string
+  contact_name: string
+  apply_email: string
+  apply_whatsapp: string
+  apply_url: string
 }
 
 const INITIAL: FormData = {
-  title:             '',
-  company_name:      '',
-  company_logo_url:  '',
-  job_type:          'part_time',
-  category:          'other',
-  location:          'Valencia, Spain',
-  hours_per_week:    '',
-  salary_text:       '',
-  language_required: 'english',
-  description:       '',
-  requirements:      '',
-  contact_name:      '',
-  apply_email:       '',
-  apply_whatsapp:    '',
-  apply_url:         '',
+  title:'',
+  company_name:'',
+  company_logo_url:'',
+  job_type:'part_time',
+  category:'other',
+  location:'Valencia, Spain',
+  hours_per_week:'',
+  salary_text:'',
+  language_required:'english',
+  description:'',
+  requirements:'',
+  contact_name:'',
+  apply_email:'',
+  apply_whatsapp:'',
+  apply_url:'',
 }
 
-const STEPS = ['Job Details', 'Description', 'How to Apply', 'Listing Plan']
+const STEPS = ['Job Details','Description','How to Apply','Listing Plan']
 
 const inputStyle: React.CSSProperties = {
-  background:   'rgba(255,255,255,0.05)',
-  border:       '1px solid rgba(255,255,255,0.12)',
-  borderRadius: '10px',
-  padding:      '10px 14px',
-  color:        '#fff',
-  fontSize:     '14px',
-  outline:      'none',
-  width:        '100%',
-  boxSizing:    'border-box',
+  background:'rgba(255,255,255,0.05)',
+  border:'1px solid rgba(255,255,255,0.12)',
+  borderRadius:'10px',
+  padding:'10px 14px',
+  color:'#fff',
+  fontSize:'14px',
+  outline:'none',
+  width:'100%',
+  boxSizing:'border-box',
 }
 
 const labelStyle: React.CSSProperties = {
-  color:        '#ccc',
-  fontSize:     '13px',
-  fontWeight:   600,
-  marginBottom: '6px',
-  display:      'block',
+  color:'#ccc',
+  fontSize:'13px',
+  fontWeight: 600,
+  marginBottom:'6px',
+  display:'block',
 }
 
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
-    <div style={{ marginBottom: '16px' }}>
+    <div style={{ marginBottom:'16px' }}>
       <label style={labelStyle}>
-        {label} {required && <span style={{ color: '#E91E8C' }}>*</span>}
+        {label} {required && <span style={{ color:'#E91E8C' }}>*</span>}
       </label>
       {children}
     </div>
@@ -80,12 +80,12 @@ function Field({ label, required, children }: { label: string; required?: boolea
 
 export default function PostJobClient({ employerId }: Props) {
   const router = useRouter()
-  const [step,        setStep]        = useState(0)
-  const [form,        setForm]        = useState<FormData>(INITIAL)
-  const [error,       setError]       = useState('')
-  const [loading,     setLoading]     = useState(false)
-  const [isFeatured,  setIsFeatured]  = useState(false)
-  const [isUrgent,    setIsUrgent]    = useState(false)
+  const [step, setStep] = useState(0)
+  const [form, setForm] = useState<FormData>(INITIAL)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [isFeatured, setIsFeatured] = useState(false)
+  const [isUrgent, setIsUrgent] = useState(false)
 
   const totalPrice = (isFeatured ? 29 : 0) + (isUrgent ? 9 : 0)
 
@@ -95,19 +95,19 @@ export default function PostJobClient({ employerId }: Props) {
 
   function validateStep(): string {
     if (step === 0) {
-      if (!form.title.trim())        return 'Job title is required.'
-      if (!form.company_name.trim()) return 'Company name is required.'
+      if (!form.title.trim()) return'Job title is required.'
+      if (!form.company_name.trim()) return'Company name is required.'
     }
     if (step === 1) {
-      if (!form.description.trim()) return 'Job description is required.'
+      if (!form.description.trim()) return'Job description is required.'
     }
     if (step === 2) {
-      if (!form.contact_name.trim()) return 'Contact name is required.'
+      if (!form.contact_name.trim()) return'Contact name is required.'
       if (!form.apply_email.trim() && !form.apply_whatsapp.trim() && !form.apply_url.trim()) {
-        return 'At least one apply method (email, WhatsApp, or URL) is required.'
+        return'At least one apply method (email, WhatsApp, or URL) is required.'
       }
     }
-    return ''
+    return''
   }
 
   function handleNext() {
@@ -125,26 +125,26 @@ export default function PostJobClient({ employerId }: Props) {
     setLoading(true)
 
     try {
-      const res  = await fetch('/api/jobs/create', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ ...form, employerId }),
+      const res = await fetch('/api/jobs/create', {
+        method:'POST',
+        headers: {'Content-Type':'application/json' },
+        body: JSON.stringify({ ...form, employerId }),
       })
       const data = await res.json() as { jobId?: string; error?: string }
 
       if (!res.ok || !data.jobId) {
-        setError(data.error ?? 'Failed to create listing. Please try again.')
+        setError(data.error ??'Failed to create listing. Please try again.')
         return
       }
 
       if (isFeatured || isUrgent) {
-        const checkoutRes  = await fetch('/api/stripe/create-checkout', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({
-            type:        'job_upgrade',
-            upgradeType: 'featured',
-            jobId:       data.jobId,
+        const checkoutRes = await fetch('/api/stripe/create-checkout', {
+          method:'POST',
+          headers: {'Content-Type':'application/json' },
+          body: JSON.stringify({
+            type:'job_upgrade',
+            upgradeType:'featured',
+            jobId: data.jobId,
             employerId,
             isFeatured,
             isUrgent,
@@ -152,7 +152,7 @@ export default function PostJobClient({ employerId }: Props) {
         })
         const checkoutData = await checkoutRes.json() as { url?: string; error?: string }
         if (!checkoutRes.ok || !checkoutData.url) {
-          setError(checkoutData.error ?? 'Checkout failed. Please try again.')
+          setError(checkoutData.error ??'Checkout failed. Please try again.')
           return
         }
         window.location.href = checkoutData.url
@@ -168,20 +168,20 @@ export default function PostJobClient({ employerId }: Props) {
   }
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+    <div style={{ maxWidth:'600px', margin:'0 auto' }}>
 
       {/* Step progress */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '32px' }}>
+      <div style={{ display:'flex', gap:'8px', marginBottom:'32px' }}>
         {STEPS.map((s, i) => (
-          <div key={s} style={{ flex: 1, textAlign: 'center' }}>
-            <div style={{ height: '4px', borderRadius: '4px', background: i <= step ? '#FF6B00' : 'rgba(255,255,255,0.1)', marginBottom: '6px', transition: 'background 0.2s' }} />
-            <span style={{ color: i === step ? '#FF6B00' : '#555', fontSize: '11px', fontWeight: 600 }}>{s}</span>
+          <div key={s} style={{ flex: 1, textAlign:'center' }}>
+            <div style={{ height:'4px', borderRadius:'4px', background: i <= step ?'#FF6B00' :'rgba(255,255,255,0.1)', marginBottom:'6px', transition:'background 0.2s' }} />
+            <span style={{ color: i === step ?'#FF6B00' :'#555', fontSize:'11px', fontWeight: 600 }}>{s}</span>
           </div>
         ))}
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '20px', padding: '28px' }}>
-        <h2 style={{ color: '#fff', fontWeight: 700, fontSize: '20px', margin: '0 0 24px' }}>
+      <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'20px', padding:'28px' }}>
+        <h2 style={{ color:'#fff', fontWeight: 700, fontSize:'20px', margin:'0 0 24px' }}>
           Step {step + 1}: {STEPS[step]}
         </h2>
 
@@ -197,7 +197,7 @@ export default function PostJobClient({ employerId }: Props) {
             <Field label="Company Logo (optional)">
               <ImageUpload value={form.company_logo_url} onChange={url => update('company_logo_url', url)} folder="jobs" />
             </Field>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px' }}>
               <Field label="Job Type" required>
                 <select style={inputStyle} value={form.job_type} onChange={e => update('job_type', e.target.value as JobType)}>
                   <option value="part_time">Part-time</option>
@@ -223,7 +223,7 @@ export default function PostJobClient({ employerId }: Props) {
             <Field label="Location">
               <input style={inputStyle} value={form.location} onChange={e => update('location', e.target.value)} placeholder="Valencia, Spain" />
             </Field>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px' }}>
               <Field label="Hours per Week">
                 <input style={inputStyle} type="number" min="1" max="168" value={form.hours_per_week} onChange={e => update('hours_per_week', e.target.value)} placeholder="e.g. 20" />
               </Field>
@@ -246,10 +246,10 @@ export default function PostJobClient({ employerId }: Props) {
         {step === 1 && (
           <div>
             <Field label="Job Description" required>
-              <textarea style={{ ...inputStyle, minHeight: '140px', resize: 'vertical' }} value={form.description} onChange={e => update('description', e.target.value)} placeholder="Describe the role, responsibilities, work environment..." />
+              <textarea style={{ ...inputStyle, minHeight:'140px', resize:'vertical' }} value={form.description} onChange={e => update('description', e.target.value)} placeholder="Describe the role, responsibilities, work environment..." />
             </Field>
             <Field label="Requirements">
-              <textarea style={{ ...inputStyle, minHeight: '100px', resize: 'vertical' }} value={form.requirements} onChange={e => update('requirements', e.target.value)} placeholder="Skills, experience, documents needed..." />
+              <textarea style={{ ...inputStyle, minHeight:'100px', resize:'vertical' }} value={form.requirements} onChange={e => update('requirements', e.target.value)} placeholder="Skills, experience, documents needed..." />
             </Field>
           </div>
         )}
@@ -257,7 +257,7 @@ export default function PostJobClient({ employerId }: Props) {
         {/* Step 3: How to Apply */}
         {step === 2 && (
           <div>
-            <p style={{ color: '#888', fontSize: '13px', marginBottom: '20px' }}>Provide at least one way for candidates to apply.</p>
+            <p style={{ color:'#888', fontSize:'13px', marginBottom:'20px' }}>Provide at least one way for candidates to apply.</p>
             <Field label="Your Name / Contact Name" required>
               <input style={inputStyle} value={form.contact_name} onChange={e => update('contact_name', e.target.value)} placeholder="e.g. Maria García" />
             </Field>
@@ -276,7 +276,7 @@ export default function PostJobClient({ employerId }: Props) {
         {/* Step 4: Listing Plan */}
         {step === 3 && (
           <div>
-            <p style={{ color: '#fff', fontWeight: 600, fontSize: '15px', margin: '0 0 16px' }}>
+            <p style={{ color:'#fff', fontWeight: 600, fontSize:'15px', margin:'0 0 16px' }}>
               Choose your listing plan
             </p>
 
@@ -284,46 +284,46 @@ export default function PostJobClient({ employerId }: Props) {
             <div
               onClick={() => { setIsFeatured(false); setIsUrgent(false) }}
               style={{
-                background:   !isFeatured ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.02)',
-                border:       !isFeatured ? '2px solid rgba(255,255,255,0.2)' : '1px solid rgba(255,255,255,0.06)',
-                borderRadius: '12px', padding: '16px', cursor: 'pointer', marginBottom: '10px',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                background: !isFeatured ?'rgba(255,255,255,0.05)' :'rgba(255,255,255,0.02)',
+                border: !isFeatured ?'2px solid rgba(255,255,255,0.2)' :'1px solid rgba(255,255,255,0.06)',
+                borderRadius:'12px', padding:'16px', cursor:'pointer', marginBottom:'10px',
+                display:'flex', justifyContent:'space-between', alignItems:'center',
               }}
             >
               <div>
-                <p style={{ color: '#fff', fontWeight: 600, margin: '0 0 4px', fontSize: '15px' }}>🆓 Standard</p>
-                <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Active for 30 days • Normal position</p>
+                <p style={{ color:'#fff', fontWeight: 600, margin:'0 0 4px', fontSize:'15px' }}> Standard</p>
+                <p style={{ color:'#888', fontSize:'13px', margin: 0 }}>Active for 30 days • Normal position</p>
               </div>
-              <span style={{ color: '#2ECC71', fontWeight: 700, fontSize: '16px' }}>Free</span>
+              <span style={{ color:'#2ECC71', fontWeight: 700, fontSize:'16px' }}>Free</span>
             </div>
 
             {/* Featured — €29 */}
             <div
               onClick={() => setIsFeatured(f => !f)}
               style={{
-                background:   isFeatured ? 'rgba(255,107,0,0.08)' : 'rgba(255,255,255,0.02)',
-                border:       isFeatured ? '2px solid rgba(255,107,0,0.4)' : '1px solid rgba(255,255,255,0.06)',
-                borderRadius: '12px', padding: '16px', cursor: 'pointer', marginBottom: '10px',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                background: isFeatured ?'rgba(255,107,0,0.08)' :'rgba(255,255,255,0.02)',
+                border: isFeatured ?'2px solid rgba(255,107,0,0.4)' :'1px solid rgba(255,255,255,0.06)',
+                borderRadius:'12px', padding:'16px', cursor:'pointer', marginBottom:'10px',
+                display:'flex', justifyContent:'space-between', alignItems:'center',
               }}
             >
               <div>
-                <p style={{ color: '#FF6B00', fontWeight: 700, margin: '0 0 4px', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  ⭐ Featured
-                  <span style={{ background: 'rgba(255,107,0,0.2)', color: '#FF6B00', padding: '1px 8px', borderRadius: '20px', fontSize: '11px' }}>Most popular</span>
+                <p style={{ color:'#FF6B00', fontWeight: 700, margin:'0 0 4px', fontSize:'15px', display:'flex', alignItems:'center', gap:'8px' }}>
+                   Featured
+                  <span style={{ background:'rgba(255,107,0,0.2)', color:'#FF6B00', padding:'1px 8px', borderRadius:'20px', fontSize:'11px' }}>Most popular</span>
                 </p>
-                <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Active 60 days • Appears first in results</p>
+                <p style={{ color:'#888', fontSize:'13px', margin: 0 }}>Active 60 days • Appears first in results</p>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ color: '#FF6B00', fontWeight: 700, fontSize: '16px' }}>€29</span>
+              <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                <span style={{ color:'#FF6B00', fontWeight: 700, fontSize:'16px' }}>€29</span>
                 <div style={{
-                  width: '22px', height: '22px', borderRadius: '6px',
-                  border:     isFeatured ? 'none' : '2px solid rgba(255,255,255,0.2)',
-                  background: isFeatured ? '#FF6B00' : 'transparent',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: '#1A1A0E', fontSize: '14px', fontWeight: 700,
+                  width:'22px', height:'22px', borderRadius:'6px',
+                  border: isFeatured ?'none' :'2px solid rgba(255,255,255,0.2)',
+                  background: isFeatured ?'#FF6B00' :'transparent',
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                  color:'#1A1A0E', fontSize:'14px', fontWeight: 700,
                 }}>
-                  {isFeatured ? '✓' : ''}
+                  {isFeatured ?'' :''}
                 </div>
               </div>
             </div>
@@ -332,31 +332,31 @@ export default function PostJobClient({ employerId }: Props) {
             <div
               onClick={() => setIsUrgent(u => !u)}
               style={{
-                background:   isUrgent ? 'rgba(255,68,68,0.08)' : 'rgba(255,255,255,0.02)',
-                border:       isUrgent ? '2px solid rgba(255,68,68,0.3)' : '1px solid rgba(255,255,255,0.06)',
-                borderRadius: '12px', padding: '14px 16px', cursor: 'pointer', marginBottom: '10px',
-                marginLeft:   isFeatured ? '16px' : '0',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                background: isUrgent ?'rgba(255,68,68,0.08)' :'rgba(255,255,255,0.02)',
+                border: isUrgent ?'2px solid rgba(255,68,68,0.3)' :'1px solid rgba(255,255,255,0.06)',
+                borderRadius:'12px', padding:'14px 16px', cursor:'pointer', marginBottom:'10px',
+                marginLeft: isFeatured ?'16px' :'0',
+                display:'flex', justifyContent:'space-between', alignItems:'center',
               }}
             >
               <div>
-                <p style={{ color: isUrgent ? '#FF4444' : '#ccc', fontWeight: 600, margin: '0 0 4px', fontSize: '14px' }}>
-                  🔥 Add Urgent Badge
+                <p style={{ color: isUrgent ?'#FF4444' :'#ccc', fontWeight: 600, margin:'0 0 4px', fontSize:'14px' }}>
+                   Add Urgent Badge
                 </p>
-                <p style={{ color: '#888', fontSize: '12px', margin: 0 }}>
+                <p style={{ color:'#888', fontSize:'12px', margin: 0 }}>
                   Red urgent badge • &quot;Hiring now&quot; label • More applications
                 </p>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ color: isUrgent ? '#FF4444' : '#888', fontWeight: 700, fontSize: '15px' }}>+€9</span>
+              <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                <span style={{ color: isUrgent ?'#FF4444' :'#888', fontWeight: 700, fontSize:'15px' }}>+€9</span>
                 <div style={{
-                  width: '22px', height: '22px', borderRadius: '6px',
-                  border:     isUrgent ? 'none' : '2px solid rgba(255,255,255,0.2)',
-                  background: isUrgent ? '#FF4444' : 'transparent',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: '#fff', fontSize: '14px', fontWeight: 700,
+                  width:'22px', height:'22px', borderRadius:'6px',
+                  border: isUrgent ?'none' :'2px solid rgba(255,255,255,0.2)',
+                  background: isUrgent ?'#FF4444' :'transparent',
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                  color:'#fff', fontSize:'14px', fontWeight: 700,
                 }}>
-                  {isUrgent ? '✓' : ''}
+                  {isUrgent ?'' :''}
                 </div>
               </div>
             </div>
@@ -364,15 +364,15 @@ export default function PostJobClient({ employerId }: Props) {
             {/* Price summary */}
             {totalPrice > 0 && (
               <div style={{
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '12px', padding: '14px 16px',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)',
+                borderRadius:'12px', padding:'14px 16px',
+                display:'flex', justifyContent:'space-between', alignItems:'center',
               }}>
-                <div style={{ fontSize: '13px' }}>
-                  {isFeatured && <p style={{ color: '#888', margin: '0 0 2px' }}>⭐ Featured listing: €29</p>}
-                  {isUrgent   && <p style={{ color: '#888', margin: 0 }}>🔥 Urgent badge: €9</p>}
+                <div style={{ fontSize:'13px' }}>
+                  {isFeatured && <p style={{ color:'#888', margin:'0 0 2px' }}> Featured listing: €29</p>}
+                  {isUrgent && <p style={{ color:'#888', margin: 0 }}> Urgent badge: €9</p>}
                 </div>
-                <p style={{ color: '#FF6B00', fontWeight: 700, fontSize: '18px', margin: 0 }}>
+                <p style={{ color:'#FF6B00', fontWeight: 700, fontSize:'18px', margin: 0 }}>
                   Total: €{totalPrice}
                 </p>
               </div>
@@ -381,23 +381,23 @@ export default function PostJobClient({ employerId }: Props) {
         )}
 
         {error && (
-          <p style={{ color: '#FF4444', fontSize: '13px', marginTop: '16px', background: 'rgba(255,68,68,0.1)', borderRadius: '8px', padding: '10px 14px' }}>{error}</p>
+          <p style={{ color:'#FF4444', fontSize:'13px', marginTop:'16px', background:'rgba(255,68,68,0.1)', borderRadius:'8px', padding:'10px 14px' }}>{error}</p>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '28px' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', marginTop:'28px' }}>
           {step > 0 ? (
-            <button type="button" onClick={() => { setError(''); setStep(s => s - 1) }} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '50px', padding: '12px 24px', color: '#fff', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>
+            <button type="button" onClick={() => { setError(''); setStep(s => s - 1) }} style={{ background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:'50px', padding:'12px 24px', color:'#fff', fontWeight: 600, cursor:'pointer', fontSize:'14px' }}>
               ← Back
             </button>
           ) : <div />}
 
           {step < STEPS.length - 1 ? (
-            <button type="button" onClick={handleNext} style={{ background: '#FF6B00', border: 'none', borderRadius: '50px', padding: '12px 28px', color: '#0D0D0D', fontWeight: 700, cursor: 'pointer', fontSize: '14px' }}>
+            <button type="button" onClick={handleNext} style={{ background:'#FF6B00', border:'none', borderRadius:'50px', padding:'12px 28px', color:'#0D0D0D', fontWeight: 700, cursor:'pointer', fontSize:'14px' }}>
               Next →
             </button>
           ) : (
-            <button type="button" onClick={handleSubmit} disabled={loading} style={{ background: loading ? 'rgba(255,107,0,0.5)' : '#FF6B00', border: 'none', borderRadius: '50px', padding: '12px 28px', color: '#0D0D0D', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', fontSize: '14px' }}>
-              {loading ? 'Posting…' : totalPrice > 0 ? `Post Job & Pay €${totalPrice} →` : 'Post Job for Free →'}
+            <button type="button" onClick={handleSubmit} disabled={loading} style={{ background: loading ?'rgba(255,107,0,0.5)' :'#FF6B00', border:'none', borderRadius:'50px', padding:'12px 28px', color:'#0D0D0D', fontWeight: 700, cursor: loading ?'not-allowed' :'pointer', fontSize:'14px' }}>
+              {loading ?'Posting…' : totalPrice > 0 ?`Post Job & Pay €${totalPrice} →` :'Post Job for Free →'}
             </button>
           )}
         </div>

@@ -1,20 +1,20 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Loader2 } from 'lucide-react'
-import BookingConfirmation from './BookingConfirmation'
+import { useEffect, useState } from'react'
+import { Loader2 } from'lucide-react'
+import BookingConfirmation from'./BookingConfirmation'
 
 interface Booking {
   booking_ref: string
-  qr_code:     string | null
-  status:      string
-  user_id:     string | null
+  qr_code: string | null
+  status: string
+  user_id: string | null
   guest_email: string | null
 }
 
 interface PollingResult {
   found: boolean
-  type?: 'event' | 'trip' | 'membership'
+  type?:'event' |'trip' |'membership'
   booking?: Booking
 }
 
@@ -23,7 +23,7 @@ interface Props {
 }
 
 export default function BookingPolling({ sessionId }: Props) {
-  const [result,   setResult]   = useState<PollingResult | null>(null)
+  const [result, setResult] = useState<PollingResult | null>(null)
   const [attempts, setAttempts] = useState(0)
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function BookingPolling({ sessionId }: Props) {
 
     const id = setInterval(async () => {
       try {
-        const res  = await fetch(`/api/stripe/booking-status?session_id=${encodeURIComponent(sessionId)}`)
+        const res = await fetch(`/api/stripe/booking-status?session_id=${encodeURIComponent(sessionId)}`)
         const json = await res.json() as PollingResult
         if (json.found) {
           setResult(json)
@@ -47,7 +47,7 @@ export default function BookingPolling({ sessionId }: Props) {
     return () => clearInterval(id)
   }, [sessionId, result, attempts])
 
-  if (result?.type === 'membership') {
+  if (result?.type ==='membership') {
     return (
       <div className="flex flex-col items-center gap-6 py-16 text-center">
         <p className="text-white/70 text-lg font-medium">Membership activated!</p>

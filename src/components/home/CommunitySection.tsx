@@ -1,9 +1,9 @@
-import { MessageCircle, Camera, Users, Zap } from 'lucide-react'
+import { MessageCircle, Camera, Users, Zap } from'lucide-react'
 
 const FEATURE_PILLS = [
-  { icon: Users,         label: '50+ Nationalities'    },
-  { icon: Zap,           label: 'Weekly Events'         },
-  { icon: MessageCircle, label: 'Active Group Chats'    },
+  { icon: Users, label:'50+ Nationalities' },
+  { icon: Zap, label:'Weekly Events' },
+  { icon: MessageCircle, label:'Active Group Chats' },
 ]
 
 export default function CommunitySection() {
@@ -53,7 +53,7 @@ export default function CommunitySection() {
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 px-8 py-4 text-white font-semibold rounded-full hover:-translate-y-px transition-all duration-200 w-full sm:w-auto"
-            style={{ backgroundColor: '#25D366' }}
+            style={{ backgroundColor:'#25D366' }}
           >
             <MessageCircle size={20} />
             Join WhatsApp Group

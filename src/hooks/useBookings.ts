@@ -1,8 +1,8 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
-import { createClient } from '@/lib/supabase/client'
-import type { EventTicketRow, TripBookingRow } from '@/types/database'
+import { useQuery } from'@tanstack/react-query'
+import { createClient } from'@/lib/supabase/client'
+import type { EventTicketRow, TripBookingRow } from'@/types/database'
 
 type EventTicketWithEvent = EventTicketRow & {
   events: { id: string; title: string; date: string; location: string | null; slug: string } | null
@@ -17,8 +17,8 @@ export function useBookings(userId: string | undefined) {
 
   const { data: eventBookings = [], isLoading: eventsLoading } = useQuery({
     queryKey: ['event-bookings', userId],
-    enabled:  !!userId,
-    queryFn:  async () => {
+    enabled: !!userId,
+    queryFn: async () => {
       const { data } = await supabase
         .from('event_tickets')
         .select('*, events(id, title, date, location, slug)')
@@ -30,8 +30,8 @@ export function useBookings(userId: string | undefined) {
 
   const { data: tripBookings = [], isLoading: tripsLoading } = useQuery({
     queryKey: ['trip-bookings', userId],
-    enabled:  !!userId,
-    queryFn:  async () => {
+    enabled: !!userId,
+    queryFn: async () => {
       const { data } = await supabase
         .from('trip_bookings')
         .select('*, trips(id, title, start_date, destination, slug, whatsapp_group_url)')

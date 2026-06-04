@@ -1,91 +1,91 @@
 'use client'
 
-import { useState, useTransition, useRef } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { useState, useTransition, useRef } from'react'
+import { useRouter } from'next/navigation'
+import { createClient } from'@/lib/supabase/client'
 import {
   createPartnerRoom, updatePartnerRoom,
   togglePartnerRoomStatus, deletePartnerRoom,
-} from '@/app/actions/admin'
+} from'@/app/actions/admin'
 import type {
   HousingPartnerRow, PartnerRoomRow, PartnerRoomStatus,
   PartnerRoomInsert,
-} from '@/types/database'
+} from'@/types/database'
 
 const NEIGHBORHOODS = [
-  'Ruzafa', 'El Carmen', 'Benimaclet', 'Blasco Ibáñez', 'Ciudad de las Artes',
-  'Gran Vía', 'Campanar', 'Algirós', 'Quatre Carreres', 'Patraix',
-  'Jesús', 'La Saïdia', 'Extramurs', 'Poblats Marítims', 'Other',
+'Ruzafa','El Carmen','Benimaclet','Blasco Ibáñez','Ciudad de las Artes',
+'Gran Vía','Campanar','Algirós','Quatre Carreres','Patraix',
+'Jesús','La Saïdia','Extramurs','Poblats Marítims','Other',
 ]
 
 const ROOM_TYPES = [
-  { value: 'private_room',   label: 'Private Room' },
-  { value: 'shared_room',    label: 'Shared Room' },
-  { value: 'studio',         label: 'Studio' },
-  { value: 'full_apartment', label: 'Full Apartment' },
+  { value:'private_room', label:'Private Room' },
+  { value:'shared_room', label:'Shared Room' },
+  { value:'studio', label:'Studio' },
+  { value:'full_apartment', label:'Full Apartment' },
 ]
 
 const AMENITIES_OPTIONS = [
-  { value: 'wifi',             label: '📶 WiFi' },
-  { value: 'ac',               label: '❄️ AC' },
-  { value: 'washing_machine',  label: '🧺 Washing machine' },
-  { value: 'balcony',          label: '🌿 Balcony' },
-  { value: 'bills_included',   label: '💡 Bills included' },
-  { value: 'furnished',        label: '🪑 Furnished' },
-  { value: 'private_bathroom', label: '🚿 Private bathroom' },
-  { value: 'near_university',  label: '🏫 Near university' },
-  { value: 'parking',          label: '🅿️ Parking' },
-  { value: 'elevator',         label: '🛗 Elevator' },
-  { value: 'heating',          label: '🔥 Heating' },
+  { value:'wifi', label:' WiFi' },
+  { value:'ac', label:' AC' },
+  { value:'washing_machine', label:' Washing machine' },
+  { value:'balcony', label:' Balcony' },
+  { value:'bills_included', label:' Bills included' },
+  { value:'furnished', label:' Furnished' },
+  { value:'private_bathroom', label:' Private bathroom' },
+  { value:'near_university', label:' Near university' },
+  { value:'parking', label:' Parking' },
+  { value:'elevator', label:' Elevator' },
+  { value:'heating', label:' Heating' },
 ]
 
 const NATIONALITIES = [
-  'Afghan','Albanian','Algerian','American','Argentine','Australian','Austrian','Belgian',
-  'Brazilian','British','Bulgarian','Canadian','Chilean','Chinese','Colombian','Croatian',
-  'Czech','Danish','Dutch','Egyptian','Estonian','Finnish','French','German','Greek',
-  'Hungarian','Indian','Indonesian','Iranian','Irish','Italian','Japanese','Jordanian',
-  'Korean','Latvian','Lebanese','Lithuanian','Malaysian','Mexican','Moroccan','Norwegian',
-  'Pakistani','Polish','Portuguese','Romanian','Russian','Saudi','Serbian','Singaporean',
-  'Slovak','Slovenian','Spanish','Swedish','Swiss','Turkish','Ukrainian','Vietnamese',
+'Afghan','Albanian','Algerian','American','Argentine','Australian','Austrian','Belgian',
+'Brazilian','British','Bulgarian','Canadian','Chilean','Chinese','Colombian','Croatian',
+'Czech','Danish','Dutch','Egyptian','Estonian','Finnish','French','German','Greek',
+'Hungarian','Indian','Indonesian','Iranian','Irish','Italian','Japanese','Jordanian',
+'Korean','Latvian','Lebanese','Lithuanian','Malaysian','Mexican','Moroccan','Norwegian',
+'Pakistani','Polish','Portuguese','Romanian','Russian','Saudi','Serbian','Singaporean',
+'Slovak','Slovenian','Spanish','Swedish','Swiss','Turkish','Ukrainian','Vietnamese',
 ]
 
 interface RoomFormState {
-  title:                   string
-  neighborhood:            string
-  room_type:               string
-  monthly_rent:            string
-  deposit_amount:          string
-  platform_fee:            string
-  available_from:          string
-  available_until:         string
-  flatmates_count:         string
+  title: string
+  neighborhood: string
+  room_type: string
+  monthly_rent: string
+  deposit_amount: string
+  platform_fee: string
+  available_from: string
+  available_until: string
+  flatmates_count: string
   flatmates_nationalities: string[]
-  gender_preference:       string
-  bills_included:          boolean
-  amenities:               string[]
-  description:             string
-  photos:                  string[]
-  status:                  PartnerRoomStatus
-  featured:                boolean
+  gender_preference: string
+  bills_included: boolean
+  amenities: string[]
+  description: string
+  photos: string[]
+  status: PartnerRoomStatus
+  featured: boolean
 }
 
 const EMPTY_ROOM: RoomFormState = {
-  title: '', neighborhood: '', room_type: 'private_room',
-  monthly_rent: '', deposit_amount: '', platform_fee: '50',
-  available_from: '', available_until: '',
-  flatmates_count: '0', flatmates_nationalities: [],
-  gender_preference: 'any', bills_included: false,
-  amenities: [], description: '', photos: [],
-  status: 'available', featured: true,
+  title:'', neighborhood:'', room_type:'private_room',
+  monthly_rent:'', deposit_amount:'', platform_fee:'50',
+  available_from:'', available_until:'',
+  flatmates_count:'0', flatmates_nationalities: [],
+  gender_preference:'any', bills_included: false,
+  amenities: [], description:'', photos: [],
+  status:'available', featured: true,
 }
 
-const inputClass = 'w-full px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
-const labelClass = 'text-white/50 text-xs mb-1.5 block'
+const inputClass ='w-full px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
+const labelClass ='text-white/50 text-xs mb-1.5 block'
 
 const STATUS_COLORS: Record<PartnerRoomStatus, string> = {
-  available: 'text-green-400 bg-green-400/10 border-green-400/20',
-  reserved:  'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
-  occupied:  'text-red-400 bg-red-400/10 border-red-400/20',
+  available:'text-green-400 bg-green-400/10 border-green-400/20',
+  reserved:'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
+  occupied:'text-red-400 bg-red-400/10 border-red-400/20',
 }
 
 export default function PartnerDetailClient({
@@ -93,15 +93,15 @@ export default function PartnerDetailClient({
   rooms,
 }: {
   partner: HousingPartnerRow
-  rooms:   PartnerRoomRow[]
+  rooms: PartnerRoomRow[]
 }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [modal, setModal]     = useState<'add' | 'edit' | null>(null)
+  const [modal, setModal] = useState<'add' |'edit' | null>(null)
   const [editing, setEditing] = useState<PartnerRoomRow | null>(null)
-  const [form, setForm]       = useState<RoomFormState>(EMPTY_ROOM)
+  const [form, setForm] = useState<RoomFormState>(EMPTY_ROOM)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
-  const [toast, setToast]     = useState('')
+  const [toast, setToast] = useState('')
   const [uploading, setUploading] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -141,23 +141,23 @@ export default function PartnerDetailClient({
   function openEdit(room: PartnerRoomRow) {
     setEditing(room)
     setForm({
-      title:                   room.title,
-      neighborhood:            room.neighborhood,
-      room_type:               room.room_type,
-      monthly_rent:            String(room.monthly_rent),
-      deposit_amount:          String(room.deposit_amount),
-      platform_fee:            String(room.platform_fee),
-      available_from:          room.available_from ?? '',
-      available_until:         room.available_until ?? '',
-      flatmates_count:         String(room.flatmates_count),
+      title: room.title,
+      neighborhood: room.neighborhood,
+      room_type: room.room_type,
+      monthly_rent: String(room.monthly_rent),
+      deposit_amount: String(room.deposit_amount),
+      platform_fee: String(room.platform_fee),
+      available_from: room.available_from ??'',
+      available_until: room.available_until ??'',
+      flatmates_count: String(room.flatmates_count),
       flatmates_nationalities: room.flatmates_nationalities,
-      gender_preference:       room.gender_preference,
-      bills_included:          room.bills_included,
-      amenities:               room.amenities,
-      description:             room.description ?? '',
-      photos:                  room.photos,
-      status:                  room.status,
-      featured:                room.featured,
+      gender_preference: room.gender_preference,
+      bills_included: room.bills_included,
+      amenities: room.amenities,
+      description: room.description ??'',
+      photos: room.photos,
+      status: room.status,
+      featured: room.featured,
     })
     setModal('edit')
   }
@@ -169,8 +169,8 @@ export default function PartnerDetailClient({
 
     for (const file of Array.from(files)) {
       if (form.photos.length + urls.length >= 8) break
-      const ext  = file.name.split('.').pop()
-      const path = `partner-rooms/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+      const ext = file.name.split('.').pop()
+      const path =`partner-rooms/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
       const { error } = await supabase.storage.from('partner-rooms').upload(path, file, { upsert: false })
       if (!error) {
         const { data: { publicUrl } } = supabase.storage.from('partner-rooms').getPublicUrl(path)
@@ -193,31 +193,31 @@ export default function PartnerDetailClient({
       return
     }
 
-    const slug = form.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-      + '-' + Math.random().toString(36).slice(2, 6)
+    const slug = form.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')
+      +'-' + Math.random().toString(36).slice(2, 6)
 
     startTransition(async () => {
       const data: PartnerRoomInsert = {
-        partner_id:              partner.id,
-        title:                   form.title,
-        slug:                    editing ? (editing.slug ?? slug) : slug,
-        neighborhood:            form.neighborhood,
-        room_type:               form.room_type as PartnerRoomInsert['room_type'],
-        monthly_rent:            parseFloat(form.monthly_rent),
-        deposit_amount:          parseFloat(form.deposit_amount),
-        platform_fee:            parseFloat(form.platform_fee) || 50,
-        available_from:          form.available_from   || null,
-        available_until:         form.available_until  || null,
-        flatmates_count:         parseInt(form.flatmates_count) || 0,
+        partner_id: partner.id,
+        title: form.title,
+        slug: editing ? (editing.slug ?? slug) : slug,
+        neighborhood: form.neighborhood,
+        room_type: form.room_type as PartnerRoomInsert['room_type'],
+        monthly_rent: parseFloat(form.monthly_rent),
+        deposit_amount: parseFloat(form.deposit_amount),
+        platform_fee: parseFloat(form.platform_fee) || 50,
+        available_from: form.available_from || null,
+        available_until: form.available_until || null,
+        flatmates_count: parseInt(form.flatmates_count) || 0,
         flatmates_nationalities: form.flatmates_nationalities,
-        gender_preference:       form.gender_preference as PartnerRoomInsert['gender_preference'],
-        bills_included:          form.bills_included,
-        amenities:               form.amenities,
-        description:             form.description || null,
-        address:                 null,
-        photos:                  form.photos,
-        status:                  form.status,
-        featured:                form.featured,
+        gender_preference: form.gender_preference as PartnerRoomInsert['gender_preference'],
+        bills_included: form.bills_included,
+        amenities: form.amenities,
+        description: form.description || null,
+        address: null,
+        photos: form.photos,
+        status: form.status,
+        featured: form.featured,
       }
 
       const result = editing
@@ -227,19 +227,19 @@ export default function PartnerDetailClient({
       if (result.success) {
         setModal(null)
         router.refresh()
-        showToast(editing ? 'Room updated.' : 'Room added.')
+        showToast(editing ?'Room updated.' :'Room added.')
       } else {
-        showToast(result.error ?? 'Failed to save room.')
+        showToast(result.error ??'Failed to save room.')
       }
     })
   }
 
   function handleToggleStatus(room: PartnerRoomRow) {
-    const next: PartnerRoomStatus = room.status === 'available' ? 'occupied' : 'available'
+    const next: PartnerRoomStatus = room.status ==='available' ?'occupied' :'available'
     startTransition(async () => {
       const result = await togglePartnerRoomStatus(room.id, next)
       if (result.success) router.refresh()
-      else showToast(result.error ?? 'Failed to update.')
+      else showToast(result.error ??'Failed to update.')
     })
   }
 
@@ -251,7 +251,7 @@ export default function PartnerDetailClient({
         router.refresh()
         showToast('Room deleted.')
       } else {
-        showToast(result.error ?? 'Failed to delete.')
+        showToast(result.error ??'Failed to delete.')
       }
     })
   }
@@ -279,9 +279,9 @@ export default function PartnerDetailClient({
           <p className="text-white/50 text-sm">{partner.contact_name} · {partner.contact_email}</p>
         </div>
         <span className={`text-xs px-2.5 py-1 rounded-full border font-medium ${
-          partner.status === 'active'
-            ? 'text-green-400 bg-green-400/10 border-green-400/20'
-            : 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20'
+          partner.status ==='active'
+            ?'text-green-400 bg-green-400/10 border-green-400/20'
+            :'text-yellow-400 bg-yellow-400/10 border-yellow-400/20'
         }`}>
           {partner.status}
         </span>
@@ -342,8 +342,8 @@ export default function PartnerDetailClient({
                   <td className="px-5 py-3 text-white/50 text-sm">{room.views}</td>
                   <td className="px-5 py-3 text-white/50 text-sm">{room.contacts_sold}</td>
                   <td className="px-5 py-3">
-                    <span className={`text-xs ${room.featured ? 'text-orange-400' : 'text-white/30'}`}>
-                      {room.featured ? '⭐ Yes' : 'No'}
+                    <span className={`text-xs ${room.featured ?'text-orange-400' :'text-white/30'}`}>
+                      {room.featured ?' Yes' :'No'}
                     </span>
                   </td>
                   <td className="px-5 py-3">
@@ -367,7 +367,7 @@ export default function PartnerDetailClient({
       {modal && (
         <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-8 bg-black/60 backdrop-blur-sm overflow-y-auto">
           <div className="glass-card rounded-2xl p-6 w-full max-w-2xl mb-8">
-            <h2 className="text-white font-bold text-lg mb-5">{modal === 'edit' ? 'Edit Room' : 'Add Room'}</h2>
+            <h2 className="text-white font-bold text-lg mb-5">{modal ==='edit' ?'Edit Room' :'Add Room'}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
 
               <div>
@@ -444,8 +444,8 @@ export default function PartnerDetailClient({
                       onClick={() => toggleNationality(n)}
                       className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${
                         form.flatmates_nationalities.includes(n)
-                          ? 'border-brand-accent bg-brand-accent/15 text-brand-accent'
-                          : 'border-white/10 text-white/40 hover:border-white/25'
+                          ?'border-brand-accent bg-brand-accent/15 text-brand-accent'
+                          :'border-white/10 text-white/40 hover:border-white/25'
                       }`}
                     >
                       {n}
@@ -512,7 +512,7 @@ export default function PartnerDetailClient({
                   onClick={() => fileRef.current?.click()}
                   className="w-full py-2.5 rounded-xl border border-dashed border-white/20 text-white/40 text-sm hover:border-white/40 hover:text-white/60 transition-colors disabled:opacity-40"
                 >
-                  {uploading ? 'Uploading…' : `+ Add photos (${form.photos.length}/8)`}
+                  {uploading ?'Uploading…' :`+ Add photos (${form.photos.length}/8)`}
                 </button>
                 {form.photos.length > 0 && (
                   <div className="grid grid-cols-4 gap-2 mt-2">
@@ -538,7 +538,7 @@ export default function PartnerDetailClient({
                   Cancel
                 </button>
                 <button type="submit" disabled={isPending || uploading} className="flex-1 btn-primary py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50">
-                  {isPending ? 'Saving…' : 'Save Room'}
+                  {isPending ?'Saving…' :'Save Room'}
                 </button>
               </div>
             </form>
@@ -555,7 +555,7 @@ export default function PartnerDetailClient({
             <div className="flex gap-3">
               <button onClick={() => setConfirmDelete(null)} className="flex-1 py-2.5 rounded-xl text-sm bg-white/5 text-white/70 hover:bg-white/10 transition-colors">Cancel</button>
               <button onClick={() => handleDelete(confirmDelete)} disabled={isPending} className="flex-1 py-2.5 rounded-xl text-sm bg-red-500/80 hover:bg-red-500 text-white font-semibold disabled:opacity-50">
-                {isPending ? 'Deleting…' : 'Delete'}
+                {isPending ?'Deleting…' :'Delete'}
               </button>
             </div>
           </div>

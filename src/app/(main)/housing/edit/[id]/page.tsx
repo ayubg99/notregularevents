@@ -1,6 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import EditListingForm from './EditListingForm'
+import { createClient } from'@/lib/supabase/server'
+import { redirect } from'next/navigation'
+import EditListingForm from'./EditListingForm'
 
 export default async function EditListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

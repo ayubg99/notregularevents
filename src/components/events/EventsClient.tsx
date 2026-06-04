@@ -1,25 +1,25 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { Search, SlidersHorizontal } from 'lucide-react'
-import type { EventRow, EventCategory } from '@/types/database'
-import EventCard from '@/components/events/EventCard'
-import { cn } from '@/lib/utils/cn'
+import { useState, useMemo } from'react'
+import { useQuery } from'@tanstack/react-query'
+import { Search, SlidersHorizontal } from'lucide-react'
+import type { EventRow, EventCategory } from'@/types/database'
+import EventCard from'@/components/events/EventCard'
+import { cn } from'@/lib/utils/cn'
 
-// ─── Category tabs ──────────────────────────────────────────────
+// Category tabs 
 
-const CATEGORIES: { value: EventCategory | 'all'; label: string }[] = [
-  { value: 'all',        label: 'All'        },
-  { value: 'party',      label: 'Party'      },
-  { value: 'cultural',   label: 'Cultural'   },
-  { value: 'sport',      label: 'Sport'      },
-  { value: 'networking', label: 'Networking' },
-  { value: 'trip',       label: 'Trip'       },
-  { value: 'other',      label: 'Other'      },
+const CATEGORIES: { value: EventCategory |'all'; label: string }[] = [
+  { value:'all', label:'All' },
+  { value:'party', label:'Party' },
+  { value:'cultural', label:'Cultural' },
+  { value:'sport', label:'Sport' },
+  { value:'networking', label:'Networking' },
+  { value:'trip', label:'Trip' },
+  { value:'other', label:'Other' },
 ]
 
-// ─── Data fetching ──────────────────────────────────────────────
+// Data fetching 
 
 async function fetchEvents(): Promise<EventRow[]> {
   const res = await fetch('/api/events', { next: { revalidate: 60 } })
@@ -27,7 +27,7 @@ async function fetchEvents(): Promise<EventRow[]> {
   return res.json() as Promise<EventRow[]>
 }
 
-// ─── Skeleton ───────────────────────────────────────────────────
+// Skeleton 
 
 function Skeleton() {
   return (
@@ -48,29 +48,29 @@ function Skeleton() {
   )
 }
 
-// ─── Main component ─────────────────────────────────────────────
+// Main component 
 
 export default function EventsClient() {
-  const [activeCategory, setActiveCategory] = useState<EventCategory | 'all'>('all')
-  const [search, setSearch]                 = useState('')
+  const [activeCategory, setActiveCategory] = useState<EventCategory |'all'>('all')
+  const [search, setSearch] = useState('')
 
   const { data: events = [], isLoading, isError } = useQuery({
     queryKey: ['events'],
-    queryFn:  fetchEvents,
+    queryFn: fetchEvents,
     staleTime: 60_000,
   })
 
   const filtered = useMemo(() => {
     let list = events
-    if (activeCategory !== 'all') {
+    if (activeCategory !=='all') {
       list = list.filter(e => e.category === activeCategory)
     }
     if (search.trim()) {
       const q = search.toLowerCase()
       list = list.filter(e =>
         e.title.toLowerCase().includes(q) ||
-        (e.location ?? '').toLowerCase().includes(q) ||
-        (e.description ?? '').toLowerCase().includes(q),
+        (e.location ??'').toLowerCase().includes(q) ||
+        (e.description ??'').toLowerCase().includes(q),
       )
     }
     return list
@@ -81,11 +81,11 @@ export default function EventsClient() {
     setActiveCategory('all')
   }
 
-  const hasFilters = search.trim() !== '' || activeCategory !== 'all'
+  const hasFilters = search.trim() !=='' || activeCategory !=='all'
 
   return (
     <div>
-      {/* ── Search + filter bar ── */}
+      {/* Search + filter bar */}
       <div className="mb-8 flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search input */}
@@ -107,7 +107,7 @@ export default function EventsClient() {
           {!isLoading && !isError && (
             <div className="flex items-center gap-1.5 text-white/45 text-sm self-center">
               <SlidersHorizontal size={14} />
-              <span>{filtered.length} event{filtered.length !== 1 ? 's' : ''}</span>
+              <span>{filtered.length} event{filtered.length !== 1 ?'s' :''}</span>
             </div>
           )}
         </div>
@@ -119,10 +119,10 @@ export default function EventsClient() {
               key={cat.value}
               onClick={() => setActiveCategory(cat.value)}
               className={cn(
-                'px-5 py-2.5 rounded-full text-sm whitespace-nowrap flex-shrink-0 transition-all duration-200',
+'px-5 py-2.5 rounded-full text-sm whitespace-nowrap flex-shrink-0 transition-all duration-200',
                 activeCategory === cat.value
-                  ? 'btn-primary font-semibold'
-                  : 'glass-card border border-white/10 text-white/55 hover:text-white hover:border-white/25 font-medium',
+                  ?'btn-primary font-semibold'
+                  :'glass-card border border-white/10 text-white/55 hover:text-white hover:border-white/25 font-medium',
               )}
             >
               {cat.label}
@@ -131,7 +131,7 @@ export default function EventsClient() {
         </div>
       </div>
 
-      {/* ── Grid ── */}
+      {/* Grid */}
       {isLoading ? (
         <Skeleton />
       ) : isError ? (
@@ -144,8 +144,8 @@ export default function EventsClient() {
           <p className="text-[var(--text-base)] text-lg font-medium">No events found</p>
           <p className="text-[var(--text-muted)] text-sm mt-2">
             {hasFilters
-              ? 'No events match your current filters.'
-              : 'Check back soon — events are being planned!'}
+              ?'No events match your current filters.'
+              :'Check back soon — events are being planned!'}
           </p>
           {hasFilters && (
             <button

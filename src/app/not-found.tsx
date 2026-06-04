@@ -1,8 +1,8 @@
-import Link from 'next/link'
-import { NextIntlClientProvider } from 'next-intl'
-import { getMessages } from 'next-intl/server'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
+import Link from'next/link'
+import { NextIntlClientProvider } from'next-intl'
+import { getMessages } from'next-intl/server'
+import Navbar from'@/components/layout/Navbar'
+import Footer from'@/components/layout/Footer'
 
 export default async function NotFound() {
   const messages = await getMessages()

@@ -1,9 +1,9 @@
-import { redirect, notFound } from 'next/navigation'
-import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
-import { getAdminClient } from '@/lib/supabase/admin'
-import PartnerDetailClient from './PartnerDetailClient'
-import type { HousingPartnerRow, PartnerRoomRow } from '@/types/database'
+import { redirect, notFound } from'next/navigation'
+import Link from'next/link'
+import { createClient } from'@/lib/supabase/server'
+import { getAdminClient } from'@/lib/supabase/admin'
+import PartnerDetailClient from'./PartnerDetailClient'
+import type { HousingPartnerRow, PartnerRoomRow } from'@/types/database'
 
 export default async function PartnerDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -12,7 +12,7 @@ export default async function PartnerDetailPage({ params }: { params: Promise<{ 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login?redirectTo=/admin/housing-partners')
   const { data: userRow } = await supabase.from('users').select('role').eq('id', user.id).single()
-  if (userRow?.role !== 'admin') redirect('/')
+  if (userRow?.role !=='admin') redirect('/')
 
   const admin = getAdminClient()
 

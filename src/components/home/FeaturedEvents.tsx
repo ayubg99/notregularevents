@@ -1,8 +1,8 @@
-import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
-import { getPublicClient } from '@/lib/supabase/public'
-import type { EventRow } from '@/types/database'
-import EventCard from './EventCard'
+import Link from'next/link'
+import { ArrowRight } from'lucide-react'
+import { getPublicClient } from'@/lib/supabase/public'
+import type { EventRow } from'@/types/database'
+import EventCard from'./EventCard'
 
 async function getPublishedEvents(): Promise<EventRow[]> {
   try {
@@ -10,7 +10,7 @@ async function getPublishedEvents(): Promise<EventRow[]> {
     const { data, error } = await supabase
       .from('events')
       .select('*')
-      .eq('status', 'published')
+      .eq('status','published')
       .gte('date', new Date().toISOString())
       .order('date', { ascending: true })
       .limit(6)
@@ -38,7 +38,7 @@ export default async function FeaturedEvents() {
         <div className="flex items-end justify-between mb-10">
           <div>
             <p className="text-brand-primary font-semibold text-sm uppercase tracking-widest mb-2">
-              This Week in Valencia 🎉
+              This Week in Valencia 
             </p>
             <h2 className="font-heading text-4xl md:text-5xl font-bold text-[var(--text-base)]">
               Upcoming Events

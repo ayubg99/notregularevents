@@ -1,6 +1,6 @@
-import { getAdminClient } from '@/lib/supabase/admin'
-import EmployersAdminClient from './EmployersAdminClient'
-import type { EmployerAccountRow } from '@/types/database'
+import { getAdminClient } from'@/lib/supabase/admin'
+import EmployersAdminClient from'./EmployersAdminClient'
+import type { EmployerAccountRow } from'@/types/database'
 
 export default async function AdminEmployersPage() {
   const admin = getAdminClient()

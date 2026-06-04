@@ -1,32 +1,32 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { MapPin, CalendarRange, Users } from 'lucide-react'
-import type { TripRow } from '@/types/database'
-import { cn } from '@/lib/utils/cn'
+import Link from'next/link'
+import Image from'next/image'
+import { MapPin, CalendarRange, Users } from'lucide-react'
+import type { TripRow } from'@/types/database'
+import { cn } from'@/lib/utils/cn'
 
 // Full static strings — Tailwind v4 content scan requires uninterpolated class names
 function getTripGradient(category: string | null): string {
   const map: Record<string, string> = {
-    beach:     'from-cyan-500 to-blue-400',
-    city:      'from-violet-600 to-indigo-500',
-    mountain:  'from-green-600 to-emerald-500',
-    cultural:  'from-amber-500 to-orange-400',
-    adventure: 'from-red-500 to-orange-400',
-    festival:  'from-pink-500 to-purple-500',
-    ski:       'from-sky-400 to-blue-500',
+    beach:'from-cyan-500 to-blue-400',
+    city:'from-violet-600 to-indigo-500',
+    mountain:'from-green-600 to-emerald-500',
+    cultural:'from-amber-500 to-orange-400',
+    adventure:'from-red-500 to-orange-400',
+    festival:'from-pink-500 to-purple-500',
+    ski:'from-sky-400 to-blue-500',
   }
-  return category && map[category] ? map[category] : 'from-orange-500 to-teal-400'
+  return category && map[category] ? map[category] :'from-orange-500 to-teal-400'
 }
 
 interface TripCardProps {
-  trip:       TripRow
+  trip: TripRow
   className?: string
 }
 
 export default function TripCard({ trip, className }: TripCardProps) {
   const seatsLeft = trip.capacity - trip.seats_sold
-  const now       = new Date()
-  const ebValid   = !!trip.price_early_bird &&
+  const now = new Date()
+  const ebValid = !!trip.price_early_bird &&
     !!trip.early_bird_deadline &&
     new Date(trip.early_bird_deadline) > now &&
     (trip.early_bird_seats == null ||
@@ -35,20 +35,20 @@ export default function TripCard({ trip, className }: TripCardProps) {
   const hasEarlyBird = ebValid
 
   const startFmt = new Date(trip.start_date).toLocaleDateString('en-GB', {
-    day: 'numeric', month: 'short',
+    day:'numeric', month:'short',
   })
   const endFmt = new Date(trip.end_date).toLocaleDateString('en-GB', {
-    day: 'numeric', month: 'short', year: 'numeric',
+    day:'numeric', month:'short', year:'numeric',
   })
-  const dateRange    = `${startFmt} – ${endFmt}`
+  const dateRange =`${startFmt} – ${endFmt}`
   const gradientClass = getTripGradient(trip.category)
 
   return (
     <Link
       href={`/trips/${trip.slug}`}
       className={cn(
-        'group block rounded-2xl overflow-hidden glass-card',
-        'hover:shadow-brand-md hover:-translate-y-1 transition-all duration-300',
+'group block rounded-2xl overflow-hidden glass-card',
+'hover:shadow-brand-md hover:-translate-y-1 transition-all duration-300',
         className,
       )}
     >
@@ -93,7 +93,7 @@ export default function TripCard({ trip, className }: TripCardProps) {
           </span>
           <span className="flex items-center gap-1.5">
             <Users size={13} className="flex-shrink-0" />
-            {seatsLeft <= 0 ? 'Fully booked' : `${seatsLeft} seat${seatsLeft === 1 ? '' : 's'} left`}
+            {seatsLeft <= 0 ?'Fully booked' :`${seatsLeft} seat${seatsLeft === 1 ?'' :'s'} left`}
           </span>
         </div>
 

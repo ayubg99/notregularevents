@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import BookRoomModal from './BookRoomModal'
-import type { PartnerRoomRow } from '@/types/database'
+import { useState } from'react'
+import BookRoomModal from'./BookRoomModal'
+import type { PartnerRoomRow } from'@/types/database'
 
 export default function RoomBookingSidebar({ room }: { room: PartnerRoomRow }) {
   const [modalOpen, setModalOpen] = useState(false)
@@ -12,7 +12,7 @@ export default function RoomBookingSidebar({ room }: { room: PartnerRoomRow }) {
       <div className="glass-card rounded-2xl p-6">
         {/* Header */}
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-amber-400 text-sm">⭐</span>
+          <span className="text-amber-400 text-sm"></span>
           <span className="text-white/70 text-sm font-medium">Verified Partner Room</span>
         </div>
 
@@ -33,8 +33,8 @@ export default function RoomBookingSidebar({ room }: { room: PartnerRoomRow }) {
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-white/50">Bills</span>
-            <span className={room.bills_included ? 'text-green-400' : 'text-white/60'}>
-              {room.bills_included ? 'Included' : '+ extra'}
+            <span className={room.bills_included ?'text-green-400' :'text-white/60'}>
+              {room.bills_included ?'Included' :'+ extra'}
             </span>
           </div>
         </div>
@@ -57,13 +57,13 @@ export default function RoomBookingSidebar({ room }: { room: PartnerRoomRow }) {
         {/* Trust badges */}
         <div className="space-y-1.5">
           <p className="text-white/50 text-xs flex items-center gap-2">
-            <span className="text-green-400">✅</span> Verified by Erasmus Life
+            <span className="text-green-400"></span> Verified by Erasmus Life
           </p>
           <p className="text-white/50 text-xs flex items-center gap-2">
-            <span className="text-green-400">✅</span> Full refund if not confirmed
+            <span className="text-green-400"></span> Full refund if not confirmed
           </p>
           <p className="text-white/50 text-xs flex items-center gap-2">
-            <span className="text-green-400">✅</span> Secure Stripe payment
+            <span className="text-green-400"></span> Secure Stripe payment
           </p>
         </div>
       </div>

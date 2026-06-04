@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getEventBySlug } from '@/lib/supabase/queries'
+import { NextRequest, NextResponse } from'next/server'
+import { getEventBySlug } from'@/lib/supabase/queries'
 
 export async function GET(
   _request: NextRequest,
@@ -9,7 +9,7 @@ export async function GET(
   const event = await getEventBySlug(slug)
 
   if (!event) {
-    return NextResponse.json({ error: 'Event not found' }, { status: 404 })
+    return NextResponse.json({ error:'Event not found' }, { status: 404 })
   }
 
   return NextResponse.json(event)

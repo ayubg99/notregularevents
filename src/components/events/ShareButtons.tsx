@@ -1,17 +1,17 @@
 'use client'
 
-import { useState } from 'react'
-import { Copy, CheckCircle, MessageCircle } from 'lucide-react'
+import { useState } from'react'
+import { Copy, CheckCircle, MessageCircle } from'lucide-react'
 
 interface Props {
   title: string
-  slug:  string
+  slug: string
 }
 
 export default function ShareButtons({ title, slug }: Props) {
   const [copied, setCopied] = useState(false)
   const [url] = useState(() =>
-    typeof window !== 'undefined' ? window.location.href : `https://erasmuslifevalencia.com/${slug}`
+    typeof window !=='undefined' ? window.location.href :`https://erasmuslifevalencia.com/${slug}`
   )
 
   const waText = encodeURIComponent(`Check out this event: ${title} — ${url}`)
@@ -32,7 +32,7 @@ export default function ShareButtons({ title, slug }: Props) {
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium text-white transition-opacity hover:opacity-90 active:opacity-75"
-        style={{ backgroundColor: '#25D366' }}
+        style={{ backgroundColor:'#25D366' }}
       >
         <MessageCircle size={14} />
         WhatsApp

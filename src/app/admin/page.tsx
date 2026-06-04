@@ -1,7 +1,7 @@
-import { Ticket, MapPin, Users, Calendar, TrendingUp } from 'lucide-react'
-import { getAdminClient } from '@/lib/supabase/admin'
-import StatsCard from '@/components/admin/StatsCard'
-import ActivityChart from './ActivityChart'
+import { Ticket, MapPin, Users, Calendar, TrendingUp } from'lucide-react'
+import { getAdminClient } from'@/lib/supabase/admin'
+import StatsCard from'@/components/admin/StatsCard'
+import ActivityChart from'./ActivityChart'
 
 function groupByDate(rows: { created_at: string }[]): { date: string; bookings: number }[] {
   const counts: Record<string, number> = {}
@@ -21,7 +21,7 @@ const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOStrin
 
 export default async function AdminPage() {
   const admin = getAdminClient()
-  const now   = new Date().toISOString()
+  const now = new Date().toISOString()
 
   const [
     { count: totalTickets },
@@ -33,10 +33,10 @@ export default async function AdminPage() {
     { data: recentTickets30 },
     { data: recentTrips30 },
   ] = await Promise.all([
-    admin.from('event_tickets').select('*', { count: 'exact', head: true }),
-    admin.from('trip_bookings').select('*', { count: 'exact', head: true }),
-    admin.from('memberships').select('*', { count: 'exact', head: true }).eq('status', 'active'),
-    admin.from('events').select('*', { count: 'exact', head: true }).eq('status', 'published').gt('date', now),
+    admin.from('event_tickets').select('*', { count:'exact', head: true }),
+    admin.from('trip_bookings').select('*', { count:'exact', head: true }),
+    admin.from('memberships').select('*', { count:'exact', head: true }).eq('status','active'),
+    admin.from('events').select('*', { count:'exact', head: true }).eq('status','published').gt('date', now),
     admin.from('event_tickets').select('booking_ref, created_at, events(title)').order('created_at', { ascending: false }).limit(6),
     admin.from('trip_bookings').select('booking_ref, created_at, trips(title)').order('created_at', { ascending: false }).limit(6),
     admin.from('event_tickets').select('created_at').gte('created_at', thirtyDaysAgo),
@@ -48,16 +48,16 @@ export default async function AdminPage() {
   type RecentItem = { ref: string; title: string; kind: string; date: string }
   const recentBookings: RecentItem[] = [
     ...(recentTicketRows ?? []).map(t => ({
-      ref:   t.booking_ref,
-      title: (t.events as unknown as { title: string } | null)?.title ?? 'Unknown event',
-      kind:  'Event',
-      date:  t.created_at,
+      ref: t.booking_ref,
+      title: (t.events as unknown as { title: string } | null)?.title ??'Unknown event',
+      kind:'Event',
+      date: t.created_at,
     })),
     ...(recentTripRows ?? []).map(t => ({
-      ref:   t.booking_ref,
-      title: (t.trips as unknown as { title: string } | null)?.title ?? 'Unknown trip',
-      kind:  'Trip',
-      date:  t.created_at,
+      ref: t.booking_ref,
+      title: (t.trips as unknown as { title: string } | null)?.title ??'Unknown trip',
+      kind:'Trip',
+      date: t.created_at,
     })),
   ]
     .sort((a, b) => b.date.localeCompare(a.date))
@@ -72,10 +72,10 @@ export default async function AdminPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-        <StatsCard label="Event Tickets"    value={totalTickets  ?? 0} icon={<Ticket   size={18} />} color="bg-brand-primary/15" />
-        <StatsCard label="Trip Bookings"    value={totalTrips    ?? 0} icon={<MapPin   size={18} />} color="bg-purple-500/15" />
-        <StatsCard label="Active Members"   value={activeMembers ?? 0} icon={<Users    size={18} />} color="bg-green-500/15" />
-        <StatsCard label="Upcoming Events"  value={upcomingEvents ?? 0} icon={<Calendar size={18} />} color="bg-orange-500/15" />
+        <StatsCard label="Event Tickets" value={totalTickets ?? 0} icon={<Ticket size={18} />} color="bg-brand-primary/15" />
+        <StatsCard label="Trip Bookings" value={totalTrips ?? 0} icon={<MapPin size={18} />} color="bg-purple-500/15" />
+        <StatsCard label="Active Members" value={activeMembers ?? 0} icon={<Users size={18} />} color="bg-green-500/15" />
+        <StatsCard label="Upcoming Events" value={upcomingEvents ?? 0} icon={<Calendar size={18} />} color="bg-orange-500/15" />
       </div>
 
       {/* Chart + recent bookings */}

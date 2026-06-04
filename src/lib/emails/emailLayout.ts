@@ -1,8 +1,8 @@
 export function emailLayout(content: string, baseUrl: string, footerNote?: string): string {
   const footer = footerNote ??
-    `Erasmus Life Valencia — your international community<br />Questions? Reply to this email or visit <a href="${baseUrl}" style="color:#FF6B00;">${baseUrl.replace('https://','')}</a>`
+`Erasmus Life Valencia — your international community<br />Questions? Reply to this email or visit <a href="${baseUrl}" style="color:#FF6B00;">${baseUrl.replace('https://','')}</a>`
 
-  return `<!DOCTYPE html>
+  return`<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />

@@ -1,63 +1,63 @@
-import type { Metadata } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { Calendar, MapPin, Users, ArrowLeft, ExternalLink } from 'lucide-react'
-import { getEventBySlug, getEventReviews } from '@/lib/supabase/queries'
-import { createClient } from '@/lib/supabase/server'
-import { getAdminClient } from '@/lib/supabase/admin'
-import CountdownTimer from '@/components/events/CountdownTimer'
-import TicketSelector from '@/components/events/TicketSelector'
-import ReviewsSection from '@/components/events/ReviewsSection'
-import ShareButtons from '@/components/events/ShareButtons'
-import GalleryStrip from '@/components/shared/GalleryStrip'
+import type { Metadata } from'next'
+import Image from'next/image'
+import Link from'next/link'
+import { notFound } from'next/navigation'
+import { Calendar, MapPin, Users, ArrowLeft, ExternalLink } from'lucide-react'
+import { getEventBySlug, getEventReviews } from'@/lib/supabase/queries'
+import { createClient } from'@/lib/supabase/server'
+import { getAdminClient } from'@/lib/supabase/admin'
+import CountdownTimer from'@/components/events/CountdownTimer'
+import TicketSelector from'@/components/events/TicketSelector'
+import ReviewsSection from'@/components/events/ReviewsSection'
+import ShareButtons from'@/components/events/ShareButtons'
+import GalleryStrip from'@/components/shared/GalleryStrip'
 
-// ─── Types ──────────────────────────────────────────────────────
+// Types 
 
 type Props = { params: Promise<{ slug: string }> }
 
-// ─── SEO ────────────────────────────────────────────────────────
+// SEO 
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const event = await getEventBySlug(slug)
-  if (!event) return { title: 'Event Not Found' }
+  if (!event) return { title:'Event Not Found' }
 
-  const description = event.description?.slice(0, 155) ?? `Join us for ${event.title} in Valencia`
+  const description = event.description?.slice(0, 155) ??`Join us for ${event.title} in Valencia`
 
   return {
-    title:       `${event.title} | Erasmus Life Valencia`,
+    title:`${event.title} | Erasmus Life Valencia`,
     description,
     openGraph: {
-      title:       event.title,
+      title: event.title,
       description,
-      type:        'website',
-      images:      event.image_url ? [{ url: event.image_url }] : [],
+      type:'website',
+      images: event.image_url ? [{ url: event.image_url }] : [],
     },
   }
 }
 
-// ─── Category label map ─────────────────────────────────────────
+// Category label map 
 
 const CATEGORY_LABELS: Record<string, string> = {
-  party:      'Party Night',
-  cultural:   'Cultural',
-  sport:      'Sport',
-  networking: 'Networking',
-  trip:       'Trip',
-  other:      'Event',
+  party:'Party Night',
+  cultural:'Cultural',
+  sport:'Sport',
+  networking:'Networking',
+  trip:'Trip',
+  other:'Event',
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  party:      'bg-purple-500/20 text-purple-300 border-purple-500/30',
-  cultural:   'bg-orange-500/20  text-orange-300  border-orange-500/30',
-  sport:      'bg-green-500/20  text-green-300  border-green-500/30',
-  networking: 'bg-blue-500/20   text-blue-300   border-blue-500/30',
-  trip:       'bg-orange-500/20 text-orange-300 border-orange-500/30',
-  other:      'bg-slate-500/20  text-slate-300  border-slate-500/30',
+  party:'bg-purple-500/20 text-purple-300 border-purple-500/30',
+  cultural:'bg-orange-500/20 text-orange-300 border-orange-500/30',
+  sport:'bg-green-500/20 text-green-300 border-green-500/30',
+  networking:'bg-blue-500/20 text-blue-300 border-blue-500/30',
+  trip:'bg-orange-500/20 text-orange-300 border-orange-500/30',
+  other:'bg-slate-500/20 text-slate-300 border-slate-500/30',
 }
 
-// ─── Page ───────────────────────────────────────────────────────
+// Page 
 
 export default async function EventDetailPage({ params }: Props) {
   const { slug } = await params
@@ -79,9 +79,9 @@ export default async function EventDetailPage({ params }: Props) {
       .from('event_tickets')
       .select('ticket_tier_name')
       .eq('event_id', event.id)
-      .not('status', 'in', '("cancelled","refunded")'),
+      .not('status','in','("cancelled","refunded")'),
     user
-      ? supabase.from('memberships').select('status').eq('user_id', user.id).eq('status', 'active').maybeSingle()
+      ? supabase.from('memberships').select('status').eq('user_id', user.id).eq('status','active').maybeSingle()
       : Promise.resolve({ data: null }),
   ])
 
@@ -97,22 +97,22 @@ export default async function EventDetailPage({ params }: Props) {
   const spotsLeft = event.capacity - event.tickets_sold
 
   const longDate = new Date(event.date).toLocaleDateString('en-GB', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+    weekday:'long', day:'numeric', month:'long', year:'numeric',
   })
   const time = new Date(event.date).toLocaleTimeString('en-GB', {
-    hour: '2-digit', minute: '2-digit',
+    hour:'2-digit', minute:'2-digit',
   })
 
   const mapsUrl = event.location
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`
+    ?`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`
     : null
 
-  const categoryLabel = CATEGORY_LABELS[event.category] ?? 'Event'
+  const categoryLabel = CATEGORY_LABELS[event.category] ??'Event'
   const categoryColor = CATEGORY_COLORS[event.category] ?? CATEGORY_COLORS.other
 
   return (
     <main className="min-h-screen bg-brand-dark">
-      {/* ── Hero image ── */}
+      {/* Hero image */}
       <div className="relative h-[55vh] md:h-[65vh] w-full overflow-hidden">
         {event.image_url ? (
           <Image
@@ -156,18 +156,18 @@ export default async function EventDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* ── Gallery strip ── */}
+      {/* Gallery strip */}
       {(event.gallery_images?.length ?? 0) > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
           <GalleryStrip images={event.gallery_images!} />
         </div>
       )}
 
-      {/* ── Content grid ── */}
+      {/* Content grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 items-start">
 
-          {/* ── LEFT: details + description + reviews ── */}
+          {/* LEFT: details + description + reviews */}
           <div className="flex flex-col gap-10">
 
             {/* Meta row */}
@@ -194,7 +194,7 @@ export default async function EventDetailPage({ params }: Props) {
               )}
               <span className="flex items-center gap-2">
                 <Users size={15} className="flex-shrink-0" />
-                {event.tickets_sold} {event.tickets_sold === 1 ? 'person' : 'people'} going
+                {event.tickets_sold} {event.tickets_sold === 1 ?'person' :'people'} going
               </span>
             </div>
 
@@ -231,7 +231,7 @@ export default async function EventDetailPage({ params }: Props) {
             />
           </div>
 
-          {/* ── RIGHT: sticky sidebar ── */}
+          {/* RIGHT: sticky sidebar */}
           <div className="flex flex-col gap-5 lg:sticky lg:top-24">
 
             {/* Ticket selector */}
@@ -268,7 +268,7 @@ export default async function EventDetailPage({ params }: Props) {
                   <div
                     className="h-full rounded-full bg-brand-primary transition-all duration-700"
                     style={{
-                      width: `${Math.round((event.tickets_sold / event.capacity) * 100)}%`,
+                      width:`${Math.round((event.tickets_sold / event.capacity) * 100)}%`,
                     }}
                   />
                 </div>

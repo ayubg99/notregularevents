@@ -1,32 +1,32 @@
-import type { Metadata } from 'next'
-import { Suspense } from 'react'
+import type { Metadata } from'next'
+import { Suspense } from'react'
 
 export const metadata: Metadata = {
-  title:       'Erasmus Life Valencia | Events, Trips & Community for Internationals',
-  description: 'Your international community in Valencia, Spain. Events, trips and connections for expats, students, digital nomads and young professionals.',
+  title:'Erasmus Life Valencia | Events, Trips & Community for Internationals',
+  description:'Your international community in Valencia, Spain. Events, trips and connections for expats, students, digital nomads and young professionals.',
   openGraph: {
-    title:       'Erasmus Life Valencia | Events, Trips & Community',
-    description: 'Your international community in Valencia, Spain. Events, trips and connections for expats, students and professionals.',
-    images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
-    type:        'website',
+    title:'Erasmus Life Valencia | Events, Trips & Community',
+    description:'Your international community in Valencia, Spain. Events, trips and connections for expats, students and professionals.',
+    images: [{ url:'/og-default.png', width: 1200, height: 630 }],
+    type:'website',
   },
   twitter: {
-    card:        'summary_large_image',
-    title:       'Erasmus Life Valencia',
-    description: 'Your international community in Valencia — events, trips and connections for expats and students.',
+    card:'summary_large_image',
+    title:'Erasmus Life Valencia',
+    description:'Your international community in Valencia — events, trips and connections for expats and students.',
   },
 }
-import HeroSection from '@/components/home/HeroSection'
-import FeaturedEvents from '@/components/home/FeaturedEvents'
-import FeaturedTrips from '@/components/home/FeaturedTrips'
-import CommunitySection from '@/components/home/CommunitySection'
-import StatsSection from '@/components/home/StatsSection'
-import TestimonialsSection from '@/components/home/TestimonialsSection'
-import NewsletterSection from '@/components/home/NewsletterSection'
-import SponsorsSection from '@/components/home/SponsorsSection'
-import AmbassadorSection from '@/components/home/AmbassadorSection'
+import HeroSection from'@/components/home/HeroSection'
+import FeaturedEvents from'@/components/home/FeaturedEvents'
+import FeaturedTrips from'@/components/home/FeaturedTrips'
+import CommunitySection from'@/components/home/CommunitySection'
+import StatsSection from'@/components/home/StatsSection'
+import TestimonialsSection from'@/components/home/TestimonialsSection'
+import NewsletterSection from'@/components/home/NewsletterSection'
+import SponsorsSection from'@/components/home/SponsorsSection'
+import AmbassadorSection from'@/components/home/AmbassadorSection'
 
-// ─── Skeleton fallbacks shown while Supabase data loads ────────
+// Skeleton fallbacks shown while Supabase data loads 
 
 function EventsSkeleton() {
   return (
@@ -71,7 +71,7 @@ function TripsSkeleton() {
   )
 }
 
-// ─── Page ──────────────────────────────────────────────────────
+// Page 
 
 export default function HomePage() {
   return (

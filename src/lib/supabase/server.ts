@@ -1,7 +1,7 @@
 // cookies() is async in Next.js 15+ — all server client factories are async.
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
-import type { Database } from '@/types/database'
+import { createServerClient } from'@supabase/ssr'
+import { cookies } from'next/headers'
+import type { Database } from'@/types/database'
 
 // Use in Server Components, Server Actions, and Route Handlers
 export async function createClient() {

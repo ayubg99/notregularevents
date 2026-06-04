@@ -1,40 +1,40 @@
 export const metadata = {
-  title:       'About — Erasmus Life Valencia',
-  description: 'Since 1994, the official Erasmus community in Valencia. Thousands of students, hundreds of events, and one unforgettable semester.',
+  title:'About — Erasmus Life Valencia',
+  description:'Since 1994, the official Erasmus community in Valencia. Thousands of students, hundreds of events, and one unforgettable semester.',
   openGraph: {
-    title:       'About — Erasmus Life Valencia',
-    description: 'Since 1994, the official Erasmus community in Valencia. Thousands of students, hundreds of events, and one unforgettable semester.',
-    images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
-    type:        'website',
+    title:'About — Erasmus Life Valencia',
+    description:'Since 1994, the official Erasmus community in Valencia. Thousands of students, hundreds of events, and one unforgettable semester.',
+    images: [{ url:'/og-default.png', width: 1200, height: 630 }],
+    type:'website',
   },
   twitter: {
-    card:        'summary_large_image',
-    title:       'About — Erasmus Life Valencia',
-    description: 'Since 1994, the official Erasmus community in Valencia.',
+    card:'summary_large_image',
+    title:'About — Erasmus Life Valencia',
+    description:'Since 1994, the official Erasmus community in Valencia.',
   },
 }
 
 const TEAM = [
-  { name: 'Leadership',     role: 'Co-Founders & Strategy', nationality: '🇪🇸', emoji: '🌟' },
-  { name: 'Events Team',    role: 'Events & Nightlife',     nationality: '🎉', emoji: '🎉' },
-  { name: 'Trips Team',     role: 'Travel & Adventures',    nationality: '🌍', emoji: '✈️' },
-  { name: 'Community Team', role: 'Community & Growth',     nationality: '💬', emoji: '💬' },
+  { name:'Leadership', role:'Co-Founders & Strategy', nationality:'', emoji:'' },
+  { name:'Events Team', role:'Events & Nightlife', nationality:'', emoji:'' },
+  { name:'Trips Team', role:'Travel & Adventures', nationality:'', emoji:'' },
+  { name:'Community Team', role:'Community & Growth', nationality:'', emoji:'' },
 ]
 
 const PHOTO_GRADIENTS = [
-  'from-brand-primary/40 to-brand-accent/20',
-  'from-purple-500/30 to-brand-primary/20',
-  'from-brand-accent/30 to-emerald-500/20',
-  'from-emerald-500/20 to-brand-primary/30',
-  'from-orange-500/20 to-brand-accent/30',
-  'from-brand-primary/20 to-purple-500/30',
+'from-brand-primary/40 to-brand-accent/20',
+'from-purple-500/30 to-brand-primary/20',
+'from-brand-accent/30 to-emerald-500/20',
+'from-emerald-500/20 to-brand-primary/30',
+'from-orange-500/20 to-brand-accent/30',
+'from-brand-primary/20 to-purple-500/30',
 ]
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-brand-dark">
 
-      {/* ── Hero ──────────────────────────────────────────────────── */}
+      {/* Hero */}
       <section className="relative overflow-hidden pt-32 pb-20 px-4">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(255,107,0,0.12),transparent)] pointer-events-none" />
         <div className="absolute top-1/3 -left-40 w-[500px] h-[500px] rounded-full bg-brand-primary/12 blur-[120px] pointer-events-none" />
@@ -55,13 +55,13 @@ export default function AboutPage() {
         {/* Team photo placeholder */}
         <div className="relative max-w-4xl mx-auto rounded-2xl aspect-video bg-gradient-to-br from-brand-primary/30 via-brand-primary/10 to-brand-accent/20 flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 opacity-30"
-            style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, var(--color-brand-primary) 0%, transparent 60%), radial-gradient(circle at 70% 40%, var(--color-brand-accent) 0%, transparent 50%)' }}
+            style={{ backgroundImage:'radial-gradient(circle at 30% 50%, var(--color-brand-primary) 0%, transparent 60%), radial-gradient(circle at 70% 40%, var(--color-brand-accent) 0%, transparent 50%)' }}
           />
           <p className="relative text-white/40 text-sm font-medium">Team photo coming soon</p>
         </div>
       </section>
 
-      {/* ── Our Story ─────────────────────────────────────────────── */}
+      {/* Our Story */}
       <section className="max-w-2xl mx-auto px-4 pb-20">
         <div className="flex flex-col gap-6 text-white/65 text-base leading-relaxed">
           <p>
@@ -83,7 +83,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Mission statement ─────────────────────────────────────── */}
+      {/* Mission statement */}
       <section className="max-w-2xl mx-auto px-4 pb-20">
         <blockquote className="border-l-4 border-brand-primary pl-6">
           <p className="font-heading text-2xl sm:text-3xl font-bold italic text-white leading-snug">
@@ -92,7 +92,7 @@ export default function AboutPage() {
         </blockquote>
       </section>
 
-      {/* ── Team grid ─────────────────────────────────────────────── */}
+      {/* Team grid */}
       <section className="max-w-4xl mx-auto px-4 pb-20">
         <h2 className="font-heading text-3xl font-bold text-white text-center mb-10">The Team</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -111,7 +111,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Community photo grid ──────────────────────────────────── */}
+      {/* Community photo grid */}
       <section className="max-w-4xl mx-auto px-4 pb-24">
         <h2 className="font-heading text-3xl font-bold text-white text-center mb-10">Our Community</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">

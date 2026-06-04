@@ -1,34 +1,34 @@
-import type { Metadata } from 'next'
-import { MessageCircle, Briefcase, Home, Languages } from 'lucide-react'
+import type { Metadata } from'next'
+import { MessageCircle, Briefcase, Home, Languages } from'lucide-react'
 
 export const metadata: Metadata = {
-  title:       'Erasmus Community Valencia | Erasmus Life',
-  description: 'Join the official Erasmus community in Valencia. Connect with students from 50+ countries, find flatmates, join WhatsApp groups and discover events.',
+  title:'Erasmus Community Valencia | Erasmus Life',
+  description:'Join the official Erasmus community in Valencia. Connect with students from 50+ countries, find flatmates, join WhatsApp groups and discover events.',
   openGraph: {
-    title:       'Erasmus Community Valencia | Erasmus Life',
-    description: 'Connect with Erasmus students in Valencia. WhatsApp groups, flatmate finder, language exchange and weekly events.',
-    images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
-    type:        'website',
+    title:'Erasmus Community Valencia | Erasmus Life',
+    description:'Connect with Erasmus students in Valencia. WhatsApp groups, flatmate finder, language exchange and weekly events.',
+    images: [{ url:'/og-default.png', width: 1200, height: 630 }],
+    type:'website',
   },
   twitter: {
-    card:        'summary_large_image',
-    title:       'Erasmus Community Valencia | Erasmus Life',
-    description: 'Connect with Erasmus students in Valencia. Events, WhatsApp groups, language exchange and more.',
+    card:'summary_large_image',
+    title:'Erasmus Community Valencia | Erasmus Life',
+    description:'Connect with Erasmus students in Valencia. Events, WhatsApp groups, language exchange and more.',
   },
 }
 
-// ─── WhatsApp groups data ───────────────────────────────────────
+// WhatsApp groups data 
 
 const WHATSAPP_GROUPS = [
-  { emoji: '🎉', label: 'Party & Nightlife',    desc: 'Events, club nights and after-parties'       },
-  { emoji: '🏖️', label: 'Beach & Outdoors',     desc: 'Beach days, hiking and outdoor adventures'   },
-  { emoji: '💼', label: 'Professional Network', desc: 'Jobs, networking and career opportunities'    },
-  { emoji: '🗣️', label: 'Language Exchange',    desc: 'Practice Spanish, English, French and more'  },
-  { emoji: '🍷', label: 'Food & Wine',           desc: 'Restaurant tips, wine tours and food events' },
-  { emoji: '🏠', label: 'Housing & Flatmates',  desc: 'Find rooms, flatmates and housing tips'      },
+  { emoji:'', label:'Party & Nightlife', desc:'Events, club nights and after-parties' },
+  { emoji:'', label:'Beach & Outdoors', desc:'Beach days, hiking and outdoor adventures' },
+  { emoji:'', label:'Professional Network', desc:'Jobs, networking and career opportunities' },
+  { emoji:'', label:'Language Exchange', desc:'Practice Spanish, English, French and more' },
+  { emoji:'', label:'Food & Wine', desc:'Restaurant tips, wine tours and food events' },
+  { emoji:'', label:'Housing & Flatmates', desc:'Find rooms, flatmates and housing tips' },
 ]
 
-// ─── Coming soon card ───────────────────────────────────────────
+// Coming soon card 
 
 function ComingSoonCard({
   icon: Icon,
@@ -52,13 +52,13 @@ function ComingSoonCard({
   )
 }
 
-// ─── Page ───────────────────────────────────────────────────────
+// Page 
 
 export default function CommunityPage() {
   return (
     <div className="min-h-screen bg-brand-dark">
 
-      {/* ── Hero ── */}
+      {/* Hero */}
       <section className="relative overflow-hidden pt-32 pb-20 px-4">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(232,168,124,0.12),transparent)] pointer-events-none" />
         <div className="absolute top-1/3 -left-40 w-[500px] h-[500px] rounded-full bg-brand-accent/10 blur-[120px] pointer-events-none" />
@@ -70,7 +70,7 @@ export default function CommunityPage() {
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-white mb-5 leading-tight">
             The Erasmus Community<br />
-            <span className="text-gradient">in Valencia 🌍</span>
+            <span className="text-gradient">in Valencia </span>
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto leading-relaxed">
             50+ nationalities. Weekly events. Lifelong friendships.
@@ -79,7 +79,7 @@ export default function CommunityPage() {
         </div>
       </section>
 
-      {/* ── WhatsApp Groups ── */}
+      {/* WhatsApp Groups */}
       <section className="bg-gradient-dark py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
@@ -117,7 +117,7 @@ export default function CommunityPage() {
         </div>
       </section>
 
-      {/* ── Community Boards (Coming Soon) ── */}
+      {/* Community Boards (Coming Soon) */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-10">
           <p className="text-brand-primary text-sm font-semibold uppercase tracking-widest mb-2">

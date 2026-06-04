@@ -1,57 +1,57 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
-import type { JobListingRow, JobStatus } from '@/types/database'
+import { useState, useTransition } from'react'
+import { useRouter } from'next/navigation'
+import type { JobListingRow, JobStatus } from'@/types/database'
 
 const STATUS_COLORS: Record<JobStatus, string> = {
-  active: 'text-green-400 bg-green-400/10 border border-green-400/20',
-  draft:  'text-yellow-400 bg-yellow-400/10 border border-yellow-400/20',
-  closed: 'text-red-400 bg-red-400/10 border border-red-400/20',
+  active:'text-green-400 bg-green-400/10 border border-green-400/20',
+  draft:'text-yellow-400 bg-yellow-400/10 border border-yellow-400/20',
+  closed:'text-red-400 bg-red-400/10 border border-red-400/20',
 }
 
 const TYPE_LABELS: Record<string, string> = {
-  part_time:   'Part-time',
-  internship:  'Internship',
-  full_time:   'Full-time',
-  freelance:   'Freelance',
-  volunteer:   'Volunteer',
+  part_time:'Part-time',
+  internship:'Internship',
+  full_time:'Full-time',
+  freelance:'Freelance',
+  volunteer:'Volunteer',
 }
 
-type StatusFilter = JobStatus | 'all'
+type StatusFilter = JobStatus |'all'
 
 const TABS: Array<{ label: string; value: StatusFilter }> = [
-  { label: 'All',    value: 'all'    },
-  { label: 'Active', value: 'active' },
-  { label: 'Draft',  value: 'draft'  },
-  { label: 'Closed', value: 'closed' },
+  { label:'All', value:'all' },
+  { label:'Active', value:'active' },
+  { label:'Draft', value:'draft' },
+  { label:'Closed', value:'closed' },
 ]
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' })
+  return new Date(iso).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'2-digit' })
 }
 
 interface Props { jobs: JobListingRow[] }
 
 export default function JobsAdminClient({ jobs }: Props) {
-  const router  = useRouter()
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [filter,  setFilter]  = useState<StatusFilter>('all')
+  const [filter, setFilter] = useState<StatusFilter>('all')
   const [confirm, setConfirm] = useState<string | null>(null)
 
-  const filtered = filter === 'all' ? jobs : jobs.filter(j => j.status === filter)
+  const filtered = filter ==='all' ? jobs : jobs.filter(j => j.status === filter)
 
   async function patch(id: string, body: Record<string, unknown>) {
     await fetch(`/api/admin/jobs/${id}`, {
-      method:  'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(body),
+      method:'PATCH',
+      headers: {'Content-Type':'application/json' },
+      body: JSON.stringify(body),
     })
     startTransition(() => { router.refresh() })
   }
 
   async function deleteJob(id: string) {
-    await fetch(`/api/admin/jobs/${id}`, { method: 'DELETE' })
+    await fetch(`/api/admin/jobs/${id}`, { method:'DELETE' })
     setConfirm(null)
     startTransition(() => { router.refresh() })
   }
@@ -66,13 +66,13 @@ export default function JobsAdminClient({ jobs }: Props) {
             onClick={() => setFilter(tab.value)}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
               filter === tab.value
-                ? 'bg-orange-500/20 text-orange-400 border border-orange-400/25'
-                : 'text-white/50 hover:text-white hover:bg-white/5 border border-transparent'
+                ?'bg-orange-500/20 text-orange-400 border border-orange-400/25'
+                :'text-white/50 hover:text-white hover:bg-white/5 border border-transparent'
             }`}
           >
             {tab.label}
             <span className="ml-1.5 text-xs opacity-60">
-              ({tab.value === 'all' ? jobs.length : jobs.filter(j => j.status === tab.value).length})
+              ({tab.value ==='all' ? jobs.length : jobs.filter(j => j.status === tab.value).length})
             </span>
           </button>
         ))}
@@ -83,7 +83,7 @@ export default function JobsAdminClient({ jobs }: Props) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-white/10">
-              {['Title', 'Company', 'Type', 'Category', 'Featured', 'Urgent', 'Status', 'Views', 'Posted', 'Expires', 'Actions'].map(h => (
+              {['Title','Company','Type','Category','Featured','Urgent','Status','Views','Posted','Expires','Actions'].map(h => (
                 <th key={h} className="text-left text-white/40 font-medium px-4 py-3 text-xs uppercase tracking-wide whitespace-nowrap">
                   {h}
                 </th>
@@ -112,20 +112,20 @@ export default function JobsAdminClient({ jobs }: Props) {
                     <button
                       onClick={() => patch(job.id, { is_featured: !job.is_featured })}
                       disabled={isPending}
-                      className={`text-xs px-2 py-1 rounded-md font-medium transition-all ${job.is_featured ? 'bg-orange-500/20 text-orange-400' : 'bg-white/5 text-white/30 hover:bg-white/10'}`}
+                      className={`text-xs px-2 py-1 rounded-md font-medium transition-all ${job.is_featured ?'bg-orange-500/20 text-orange-400' :'bg-white/5 text-white/30 hover:bg-white/10'}`}
                       title="Toggle featured"
                     >
-                      {job.is_featured ? '⭐ Yes' : '—'}
+                      {job.is_featured ?' Yes' :'—'}
                     </button>
                   </td>
                   <td className="px-4 py-3">
                     <button
                       onClick={() => patch(job.id, { is_urgent: !job.is_urgent })}
                       disabled={isPending}
-                      className={`text-xs px-2 py-1 rounded-md font-medium transition-all ${job.is_urgent ? 'bg-red-500/20 text-red-400' : 'bg-white/5 text-white/30 hover:bg-white/10'}`}
+                      className={`text-xs px-2 py-1 rounded-md font-medium transition-all ${job.is_urgent ?'bg-red-500/20 text-red-400' :'bg-white/5 text-white/30 hover:bg-white/10'}`}
                       title="Toggle urgent"
                     >
-                      {job.is_urgent ? '🔥 Yes' : '—'}
+                      {job.is_urgent ?' Yes' :'—'}
                     </button>
                   </td>
                   <td className="px-4 py-3">
@@ -138,18 +138,18 @@ export default function JobsAdminClient({ jobs }: Props) {
                   <td className="px-4 py-3 text-white/50 text-xs whitespace-nowrap">{formatDate(job.expires_at)}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-1">
-                      {job.status !== 'active' && (
+                      {job.status !=='active' && (
                         <button
-                          onClick={() => patch(job.id, { status: 'active' })}
+                          onClick={() => patch(job.id, { status:'active' })}
                           disabled={isPending}
                           className="text-xs px-2.5 py-1.5 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors font-medium"
                         >
                           Activate
                         </button>
                       )}
-                      {job.status === 'active' && (
+                      {job.status ==='active' && (
                         <button
-                          onClick={() => patch(job.id, { status: 'closed' })}
+                          onClick={() => patch(job.id, { status:'closed' })}
                           disabled={isPending}
                           className="text-xs px-2.5 py-1.5 rounded-lg bg-white/5 text-white/50 hover:bg-white/10 transition-colors font-medium"
                         >

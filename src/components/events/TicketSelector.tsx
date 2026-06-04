@@ -1,35 +1,35 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { Lock } from 'lucide-react'
-import BookingModal from '@/components/booking/BookingModal'
-import type { EventTicketTier } from '@/types/database'
-import { tierDefaults } from '@/types/database'
+import { useState, useMemo } from'react'
+import { Lock } from'lucide-react'
+import BookingModal from'@/components/booking/BookingModal'
+import type { EventTicketTier } from'@/types/database'
+import { tierDefaults } from'@/types/database'
 
 interface Props {
-  eventId:              string
-  price:                number
-  capacity:             number
-  sold:                 number
-  slug:                 string
-  title:                string
-  isFree?:              boolean
-  isMembersOnlyFree?:   boolean
-  priceEarlyBird?:      number | null
-  priceGroup?:          number | null
-  earlyBirdDeadline?:   string | null
-  earlyBirdSeats?:      number
-  earlyBirdSeatsSold?:  number
-  ticketTiers?:         EventTicketTier[]
-  userIsMember?:        boolean
-  tierSoldCounts?:      Record<string, number>
-  eventDate?:           string | null
+  eventId: string
+  price: number
+  capacity: number
+  sold: number
+  slug: string
+  title: string
+  isFree?: boolean
+  isMembersOnlyFree?: boolean
+  priceEarlyBird?: number | null
+  priceGroup?: number | null
+  earlyBirdDeadline?: string | null
+  earlyBirdSeats?: number
+  earlyBirdSeatsSold?: number
+  ticketTiers?: EventTicketTier[]
+  userIsMember?: boolean
+  tierSoldCounts?: Record<string, number>
+  eventDate?: string | null
 }
 
 function isTierExpired(tier: EventTicketTier, eventDate?: string | null): boolean {
   if (!tier.valid_until_time || !eventDate) return false
   const [hh, mm] = tier.valid_until_time.split(':').map(Number)
-  const cutoff   = new Date(eventDate)
+  const cutoff = new Date(eventDate)
   cutoff.setHours(hh, mm, 0, 0)
   if (hh < 12) cutoff.setDate(cutoff.getDate() + 1)
   return new Date() > cutoff
@@ -40,7 +40,7 @@ export default function TicketSelector({
   priceEarlyBird, priceGroup, earlyBirdDeadline, earlyBirdSeats, earlyBirdSeatsSold,
   ticketTiers, userIsMember, tierSoldCounts, eventDate,
 }: Props) {
-  const [modalOpen,       setModalOpen]       = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
   const [selectedTierIdx, setSelectedTierIdx] = useState(0)
 
   void slug
@@ -48,7 +48,7 @@ export default function TicketSelector({
   const spotsLeft = capacity - sold
   const isSoldOut = spotsLeft <= 0
 
-  // ── Custom tiers path ────────────────────────────────────────
+  // Custom tiers path 
   const hasTiers = !!ticketTiers && ticketTiers.length > 0
 
   // Normalise all tiers and compute visibility / locked state
@@ -56,10 +56,10 @@ export default function TicketSelector({
     if (!ticketTiers?.length) return []
     const normalised = ticketTiers.map(tierDefaults)
     return normalised.map(tier => {
-      const soldCount  = tierSoldCounts?.[tier.name] ?? 0
-      const isSoldOut  = tier.seats !== null && soldCount >= tier.seats
-      const isLocked   = tier.members_only && !userIsMember
-      const isExpired  = isTierExpired(tier, eventDate)
+      const soldCount = tierSoldCounts?.[tier.name] ?? 0
+      const isSoldOut = tier.seats !== null && soldCount >= tier.seats
+      const isLocked = tier.members_only && !userIsMember
+      const isExpired = isTierExpired(tier, eventDate)
 
       // Hidden until its prerequisite tier sells out
       let isHidden = false
@@ -92,16 +92,16 @@ export default function TicketSelector({
   }
 
   if (hasTiers && visibleTiers.length > 0) {
-    const selected    = selectedEntry?.tier
-    const isTierFree  = selected?.price === 0
-    const isDisabled  = !selectedEntry || selectedEntry.isSoldOut || selectedEntry.isLocked || selectedEntry.isExpired
+    const selected = selectedEntry?.tier
+    const isTierFree = selected?.price === 0
+    const isDisabled = !selectedEntry || selectedEntry.isSoldOut || selectedEntry.isLocked || selectedEntry.isExpired
 
     return (
       <>
         <div className="glass-card rounded-2xl p-6 flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <h2 className="font-heading text-lg font-bold text-white">Get Tickets</h2>
-            <span className="text-white/40 text-xs">{spotsLeft} spot{spotsLeft === 1 ? '' : 's'} left</span>
+            <span className="text-white/40 text-xs">{spotsLeft} spot{spotsLeft === 1 ?'' :'s'} left</span>
           </div>
 
           <div className="flex flex-col gap-2">
@@ -115,10 +115,10 @@ export default function TicketSelector({
                   disabled={isDisabledTier}
                   className={`w-full text-left rounded-xl border p-3.5 transition-all ${
                     isDisabledTier
-                      ? 'border-white/5 bg-white/3 opacity-50 cursor-not-allowed'
+                      ?'border-white/5 bg-white/3 opacity-50 cursor-not-allowed'
                       : safeIdx === i
-                        ? 'border-brand-primary bg-brand-primary/10'
-                        : 'border-white/10 bg-white/5 hover:border-white/20'
+                        ?'border-brand-primary bg-brand-primary/10'
+                        :'border-white/10 bg-white/5 hover:border-white/20'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -167,7 +167,7 @@ export default function TicketSelector({
                       {tier.benefits.length > 0 && (
                         <ul className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5">
                           {tier.benefits.map(b => (
-                            <li key={b} className="text-[11px] text-white/40 before:content-['✓'] before:mr-1 before:text-green-400/70">
+                            <li key={b} className="text-[11px] text-white/40 before:content-[''] before:mr-1 before:text-green-400/70">
                               {b}
                             </li>
                           ))}
@@ -176,12 +176,12 @@ export default function TicketSelector({
 
                       {/* Per-tier spots left */}
                       {tierSpots !== null && !tierSoldOut && (
-                        <p className="text-[10px] text-white/30 mt-1">{tierSpots} spot{tierSpots === 1 ? '' : 's'} left</p>
+                        <p className="text-[10px] text-white/30 mt-1">{tierSpots} spot{tierSpots === 1 ?'' :'s'} left</p>
                       )}
                     </div>
 
-                    <span className={`font-bold text-base flex-shrink-0 ${isDisabledTier ? 'text-white/30' : 'text-white'}`}>
-                      {tierSoldOut ? '—' : tier.price === 0 ? 'Free' : `€${tier.price.toFixed(2)}`}
+                    <span className={`font-bold text-base flex-shrink-0 ${isDisabledTier ?'text-white/30' :'text-white'}`}>
+                      {tierSoldOut ?'—' : tier.price === 0 ?'Free' :`€${tier.price.toFixed(2)}`}
                     </span>
                   </div>
                 </button>
@@ -194,11 +194,11 @@ export default function TicketSelector({
             disabled={isDisabled}
             className="w-full py-3.5 rounded-full btn-primary font-semibold text-sm shadow-brand-sm hover:brightness-105 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {isTierFree ? "RSVP — It's Free!" : 'Book Tickets'}
+            {isTierFree ?"RSVP — It's Free!" :'Book Tickets'}
           </button>
 
           <p className="text-center text-white/25 text-xs -mt-1">
-            {isTierFree ? 'Instant confirmation, no payment needed' : 'Secure checkout via Stripe'}
+            {isTierFree ?'Instant confirmation, no payment needed' :'Secure checkout via Stripe'}
           </p>
         </div>
 
@@ -229,7 +229,7 @@ export default function TicketSelector({
     )
   }
 
-  // ── Legacy path (no custom tiers) ───────────────────────────
+  // Legacy path (no custom tiers) 
   const isFree = isFreeProp ?? price === 0
 
   const isEarlyBirdValid =
@@ -246,16 +246,16 @@ export default function TicketSelector({
         <div className="flex items-baseline justify-between">
           <div>
             <p className="font-heading text-2xl font-bold text-white">
-              {isMembersOnlyFree ? 'Members Only — Free' : isFree ? 'Free Entry' : `€${displayPrice.toFixed(2)}`}
+              {isMembersOnlyFree ?'Members Only — Free' : isFree ?'Free Entry' :`€${displayPrice.toFixed(2)}`}
               {!isFree && !isMembersOnlyFree && <span className="text-white/40 text-sm font-normal ml-1">/ ticket</span>}
             </p>
             <p className="text-white/50 text-xs mt-0.5">
-              {isMembersOnlyFree ? 'Active membership required' : `${spotsLeft} spot${spotsLeft === 1 ? '' : 's'} remaining`}
+              {isMembersOnlyFree ?'Active membership required' :`${spotsLeft} spot${spotsLeft === 1 ?'' :'s'} remaining`}
             </p>
           </div>
           {!isFree && !isMembersOnlyFree && (
             <span className="text-xs text-white/30 bg-white/5 border border-white/10 px-2 py-1 rounded-lg">
-              {isEarlyBirdValid ? '🔥 Early Bird' : 'Standard'}
+              {isEarlyBirdValid ?' Early Bird' :'Standard'}
             </span>
           )}
         </div>
@@ -264,11 +264,11 @@ export default function TicketSelector({
           onClick={() => setModalOpen(true)}
           className="w-full py-3.5 rounded-full btn-primary font-semibold text-sm shadow-brand-sm hover:brightness-105 transition-all"
         >
-          {isMembersOnlyFree ? '👑 Register — Members Only' : isFree ? "RSVP — It's Free!" : 'Book Tickets'}
+          {isMembersOnlyFree ?' Register — Members Only' : isFree ?"RSVP — It's Free!" :'Book Tickets'}
         </button>
 
         <p className="text-center text-white/25 text-xs -mt-1">
-          {isMembersOnlyFree ? 'Membership verified at checkout' : isFree ? 'Instant confirmation' : 'Secure checkout via Stripe'}
+          {isMembersOnlyFree ?'Membership verified at checkout' : isFree ?'Instant confirmation' :'Secure checkout via Stripe'}
         </p>
       </div>
 

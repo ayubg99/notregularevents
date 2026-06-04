@@ -1,17 +1,17 @@
 'use client'
 
-import { useState } from 'react'
-import { Check, X } from 'lucide-react'
-import type { TripRow, ReviewRow } from '@/types/database'
-import ItineraryTimeline from '@/components/trips/ItineraryTimeline'
-import ReviewsSection from '@/components/events/ReviewsSection'
+import { useState } from'react'
+import { Check, X } from'lucide-react'
+import type { TripRow, ReviewRow } from'@/types/database'
+import ItineraryTimeline from'@/components/trips/ItineraryTimeline'
+import ReviewsSection from'@/components/events/ReviewsSection'
 
-const TABS = ['Overview', 'Itinerary', 'Included', 'Meeting Points', 'Reviews'] as const
+const TABS = ['Overview','Itinerary','Included','Meeting Points','Reviews'] as const
 type Tab = typeof TABS[number]
 
 interface Props {
-  trip:            TripRow
-  reviews:         ReviewRow[]
+  trip: TripRow
+  reviews: ReviewRow[]
   isAuthenticated: boolean
 }
 
@@ -28,8 +28,8 @@ export default function TripTabs({ trip, reviews, isAuthenticated }: Props) {
             onClick={() => setActive(tab)}
             className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ${
               active === tab
-                ? 'text-brand-primary border-brand-primary'
-                : 'text-white/50 border-transparent hover:text-white/80'
+                ?'text-brand-primary border-brand-primary'
+                :'text-white/50 border-transparent hover:text-white/80'
             }`}
           >
             {tab}
@@ -38,7 +38,7 @@ export default function TripTabs({ trip, reviews, isAuthenticated }: Props) {
       </div>
 
       {/* Tab content */}
-      {active === 'Overview' && (
+      {active ==='Overview' && (
         <div className="flex flex-col gap-6">
           {trip.description ? (
             <div>
@@ -53,23 +53,23 @@ export default function TripTabs({ trip, reviews, isAuthenticated }: Props) {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: 'Destination', value: trip.destination },
+              { label:'Destination', value: trip.destination },
               {
-                label: 'Duration',
+                label:'Duration',
                 value: (() => {
                   const days = Math.round(
                     (new Date(trip.end_date).getTime() - new Date(trip.start_date).getTime()) / 86_400_000,
                   )
-                  return `${days} day${days === 1 ? '' : 's'}`
+                  return`${days} day${days === 1 ?'' :'s'}`
                 })(),
               },
               {
-                label: 'Capacity',
-                value: `${trip.capacity} people`,
+                label:'Capacity',
+                value:`${trip.capacity} people`,
               },
               {
-                label: 'From',
-                value: `€${Math.min(
+                label:'From',
+                value:`€${Math.min(
                   ...[trip.price_early_bird, trip.price_standard, trip.price_vip, trip.price_group]
                     .filter((p): p is number => p != null),
                 )}`,
@@ -84,14 +84,14 @@ export default function TripTabs({ trip, reviews, isAuthenticated }: Props) {
         </div>
       )}
 
-      {active === 'Itinerary' && (
+      {active ==='Itinerary' && (
         <div>
           <h2 className="font-heading text-xl font-bold text-white mb-6">Day by Day</h2>
           <ItineraryTimeline itinerary={trip.itinerary} />
         </div>
       )}
 
-      {active === 'Included' && (
+      {active ==='Included' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
           <div>
             <h3 className="font-heading font-bold text-white mb-4 flex items-center gap-2">
@@ -133,7 +133,7 @@ export default function TripTabs({ trip, reviews, isAuthenticated }: Props) {
         </div>
       )}
 
-      {active === 'Meeting Points' && (
+      {active ==='Meeting Points' && (
         <div>
           <h2 className="font-heading text-xl font-bold text-white mb-6">Meeting Points</h2>
           {trip.meeting_points && trip.meeting_points.length > 0 ? (
@@ -153,7 +153,7 @@ export default function TripTabs({ trip, reviews, isAuthenticated }: Props) {
         </div>
       )}
 
-      {active === 'Reviews' && (
+      {active ==='Reviews' && (
         <ReviewsSection
           targetId={trip.id}
           targetType="trip"

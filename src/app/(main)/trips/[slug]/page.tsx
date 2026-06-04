@@ -1,43 +1,43 @@
-import type { Metadata } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { ArrowLeft, Calendar, MapPin, MessageCircle } from 'lucide-react'
-import { getTripBySlug, getTripReviews } from '@/lib/supabase/queries'
-import { createClient } from '@/lib/supabase/server'
-import CountdownTimer from '@/components/events/CountdownTimer'
-import ShareButtons from '@/components/events/ShareButtons'
-import SeatCounter from '@/components/trips/SeatCounter'
-import BookingWrapper from '@/components/trips/BookingWrapper'
-import TripTabs from '@/components/trips/TripTabs'
-import GalleryStrip from '@/components/shared/GalleryStrip'
+import type { Metadata } from'next'
+import Image from'next/image'
+import Link from'next/link'
+import { notFound } from'next/navigation'
+import { ArrowLeft, Calendar, MapPin, MessageCircle } from'lucide-react'
+import { getTripBySlug, getTripReviews } from'@/lib/supabase/queries'
+import { createClient } from'@/lib/supabase/server'
+import CountdownTimer from'@/components/events/CountdownTimer'
+import ShareButtons from'@/components/events/ShareButtons'
+import SeatCounter from'@/components/trips/SeatCounter'
+import BookingWrapper from'@/components/trips/BookingWrapper'
+import TripTabs from'@/components/trips/TripTabs'
+import GalleryStrip from'@/components/shared/GalleryStrip'
 
 type Props = {
-  params:       Promise<{ slug: string }>
+  params: Promise<{ slug: string }>
   searchParams: Promise<{ booked?: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const trip = await getTripBySlug(slug)
-  if (!trip) return { title: 'Trip Not Found' }
+  if (!trip) return { title:'Trip Not Found' }
 
-  const description = trip.description?.slice(0, 155) ?? `Join Erasmus Life on a trip to ${trip.destination}`
+  const description = trip.description?.slice(0, 155) ??`Join Erasmus Life on a trip to ${trip.destination}`
 
   return {
-    title:       `${trip.title} | Erasmus Life Valencia`,
+    title:`${trip.title} | Erasmus Life Valencia`,
     description,
     openGraph: {
-      title:       trip.title,
+      title: trip.title,
       description,
-      type:        'website',
-      images:      trip.image_url ? [{ url: trip.image_url }] : [],
+      type:'website',
+      images: trip.image_url ? [{ url: trip.image_url }] : [],
     },
   }
 }
 
 export default async function TripDetailPage({ params, searchParams }: Props) {
-  const { slug }   = await params
+  const { slug } = await params
   const { booked } = await searchParams
 
   const trip = await getTripBySlug(slug)
@@ -49,20 +49,20 @@ export default async function TripDetailPage({ params, searchParams }: Props) {
   ])
   const { data: { user } } = await supabase.auth.getUser()
 
-  const isPast    = new Date(trip.end_date) < new Date()
+  const isPast = new Date(trip.end_date) < new Date()
   const seatsLeft = trip.capacity - trip.seats_sold
 
   const startLong = new Date(trip.start_date).toLocaleDateString('en-GB', {
-    day: 'numeric', month: 'long', year: 'numeric',
+    day:'numeric', month:'long', year:'numeric',
   })
   const endLong = new Date(trip.end_date).toLocaleDateString('en-GB', {
-    day: 'numeric', month: 'long', year: 'numeric',
+    day:'numeric', month:'long', year:'numeric',
   })
 
   return (
     <main className="min-h-screen bg-brand-dark">
 
-      {/* ── Hero ── */}
+      {/* Hero */}
       <div className="relative h-[55vh] md:h-[65vh] w-full overflow-hidden">
         {trip.image_url ? (
           <Image
@@ -111,18 +111,18 @@ export default async function TripDetailPage({ params, searchParams }: Props) {
         </div>
       </div>
 
-      {/* ── Gallery strip ── */}
+      {/* Gallery strip */}
       {(trip.gallery_images?.length ?? 0) > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
           <GalleryStrip images={trip.gallery_images!} />
         </div>
       )}
 
-      {/* ── Content grid ── */}
+      {/* Content grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-10 items-start">
 
-          {/* ── LEFT ── */}
+          {/* LEFT */}
           <div className="flex flex-col gap-8">
             {!isPast && (
               <div>
@@ -133,11 +133,11 @@ export default async function TripDetailPage({ params, searchParams }: Props) {
             <TripTabs trip={trip} reviews={reviews} isAuthenticated={!!user} />
           </div>
 
-          {/* ── RIGHT: sticky sidebar ── */}
+          {/* RIGHT: sticky sidebar */}
           <div className="flex flex-col gap-5 lg:sticky lg:top-24">
 
             {/* Booking confirmed banner */}
-            {booked === 'true' && (
+            {booked ==='true' && (
               <div className="rounded-2xl border border-green-500/30 bg-green-500/10 p-5">
                 <p className="text-green-400 font-semibold text-sm">Booking confirmed!</p>
                 <p className="text-white/60 text-xs mt-1">Check your email for details.</p>
@@ -166,7 +166,7 @@ export default async function TripDetailPage({ params, searchParams }: Props) {
             <BookingWrapper trip={trip} seatsLeft={seatsLeft} />
 
             {/* WhatsApp teaser (pre-booking) */}
-            {trip.whatsapp_group_url && booked !== 'true' && (
+            {trip.whatsapp_group_url && booked !=='true' && (
               <div className="glass-card rounded-2xl p-4">
                 <p className="text-white/40 text-xs uppercase tracking-widest mb-2">Community</p>
                 <a

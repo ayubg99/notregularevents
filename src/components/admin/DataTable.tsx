@@ -1,44 +1,44 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { ChevronUp, ChevronDown, Search } from 'lucide-react'
+import { useState, useMemo } from'react'
+import { ChevronUp, ChevronDown, Search } from'lucide-react'
 
 export interface Column<T extends Record<string, unknown>> {
-  key:       string
-  header:    string
-  render?:   (row: T) => React.ReactNode
+  key: string
+  header: string
+  render?: (row: T) => React.ReactNode
   sortable?: boolean
 }
 
 interface Props<T extends Record<string, unknown>> {
-  data:         T[]
-  columns:      Column<T>[]
-  searchKeys?:  (keyof T)[]
-  actions?:     (row: T) => React.ReactNode
-  onRowClick?:  (row: T) => void
+  data: T[]
+  columns: Column<T>[]
+  searchKeys?: (keyof T)[]
+  actions?: (row: T) => React.ReactNode
+  onRowClick?: (row: T) => void
 }
 
 export default function DataTable<T extends Record<string, unknown>>({
   data, columns, searchKeys, actions, onRowClick,
 }: Props<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null)
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
-  const [search,  setSearch]  = useState('')
+  const [sortDir, setSortDir] = useState<'asc' |'desc'>('asc')
+  const [search, setSearch] = useState('')
 
   const filtered = useMemo(() => {
     let rows = [...data]
     if (search.trim() && searchKeys) {
       const q = search.toLowerCase()
       rows = rows.filter(row =>
-        searchKeys.some(k => String(row[k] ?? '').toLowerCase().includes(q))
+        searchKeys.some(k => String(row[k] ??'').toLowerCase().includes(q))
       )
     }
     if (sortKey) {
       rows.sort((a, b) => {
-        const av = String(a[sortKey] ?? '')
-        const bv = String(b[sortKey] ?? '')
+        const av = String(a[sortKey] ??'')
+        const bv = String(b[sortKey] ??'')
         const cmp = av < bv ? -1 : av > bv ? 1 : 0
-        return sortDir === 'asc' ? cmp : -cmp
+        return sortDir ==='asc' ? cmp : -cmp
       })
     }
     return rows
@@ -46,7 +46,7 @@ export default function DataTable<T extends Record<string, unknown>>({
 
   function toggleSort(key: string) {
     if (sortKey === key) {
-      setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+      setSortDir(d => d ==='asc' ?'desc' :'asc')
     } else {
       setSortKey(key)
       setSortDir('asc')
@@ -78,13 +78,13 @@ export default function DataTable<T extends Record<string, unknown>>({
                   key={col.key}
                   onClick={() => col.sortable && toggleSort(col.key)}
                   className={`text-left px-4 py-3 text-xs font-semibold text-white/40 uppercase tracking-wider whitespace-nowrap ${
-                    col.sortable ? 'cursor-pointer hover:text-white/70 select-none' : ''
+                    col.sortable ?'cursor-pointer hover:text-white/70 select-none' :''
                   }`}
                 >
                   <span className="inline-flex items-center gap-1">
                     {col.header}
                     {col.sortable && sortKey === col.key && (
-                      sortDir === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />
+                      sortDir ==='asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />
                     )}
                   </span>
                 </th>
@@ -111,11 +111,11 @@ export default function DataTable<T extends Record<string, unknown>>({
                 <tr
                   key={i}
                   onClick={() => onRowClick?.(row)}
-                  className={`border-b border-white/5 hover:bg-white/[0.03] transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
+                  className={`border-b border-white/5 hover:bg-white/[0.03] transition-colors ${onRowClick ?'cursor-pointer' :''}`}
                 >
                   {columns.map(col => (
                     <td key={col.key} className="px-4 py-3 text-sm text-white/80">
-                      {col.render ? col.render(row) : String(row[col.key] ?? '—')}
+                      {col.render ? col.render(row) : String(row[col.key] ??'—')}
                     </td>
                   ))}
                   {actions && (
@@ -130,8 +130,8 @@ export default function DataTable<T extends Record<string, unknown>>({
         </table>
       </div>
       <div className="px-4 py-2 border-t border-white/5 text-white/25 text-xs">
-        {filtered.length} {filtered.length === 1 ? 'row' : 'rows'}
-        {search && ` (filtered from ${data.length})`}
+        {filtered.length} {filtered.length === 1 ?'row' :'rows'}
+        {search &&` (filtered from ${data.length})`}
       </div>
     </div>
   )

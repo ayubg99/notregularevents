@@ -1,46 +1,46 @@
-import { Mail, MessageCircle, ExternalLink } from 'lucide-react'
-import ContactForm from './ContactForm'
+import { Mail, MessageCircle, ExternalLink } from'lucide-react'
+import ContactForm from'./ContactForm'
 
 export const metadata = {
-  title:       'Contact — Erasmus Life',
-  description: "Get in touch with the Erasmus Life team. We're always happy to hear from you.",
+  title:'Contact — Erasmus Life',
+  description:"Get in touch with the Erasmus Life team. We're always happy to hear from you.",
   openGraph: {
-    title:       'Contact — Erasmus Life Valencia',
-    description: "Get in touch with the Erasmus Life team.",
-    images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
-    type:        'website',
+    title:'Contact — Erasmus Life Valencia',
+    description:"Get in touch with the Erasmus Life team.",
+    images: [{ url:'/og-default.png', width: 1200, height: 630 }],
+    type:'website',
   },
   twitter: {
-    card:        'summary_large_image',
-    title:       'Contact — Erasmus Life',
-    description: "Get in touch with the Erasmus Life team.",
+    card:'summary_large_image',
+    title:'Contact — Erasmus Life',
+    description:"Get in touch with the Erasmus Life team.",
   },
 }
 
 const CONTACT_LINKS = [
   {
-    icon:  <MessageCircle size={20} />,
-    label: 'WhatsApp',
-    value: '+34 600 000 000',
-    href:  'https://wa.me/34600000000',
-    color: 'text-green-400',
-    bg:    'bg-green-500/10 border-green-500/20',
+    icon: <MessageCircle size={20} />,
+    label:'WhatsApp',
+    value:'+34 600 000 000',
+    href:'https://wa.me/34600000000',
+    color:'text-green-400',
+    bg:'bg-green-500/10 border-green-500/20',
   },
   {
-    icon:  <Mail size={20} />,
-    label: 'Email',
-    value: 'info@erasmuslifevalencia.com',
-    href:  'mailto:info@erasmuslifevalencia.com',
-    color: 'text-brand-primary',
-    bg:    'bg-brand-primary/10 border-brand-primary/20',
+    icon: <Mail size={20} />,
+    label:'Email',
+    value:'info@erasmuslifevalencia.com',
+    href:'mailto:info@erasmuslifevalencia.com',
+    color:'text-brand-primary',
+    bg:'bg-brand-primary/10 border-brand-primary/20',
   },
   {
-    icon:  <ExternalLink size={20} />,
-    label: 'Instagram',
-    value: '@erasmuslifevalencia',
-    href:  'https://instagram.com/erasmuslifevalencia',
-    color: 'text-pink-400',
-    bg:    'bg-pink-500/10 border-pink-500/20',
+    icon: <ExternalLink size={20} />,
+    label:'Instagram',
+    value:'@erasmuslifevalencia',
+    href:'https://instagram.com/erasmuslifevalencia',
+    color:'text-pink-400',
+    bg:'bg-pink-500/10 border-pink-500/20',
   },
 ]
 
@@ -48,7 +48,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-brand-dark">
 
-      {/* ── Hero ──────────────────────────────────────────────────── */}
+      {/* Hero */}
       <section className="relative overflow-hidden pt-32 pb-16 px-4 text-center">
         <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/10 to-transparent pointer-events-none" />
         <div className="relative max-w-xl mx-auto">
@@ -62,7 +62,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* ── Main content ──────────────────────────────────────────── */}
+      {/* Main content */}
       <section className="max-w-6xl mx-auto px-4 pb-24">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
 
@@ -103,7 +103,7 @@ export default function ContactPage() {
             </div>
 
             <p className="text-white/30 text-xs text-center">
-              Based in Valencia, Spain 🇪🇸 · Typically reply within 24h
+              Based in Valencia, Spain · Typically reply within 24h
             </p>
 
           </div>
