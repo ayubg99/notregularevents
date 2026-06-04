@@ -70,7 +70,7 @@ export default function CommunityPage() {
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-white mb-5 leading-tight">
             The Erasmus Community<br />
-            <span className="text-gradient">in Valencia 🌍</span>
+            <span className="text-gradient">in Valencia</span>
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto leading-relaxed">
             50+ nationalities. Weekly events. Lifelong friendships.

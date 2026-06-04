@@ -110,7 +110,7 @@ export default async function MembershipPage() {
             Membership
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-gradient mb-5 leading-tight">
-            The Erasmus Life<br />Premium Card 👑
+            The Erasmus Life<br />Premium Card
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto">
             Get more from your Erasmus semester. Discounts, exclusive events, housing contacts and the full Valencia experience.

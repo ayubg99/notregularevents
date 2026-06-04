@@ -45,7 +45,7 @@ export default async function MarketplacePage() {
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <h1 style={{ color: '#fff', fontSize: '32px', fontWeight: 800, margin: '0 0 6px', lineHeight: 1.1 }}>
-              Erasmus Marketplace 🛍️
+              Erasmus Marketplace
             </h1>
             <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px', margin: 0 }}>
               Buy and sell with fellow Erasmus students. Leaving Valencia? Sell your stuff. Just arrived? Find everything you need.

@@ -152,7 +152,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Erasmus Life Valencia. All rights reserved.
           </p>
           <p className="text-white/20 text-xs">
-            Made for Erasmus students in Valencia 🎓
+            Made for Erasmus students in Valencia
           </p>
         </div>
       </div>

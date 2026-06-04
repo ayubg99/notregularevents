@@ -38,7 +38,7 @@ export default async function JobsPage() {
         {/* Hero */}
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Jobs for Erasmus Students in Valencia 💼
+            Jobs for Erasmus Students in Valencia
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto mb-8">
             Part-time jobs, internships and opportunities that work around your Erasmus schedule. English-friendly employers.

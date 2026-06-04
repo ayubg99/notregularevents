@@ -37,7 +37,7 @@ export default async function FeaturedTrips() {
         <div className="flex items-end justify-between mb-10">
           <div>
             <p className="text-brand-accent font-semibold text-sm uppercase tracking-widest mb-2">
-              Erasmus Trips 🌍
+              Erasmus Trips
             </p>
             <h2 className="font-heading text-4xl md:text-5xl font-bold text-white">
               Weekend Adventures

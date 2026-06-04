@@ -50,7 +50,7 @@ function LoginForm() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="Erasmus Life" className="h-12 w-auto" />
           </Link>
-          <h1 className="font-heading text-3xl font-bold text-white mb-2">Welcome back 👋</h1>
+          <h1 className="font-heading text-3xl font-bold text-white mb-2">Welcome back</h1>
           <p className="text-white/50 text-sm">Login to your Erasmus Life account</p>
         </div>
 
