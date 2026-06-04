@@ -1,20 +1,20 @@
 'use client'
 
-import { useState, useRef } from'react'
-import Image from'next/image'
-import { X, Loader2, ImageIcon } from'lucide-react'
-import { createClient } from'@/lib/supabase/client'
+import { useState, useRef } from 'react'
+import Image from 'next/image'
+import { X, Loader2, ImageIcon } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 interface Props {
-  value: string[]
+  value:    string[]
   onChange: (urls: string[]) => void
-  folder:'events' |'trips' |'sponsors' |'jobs'
-  max?: number
+  folder:   'events' | 'trips' | 'sponsors' | 'jobs'
+  max?:     number
 }
 
 export default function MultiImageUpload({ value, onChange, folder, max = 8 }: Props) {
   const [uploading, setUploading] = useState(false)
-  const [error, setError] = useState('')
+  const [error,     setError]     = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   async function handleFiles(files: FileList) {
@@ -44,9 +44,9 @@ export default function MultiImageUpload({ value, onChange, folder, max = 8 }: P
       const urls: string[] = []
 
       for (const file of toUpload) {
-        const ext = file.name.split('.').pop() ??'jpg'
-        const name =`${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-        const path =`${folder}/${name}`
+        const ext  = file.name.split('.').pop() ?? 'jpg'
+        const name = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+        const path = `${folder}/${name}`
 
         const { error: uploadError } = await supabase.storage
           .from('images')
@@ -60,7 +60,7 @@ export default function MultiImageUpload({ value, onChange, folder, max = 8 }: P
 
       onChange([...value, ...urls])
     } catch (err) {
-      setError(err instanceof Error ? err.message :'Upload failed')
+      setError(err instanceof Error ? err.message : 'Upload failed')
     } finally {
       setUploading(false)
     }
@@ -119,7 +119,7 @@ export default function MultiImageUpload({ value, onChange, folder, max = 8 }: P
         className="hidden"
         onChange={e => {
           if (e.target.files?.length) handleFiles(e.target.files)
-          e.target.value =''
+          e.target.value = ''
         }}
       />
 

@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useTransition } from'react'
-import { Mail, Download, Send, Users } from'lucide-react'
-import { triggerWeeklyDigest } from'./actions'
+import { useState, useTransition } from 'react'
+import { Mail, Download, Send, Users } from 'lucide-react'
+import { triggerWeeklyDigest } from './actions'
 
 interface Subscriber {
-  id: string
-  email: string
+  id:            string
+  email:         string
   subscribed_at: string
 }
 
@@ -15,18 +15,18 @@ interface Props {
 }
 
 export default function NewsletterClient({ subscribers }: Props) {
-  const [sendResult, setSendResult] = useState<string | null>(null)
-  const [isPending, startTransition] = useTransition()
+  const [sendResult,  setSendResult]  = useState<string | null>(null)
+  const [isPending,   startTransition] = useTransition()
 
   function exportCsv() {
     const rows = ['email,subscribed_at', ...subscribers.map(s =>
-`${s.email},${new Date(s.subscribed_at).toISOString()}`
+      `${s.email},${new Date(s.subscribed_at).toISOString()}`
     )]
-    const blob = new Blob([rows.join('\n')], { type:'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download =`newsletter-subscribers-${new Date().toISOString().slice(0,10)}.csv`
+    const blob = new Blob([rows.join('\n')], { type: 'text/csv' })
+    const url  = URL.createObjectURL(blob)
+    const a    = document.createElement('a')
+    a.href     = url
+    a.download = `newsletter-subscribers-${new Date().toISOString().slice(0,10)}.csv`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -36,11 +36,11 @@ export default function NewsletterClient({ subscribers }: Props) {
     startTransition(async () => {
       const result = await triggerWeeklyDigest()
       if (result.skipped) {
-        setSendResult(`Skipped — ${result.reason ??'no content this week'}`)
+        setSendResult(`Skipped — ${result.reason ?? 'no content this week'}`)
       } else if (result.sent === 0) {
-        setSendResult(result.reason ??'No subscribers to send to')
+        setSendResult(result.reason ?? 'No subscribers to send to')
       } else {
-        setSendResult(` Sent to ${result.sent} subscriber${result.sent === 1 ?'' :'s'}`)
+        setSendResult(`✓ Sent to ${result.sent} subscriber${result.sent === 1 ? '' : 's'}`)
       }
     })
   }
@@ -72,7 +72,7 @@ export default function NewsletterClient({ subscribers }: Props) {
             ) : (
               <Send size={14} />
             )}
-            {isPending ?'Sending…' :"Send this week's digest"}
+            {isPending ? 'Sending…' : "Send this week's digest"}
           </button>
         </div>
       </div>
@@ -118,11 +118,11 @@ export default function NewsletterClient({ subscribers }: Props) {
             </thead>
             <tbody>
               {subscribers.map((sub, i) => (
-                <tr key={sub.id} className={`border-b border-white/5 ${i % 2 === 0 ?'' :'bg-white/[0.02]'}`}>
+                <tr key={sub.id} className={`border-b border-white/5 ${i % 2 === 0 ? '' : 'bg-white/[0.02]'}`}>
                   <td className="px-6 py-3.5 text-sm text-white/80">{sub.email}</td>
                   <td className="px-6 py-3.5 text-sm text-white/40 text-right whitespace-nowrap">
                     {new Date(sub.subscribed_at).toLocaleDateString('en-GB', {
-                      day:'numeric', month:'short', year:'numeric',
+                      day: 'numeric', month: 'short', year: 'numeric',
                     })}
                   </td>
                 </tr>

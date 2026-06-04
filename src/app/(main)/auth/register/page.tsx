@@ -1,24 +1,24 @@
 'use client'
 
-import { Suspense, useState } from'react'
-import Link from'next/link'
-import { useRouter } from'next/navigation'
-import { createClient } from'@/lib/supabase/client'
-import { Loader2, Mail, Lock, User, Globe, GraduationCap } from'lucide-react'
-import { NATIONALITIES } from'@/lib/constants/nationalities'
-import { saveRegistrationProfile } from'@/app/actions/profile'
+import { Suspense, useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+import { Loader2, Mail, Lock, User, Globe, GraduationCap } from 'lucide-react'
+import { NATIONALITIES } from '@/lib/constants/nationalities'
+import { saveRegistrationProfile } from '@/app/actions/profile'
 
 function RegisterForm() {
   const router = useRouter()
 
-  const [fullName, setFullName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [fullName,    setFullName]    = useState('')
+  const [email,       setEmail]       = useState('')
+  const [password,    setPassword]    = useState('')
   const [nationality, setNationality] = useState('')
-  const [university, setUniversity] = useState('')
-  const [agreed, setAgreed] = useState(false)
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [university,  setUniversity]  = useState('')
+  const [agreed,      setAgreed]    = useState(false)
+  const [error,       setError]     = useState('')
+  const [isLoading,   setIsLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -128,7 +128,7 @@ function RegisterForm() {
               >
                 <option value="" disabled>Select your nationality</option>
                 {NATIONALITIES.map(n => (
-                  <option key={n.value} value={n.value} style={{ background:'#0D0D0D' }}>{n.label}</option>
+                  <option key={n.value} value={n.value} style={{ background: '#0D0D0D' }}>{n.label}</option>
                 ))}
               </select>
             </div>
@@ -155,7 +155,7 @@ function RegisterForm() {
                   className="sr-only"
                 />
                 <div className={`w-5 h-5 rounded-md border transition-all duration-150 flex items-center justify-center ${
-                  agreed ?'bg-brand-primary border-brand-primary' :'border-white/20 bg-white/5 group-hover:border-white/40'
+                  agreed ? 'bg-brand-primary border-brand-primary' : 'border-white/20 bg-white/5 group-hover:border-white/40'
                 }`}>
                   {agreed && (
                     <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
@@ -165,9 +165,9 @@ function RegisterForm() {
                 </div>
               </div>
               <span className="text-white/50 text-xs leading-relaxed">
-                I agree to the{''}
+                I agree to the{' '}
                 <span className="text-brand-primary">Terms of Service</span>
-                {''}and{''}
+                {' '}and{' '}
                 <span className="text-brand-primary">Privacy Policy</span>
               </span>
             </label>
@@ -181,13 +181,13 @@ function RegisterForm() {
               disabled={isLoading}
               className="w-full py-3.5 mt-1 rounded-xl bg-brand-primary hover:brightness-110 active:brightness-90 text-white font-semibold text-sm transition-all duration-200 disabled:opacity-70 flex items-center justify-center gap-2"
             >
-              {isLoading ? <><Loader2 size={15} className="animate-spin" /> Creating account…</> :'Create Account'}
+              {isLoading ? <><Loader2 size={15} className="animate-spin" /> Creating account…</> : 'Create Account'}
             </button>
           </form>
         </div>
 
         <p className="text-center text-white/40 text-sm mt-6">
-          Already have an account?{''}
+          Already have an account?{' '}
           <Link href="/auth/login" className="text-brand-primary hover:brightness-110 transition-colors font-medium">
             Sign in
           </Link>

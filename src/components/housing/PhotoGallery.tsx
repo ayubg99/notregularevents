@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from'react'
+import { useState, useEffect, useCallback } from 'react'
 
 export default function PhotoGallery({ photos, title }: { photos: string[]; title: string }) {
-  const [active, setActive] = useState(0)
+  const [active,   setActive]   = useState(0)
   const [lightbox, setLightbox] = useState(false)
   const [lightboxI, setLightboxI] = useState(0)
 
@@ -16,9 +16,9 @@ export default function PhotoGallery({ photos, title }: { photos: string[]; titl
   useEffect(() => {
     if (!lightbox) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key ==='ArrowLeft') prev()
-      if (e.key ==='ArrowRight') next()
-      if (e.key ==='Escape') closeLightbox()
+      if (e.key === 'ArrowLeft')  prev()
+      if (e.key === 'ArrowRight') next()
+      if (e.key === 'Escape')     closeLightbox()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -55,7 +55,7 @@ export default function PhotoGallery({ photos, title }: { photos: string[]; titl
                 key={url}
                 onClick={() => setActive(i)}
                 className="h-16 w-16 flex-shrink-0 rounded-xl overflow-hidden transition-opacity"
-                style={{ border: i === active ?'2px solid #4ECDC4' :'2px solid transparent', opacity: i === active ? 1 : 0.55 }}
+                style={{ border: i === active ? '2px solid #4ECDC4' : '2px solid transparent', opacity: i === active ? 1 : 0.55 }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={url} alt={`${title} ${i + 1}`} className="w-full h-full object-cover" />
@@ -70,15 +70,15 @@ export default function PhotoGallery({ photos, title }: { photos: string[]; titl
         <div
           onClick={closeLightbox}
           className="fixed inset-0 z-50 flex items-center justify-center"
-          style={{ background:'rgba(0,0,0,0.92)', backdropFilter:'blur(8px)' }}
+          style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(8px)' }}
         >
           {/* Close */}
           <button
             onClick={closeLightbox}
             className="absolute top-5 right-5 text-white/70 hover:text-white w-10 h-10 rounded-full flex items-center justify-center text-xl"
-            style={{ background:'rgba(255,255,255,0.1)' }}
+            style={{ background: 'rgba(255,255,255,0.1)' }}
           >
-            
+            ✕
           </button>
 
           {/* Counter */}
@@ -91,7 +91,7 @@ export default function PhotoGallery({ photos, title }: { photos: string[]; titl
             <button
               onClick={e => { e.stopPropagation(); prev() }}
               className="absolute left-5 text-white text-2xl w-12 h-12 rounded-full flex items-center justify-center"
-              style={{ background:'rgba(255,255,255,0.1)' }}
+              style={{ background: 'rgba(255,255,255,0.1)' }}
             >
               ‹
             </button>
@@ -112,7 +112,7 @@ export default function PhotoGallery({ photos, title }: { photos: string[]; titl
             <button
               onClick={e => { e.stopPropagation(); next() }}
               className="absolute right-5 text-white text-2xl w-12 h-12 rounded-full flex items-center justify-center"
-              style={{ background:'rgba(255,255,255,0.1)' }}
+              style={{ background: 'rgba(255,255,255,0.1)' }}
             >
               ›
             </button>

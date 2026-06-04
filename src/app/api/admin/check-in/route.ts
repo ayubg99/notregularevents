@@ -1,17 +1,17 @@
-import { NextRequest, NextResponse } from'next/server'
-import { getAdminClient } from'@/lib/supabase/admin'
+import { NextRequest, NextResponse } from 'next/server'
+import { getAdminClient } from '@/lib/supabase/admin'
 
 export async function POST(req: NextRequest) {
-  const { bookingId, type } = await req.json() as { bookingId: string; type:'event' |'trip' }
+  const { bookingId, type } = await req.json() as { bookingId: string; type: 'event' | 'trip' }
 
   if (!bookingId || !type) {
-    return NextResponse.json({ error:'Missing required fields' }, { status: 400 })
+    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
 
-  const admin = getAdminClient()
+  const admin       = getAdminClient()
   const checked_in_at = new Date().toISOString()
 
-  if (type ==='event') {
+  if (type === 'event') {
     const { error } = await admin
       .from('event_tickets')
       .update({ checked_in: true, checked_in_at })

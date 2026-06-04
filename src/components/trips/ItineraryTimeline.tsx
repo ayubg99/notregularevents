@@ -1,4 +1,4 @@
-import type { ItineraryDay } from'@/types/database'
+import type { ItineraryDay } from '@/types/database'
 
 interface Props {
   itinerary: ItineraryDay[] | null

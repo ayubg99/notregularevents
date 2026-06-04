@@ -1,8 +1,8 @@
-import { redirect } from'next/navigation'
-import Link from'next/link'
-import { stripe } from'@/lib/stripe'
+import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import { stripe } from '@/lib/stripe'
 
-export const dynamic ='force-dynamic'
+export const dynamic = 'force-dynamic'
 
 export default async function ContactSuccessPage({
   searchParams,
@@ -30,16 +30,16 @@ export default async function ContactSuccessPage({
         {/* Pending banner */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-full bg-orange-400/20 flex items-center justify-center mx-auto mb-4 text-3xl">
-            
+            ⏳
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">Booking Pending!</h1>
-          <p className="text-white/50">{room_title}{neighborhood ?` · ${neighborhood}` :''}</p>
+          <p className="text-white/50">{room_title}{neighborhood ? ` · ${neighborhood}` : ''}</p>
         </div>
 
         {/* Payment confirmed */}
         <div className="glass-card rounded-2xl p-5 mb-4 flex items-start gap-4">
           <div className="w-8 h-8 rounded-full bg-green-400/20 flex items-center justify-center flex-shrink-0 text-base">
-            
+            ✅
           </div>
           <div>
             <p className="text-white font-semibold text-sm mb-0.5">Payment of €50 confirmed</p>
@@ -49,13 +49,13 @@ export default async function ContactSuccessPage({
 
         {/* What happens next */}
         <div className="glass-card rounded-2xl p-6 mb-4">
-          <p className="text-white font-semibold mb-4"> What happens next?</p>
+          <p className="text-white font-semibold mb-4">📋 What happens next?</p>
           <ol className="space-y-4">
             {[
-              { icon:'', text:'The landlord has been notified and will confirm your booking within 48 hours.' },
-              { icon:'', text:'If confirmed, you\'ll receive the landlord\'s full contact details by email.' },
-              { icon:'', text:'Contact the landlord to schedule a viewing and finalise move-in details.' },
-              { icon:'', text:'Sign the rental contract and pay rent + deposit directly to the landlord.' },
+              { icon: '📧', text: 'The landlord has been notified and will confirm your booking within 48 hours.' },
+              { icon: '✅', text: 'If confirmed, you\'ll receive the landlord\'s full contact details by email.' },
+              { icon: '📅', text: 'Contact the landlord to schedule a viewing and finalise move-in details.' },
+              { icon: '📝', text: 'Sign the rental contract and pay rent + deposit directly to the landlord.' },
             ].map((step, i) => (
               <li key={i} className="flex gap-3 text-sm">
                 <span className="w-6 h-6 rounded-full bg-white/10 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5 text-white/60">
@@ -72,7 +72,7 @@ export default async function ContactSuccessPage({
 
         {/* Guarantee card */}
         <div className="rounded-2xl p-5 mb-4 border border-green-400/20 bg-green-400/5">
-          <p className="text-green-400 font-semibold text-sm mb-1"> Money-back guarantee</p>
+          <p className="text-green-400 font-semibold text-sm mb-1">🛡️ Money-back guarantee</p>
           <p className="text-white/60 text-sm">
             If the landlord doesn&apos;t confirm within 48 hours — or rejects your booking — you get a
             full automatic refund of €50. No questions asked.
@@ -81,7 +81,7 @@ export default async function ContactSuccessPage({
 
         {/* Membership upsell */}
         <div className="rounded-2xl p-5 mb-4 border border-brand-accent/20 bg-brand-accent/5">
-          <p className="text-brand-accent font-bold text-base mb-1"> Welcome to Erasmus Life!</p>
+          <p className="text-brand-accent font-bold text-base mb-1">🎉 Welcome to Erasmus Life!</p>
           <p className="text-white/60 text-sm mb-4">
             Join our membership for €9.99/month and save 10% on all events and trips.
           </p>

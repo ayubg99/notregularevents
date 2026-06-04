@@ -1,9 +1,9 @@
-import { BarChart2, Ticket, TrendingUp, DollarSign, Calendar, MapPin, Users } from'lucide-react'
-import { getAdminClient } from'@/lib/supabase/admin'
-import StatsCard from'@/components/admin/StatsCard'
-import RevenueChart, { type MonthData } from'@/components/admin/RevenueChart'
+import { BarChart2, Ticket, TrendingUp, DollarSign, Calendar, MapPin, Users } from 'lucide-react'
+import { getAdminClient } from '@/lib/supabase/admin'
+import StatsCard from '@/components/admin/StatsCard'
+import RevenueChart, { type MonthData } from '@/components/admin/RevenueChart'
 
-export const dynamic ='force-dynamic'
+export const dynamic = 'force-dynamic'
 
 const MEMBERSHIP_PRICE: Record<string, number> = {
   basic: 9.99,
@@ -57,47 +57,47 @@ export default async function AnalyticsPage() {
     admin
       .from('event_tickets')
       .select('amount_paid, created_at, status, events(title, category)')
-      .in('status', ['active','used'])
+      .in('status', ['active', 'used'])
       .order('created_at', { ascending: true }),
     admin
       .from('trip_bookings')
       .select('amount_paid, tier, created_at, status, trips(title, destination)')
-      .eq('status','confirmed')
+      .eq('status', 'confirmed')
       .order('created_at', { ascending: true }),
     admin
       .from('memberships')
       .select('plan, status, created_at, start_date')
-      .eq('status','active'),
+      .eq('status', 'active'),
   ])
 
   const eb = (rawEventBookings as unknown as EventTicketRow[] | null) ?? []
   const tb = (rawTripBookings as unknown as TripBookingRow[] | null) ?? []
   const mb = (rawMemberships as unknown as MembershipRow[] | null) ?? []
 
-  // Combined revenue entries 
-  type RevenueEntry = { amount: number; type:'Event' |'Trip' |'Membership'; title: string; created_at: string }
+  // ── Combined revenue entries ──
+  type RevenueEntry = { amount: number; type: 'Event' | 'Trip' | 'Membership'; title: string; created_at: string }
   const allRevenue: RevenueEntry[] = [
     ...eb.map(b => ({
       amount: b.amount_paid ?? 0,
-      type:'Event' as const,
-      title: b.events?.title ??'Unknown event',
+      type: 'Event' as const,
+      title: b.events?.title ?? 'Unknown event',
       created_at: b.created_at,
     })),
     ...tb.map(b => ({
       amount: b.amount_paid ?? 0,
-      type:'Trip' as const,
-      title: b.trips?.title ??'Unknown trip',
+      type: 'Trip' as const,
+      title: b.trips?.title ?? 'Unknown trip',
       created_at: b.created_at,
     })),
     ...mb.map(m => ({
       amount: getMembershipPrice(m.plan),
-      type:'Membership' as const,
-      title:`${m.plan} membership`,
+      type: 'Membership' as const,
+      title: `${m.plan} membership`,
       created_at: m.created_at,
     })),
   ]
 
-  // Top-level stats 
+  // ── Top-level stats ──
   const totalRevenue = allRevenue.reduce((s, r) => s + r.amount, 0)
 
   const now = new Date()
@@ -110,34 +110,34 @@ export default async function AnalyticsPage() {
     .reduce((s, r) => s + r.amount, 0)
   const growthPercent = lastMonthRevenue > 0
     ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue * 100).toFixed(1)
-    : thisMonthRevenue > 0 ?'100' :'0'
+    : thisMonthRevenue > 0 ? '100' : '0'
 
   const eventRevenue = eb.reduce((s, b) => s + (b.amount_paid ?? 0), 0)
-  const tripRevenue = tb.reduce((s, b) => s + (b.amount_paid ?? 0), 0)
+  const tripRevenue  = tb.reduce((s, b) => s + (b.amount_paid ?? 0), 0)
   const membershipRevenue = mb.reduce((s, m) => s + getMembershipPrice(m.plan), 0)
 
   const totalBookings = eb.length + tb.length
   const avgOrderValue = totalBookings > 0 ? (totalRevenue / totalBookings) : 0
 
-  // Monthly chart data (last 6 months) 
+  // ── Monthly chart data (last 6 months) ──
   const monthlyData: MonthData[] = Array.from({ length: 6 }, (_, i) => {
     const d = new Date(now.getFullYear(), now.getMonth() - 5 + i)
     const y = d.getFullYear()
     const m = d.getMonth()
-    const label = d.toLocaleDateString('en-IE', { month:'short', year:'2-digit' })
+    const label = d.toLocaleDateString('en-IE', { month: 'short', year: '2-digit' })
     return {
       month: label,
-      events: eb.filter(b => sameMonth(b.created_at, y, m)).reduce((s, b) => s + (b.amount_paid ?? 0), 0),
-      trips: tb.filter(b => sameMonth(b.created_at, y, m)).reduce((s, b) => s + (b.amount_paid ?? 0), 0),
+      events:      eb.filter(b => sameMonth(b.created_at, y, m)).reduce((s, b) => s + (b.amount_paid ?? 0), 0),
+      trips:       tb.filter(b => sameMonth(b.created_at, y, m)).reduce((s, b) => s + (b.amount_paid ?? 0), 0),
       memberships: mb.filter(mem => sameMonth(mem.created_at, y, m)).reduce((s, mem) => s + getMembershipPrice(mem.plan), 0),
     }
   })
 
-  // Top events 
+  // ── Top events ──
   const eventMap: Record<string, { bookings: number; revenue: number; category: string }> = {}
   for (const b of eb) {
-    const key = b.events?.title ??'Unknown'
-    if (!eventMap[key]) eventMap[key] = { bookings: 0, revenue: 0, category: b.events?.category ??'' }
+    const key = b.events?.title ?? 'Unknown'
+    if (!eventMap[key]) eventMap[key] = { bookings: 0, revenue: 0, category: b.events?.category ?? '' }
     eventMap[key].bookings++
     eventMap[key].revenue += b.amount_paid ?? 0
   }
@@ -145,11 +145,11 @@ export default async function AnalyticsPage() {
     .sort((a, b) => b[1].revenue - a[1].revenue)
     .slice(0, 5)
 
-  // Top trips 
+  // ── Top trips ──
   const tripMap: Record<string, { bookings: number; revenue: number; destination: string }> = {}
   for (const b of tb) {
-    const key = b.trips?.title ??'Unknown'
-    if (!tripMap[key]) tripMap[key] = { bookings: 0, revenue: 0, destination: b.trips?.destination ??'' }
+    const key = b.trips?.title ?? 'Unknown'
+    if (!tripMap[key]) tripMap[key] = { bookings: 0, revenue: 0, destination: b.trips?.destination ?? '' }
     tripMap[key].bookings++
     tripMap[key].revenue += b.amount_paid ?? 0
   }
@@ -157,21 +157,21 @@ export default async function AnalyticsPage() {
     .sort((a, b) => b[1].revenue - a[1].revenue)
     .slice(0, 5)
 
-  // Membership breakdown 
+  // ── Membership breakdown ──
   const mCount = { basic: 0, premium: 0, vip: 0 }
   for (const m of mb) {
     if (m.plan in mCount) mCount[m.plan as keyof typeof mCount]++
   }
 
-  // Recent transactions (last 10) 
+  // ── Recent transactions (last 10) ──
   const recentTx = [...allRevenue]
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
     .slice(0, 10)
 
   const badgeColor = (type: string) => {
-    if (type ==='Event') return'bg-brand-primary/20 text-brand-primary'
-    if (type ==='Trip') return'bg-teal-500/20 text-teal-400'
-    return'bg-orange-500/20 text-orange-400'
+    if (type === 'Event') return 'bg-brand-primary/20 text-brand-primary'
+    if (type === 'Trip')  return 'bg-teal-500/20 text-teal-400'
+    return 'bg-orange-500/20 text-orange-400'
   }
 
   return (
@@ -193,7 +193,7 @@ export default async function AnalyticsPage() {
         <StatsCard
           label="This Month"
           value={`€${fmt(thisMonthRevenue)}`}
-          delta={`${Number(growthPercent) >= 0 ?'+' :''}${growthPercent}% vs last month`}
+          delta={`${Number(growthPercent) >= 0 ? '+' : ''}${growthPercent}% vs last month`}
           icon={<TrendingUp size={18} />}
           color="bg-brand-primary/15"
         />
@@ -214,9 +214,9 @@ export default async function AnalyticsPage() {
       {/* B — Revenue by type */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
-          { label:'Events', revenue: eventRevenue, sub:`${eb.length} bookings`, icon: <Calendar size={16} />, color:'text-brand-primary' },
-          { label:'Trips', revenue: tripRevenue, sub:`${tb.length} bookings`, icon: <MapPin size={16} />, color:'text-teal-400' },
-          { label:'Memberships', revenue: membershipRevenue, sub:`${mb.length} active`, icon: <Users size={16} />, color:'text-orange-400' },
+          { label: 'Events', revenue: eventRevenue, sub: `${eb.length} bookings`, icon: <Calendar size={16} />, color: 'text-brand-primary' },
+          { label: 'Trips',  revenue: tripRevenue,  sub: `${tb.length} bookings`, icon: <MapPin size={16} />,   color: 'text-teal-400'     },
+          { label: 'Memberships', revenue: membershipRevenue, sub: `${mb.length} active`, icon: <Users size={16} />, color: 'text-orange-400' },
         ].map(({ label, revenue, sub, icon, color }) => (
           <div key={label} className="glass-card rounded-2xl p-6 flex items-start gap-4">
             <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
@@ -311,9 +311,9 @@ export default async function AnalyticsPage() {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {([
-            { plan:'basic', price: 9.99, label:'Basic' },
-            { plan:'premium', price: 24.99, label:'Premium' },
-            { plan:'vip', price: 39.99, label:'VIP' },
+            { plan: 'basic',   price: 9.99,  label: 'Basic' },
+            { plan: 'premium', price: 24.99, label: 'Premium' },
+            { plan: 'vip',     price: 39.99, label: 'VIP' },
           ] as const).map(({ plan, price, label }) => (
             <div key={plan} className="bg-white/4 rounded-xl p-4">
               <p className="text-white/40 text-xs uppercase tracking-wider font-medium mb-2">{label}</p>
@@ -344,7 +344,7 @@ export default async function AnalyticsPage() {
               <p className="flex-1 text-white text-xs font-medium truncate">{tx.title}</p>
               <span className="text-white font-semibold text-xs flex-shrink-0">€{fmt(tx.amount)}</span>
               <span className="text-white/30 text-xs flex-shrink-0 tabular-nums">
-                {new Date(tx.created_at).toLocaleDateString('en-IE', { day:'numeric', month:'short' })}
+                {new Date(tx.created_at).toLocaleDateString('en-IE', { day: 'numeric', month: 'short' })}
               </span>
             </div>
           ))}

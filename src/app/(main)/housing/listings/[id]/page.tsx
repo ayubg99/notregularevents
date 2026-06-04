@@ -1,41 +1,41 @@
-export const dynamic ='force-dynamic'
+export const dynamic = 'force-dynamic'
 
-import { notFound } from'next/navigation'
-import Link from'next/link'
-import { createClient } from'@/lib/supabase/server'
-import { getAdminClient } from'@/lib/supabase/admin'
-import PhotoGallery from'@/components/housing/PhotoGallery'
-import ContactSection from'@/components/housing/ContactSection'
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
+import { getAdminClient } from '@/lib/supabase/admin'
+import PhotoGallery from '@/components/housing/PhotoGallery'
+import ContactSection from '@/components/housing/ContactSection'
 
 const NATIONALITY_FLAGS: Record<string, string> = {
-  Spanish:'', French:'', German:'', Italian:'',
-  Portuguese:'', Dutch:'', Polish:'', Romanian:'',
-  Greek:'', American:'', British:'', Turkish:'',
-  Moroccan:'', Brazilian:'', Mexican:'', Chinese:'',
-  Japanese:'', Korean:'', Indian:'', Australian:'',
+  Spanish: '🇪🇸', French: '🇫🇷', German: '🇩🇪', Italian: '🇮🇹',
+  Portuguese: '🇵🇹', Dutch: '🇳🇱', Polish: '🇵🇱', Romanian: '🇷🇴',
+  Greek: '🇬🇷', American: '🇺🇸', British: '🇬🇧', Turkish: '🇹🇷',
+  Moroccan: '🇲🇦', Brazilian: '🇧🇷', Mexican: '🇲🇽', Chinese: '🇨🇳',
+  Japanese: '🇯🇵', Korean: '🇰🇷', Indian: '🇮🇳', Australian: '🇦🇺',
 }
 
 const AMENITY_DISPLAY: Record<string, string> = {
-  wifi:' WiFi',
-  ac:' Air conditioning',
-  washing:' Washing machine',
-  balcony:' Balcony',
-  bills:' Bills included',
-  furnished:' Furnished',
-  private_bath:' Private bathroom',
-  near_uni:' Near university',
-  parking:' Parking',
+  wifi:         '📶 WiFi',
+  ac:           '❄️ Air conditioning',
+  washing:      '🧺 Washing machine',
+  balcony:      '🌿 Balcony',
+  bills:        '💡 Bills included',
+  furnished:    '🪑 Furnished',
+  private_bath: '🚿 Private bathroom',
+  near_uni:     '🏫 Near university',
+  parking:      '🅿️ Parking',
 }
 
 const ROOM_TYPE_LABELS: Record<string, string> = {
-  private_room:'Private Room',
-  shared_room:'Shared Room',
-  studio:'Studio',
-  full_apartment:'Full Apartment',
+  private_room:   'Private Room',
+  shared_room:    'Shared Room',
+  studio:         'Studio',
+  full_apartment: 'Full Apartment',
 }
 
 const GENDER_LABELS: Record<string, string> = {
-  male:'Male only', female:'Female only', mixed:'Mixed', any:'Any gender',
+  male: 'Male only', female: 'Female only', mixed: 'Mixed', any: 'Any gender',
 }
 
 export default async function ListingDetailPage({
@@ -52,7 +52,7 @@ export default async function ListingDetailPage({
       .from('housing_listings')
       .select('*')
       .eq('id', id)
-      .eq('status','active')
+      .eq('status', 'active')
       .single(),
     supabase.auth.getUser(),
   ])
@@ -65,7 +65,7 @@ export default async function ListingDetailPage({
       .from('memberships')
       .select('status, end_date')
       .eq('user_id', user.id)
-      .eq('status','active')
+      .eq('status', 'active')
       .maybeSingle()
     hasMembership =
       !!membership &&
@@ -77,8 +77,8 @@ export default async function ListingDetailPage({
     .update({ views: listing.views + 1 })
     .eq('id', id)
 
-  const isRoom = listing.type ==='room_available'
-  const firstName = (name: string) => name.split('')[0]
+  const isRoom = listing.type === 'room_available'
+  const firstName = (name: string) => name.split(' ')[0]
 
   return (
     <main className="min-h-screen pt-24 pb-20 px-4">
@@ -93,7 +93,7 @@ export default async function ListingDetailPage({
 
         <div className="flex flex-col lg:flex-row gap-8">
 
-          {/* Left column */}
+          {/* ── Left column ───────────────────────── */}
           <div className="flex-1 min-w-0">
 
             {/* Photo gallery */}
@@ -104,10 +104,10 @@ export default async function ListingDetailPage({
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
                   isRoom
-                    ?'bg-teal-400/90 text-brand-dark'
-                    :'bg-orange-400/90 text-brand-dark'
+                    ? 'bg-teal-400/90 text-brand-dark'
+                    : 'bg-orange-400/90 text-brand-dark'
                 }`}>
-                  {isRoom ?' Room Available' :' Looking for Room'}
+                  {isRoom ? '🏠 Room Available' : '👤 Looking for Room'}
                 </span>
                 {listing.room_type && (
                   <span className="text-xs text-white/50 bg-white/5 border border-white/10 px-2.5 py-1 rounded-full">
@@ -118,7 +118,7 @@ export default async function ListingDetailPage({
               <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">{listing.title}</h1>
               {listing.neighborhood && (
                 <p className="text-white/50 flex items-center gap-1">
-                  <span></span> {listing.neighborhood}
+                  <span>📍</span> {listing.neighborhood}
                 </p>
               )}
             </div>
@@ -130,7 +130,7 @@ export default async function ListingDetailPage({
                   <p className="text-white/40 text-xs mb-1">Available from</p>
                   <p className="text-white text-sm font-medium">
                     {new Date(listing.available_from).toLocaleDateString('en-GB', {
-                      day:'numeric', month:'short', year:'numeric',
+                      day: 'numeric', month: 'short', year: 'numeric',
                     })}
                   </p>
                 </div>
@@ -140,7 +140,7 @@ export default async function ListingDetailPage({
                   <p className="text-white/40 text-xs mb-1">Available until</p>
                   <p className="text-white text-sm font-medium">
                     {new Date(listing.available_until).toLocaleDateString('en-GB', {
-                      day:'numeric', month:'short', year:'numeric',
+                      day: 'numeric', month: 'short', year: 'numeric',
                     })}
                   </p>
                 </div>
@@ -157,7 +157,7 @@ export default async function ListingDetailPage({
                 <div>
                   <p className="text-white/40 text-xs mb-1">Flatmates</p>
                   <p className="text-white text-sm font-medium">
-                    {listing.flatmates_count} roommate{listing.flatmates_count !== 1 ?'s' :''}
+                    {listing.flatmates_count} roommate{listing.flatmates_count !== 1 ? 's' : ''}
                   </p>
                 </div>
               )}
@@ -167,7 +167,7 @@ export default async function ListingDetailPage({
                   <p className="text-sm">
                     {listing.flatmates_nationalities.map(n => (
                       <span key={n} className="mr-1" title={n}>
-                        {NATIONALITY_FLAGS[n] ??''} {n}
+                        {NATIONALITY_FLAGS[n] ?? '🌍'} {n}
                       </span>
                     ))}
                   </p>
@@ -208,9 +208,9 @@ export default async function ListingDetailPage({
                   <p className="text-white font-semibold">{firstName(listing.contact_name)}</p>
                   <p className="text-white/50 text-xs">
                     {[
-                      listing.nationality &&`${NATIONALITY_FLAGS[listing.nationality] ??''} ${listing.nationality}`,
+                      listing.nationality && `${NATIONALITY_FLAGS[listing.nationality] ?? ''} ${listing.nationality}`,
                       listing.university,
-                    ].filter(Boolean).join(' ·')}
+                    ].filter(Boolean).join(' · ')}
                   </p>
                 </div>
                 <span className="ml-auto text-white/30 text-xs">{listing.views} views</span>
@@ -223,10 +223,10 @@ export default async function ListingDetailPage({
                 <h2 className="text-white font-semibold mb-4">What happens next?</h2>
                 <ol className="space-y-3">
                   {[
-                    ['Join membership','Get access to contact details for all student listings'],
-                    ['Contact the student','Reach out via WhatsApp or email directly'],
-                    ['Arrange a viewing','Visit the room and meet your potential flatmates'],
-                    ['Sign the contract','Agree terms and sign the rental contract'],
+                    ['Join membership', 'Get access to contact details for all student listings'],
+                    ['Contact the student', 'Reach out via WhatsApp or email directly'],
+                    ['Arrange a viewing', 'Visit the room and meet your potential flatmates'],
+                    ['Sign the contract', 'Agree terms and sign the rental contract'],
                   ].map(([step, desc], i) => (
                     <li key={i} className="flex gap-4">
                       <span className="w-7 h-7 rounded-full bg-teal-400/20 text-teal-400 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -243,7 +243,7 @@ export default async function ListingDetailPage({
             )}
           </div>
 
-          {/* Right column (sticky sidebar) */}
+          {/* ── Right column (sticky sidebar) ──── */}
           <div className="w-full lg:w-80 xl:w-96 flex-shrink-0">
             <div className="sticky top-28 space-y-4">
 
@@ -262,12 +262,12 @@ export default async function ListingDetailPage({
                       <span className="text-white/50">Available from</span>
                       <span className="text-white font-medium">
                         {new Date(listing.available_from).toLocaleDateString('en-GB', {
-                          day:'numeric', month:'short',
+                          day: 'numeric', month: 'short',
                         })}
                       </span>
                     </div>
                   )}
-                  {listing.gender_preference && listing.gender_preference !=='any' && (
+                  {listing.gender_preference && listing.gender_preference !== 'any' && (
                     <div className="flex justify-between text-sm">
                       <span className="text-white/50">Gender</span>
                       <span className="text-white font-medium capitalize">{listing.gender_preference}</span>

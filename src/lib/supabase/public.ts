@@ -1,5 +1,5 @@
-import { createClient } from'@supabase/supabase-js'
-import type { Database } from'@/types/database'
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/database'
 
 // Cookie-free client for public/anonymous reads in static server components
 export function getPublicClient() {

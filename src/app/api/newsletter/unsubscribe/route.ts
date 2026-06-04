@@ -1,13 +1,13 @@
-import { NextRequest } from'next/server'
-import { getAdminClient } from'@/lib/supabase/admin'
+import { NextRequest } from 'next/server'
+import { getAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get('token')
 
   if (!token) {
-    return new Response(unsubscribePage('Invalid link','This unsubscribe link is missing a token.'), {
+    return new Response(unsubscribePage('Invalid link', 'This unsubscribe link is missing a token.'), {
       status: 400,
-      headers: {'Content-Type':'text/html' },
+      headers: { 'Content-Type': 'text/html' },
     })
   }
 
@@ -20,21 +20,21 @@ export async function GET(req: NextRequest) {
 
   if (error) {
     console.error('[newsletter] unsubscribe error:', error)
-    return new Response(unsubscribePage('Something went wrong','Please try again or contact us at info@erasmuslifevalencia.com.'), {
+    return new Response(unsubscribePage('Something went wrong', 'Please try again or contact us at info@erasmuslifevalencia.com.'), {
       status: 500,
-      headers: {'Content-Type':'text/html' },
+      headers: { 'Content-Type': 'text/html' },
     })
   }
 
-  return new Response(unsubscribePage('Unsubscribed',"You've been removed from the Erasmus Life newsletter. No more emails from us!"), {
+  return new Response(unsubscribePage('Unsubscribed', "You've been removed from the Erasmus Life newsletter. No more emails from us!"), {
     status: 200,
-    headers: {'Content-Type':'text/html' },
+    headers: { 'Content-Type': 'text/html' },
   })
 }
 
 function unsubscribePage(title: string, message: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ??'https://erasmuslifevalencia.com'
-  return`<!DOCTYPE html>
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />

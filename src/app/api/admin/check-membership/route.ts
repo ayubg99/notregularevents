@@ -1,18 +1,18 @@
-import { NextRequest, NextResponse } from'next/server'
-import { createClient } from'@supabase/supabase-js'
-import type { Database } from'@/types/database'
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/database'
 
 // GET /api/admin/check-membership?user_id=xxx
 // Diagnostic endpoint — requires service role key in X-Admin-Secret header.
 export async function GET(request: NextRequest) {
   const secret = request.headers.get('x-admin-secret')
   if (!secret || secret !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    return NextResponse.json({ error:'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   const userId = request.nextUrl.searchParams.get('user_id')
   if (!userId) {
-    return NextResponse.json({ error:'user_id query param is required' }, { status: 400 })
+    return NextResponse.json({ error: 'user_id query param is required' }, { status: 400 })
   }
 
   const admin = createClient<Database>(
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     profile,
     errors: {
       membership: memErr?.message ?? null,
-      profile: profErr?.message ?? null,
+      profile:    profErr?.message ?? null,
     },
   })
 }

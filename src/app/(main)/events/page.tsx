@@ -1,19 +1,19 @@
-import type { Metadata } from'next'
-import EventsClient from'@/components/events/EventsClient'
+import type { Metadata } from 'next'
+import EventsClient from '@/components/events/EventsClient'
 
 export const metadata: Metadata = {
-  title:'Events | Erasmus Life Valencia',
-  description:'Browse and book events for internationals in Valencia. Parties, networking, language exchange, food tours, hiking, yoga and more.',
+  title:       'Events | Erasmus Life Valencia',
+  description: 'Browse and book events for internationals in Valencia. Parties, networking, language exchange, food tours, hiking, yoga and more.',
   openGraph: {
-    title:'Events | Erasmus Life Valencia',
-    description:'Browse and book events for internationals in Valencia — parties, networking, cultural nights and more.',
-    images: [{ url:'/og-default.png', width: 1200, height: 630 }],
-    type:'website',
+    title:       'Events | Erasmus Life Valencia',
+    description: 'Browse and book events for internationals in Valencia — parties, networking, cultural nights and more.',
+    images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
+    type:        'website',
   },
   twitter: {
-    card:'summary_large_image',
-    title:'Events | Erasmus Life Valencia',
-    description:'Browse and book events for internationals in Valencia — parties, networking, cultural nights and more.',
+    card:        'summary_large_image',
+    title:       'Events | Erasmus Life Valencia',
+    description: 'Browse and book events for internationals in Valencia — parties, networking, cultural nights and more.',
   },
 }
 

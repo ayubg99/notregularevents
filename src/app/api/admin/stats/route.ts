@@ -1,6 +1,6 @@
-import { NextResponse } from'next/server'
-import { createClient } from'@/lib/supabase/server'
-import { getAdminClient } from'@/lib/supabase/admin'
+import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { getAdminClient } from '@/lib/supabase/admin'
 
 function groupByDate(rows: { created_at: string }[]): { date: string; bookings: number }[] {
   const counts: Record<string, number> = {}
@@ -19,15 +19,15 @@ function groupByDate(rows: { created_at: string }[]): { date: string; bookings: 
 export async function GET() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error:'Unauthorized' }, { status: 401 })
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { data: userRow } = await supabase.from('users').select('role').eq('id', user.id).single()
-  if (userRow?.role !=='admin') return NextResponse.json({ error:'Forbidden' }, { status: 403 })
+  if (userRow?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const admin = getAdminClient()
+  const admin     = getAdminClient()
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-  const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
-  const now = new Date().toISOString()
+  const startOfMonth  = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
+  const now           = new Date().toISOString()
 
   const [
     { count: totalEventTickets },
@@ -37,10 +37,10 @@ export async function GET() {
     { data: recentTickets },
     { data: recentTripBookings },
   ] = await Promise.all([
-    admin.from('event_tickets').select('*', { count:'exact', head: true }),
-    admin.from('trip_bookings').select('*', { count:'exact', head: true }),
-    admin.from('memberships').select('*', { count:'exact', head: true }).eq('status','active'),
-    admin.from('events').select('*', { count:'exact', head: true }).eq('status','published').gt('date', now),
+    admin.from('event_tickets').select('*', { count: 'exact', head: true }),
+    admin.from('trip_bookings').select('*', { count: 'exact', head: true }),
+    admin.from('memberships').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+    admin.from('events').select('*', { count: 'exact', head: true }).eq('status', 'published').gt('date', now),
     admin.from('event_tickets').select('created_at').gte('created_at', thirtyDaysAgo),
     admin.from('trip_bookings').select('created_at').gte('created_at', thirtyDaysAgo),
   ])
@@ -53,11 +53,11 @@ export async function GET() {
     admin.from('event_tickets')
       .select('events(price)')
       .gte('created_at', startOfMonth)
-      .not('status','eq','refunded'),
+      .not('status', 'eq', 'refunded'),
     admin.from('trip_bookings')
       .select('tier, trips(price_standard, price_early_bird, price_vip, price_group)')
       .gte('created_at', startOfMonth)
-      .not('status','eq','refunded'),
+      .not('status', 'eq', 'refunded'),
   ])
 
   const eventRevenue = (monthTickets ?? []).reduce((sum, t) => {
@@ -80,11 +80,11 @@ export async function GET() {
   const allActivity = [...(recentTickets ?? []), ...(recentTripBookings ?? [])]
 
   return NextResponse.json({
-    totalEventTickets: totalEventTickets ?? 0,
-    totalTripBookings: totalTripBookings ?? 0,
-    activeMembers: activeMembers ?? 0,
-    upcomingEvents: upcomingEvents ?? 0,
-    revenueThisMonth: Math.round((eventRevenue + tripRevenue) * 100) / 100,
+    totalEventTickets:  totalEventTickets  ?? 0,
+    totalTripBookings:  totalTripBookings  ?? 0,
+    activeMembers:      activeMembers      ?? 0,
+    upcomingEvents:     upcomingEvents     ?? 0,
+    revenueThisMonth:   Math.round((eventRevenue + tripRevenue) * 100) / 100,
     activityLast30Days: groupByDate(allActivity),
   })
 }

@@ -1,5 +1,5 @@
-import { getAdminClient } from'@/lib/supabase/admin'
-import EventsManager from'./EventsManager'
+import { getAdminClient } from '@/lib/supabase/admin'
+import EventsManager from './EventsManager'
 
 export default async function AdminEventsPage() {
   const admin = getAdminClient()

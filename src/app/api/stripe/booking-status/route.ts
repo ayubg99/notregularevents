@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from'next/server'
-import { createClient } from'@supabase/supabase-js'
-import type { Database } from'@/types/database'
-import { stripe } from'@/lib/stripe'
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/database'
+import { stripe } from '@/lib/stripe'
 
 function getAdminClient() {
   return createClient<Database>(
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     .maybeSingle()
 
   if (ticket) {
-    return NextResponse.json({ found: true, type:'event', booking: ticket })
+    return NextResponse.json({ found: true, type: 'event', booking: ticket })
   }
 
   const { data: tripBooking } = await admin
@@ -36,14 +36,14 @@ export async function GET(request: NextRequest) {
     .maybeSingle()
 
   if (tripBooking) {
-    return NextResponse.json({ found: true, type:'trip', booking: tripBooking })
+    return NextResponse.json({ found: true, type: 'trip', booking: tripBooking })
   }
 
   // Not an event or trip — check if this is a membership payment so polling doesn't spin forever
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId)
-    if (session.mode ==='subscription' && session.metadata?.type ==='membership') {
-      return NextResponse.json({ found: true, type:'membership' })
+    if (session.mode === 'subscription' && session.metadata?.type === 'membership') {
+      return NextResponse.json({ found: true, type: 'membership' })
     }
   } catch { /* stripe not configured or session expired — fall through */ }
 

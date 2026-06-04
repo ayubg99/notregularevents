@@ -1,23 +1,23 @@
-export const dynamic ='force-dynamic'
+export const dynamic = 'force-dynamic'
 
-import { redirect } from'next/navigation'
-import Link from'next/link'
-import Image from'next/image'
-import QRCode from'qrcode'
-import { createClient } from'@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
+import QRCode from 'qrcode'
+import { createClient } from '@/lib/supabase/server'
 
 export const metadata = {
-  title:'My Dashboard — Erasmus Life Valencia',
-  description:'Manage your bookings, membership, and Erasmus Life profile.',
+  title:       'My Dashboard — Erasmus Life Valencia',
+  description: 'Manage your bookings, membership, and Erasmus Life profile.',
 }
-import ProfileForm from'./ProfileForm'
-import BookingTabs from'./BookingTabs'
-import HousingListings from'./HousingListings'
-import JobListings from'./JobListings'
-import MemberCard from'./MemberCard'
-import AmbassadorDashboard from'./AmbassadorDashboard'
-import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow, HousingListingRow, JobListingRow, SponsorRow, AmbassadorRow, AmbassadorCommissionRow, AmbassadorRewardRow, MarketplaceListingRow } from'@/types/database'
-import MarketplaceListings from'./MarketplaceListings'
+import ProfileForm from './ProfileForm'
+import BookingTabs from './BookingTabs'
+import HousingListings from './HousingListings'
+import JobListings from './JobListings'
+import MemberCard from './MemberCard'
+import AmbassadorDashboard from './AmbassadorDashboard'
+import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow, HousingListingRow, JobListingRow, SponsorRow, AmbassadorRow, AmbassadorCommissionRow, AmbassadorRewardRow, MarketplaceListingRow } from '@/types/database'
+import MarketplaceListings from './MarketplaceListings'
 
 type EventTicketWithEvent = EventTicketRow & {
   events: { id: string; title: string; date: string; location: string | null; slug: string } | null
@@ -28,8 +28,8 @@ type TripBookingWithTrip = TripBookingRow & {
 }
 
 function getInitials(name: string | null | undefined): string {
-  if (!name) return'?'
-  return name.split('').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+  if (!name) return '?'
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
 }
 
 
@@ -53,15 +53,15 @@ export default async function DashboardPage() {
   ] = await Promise.all([
     supabase.from('users').select('full_name, avatar_url, role').eq('id', user.id).single(),
     supabase.from('profiles').select('*').eq('user_id', user.id).single(),
-    supabase.from('memberships').select('*').eq('user_id', user.id).eq('status','active').maybeSingle(),
+    supabase.from('memberships').select('*').eq('user_id', user.id).eq('status', 'active').maybeSingle(),
     supabase.from('event_tickets').select('*, events(id, title, date, location, slug)').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('trip_bookings').select('*, trips(id, title, start_date, destination, slug, whatsapp_group_url)').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('housing_listings').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('job_listings').select('*').eq('posted_by_user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('marketplace_listings').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
-    supabase.from('sponsors').select('*').eq('status','active').eq('members_only', true).order('display_order', { ascending: true }),
+    supabase.from('sponsors').select('*').eq('status', 'active').eq('members_only', true).order('display_order', { ascending: true }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (supabase as any).from('ambassadors').select('*').eq('user_id', user.id).eq('status','active').maybeSingle(),
+    (supabase as any).from('ambassadors').select('*').eq('user_id', user.id).eq('status', 'active').maybeSingle(),
   ])
 
   const ambassador = ambassadorRaw as AmbassadorRow | null
@@ -76,24 +76,24 @@ export default async function DashboardPage() {
     : [{ data: [] }, { data: [] }]
 
   const commissions = (commissionsRaw ?? []) as AmbassadorCommissionRow[]
-  const rewards = (rewardsRaw ?? []) as AmbassadorRewardRow[]
+  const rewards     = (rewardsRaw     ?? []) as AmbassadorRewardRow[]
 
-  const displayName = (userRow as Pick<UserRow,'full_name'> | null)?.full_name ?? user.email?.split('@')[0] ??'Student'
-  const initials = getInitials(displayName)
-  const avatarUrl = (userRow as Pick<UserRow,'full_name' |'avatar_url'> | null)?.avatar_url
+  const displayName = (userRow as Pick<UserRow, 'full_name'> | null)?.full_name ?? user.email?.split('@')[0] ?? 'Student'
+  const initials    = getInitials(displayName)
+  const avatarUrl   = (userRow as Pick<UserRow, 'full_name' | 'avatar_url'> | null)?.avatar_url
 
   const eventTickets = (eventTicketsRaw ?? []) as unknown as EventTicketWithEvent[]
   const tripBookings = (tripBookingsRaw ?? []) as unknown as TripBookingWithTrip[]
-  const myListings = (myListingsRaw ?? []) as HousingListingRow[]
-  const myJobs = (myJobsRaw ?? []) as JobListingRow[]
+  const myListings   = (myListingsRaw ?? []) as HousingListingRow[]
+  const myJobs            = (myJobsRaw        ?? []) as JobListingRow[]
   const myMarketplaceItems = (myMarketplaceRaw ?? []) as MarketplaceListingRow[]
-  const sponsors = (sponsorsRaw ?? []) as SponsorRow[]
+  const sponsors     = (sponsorsRaw  ?? []) as SponsorRow[]
   const activeMembership = membership as MembershipRow | null
-  const profileData = profile as ProfileRow | null
+  const profileData  = profile as ProfileRow | null
 
   const memberQrUrl = activeMembership
     ? await QRCode.toDataURL(
-`ERASMUSLIFE-${user.id.slice(0, 8).toUpperCase()}`,
+        `ERASMUSLIFE-${user.id.slice(0, 8).toUpperCase()}`,
         { width: 120, margin: 1 },
       )
     : null
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
           </div>
           <div>
             <h1 className="font-heading text-3xl font-bold text-white">
-              Hey, {displayName.split('')[0]}
+              Hey, {displayName.split(' ')[0]}
             </h1>
             <p className="text-white/40 text-sm mt-0.5">{user.email}</p>
           </div>
@@ -170,7 +170,7 @@ export default async function DashboardPage() {
             {/* Member discounts */}
             {activeMembership && sponsors.length > 0 && (
               <div className="flex flex-col gap-3">
-                <h3 className="text-white font-bold text-sm"> Your Member Discounts</h3>
+                <h3 className="text-white font-bold text-sm">🎁 Your Member Discounts</h3>
                 <div className="grid grid-cols-2 gap-3">
                   {sponsors.map(sponsor => (
                     <div
@@ -178,17 +178,17 @@ export default async function DashboardPage() {
                       className="glass-card rounded-xl p-3 text-center flex flex-col items-center gap-2"
                     >
                       {/* Logo */}
-                      <div style={{ background:'rgba(255,255,255,0.06)', borderRadius: 8, padding: 10, height: 48, width:'100%', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                      <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: 8, padding: 10, height: 48, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {sponsor.logo_url ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={sponsor.logo_url} alt={sponsor.name} style={{ maxHeight: 28, maxWidth: 80, objectFit:'contain' }} />
+                          <img src={sponsor.logo_url} alt={sponsor.name} style={{ maxHeight: 28, maxWidth: 80, objectFit: 'contain' }} />
                         ) : (
                           <span className="text-white font-bold text-xs text-center leading-tight">{sponsor.name}</span>
                         )}
                       </div>
                       {/* Discount badge */}
                       {sponsor.discount_text && (
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background:'rgba(255,107,0,0.15)', color:'#FF6B00' }}>
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(255,107,0,0.15)', color: '#FF6B00' }}>
                           {sponsor.discount_text}
                         </span>
                       )}
@@ -198,13 +198,13 @@ export default async function DashboardPage() {
                       )}
                       {/* Code — Semester/Annual only */}
                       {sponsor.discount_code && (
-                        (activeMembership?.plan ==='premium' || activeMembership?.plan ==='vip') ? (
-                          <span className="text-[12px] font-bold px-2 py-0.5 rounded" style={{ fontFamily:'monospace', color:'#FF6B00', background:'rgba(255,255,255,0.05)' }}>
+                        (activeMembership?.plan === 'premium' || activeMembership?.plan === 'vip') ? (
+                          <span className="text-[12px] font-bold px-2 py-0.5 rounded" style={{ fontFamily: 'monospace', color: '#FF6B00', background: 'rgba(255,255,255,0.05)' }}>
                             {sponsor.discount_code}
                           </span>
                         ) : (
-                          <span className="text-[11px] text-white/25 px-2 py-0.5 rounded" style={{ background:'rgba(255,255,255,0.03)' }}>
-                             Semester+ only
+                          <span className="text-[11px] text-white/25 px-2 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                            ⬆️ Semester+ only
                           </span>
                         )
                       )}
@@ -220,21 +220,21 @@ export default async function DashboardPage() {
                 href="/ambassadors"
                 className="relative rounded-2xl p-5 flex items-start gap-4 overflow-hidden transition-all duration-300 group"
                 style={{
-                  background:'linear-gradient(135deg, rgba(233,30,140,0.10) 0%, rgba(255,107,0,0.08) 100%)',
-                  border:'1px solid rgba(233,30,140,0.25)',
-                  boxShadow:'0 0 24px rgba(233,30,140,0.08)',
+                  background: 'linear-gradient(135deg, rgba(233,30,140,0.10) 0%, rgba(255,107,0,0.08) 100%)',
+                  border: '1px solid rgba(233,30,140,0.25)',
+                  boxShadow: '0 0 24px rgba(233,30,140,0.08)',
                 }}
               >
                 {/* subtle glow on hover */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl pointer-events-none"
-                  style={{ background:'linear-gradient(135deg, rgba(233,30,140,0.08) 0%, rgba(255,107,0,0.06) 100%)' }} />
+                  style={{ background: 'linear-gradient(135deg, rgba(233,30,140,0.08) 0%, rgba(255,107,0,0.06) 100%)' }} />
 
                 <div className="relative w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
                   style={{
-                    background:'linear-gradient(135deg, rgba(233,30,140,0.25) 0%, rgba(255,107,0,0.20) 100%)',
-                    border:'1px solid rgba(233,30,140,0.35)',
+                    background: 'linear-gradient(135deg, rgba(233,30,140,0.25) 0%, rgba(255,107,0,0.20) 100%)',
+                    border: '1px solid rgba(233,30,140,0.35)',
                   }}>
-                  <span className="text-lg"></span>
+                  <span className="text-lg">🌟</span>
                 </div>
 
                 <div className="relative flex-1 min-w-0">
@@ -243,7 +243,7 @@ export default async function DashboardPage() {
                       Become an Ambassador
                     </p>
                     <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                      style={{ background:'rgba(233,30,140,0.2)', color:'#E91E8C', border:'1px solid rgba(233,30,140,0.3)' }}>
+                      style={{ background: 'rgba(233,30,140,0.2)', color: '#E91E8C', border: '1px solid rgba(233,30,140,0.3)' }}>
                       NEW
                     </span>
                   </div>
@@ -258,7 +258,7 @@ export default async function DashboardPage() {
             )}
 
             <ProfileForm
-              user={{ full_name: (userRow as Pick<UserRow,'full_name'> | null)?.full_name ?? null }}
+              user={{ full_name: (userRow as Pick<UserRow, 'full_name'> | null)?.full_name ?? null }}
               profile={profileData}
             />
           </div>

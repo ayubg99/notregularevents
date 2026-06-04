@@ -2,11 +2,11 @@ interface Props {
   label: string
   value: string | number
   delta?: string
-  icon: React.ReactNode
+  icon:  React.ReactNode
   color?: string
 }
 
-export default function StatsCard({ label, value, delta, icon, color ='bg-brand-primary/15' }: Props) {
+export default function StatsCard({ label, value, delta, icon, color = 'bg-brand-primary/15' }: Props) {
   return (
     <div className="glass-card rounded-2xl p-6 flex items-start gap-4">
       <div className={`flex-shrink-0 w-11 h-11 rounded-xl ${color} flex items-center justify-center text-white`}>

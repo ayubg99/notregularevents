@@ -1,45 +1,45 @@
-import Image from'next/image'
-import Link from'next/link'
-import { Calendar, MapPin, Users } from'lucide-react'
-import type { TripRow } from'@/types/database'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Calendar, MapPin, Users } from 'lucide-react'
+import type { TripRow } from '@/types/database'
 
 const CATEGORY_GRADIENTS: Record<string, string> = {
-  beach:'from-cyan-500/40 to-blue-500/30',
-  city:'from-violet-500/40 to-indigo-500/30',
-  adventure:'from-emerald-500/40 to-teal-500/30',
-  festival:'from-pink-500/40 to-rose-500/30',
-  cultural:'from-amber-500/40 to-orange-500/30',
-  mountain:'from-slate-500/40 to-gray-500/30',
-  ski:'from-blue-400/40 to-cyan-400/30',
+  beach:     'from-cyan-500/40    to-blue-500/30',
+  city:      'from-violet-500/40  to-indigo-500/30',
+  adventure: 'from-emerald-500/40 to-teal-500/30',
+  festival:  'from-pink-500/40    to-rose-500/30',
+  cultural:  'from-amber-500/40   to-orange-500/30',
+  mountain:  'from-slate-500/40   to-gray-500/30',
+  ski:       'from-blue-400/40    to-cyan-400/30',
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  beach:'Beach',
-  city:'City Break',
-  adventure:'Adventure',
-  festival:'Festival',
-  cultural:'Cultural',
-  mountain:'Mountain',
-  ski:'Ski',
+  beach:     'Beach',
+  city:      'City Break',
+  adventure: 'Adventure',
+  festival:  'Festival',
+  cultural:  'Cultural',
+  mountain:  'Mountain',
+  ski:       'Ski',
 }
 
 const BADGE_COLORS: Record<string, string> = {
-  beach:'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
-  city:'bg-violet-500/20 text-violet-300 border-violet-500/30',
-  adventure:'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-  festival:'bg-pink-500/20 text-pink-300 border-pink-500/30',
-  cultural:'bg-amber-500/20 text-amber-300 border-amber-500/30',
-  mountain:'bg-slate-500/20 text-slate-300 border-slate-500/30',
-  ski:'bg-blue-400/20 text-blue-300 border-blue-400/30',
+  beach:     'bg-cyan-500/20    text-cyan-300    border-cyan-500/30',
+  city:      'bg-violet-500/20  text-violet-300  border-violet-500/30',
+  adventure: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+  festival:  'bg-pink-500/20    text-pink-300    border-pink-500/30',
+  cultural:  'bg-amber-500/20   text-amber-300   border-amber-500/30',
+  mountain:  'bg-slate-500/20   text-slate-300   border-slate-500/30',
+  ski:       'bg-blue-400/20    text-blue-300    border-blue-400/30',
 }
 
 function durationLabel(start: string, end: string): string {
   const days = Math.round(
     (new Date(end).getTime() - new Date(start).getTime()) / 86_400_000,
   )
-  if (days <= 3) return`${days}d Weekend`
-  if (days <= 7) return`${days}d Trip`
-  return`${days}d Extended`
+  if (days <= 3)  return `${days}d Weekend`
+  if (days <= 7)  return `${days}d Trip`
+  return `${days}d Extended`
 }
 
 interface Props {
@@ -47,18 +47,18 @@ interface Props {
 }
 
 export default function TripCard({ trip }: Props) {
-  const cat = trip.category ??'adventure'
+  const cat      = trip.category ?? 'adventure'
   const gradient = CATEGORY_GRADIENTS[cat] ?? CATEGORY_GRADIENTS.adventure
-  const badge = BADGE_COLORS[cat] ?? BADGE_COLORS.adventure
-  const label = CATEGORY_LABELS[cat] ??'Trip'
+  const badge    = BADGE_COLORS[cat]        ?? BADGE_COLORS.adventure
+  const label    = CATEGORY_LABELS[cat]     ?? 'Trip'
   const seatsLeft = trip.capacity - trip.seats_sold
-  const soldPct = (trip.seats_sold / trip.capacity) * 100
+  const soldPct   = (trip.seats_sold / trip.capacity) * 100
 
   const startDate = new Date(trip.start_date).toLocaleDateString('en-GB', {
-    day:'numeric', month:'short',
+    day: 'numeric', month: 'short',
   })
   const endDate = new Date(trip.end_date).toLocaleDateString('en-GB', {
-    day:'numeric', month:'short', year:'numeric',
+    day: 'numeric', month: 'short', year: 'numeric',
   })
 
   const now = new Date()
@@ -66,10 +66,10 @@ export default function TripCard({ trip }: Props) {
     trip.price_early_bird > 0 &&
     !!trip.early_bird_deadline &&
     new Date(trip.early_bird_deadline) > now
-  const ebSeatsLeft = (trip.early_bird_seats ?? 0) - (trip.early_bird_seats_sold ?? 0)
-  const earlyBirdActive = ebDeadlineValid && (trip.early_bird_seats == null || ebSeatsLeft > 0)
+  const ebSeatsLeft     = (trip.early_bird_seats ?? 0) - (trip.early_bird_seats_sold ?? 0)
+  const earlyBirdActive  = ebDeadlineValid && (trip.early_bird_seats == null || ebSeatsLeft > 0)
   const earlyBirdSoldOut = ebDeadlineValid && trip.early_bird_seats != null && ebSeatsLeft <= 0
-  const displayPrice = earlyBirdActive ? trip.price_early_bird! : trip.price_standard
+  const displayPrice     = earlyBirdActive ? trip.price_early_bird! : trip.price_standard
 
   return (
     <Link href={`/trips/${trip.slug}`} className="group block">
@@ -140,9 +140,9 @@ export default function TripCard({ trip }: Props) {
             <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-700 ${
-                  soldPct >= 90 ?'bg-red-500' : soldPct >= 60 ?'bg-orange-500' :'bg-brand-primary'
+                  soldPct >= 90 ? 'bg-red-500' : soldPct >= 60 ? 'bg-orange-500' : 'bg-brand-primary'
                 }`}
-                style={{ width:`${soldPct}%` }}
+                style={{ width: `${soldPct}%` }}
               />
             </div>
           </div>
@@ -154,18 +154,18 @@ export default function TripCard({ trip }: Props) {
                 <p className="text-xs text-brand-accent font-bold uppercase tracking-wide">Early Bird</p>
               )}
               {earlyBirdSoldOut && (
-                <p className="text-xs text-red-400 font-bold uppercase tracking-wide"> Early Bird Sold Out</p>
+                <p className="text-xs text-red-400 font-bold uppercase tracking-wide">🔥 Early Bird Sold Out</p>
               )}
-              <p className={`font-bold text-base ${earlyBirdActive ?'text-gradient-primary' :'text-white'}`}>
-                {displayPrice === 0 ?'Free' :`From €${displayPrice}`}
+              <p className={`font-bold text-base ${earlyBirdActive ? 'text-gradient-primary' : 'text-white'}`}>
+                {displayPrice === 0 ? 'Free' : `From €${displayPrice}`}
               </p>
             </div>
             <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 ${
               seatsLeft === 0
-                ?'bg-white/10 text-white/40 cursor-not-allowed'
-                :'btn-primary px-5 py-2 text-sm'
+                ? 'bg-white/10 text-white/40 cursor-not-allowed'
+                : 'btn-primary px-5 py-2 text-sm'
             }`}>
-              {seatsLeft === 0 ?'Sold Out' :'Book Trip'}
+              {seatsLeft === 0 ? 'Sold Out' : 'Book Trip'}
             </span>
           </div>
         </div>

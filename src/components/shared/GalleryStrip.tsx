@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useCallback } from'react'
-import Image from'next/image'
-import { X, ChevronLeft, ChevronRight } from'lucide-react'
+import { useState, useCallback } from 'react'
+import Image from 'next/image'
+import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface Props {
   images: string[]
@@ -20,16 +20,16 @@ export default function GalleryStrip({ images }: Props) {
   }, [images.length])
 
   const handleKey = useCallback((e: React.KeyboardEvent) => {
-    if (e.key ==='ArrowLeft') prev()
-    if (e.key ==='ArrowRight') next()
-    if (e.key ==='Escape') setLightbox(null)
+    if (e.key === 'ArrowLeft')  prev()
+    if (e.key === 'ArrowRight') next()
+    if (e.key === 'Escape')     setLightbox(null)
   }, [prev, next])
 
   if (images.length === 0) return null
 
   return (
     <>
-      {/* Scrollable strip */}
+      {/* ── Scrollable strip ── */}
       <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
           {images.map((src, i) => (
@@ -50,7 +50,7 @@ export default function GalleryStrip({ images }: Props) {
         </div>
       </div>
 
-      {/* Lightbox */}
+      {/* ── Lightbox ── */}
       {lightbox !== null && (
         <div
           className="fixed inset-0 z-[80] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"

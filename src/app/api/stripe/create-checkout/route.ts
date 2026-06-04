@@ -1,26 +1,26 @@
-import { NextRequest, NextResponse } from'next/server'
-import { createClient } from'@/lib/supabase/server'
-import { getAdminClient } from'@/lib/supabase/admin'
-import { stripe } from'@/lib/stripe'
-import { generateQR } from'@/lib/qr'
-import { nanoid } from'nanoid'
-import { sendBookingConfirmation } from'@/lib/email'
-import type { MembershipPlan, TripTier } from'@/types/database'
-import { tierDefaults } from'@/types/database'
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { getAdminClient } from '@/lib/supabase/admin'
+import { stripe } from '@/lib/stripe'
+import { generateQR } from '@/lib/qr'
+import { nanoid } from 'nanoid'
+import { sendBookingConfirmation } from '@/lib/email'
+import type { MembershipPlan, TripTier } from '@/types/database'
+import { tierDefaults } from '@/types/database'
 
-type CheckoutType ='event' |'trip' |'membership' |'job_listing' |'employer_subscription' |'job_upgrade'
+type CheckoutType = 'event' | 'trip' | 'membership' | 'job_listing' | 'employer_subscription' | 'job_upgrade'
 
 interface Body {
-  type: CheckoutType
-  itemId: string
-  tier?: TripTier
-  quantity?: number
-  groupSize?: number
-  promoCode?: string
-  guestName?: string
+  type:        CheckoutType
+  itemId:      string
+  tier?:       TripTier
+  quantity?:   number
+  groupSize?:  number
+  promoCode?:  string
+  guestName?:  string
   guestEmail?: string
   guestPhone?: string
-  attendees?: { name: string; email: string }[]
+  attendees?:  { name: string; email: string }[]
   referralCode?: string
   ambassadorId?: string
   // event ticket tiers
@@ -28,18 +28,18 @@ interface Body {
   // trip extras
   selectedExtras?: { id: string; name: string; price: number; description: string }[]
   // job listing specific
-  basePlan?:'standard' |'featured' |'employer_plan'
+  basePlan?:   'standard' | 'featured' | 'employer_plan'
   withUrgent?: boolean
   // job upgrade specific
-  upgradeType?:'featured' |'subscription'
-  employerId?: string
-  jobId?: string
-  isFeatured?: boolean
-  isUrgent?: boolean
+  upgradeType?: 'featured' | 'subscription'
+  employerId?:  string
+  jobId?:       string
+  isFeatured?:  boolean
+  isUrgent?:    boolean
 }
 
-function applyDiscount(price: number, type:'percentage' |'fixed', value: number): number {
-  const discounted = type ==='percentage'
+function applyDiscount(price: number, type: 'percentage' | 'fixed', value: number): number {
+  const discounted = type === 'percentage'
     ? price * (1 - value / 100)
     : price - value
   return Math.max(0, discounted)
@@ -48,16 +48,16 @@ function applyDiscount(price: number, type:'percentage' |'fixed', value: number)
 // Resolves the canonical app URL across local / Vercel preview / Vercel production
 function getBaseUrl(): string {
   if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL
-  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL
+  if (process.env.NEXT_PUBLIC_APP_URL)  return process.env.NEXT_PUBLIC_APP_URL
   // VERCEL_URL is set automatically by Vercel on every deployment (server-only, no HTTPS prefix)
-  if (process.env.VERCEL_URL) return`https://${process.env.VERCEL_URL}`
-  return'http://localhost:3000'
+  if (process.env.VERCEL_URL)           return `https://${process.env.VERCEL_URL}`
+  return 'http://localhost:3000'
 }
 
 const MEMBERSHIP_PRICES: Record<MembershipPlan, string | undefined> = {
-  basic: process.env.STRIPE_PRICE_BASIC,
-  premium: process.env.STRIPE_PRICE_PREMIUM,
-  vip: process.env.STRIPE_PRICE_VIP,
+  basic:    process.env.STRIPE_PRICE_BASIC,
+  premium:  process.env.STRIPE_PRICE_PREMIUM,
+  vip:      process.env.STRIPE_PRICE_VIP,
   employer: undefined, // employer plan uses inline price_data via employer_subscription type
 }
 
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     return await handleCheckout(request)
   } catch (err) {
     console.error('[create-checkout] unhandled error:', err)
-    const message = err instanceof Error ? err.message :'Checkout failed. Please try again.'
+    const message = err instanceof Error ? err.message : 'Checkout failed. Please try again.'
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
@@ -77,7 +77,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
   if (!process.env.STRIPE_SECRET_KEY) {
     console.error('[create-checkout] STRIPE_SECRET_KEY is not set')
     return NextResponse.json(
-      { error:'Payment system not configured. Please contact support.' },
+      { error: 'Payment system not configured. Please contact support.' },
       { status: 500 },
     )
   }
@@ -89,24 +89,24 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
   const { type, itemId, tier, quantity = 1, groupSize, promoCode, guestName, guestEmail, guestPhone, attendees, referralCode, ambassadorId: clientAmbassadorId, ticketTierIdx, selectedExtras } = body
 
   // Resolve ambassadorId server-side from referral code — client state can be stale
-  let ambassadorId = clientAmbassadorId ??''
+  let ambassadorId = clientAmbassadorId ?? ''
   if (referralCode && !ambassadorId) {
     const { data: amb } = await supabase
       .from('ambassadors')
       .select('id')
       .eq('referral_code', referralCode.toUpperCase())
-      .eq('status','active')
+      .eq('status', 'active')
       .single()
     if (amb) ambassadorId = amb.id
   }
 
-  console.log('[create-checkout]', { type, itemId, tier, quantity, hasUser: !!user, referralCode: referralCode ??'', ambassadorId })
+  console.log('[create-checkout]', { type, itemId, tier, quantity, hasUser: !!user, referralCode: referralCode ?? '', ambassadorId })
 
   const baseUrl = getBaseUrl()
 
   // Membership still requires auth
-  if (type ==='membership' && !user) {
-    return NextResponse.json({ error:'Please log in to purchase a membership.' }, { status: 401 })
+  if (type === 'membership' && !user) {
+    return NextResponse.json({ error: 'Please log in to purchase a membership.' }, { status: 401 })
   }
 
   // Membership discount: check memberships table + profiles fallback
@@ -117,7 +117,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
         .from('memberships')
         .select('status')
         .eq('user_id', user.id)
-        .eq('status','active')
+        .eq('status', 'active')
         .maybeSingle(),
       supabase
         .from('profiles')
@@ -126,18 +126,18 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
         .maybeSingle(),
     ])
     if (memErr) console.error('[create-checkout] membership check error:', memErr.message)
-    memberDiscount = !!(mem || profile?.membership_status ==='active')
+    memberDiscount = !!(mem || profile?.membership_status === 'active')
     console.log('[create-checkout] membership check:', {
       userId: user.id,
       memberDiscount,
-      memFound: !!mem,
-      profileStatus: profile?.membership_status,
+      memFound:       !!mem,
+      profileStatus:  profile?.membership_status,
     })
   }
 
-  // Validate promo code 
+  // ── Validate promo code ──────────────────────────────────────
   let promoCodeId: string | undefined
-  let discountType:'percentage' |'fixed' | undefined
+  let discountType: 'percentage' | 'fixed' | undefined
   let discountValue = 0
 
   if (promoCode) {
@@ -150,32 +150,32 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       .single()
 
     if (promo) {
-      const appliesTo = promo.applies_to ??'both'
-      const validFor = appliesTo ==='both' || (type ==='event' && appliesTo ==='events') || (type ==='trip' && appliesTo ==='trips')
+      const appliesTo = promo.applies_to ?? 'both'
+      const validFor  = appliesTo === 'both' || (type === 'event' && appliesTo === 'events') || (type === 'trip' && appliesTo === 'trips')
       if (validFor) {
-        promoCodeId = promo.id
-        discountType = promo.discount_type
+        promoCodeId   = promo.id
+        discountType  = promo.discount_type
         discountValue = promo.discount_value
       }
     }
   }
 
-  // Event checkout 
-  if (type ==='event') {
+  // ── Event checkout ───────────────────────────────────────────
+  if (type === 'event') {
     const { data: event } = await supabase
       .from('events')
       .select('id, title, price, price_early_bird, price_group, early_bird_deadline, early_bird_seats, early_bird_seats_sold, capacity, tickets_sold, slug, image_url, date, location, ticket_tiers')
       .eq('id', itemId)
-      .eq('status','published')
+      .eq('status', 'published')
       .single()
 
     if (!event) {
-      return NextResponse.json({ error:'Event not found or no longer available.' }, { status: 404 })
+      return NextResponse.json({ error: 'Event not found or no longer available.' }, { status: 404 })
     }
 
     const spotsLeft = event.capacity - event.tickets_sold
     if (spotsLeft < quantity) {
-      return NextResponse.json({ error:`Only ${spotsLeft} spot${spotsLeft === 1 ?'' :'s'} remaining.` }, { status: 409 })
+      return NextResponse.json({ error: `Only ${spotsLeft} spot${spotsLeft === 1 ? '' : 's'} remaining.` }, { status: 409 })
     }
 
     // Resolve price — custom tiers take priority over early_bird/group
@@ -186,28 +186,28 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       : null
     const customTier = customTierRaw ? tierDefaults(customTierRaw) : null
 
-    // Per-tier constraint validation 
+    // ── Per-tier constraint validation ───────────────────────────
     if (customTier) {
       // Members-only gate
       if (customTier.members_only && !memberDiscount) {
-        return NextResponse.json({ error:'This ticket tier is for members only. Upgrade your membership to access it.' }, { status: 403 })
+        return NextResponse.json({ error: 'This ticket tier is for members only. Upgrade your membership to access it.' }, { status: 403 })
       }
 
       // Min group size
       if (customTier.min_group_size && quantity < customTier.min_group_size) {
-        return NextResponse.json({ error:`This tier requires a minimum of ${customTier.min_group_size} people. Please increase your quantity.` }, { status: 400 })
+        return NextResponse.json({ error: `This tier requires a minimum of ${customTier.min_group_size} people. Please increase your quantity.` }, { status: 400 })
       }
 
-      // Time gate — valid_until_time"HH:MM"; times <"12:00" treated as next calendar day
+      // Time gate — valid_until_time "HH:MM"; times < "12:00" treated as next calendar day
       if (customTier.valid_until_time && event.date) {
-        const [hh, mm] = customTier.valid_until_time.split(':').map(Number)
-        const eventDay = new Date(event.date)
-        const cutoff = new Date(eventDay)
+        const [hh, mm]    = customTier.valid_until_time.split(':').map(Number)
+        const eventDay    = new Date(event.date)
+        const cutoff      = new Date(eventDay)
         cutoff.setHours(hh, mm, 0, 0)
         // If the cutoff hour is before noon, assume it wraps to the next calendar day
         if (hh < 12) cutoff.setDate(cutoff.getDate() + 1)
         if (new Date() > cutoff) {
-          return NextResponse.json({ error:'This ticket tier is no longer available.' }, { status: 400 })
+          return NextResponse.json({ error: 'This ticket tier is no longer available.' }, { status: 400 })
         }
       }
 
@@ -220,12 +220,12 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
           if (prereq.seats !== null) {
             const { count } = await supabase
               .from('event_tickets')
-              .select('id', { count:'exact', head: true })
+              .select('id', { count: 'exact', head: true })
               .eq('event_id', event.id)
               .eq('ticket_tier_name', prereq.name)
-              .not('status','in','("cancelled","refunded")')
+              .not('status', 'in', '("cancelled","refunded")')
             if ((count ?? 0) < prereq.seats) {
-              return NextResponse.json({ error:'This ticket tier is not yet available.' }, { status: 400 })
+              return NextResponse.json({ error: 'This ticket tier is not yet available.' }, { status: 400 })
             }
           }
         }
@@ -235,18 +235,18 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       if (customTier.seats !== null) {
         const { count } = await supabase
           .from('event_tickets')
-          .select('id', { count:'exact', head: true })
+          .select('id', { count: 'exact', head: true })
           .eq('event_id', event.id)
           .eq('ticket_tier_name', customTier.name)
-          .not('status','in','("cancelled","refunded")')
+          .not('status', 'in', '("cancelled","refunded")')
         if ((count ?? 0) + quantity > customTier.seats) {
-          return NextResponse.json({ error:'This ticket tier has sold out.' }, { status: 409 })
+          return NextResponse.json({ error: 'This ticket tier has sold out.' }, { status: 409 })
         }
       }
     }
 
     const isEbValid =
-      tier ==='early_bird' &&
+      tier === 'early_bird' &&
       event.price_early_bird != null &&
       event.early_bird_deadline != null &&
       new Date(event.early_bird_deadline) > new Date() &&
@@ -254,114 +254,114 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
 
     const baseEventPrice = customTier
       ? customTier.price
-      : isEbValid ? (event.price_early_bird ?? event.price)
-      : tier ==='group' && event.price_group != null ? event.price_group
+      : isEbValid                              ? (event.price_early_bird ?? event.price)
+      : tier === 'group' && event.price_group != null ? event.price_group
       : event.price
 
     let unitPrice = discountType
       ? applyDiscount(baseEventPrice, discountType, discountValue)
       : baseEventPrice
     if (memberDiscount) {
-      unitPrice = applyDiscount(unitPrice,'percentage', 10)
+      unitPrice = applyDiscount(unitPrice, 'percentage', 10)
     }
 
-    const cancelUrl =`${baseUrl}/events/${event.slug}`
+    const cancelUrl = `${baseUrl}/events/${event.slug}`
     const toEmail = guestEmail ?? user?.email
-    const toName = guestName ?? user?.user_metadata?.full_name ??'there'
+    const toName  = guestName  ?? user?.user_metadata?.full_name ?? 'there'
 
     // Free path — insert directly
     if (unitPrice === 0) {
       const bookingRef = nanoid(8).toUpperCase()
       const qrCode = await generateQR(bookingRef)
       const tickets = Array.from({ length: quantity }, () => ({
-        event_id: event.id,
-        user_id: user?.id ?? null,
-        booking_ref: bookingRef,
-        qr_code: qrCode,
+        event_id:          event.id,
+        user_id:           user?.id ?? null,
+        booking_ref:       bookingRef,
+        qr_code:           qrCode,
         stripe_payment_id: null,
-        guest_name: guestName ?? null,
-        guest_email: guestEmail ?? null,
-        guest_phone: guestPhone ?? null,
-        status:'active' as const,
-        ticket_tier_name: customTier?.name ?? null,
-        promo_code_used: promoCode ?? null,
-        referral_code: referralCode ?? null,
+        guest_name:        guestName  ?? null,
+        guest_email:       guestEmail ?? null,
+        guest_phone:       guestPhone ?? null,
+        status:            'active' as const,
+        ticket_tier_name:  customTier?.name ?? null,
+        promo_code_used:   promoCode ?? null,
+        referral_code:     referralCode ?? null,
       }))
       const { error } = await supabase.from('event_tickets').insert(tickets)
       if (error) {
         console.error('[create-checkout free event]', error.message)
-        return NextResponse.json({ error:'Failed to create your ticket.' }, { status: 500 })
+        return NextResponse.json({ error: 'Failed to create your ticket.' }, { status: 500 })
       }
       if (user?.id) {
         await supabase.from('notifications').insert({
           user_id: user.id,
-          type:'booking_confirmed',
-          message:`Your ticket for ${event.title} is confirmed. Ref: ${bookingRef}`,
-          read: false,
+          type:    'booking_confirmed',
+          message: `Your ticket for ${event.title} is confirmed. Ref: ${bookingRef}`,
+          read:    false,
         })
       }
       if (toEmail) {
         await sendBookingConfirmation({
-          to: toEmail,
-          name: toName,
+          to:         toEmail,
+          name:       toName,
           bookingRef,
           qrCode,
-          title: event.title,
-          type:'event',
-          date: event.date ?? undefined,
-          location: event.location ?? undefined,
+          title:      event.title,
+          type:       'event',
+          date:       event.date ?? undefined,
+          location:   event.location ?? undefined,
         })
       }
-      return NextResponse.json({ url:`${baseUrl}/booking/success?ref=${bookingRef}` })
+      return NextResponse.json({ url: `${baseUrl}/booking/success?ref=${bookingRef}` })
     }
 
     const erasmusVibeAccountId = process.env.ERASMUS_VIBE_STRIPE_ACCOUNT_ID
     if (!erasmusVibeAccountId) {
       console.error('[create-checkout] ERASMUS_VIBE_STRIPE_ACCOUNT_ID not set')
-      return NextResponse.json({ error:'Payment configuration error' }, { status: 500 })
+      return NextResponse.json({ error: 'Payment configuration error' }, { status: 500 })
     }
-    const platformFeeEvents = parseInt(process.env.PLATFORM_FEE_EVENTS ||'20') / 100
+    const platformFeeEvents = parseInt(process.env.PLATFORM_FEE_EVENTS || '20') / 100
     const eventGrossAmount = Math.round(unitPrice * quantity * 100)
     const eventStripeFeeEst = Math.round(eventGrossAmount * 0.02) + 25
     const eventAppFeeAmount = Math.round((eventGrossAmount - eventStripeFeeEst) * platformFeeEvents)
 
     const session = await stripe.checkout.sessions.create({
-      mode:'payment',
+      mode:           'payment',
       customer_email: toEmail ?? undefined,
       line_items: [{
         quantity,
         price_data: {
-          currency:'eur',
-          unit_amount: Math.round(unitPrice * 100),
+          currency:     'eur',
+          unit_amount:  Math.round(unitPrice * 100),
           product_data: {
-            name: event.title,
+            name:   event.title,
             images: event.image_url ? [event.image_url] : [],
           },
         },
       }],
       payment_intent_data: {
         application_fee_amount: eventAppFeeAmount,
-        transfer_data: { destination: erasmusVibeAccountId },
+        transfer_data:          { destination: erasmusVibeAccountId },
       },
-      success_url:`${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: cancelUrl,
+      success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url:  cancelUrl,
       metadata: {
-        type:'event',
-        item_id: event.id,
-        user_id: user?.id ??'',
-        quantity: String(quantity),
-        guest_name: guestName ??'',
-        guest_email: guestEmail ??'',
-        guest_phone: guestPhone ??'',
-        event_title: event.title,
-        event_date: event.date ??'',
-        location: event.location ??'',
-        attendees: JSON.stringify(attendees ?? []),
-        referral_code: referralCode ??'',
-        ambassador_id: ambassadorId ??'',
-        ticket_tier_name: customTier?.name ??'',
+        type:                   'event',
+        item_id:                event.id,
+        user_id:                user?.id      ?? '',
+        quantity:               String(quantity),
+        guest_name:             guestName     ?? '',
+        guest_email:            guestEmail    ?? '',
+        guest_phone:            guestPhone    ?? '',
+        event_title:            event.title,
+        event_date:             event.date    ?? '',
+        location:               event.location ?? '',
+        attendees:              JSON.stringify(attendees ?? []),
+        referral_code:          referralCode  ?? '',
+        ambassador_id:          ambassadorId  ?? '',
+        ticket_tier_name:       customTier?.name ?? '',
         application_fee_amount: eventAppFeeAmount.toString(),
-        destination_account: erasmusVibeAccountId,
+        destination_account:    erasmusVibeAccountId,
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
     })
@@ -369,27 +369,27 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ url: session.url })
   }
 
-  // Trip checkout 
-  if (type ==='trip') {
-    const tripTier = tier ??'standard'
+  // ── Trip checkout ────────────────────────────────────────────
+  if (type === 'trip') {
+    const tripTier = tier ?? 'standard'
 
     const { data: trip } = await supabase
       .from('trips')
       .select('id, title, price_early_bird, price_standard, price_vip, price_group, early_bird_deadline, early_bird_seats, early_bird_seats_sold, capacity, seats_sold, slug, image_url, start_date, destination, whatsapp_group_url')
       .eq('id', itemId)
-      .eq('status','published')
+      .eq('status', 'published')
       .single()
 
     if (!trip) {
-      return NextResponse.json({ error:'Trip not found or no longer available.' }, { status: 404 })
+      return NextResponse.json({ error: 'Trip not found or no longer available.' }, { status: 404 })
     }
 
     const seatsLeft = trip.capacity - trip.seats_sold
     if (seatsLeft < 1) {
-      return NextResponse.json({ error:'Sorry, this trip is fully booked.' }, { status: 409 })
+      return NextResponse.json({ error: 'Sorry, this trip is fully booked.' }, { status: 409 })
     }
 
-    if (tripTier ==='early_bird') {
+    if (tripTier === 'early_bird') {
       const ebValid =
         trip.price_early_bird != null &&
         trip.early_bird_deadline != null &&
@@ -398,7 +398,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
           (trip.early_bird_seats - (trip.early_bird_seats_sold ?? 0)) > 0)
       if (!ebValid) {
         return NextResponse.json(
-          { error:'Early bird is no longer available. Please select standard price.' },
+          { error: 'Early bird is no longer available. Please select standard price.' },
           { status: 400 },
         )
       }
@@ -406,96 +406,96 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
 
     const tierPrices: Record<TripTier, number> = {
       early_bird: trip.price_early_bird ?? trip.price_standard,
-      standard: trip.price_standard,
-      group: trip.price_group ?? trip.price_standard,
+      standard:   trip.price_standard,
+      group:      trip.price_group      ?? trip.price_standard,
     }
     const basePrice = tierPrices[tripTier]
     let unitPrice = discountType
       ? applyDiscount(basePrice, discountType, discountValue)
       : basePrice
     if (memberDiscount) {
-      unitPrice = applyDiscount(unitPrice,'percentage', 10)
+      unitPrice = applyDiscount(unitPrice, 'percentage', 10)
     }
 
-    const tripGroupSize0 = tier ==='group' ? (groupSize ?? 1) : 1
+    const tripGroupSize0 = tier === 'group' ? (groupSize ?? 1) : 1
     const extrasTotal = (selectedExtras ?? []).reduce((s, e) => s + e.price, 0) * tripGroupSize0
 
-    const cancelUrl =`${baseUrl}/trips/${trip.slug}`
+    const cancelUrl = `${baseUrl}/trips/${trip.slug}`
     const toEmail = guestEmail ?? user?.email
-    const toName = guestName ?? user?.user_metadata?.full_name ??'there'
+    const toName  = guestName  ?? user?.user_metadata?.full_name ?? 'there'
 
     // Free path (base price + all extras = 0)
     if (unitPrice === 0 && extrasTotal === 0) {
       const bookingRef = nanoid(8).toUpperCase()
       const qrCode = await generateQR(bookingRef)
       const freeBookingRow = {
-        trip_id: trip.id,
-        user_id: user?.id ?? null,
-        tier: tripTier,
-        booking_ref: bookingRef,
-        qr_code: qrCode,
+        trip_id:           trip.id,
+        user_id:           user?.id ?? null,
+        tier:              tripTier,
+        booking_ref:       bookingRef,
+        qr_code:           qrCode,
         stripe_payment_id: null as null,
-        guest_name: guestName ?? null,
-        guest_email: guestEmail ?? null,
-        guest_phone: guestPhone ?? null,
-        status:'confirmed' as const,
-        deposit_paid: true,
-        selected_extras: selectedExtras?.length ? selectedExtras : null,
+        guest_name:        guestName  ?? null,
+        guest_email:       guestEmail ?? null,
+        guest_phone:       guestPhone ?? null,
+        status:            'confirmed' as const,
+        deposit_paid:      true,
+        selected_extras:   selectedExtras?.length ? selectedExtras : null,
       }
       const { error } = await supabase.from('trip_bookings').insert(freeBookingRow)
       if (error) {
         console.error('[create-checkout free trip]', error.message)
-        return NextResponse.json({ error:'Failed to create your booking.' }, { status: 500 })
+        return NextResponse.json({ error: 'Failed to create your booking.' }, { status: 500 })
       }
       if (user?.id) {
         await supabase.from('notifications').insert({
           user_id: user.id,
-          type:'booking_confirmed',
-          message:`Your booking for ${trip.title} is confirmed. Ref: ${bookingRef}`,
-          read: false,
+          type:    'booking_confirmed',
+          message: `Your booking for ${trip.title} is confirmed. Ref: ${bookingRef}`,
+          read:    false,
         })
       }
       if (toEmail) {
         await sendBookingConfirmation({
-          to: toEmail,
-          name: toName,
+          to:           toEmail,
+          name:         toName,
           bookingRef,
           qrCode,
-          title: trip.title,
-          type:'trip',
-          date: trip.start_date ?? undefined,
-          location: trip.destination ?? undefined,
-          whatsappUrl: trip.whatsapp_group_url ?? undefined,
+          title:        trip.title,
+          type:         'trip',
+          date:         trip.start_date ?? undefined,
+          location:     trip.destination ?? undefined,
+          whatsappUrl:  trip.whatsapp_group_url ?? undefined,
         })
       }
-      return NextResponse.json({ url:`${baseUrl}/booking/success?ref=${bookingRef}` })
+      return NextResponse.json({ url: `${baseUrl}/booking/success?ref=${bookingRef}` })
     }
 
-    const tripGroupSize = tripTier ==='group' ? (groupSize ?? 1) : 1
-    const extrasItems = (selectedExtras ?? []).filter(e => e.price > 0)
+    const tripGroupSize  = tripTier === 'group' ? (groupSize ?? 1) : 1
+    const extrasItems    = (selectedExtras ?? []).filter(e => e.price > 0)
 
     const tripErasmusVibeAccountId = process.env.ERASMUS_VIBE_STRIPE_ACCOUNT_ID
     if (!tripErasmusVibeAccountId) {
       console.error('[create-checkout] ERASMUS_VIBE_STRIPE_ACCOUNT_ID not set')
-      return NextResponse.json({ error:'Payment configuration error' }, { status: 500 })
+      return NextResponse.json({ error: 'Payment configuration error' }, { status: 500 })
     }
-    const platformFeeTrips = parseInt(process.env.PLATFORM_FEE_TRIPS ||'20') / 100
+    const platformFeeTrips = parseInt(process.env.PLATFORM_FEE_TRIPS || '20') / 100
     const tripGrossAmount = Math.round(unitPrice * tripGroupSize * 100)
       + extrasItems.reduce((s, e) => s + Math.round(e.price * 100) * tripGroupSize, 0)
     const tripStripeFeeEst = Math.round(tripGrossAmount * 0.02) + 25
     const tripAppFeeAmount = Math.round((tripGrossAmount - tripStripeFeeEst) * platformFeeTrips)
 
     const session = await stripe.checkout.sessions.create({
-      mode:'payment',
+      mode:           'payment',
       customer_email: toEmail ?? undefined,
       line_items: [
         {
           quantity: tripGroupSize,
           price_data: {
-            currency:'eur',
-            unit_amount: Math.round(unitPrice * 100),
+            currency:     'eur',
+            unit_amount:  Math.round(unitPrice * 100),
             product_data: {
-              name:`${trip.title} — ${tripTier.replace('_','')}`,
+              name:   `${trip.title} — ${tripTier.replace('_', ' ')}`,
               images: trip.image_url ? [trip.image_url] : [],
             },
           },
@@ -503,37 +503,37 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
         ...extrasItems.map(e => ({
           quantity: tripGroupSize,
           price_data: {
-            currency:'eur' as const,
-            unit_amount: Math.round(e.price * 100),
+            currency:     'eur' as const,
+            unit_amount:  Math.round(e.price * 100),
             product_data: { name: e.name },
           },
         })),
       ],
       payment_intent_data: {
         application_fee_amount: tripAppFeeAmount,
-        transfer_data: { destination: tripErasmusVibeAccountId },
+        transfer_data:          { destination: tripErasmusVibeAccountId },
       },
-      success_url:`${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: cancelUrl,
+      success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url:  cancelUrl,
       metadata: {
-        type:'trip',
-        item_id: trip.id,
-        user_id: user?.id ??'',
-        tier: tripTier,
-        quantity: String(tripGroupSize),
-        guest_name: guestName ??'',
-        guest_email: guestEmail ??'',
-        guest_phone: guestPhone ??'',
-        trip_title: trip.title,
-        trip_date: trip.start_date ??'',
-        destination: trip.destination ??'',
-        whatsapp_group_url: trip.whatsapp_group_url ??'',
-        attendees: JSON.stringify(attendees ?? []),
-        referral_code: referralCode ??'',
-        ambassador_id: ambassadorId ??'',
-        selected_extras_json: JSON.stringify(selectedExtras ?? []),
+        type:                   'trip',
+        item_id:                trip.id,
+        user_id:                user?.id        ?? '',
+        tier:                   tripTier,
+        quantity:               String(tripGroupSize),
+        guest_name:             guestName       ?? '',
+        guest_email:            guestEmail      ?? '',
+        guest_phone:            guestPhone      ?? '',
+        trip_title:             trip.title,
+        trip_date:              trip.start_date ?? '',
+        destination:            trip.destination ?? '',
+        whatsapp_group_url:     trip.whatsapp_group_url ?? '',
+        attendees:              JSON.stringify(attendees ?? []),
+        referral_code:          referralCode    ?? '',
+        ambassador_id:          ambassadorId    ?? '',
+        selected_extras_json:   JSON.stringify(selectedExtras ?? []),
         application_fee_amount: tripAppFeeAmount.toString(),
-        destination_account: tripErasmusVibeAccountId,
+        destination_account:    tripErasmusVibeAccountId,
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
     })
@@ -541,22 +541,22 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ url: session.url })
   }
 
-  // Membership checkout 
-  if (type ==='membership') {
-    const plan = itemId as MembershipPlan
+  // ── Membership checkout ──────────────────────────────────────
+  if (type === 'membership') {
+    const plan    = itemId as MembershipPlan
     const priceId = MEMBERSHIP_PRICES[plan]
 
     console.log('[create-checkout membership]', {
       plan,
-      priceId: priceId ??'MISSING',
-      hasBasicEnv: !!process.env.STRIPE_PRICE_BASIC,
-      hasPremiumEnv: !!process.env.STRIPE_PRICE_PREMIUM,
-      hasVipEnv: !!process.env.STRIPE_PRICE_VIP,
+      priceId:        priceId ?? 'MISSING',
+      hasBasicEnv:    !!process.env.STRIPE_PRICE_BASIC,
+      hasPremiumEnv:  !!process.env.STRIPE_PRICE_PREMIUM,
+      hasVipEnv:      !!process.env.STRIPE_PRICE_VIP,
     })
 
     if (!priceId) {
       return NextResponse.json(
-        { error:`Membership plan"${plan}" is not configured — STRIPE_PRICE_${plan.toUpperCase()} is missing. Contact support.` },
+        { error: `Membership plan "${plan}" is not configured — STRIPE_PRICE_${plan.toUpperCase()} is missing. Contact support.` },
         { status: 400 },
       )
     }
@@ -567,7 +567,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       .from('memberships')
       .select('stripe_subscription_id')
       .eq('user_id', user!.id)
-      .eq('status','active')
+      .eq('status', 'active')
       .maybeSingle()
 
     if (existingMembership?.stripe_subscription_id) {
@@ -579,103 +579,103 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       }
       await adminClient
         .from('memberships')
-        .update({ status:'cancelled' })
+        .update({ status: 'cancelled' })
         .eq('user_id', user!.id)
     }
 
     const membershipMeta = {
-      type:'membership',
+      type:    'membership',
       item_id: plan,
-      plan, // explicit duplicate so subscription object also carries it
+      plan,              // explicit duplicate so subscription object also carries it
       user_id: user!.id,
     }
 
     const session = await stripe.checkout.sessions.create({
-      mode:'subscription',
+      mode:           'subscription',
       customer_email: user!.email ?? undefined,
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items:     [{ price: priceId, quantity: 1 }],
       // subscription_data.metadata copies onto the subscription object itself,
       // making user_id + plan available in customer.subscription.* events.
       subscription_data: { metadata: membershipMeta },
-      success_url:`${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:`${baseUrl}/membership`,
-      metadata: membershipMeta,
+      success_url:       `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url:        `${baseUrl}/membership`,
+      metadata:          membershipMeta,
     })
 
     return NextResponse.json({ url: session.url })
   }
 
-  // Job listing checkout 
-  if (type ==='job_listing') {
-    const isFeatured = body.basePlan ==='featured'
-    const isUrgent = body.withUrgent ?? false
-    const amount = (isFeatured ? 2900 : 0) + (isUrgent ? 900 : 0)
+  // ── Job listing checkout ─────────────────────────────────────
+  if (type === 'job_listing') {
+    const isFeatured = body.basePlan === 'featured'
+    const isUrgent   = body.withUrgent ?? false
+    const amount     = (isFeatured ? 2900 : 0) + (isUrgent ? 900 : 0)
 
     if (amount === 0) {
-      return NextResponse.json({ error:'No paid option selected.' }, { status: 400 })
+      return NextResponse.json({ error: 'No paid option selected.' }, { status: 400 })
     }
 
     const productName = isFeatured && isUrgent
-      ?'Featured + Urgent Job Listing'
+      ? 'Featured + Urgent Job Listing'
       : isFeatured
-        ?'Featured Job Listing'
-        :'Urgent Job Badge'
+        ? 'Featured Job Listing'
+        : 'Urgent Job Badge'
 
     const session = await stripe.checkout.sessions.create({
-      mode:'payment',
+      mode:           'payment',
       customer_email: user?.email ?? undefined,
       line_items: [{
         price_data: {
-          currency:'eur',
-          unit_amount: amount,
+          currency:     'eur',
+          unit_amount:  amount,
           product_data: { name: productName },
         },
         quantity: 1,
       }],
-      success_url:`${baseUrl}/jobs/${itemId}?payment=success`,
-      cancel_url:`${baseUrl}/jobs/post`,
+      success_url: `${baseUrl}/jobs/${itemId}?payment=success`,
+      cancel_url:  `${baseUrl}/jobs/post`,
       metadata: {
-        type:'job_listing',
-        item_id: itemId,
-        user_id: user?.id ??'',
+        type:        'job_listing',
+        item_id:     itemId,
+        user_id:     user?.id   ?? '',
         is_featured: String(isFeatured),
-        is_urgent: String(isUrgent),
+        is_urgent:   String(isUrgent),
       },
     })
 
     return NextResponse.json({ url: session.url })
   }
 
-  // Employer subscription checkout 
-  if (type ==='employer_subscription') {
+  // ── Employer subscription checkout ───────────────────────────
+  if (type === 'employer_subscription') {
     const isUrgent = body.withUrgent ?? false
 
     const session = await stripe.checkout.sessions.create({
-      mode:'subscription',
+      mode:           'subscription',
       customer_email: user?.email ?? undefined,
       line_items: [{
         price_data: {
-          currency:'eur',
-          unit_amount: 4900,
-          product_data: { name:'Employer Plan — Erasmus Life Jobs' },
-          recurring: { interval:'month' },
+          currency:     'eur',
+          unit_amount:  4900,
+          product_data: { name: 'Employer Plan — Erasmus Life Jobs' },
+          recurring:    { interval: 'month' },
         },
         quantity: 1,
       }],
       subscription_data: {
         metadata: {
-          type:'employer_subscription',
-          job_id: itemId,
-          user_id: user?.id ??'',
+          type:      'employer_subscription',
+          job_id:    itemId,
+          user_id:   user?.id ?? '',
           is_urgent: String(isUrgent),
         },
       },
-      success_url:`${baseUrl}/jobs/${itemId}?payment=success`,
-      cancel_url:`${baseUrl}/jobs/post`,
+      success_url: `${baseUrl}/jobs/${itemId}?payment=success`,
+      cancel_url:  `${baseUrl}/jobs/post`,
       metadata: {
-        type:'employer_subscription',
-        item_id: itemId,
-        user_id: user?.id ??'',
+        type:      'employer_subscription',
+        item_id:   itemId,
+        user_id:   user?.id ?? '',
         is_urgent: String(isUrgent),
       },
     })
@@ -683,92 +683,92 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ url: session.url })
   }
 
-  // Job upgrade checkout 
-  if (type ==='job_upgrade') {
+  // ── Job upgrade checkout ─────────────────────────────────────
+  if (type === 'job_upgrade') {
     const upgradeType = body.upgradeType
-    const employerId = body.employerId ?? itemId
-    const jobId = body.jobId
+    const employerId  = body.employerId ?? itemId
+    const jobId       = body.jobId
 
     if (!upgradeType) {
-      return NextResponse.json({ error:'upgradeType is required.' }, { status: 400 })
+      return NextResponse.json({ error: 'upgradeType is required.' }, { status: 400 })
     }
 
-    if (upgradeType ==='featured') {
-      if (!jobId) return NextResponse.json({ error:'jobId required for featured upgrade.' }, { status: 400 })
+    if (upgradeType === 'featured') {
+      if (!jobId) return NextResponse.json({ error: 'jobId required for featured upgrade.' }, { status: 400 })
 
-      const isFeat = body.isFeatured ?? true
-      const isUrg = body.isUrgent ?? false
+      const isFeat      = body.isFeatured ?? true
+      const isUrg       = body.isUrgent   ?? false
       const featuredAmt = isFeat ? 2900 : 0
-      const urgentAmt = isUrg ? 900 : 0
-      const amount = featuredAmt + urgentAmt
+      const urgentAmt   = isUrg  ? 900  : 0
+      const amount      = featuredAmt + urgentAmt
 
       const productName = isFeat && isUrg
-        ?'Featured + Urgent Job Listing — 60 days'
+        ? 'Featured + Urgent Job Listing — 60 days'
         : isFeat
-          ?'Featured Job Listing — 60 days'
-          :'Urgent Job Badge'
+          ? 'Featured Job Listing — 60 days'
+          : 'Urgent Job Badge'
 
       const session = await stripe.checkout.sessions.create({
-        mode:'payment',
+        mode:           'payment',
         customer_email: user?.email ?? undefined,
         line_items: [{
           price_data: {
-            currency:'eur',
-            unit_amount: amount,
+            currency:     'eur',
+            unit_amount:  amount,
             product_data: { name: productName },
           },
           quantity: 1,
         }],
-        success_url:`${baseUrl}/employer/dashboard?upgraded=true`,
-        cancel_url:`${baseUrl}/employer/upgrade`,
+        success_url: `${baseUrl}/employer/dashboard?upgraded=true`,
+        cancel_url:  `${baseUrl}/employer/upgrade`,
         metadata: {
-          type:'job_upgrade',
-          upgrade_type:'featured',
-          employer_id: employerId,
-          item_id: jobId,
-          is_featured: String(isFeat),
-          is_urgent: String(isUrg),
-          user_id: user?.id ??'',
+          type:         'job_upgrade',
+          upgrade_type: 'featured',
+          employer_id:  employerId,
+          item_id:      jobId,
+          is_featured:  String(isFeat),
+          is_urgent:    String(isUrg),
+          user_id:      user?.id ?? '',
         },
       })
       return NextResponse.json({ url: session.url })
     }
 
-    if (upgradeType ==='subscription') {
+    if (upgradeType === 'subscription') {
       const session = await stripe.checkout.sessions.create({
-        mode:'subscription',
+        mode:           'subscription',
         customer_email: user?.email ?? undefined,
         line_items: [{
           price_data: {
-            currency:'eur',
-            unit_amount: 4900,
-            product_data: { name:'Employer Plan — Erasmus Life Jobs' },
-            recurring: { interval:'month' },
+            currency:     'eur',
+            unit_amount:  4900,
+            product_data: { name: 'Employer Plan — Erasmus Life Jobs' },
+            recurring:    { interval: 'month' },
           },
           quantity: 1,
         }],
         subscription_data: {
           metadata: {
-            type:'job_upgrade',
-            upgrade_type:'subscription',
-            employer_id: employerId,
-            item_id: employerId, // fallback for webhook itemId guard
-            user_id: user?.id ??'',
+            type:         'job_upgrade',
+            upgrade_type: 'subscription',
+            employer_id:  employerId,
+            item_id:      employerId,   // fallback for webhook itemId guard
+            user_id:      user?.id ?? '',
           },
         },
-        success_url:`${baseUrl}/employer/dashboard?upgraded=true`,
-        cancel_url:`${baseUrl}/employer/upgrade`,
+        success_url: `${baseUrl}/employer/dashboard?upgraded=true`,
+        cancel_url:  `${baseUrl}/employer/upgrade`,
         metadata: {
-          type:'job_upgrade',
-          upgrade_type:'subscription',
-          employer_id: employerId,
-          item_id: employerId, // fallback for webhook itemId guard
-          user_id: user?.id ??'',
+          type:         'job_upgrade',
+          upgrade_type: 'subscription',
+          employer_id:  employerId,
+          item_id:      employerId,   // fallback for webhook itemId guard
+          user_id:      user?.id ?? '',
         },
       })
       return NextResponse.json({ url: session.url })
     }
   }
 
-  return NextResponse.json({ error:'Invalid checkout type.' }, { status: 400 })
+  return NextResponse.json({ error: 'Invalid checkout type.' }, { status: 400 })
 }

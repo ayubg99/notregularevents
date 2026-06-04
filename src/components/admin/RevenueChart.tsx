@@ -3,7 +3,7 @@
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer,
-} from'recharts'
+} from 'recharts'
 
 export interface MonthData {
   month: string
@@ -51,23 +51,23 @@ export default function RevenueChart({ data }: { data: MonthData[] }) {
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
           <XAxis
             dataKey="month"
-            tick={{ fill:'rgba(255,255,255,0.3)', fontSize: 11 }}
+            tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 11 }}
             tickLine={false}
             axisLine={false}
           />
           <YAxis
-            tick={{ fill:'rgba(255,255,255,0.3)', fontSize: 10 }}
+            tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }}
             tickLine={false}
             axisLine={false}
-            tickFormatter={v =>`€${v}`}
+            tickFormatter={v => `€${v}`}
             width={50}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill:'rgba(255,255,255,0.03)' }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
           <Legend
-            wrapperStyle={{ fontSize: 11, color:'rgba(255,255,255,0.4)', paddingTop: 12 }}
+            wrapperStyle={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', paddingTop: 12 }}
           />
-          <Bar dataKey="events" name="Events" fill="#E91E8C" radius={[3, 3, 0, 0]} maxBarSize={20} />
-          <Bar dataKey="trips" name="Trips" fill="#2dd4bf" radius={[3, 3, 0, 0]} maxBarSize={20} />
+          <Bar dataKey="events"      name="Events"      fill="#E91E8C" radius={[3, 3, 0, 0]} maxBarSize={20} />
+          <Bar dataKey="trips"       name="Trips"       fill="#2dd4bf" radius={[3, 3, 0, 0]} maxBarSize={20} />
           <Bar dataKey="memberships" name="Memberships" fill="#8B1A6B" radius={[3, 3, 0, 0]} maxBarSize={20} />
         </BarChart>
       </ResponsiveContainer>

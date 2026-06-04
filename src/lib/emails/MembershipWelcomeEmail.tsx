@@ -1,24 +1,24 @@
 interface Props {
-  name: string
-  plan:'basic' |'premium' |'vip' |'employer'
+  name:    string
+  plan:    'basic' | 'premium' | 'vip' | 'employer'
   endDate: string
   baseUrl: string
 }
 
 const PLAN_INFO = {
-  basic: { label:'Monthly', price:'€9.99/mo', duration:'30 days' },
-  premium: { label:'Semester', price:'≈€4.17/mo', duration:'6 months' },
-  vip: { label:'Annual', price:'≈€3.33/mo', duration:'1 year' },
-  employer: { label:'Employer Plan', price:'€49/mo', duration:'1 month' },
+  basic:    { label: 'Monthly',       price: '€9.99/mo',  duration: '30 days'  },
+  premium:  { label: 'Semester',      price: '≈€4.17/mo', duration: '6 months' },
+  vip:      { label: 'Annual',        price: '≈€3.33/mo', duration: '1 year'   },
+  employer: { label: 'Employer Plan', price: '€49/mo',    duration: '1 month'  },
 }
 
 export function MembershipWelcomeEmail({ name, plan, endDate, baseUrl }: Props): string {
   const info = PLAN_INFO[plan]
   const formattedEnd = new Date(endDate).toLocaleDateString('en-GB', {
-    day:'numeric', month:'long', year:'numeric',
+    day: 'numeric', month: 'long', year: 'numeric',
   })
 
-  return`<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -43,7 +43,7 @@ export function MembershipWelcomeEmail({ name, plan, endDate, baseUrl }: Props):
 
         <!-- Greeting -->
         <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
-          Welcome, ${name}! 
+          Welcome, ${name}! 🎉
         </p>
         <p style="margin:0 0 32px;font-size:15px;color:#B8A090;line-height:1.6;">
           You're now a Vibe Member — enjoy your discount on every event and trip.
@@ -103,11 +103,11 @@ export function MembershipWelcomeEmail({ name, plan, endDate, baseUrl }: Props):
               <p style="margin:0 0 16px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">
                 Your Member Benefits
               </p>
-              <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;"> &nbsp;10% discount on all events</p>
-              <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;"> &nbsp;10% discount on all trips</p>
-              <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;"> &nbsp;Priority access to new events</p>
-              <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;"> &nbsp;Private WhatsApp member groups</p>
-              <p style="margin:0;font-size:14px;color:#FFF8EE;"> &nbsp;Exclusive members-only parties</p>
+              <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">🎟️ &nbsp;10% discount on all events</p>
+              <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">✈️ &nbsp;10% discount on all trips</p>
+              <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">⚡ &nbsp;Priority access to new events</p>
+              <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">💬 &nbsp;Private WhatsApp member groups</p>
+              <p style="margin:0;font-size:14px;color:#FFF8EE;">🎉 &nbsp;Exclusive members-only parties</p>
             </td>
           </tr>
         </table>

@@ -1,16 +1,16 @@
 'use client'
 
-import { useState } from'react'
-import Image from'next/image'
-import { Copy, Check, Download, MessageCircle, LayoutDashboard, Crown, TrendingUp } from'lucide-react'
-import Link from'next/link'
+import { useState } from 'react'
+import Image from 'next/image'
+import { Copy, Check, Download, MessageCircle, LayoutDashboard, Crown, TrendingUp } from 'lucide-react'
+import Link from 'next/link'
 
 interface Props {
-  bookingRef: string
-  qrCode: string | null
-  icsContent?: string
-  whatsappUrl?: string
-  title?: string
+  bookingRef:       string
+  qrCode:           string | null
+  icsContent?:      string
+  whatsappUrl?:     string
+  title?:           string
   showMemberUpsell?: boolean
 }
 
@@ -19,7 +19,7 @@ export default function BookingConfirmation({
   qrCode,
   icsContent,
   whatsappUrl,
-  title ='Your Booking',
+  title = 'Your Booking',
   showMemberUpsell = false,
 }: Props) {
   const [copied, setCopied] = useState(false)
@@ -128,15 +128,15 @@ export default function BookingConfirmation({
       <Link
         href="/ambassadors"
         className="w-full max-w-sm flex items-center gap-3 rounded-2xl px-5 py-4 transition-all group hover:brightness-110"
-        style={{ background:'rgba(255,107,0,0.07)', border:'1px solid rgba(255,107,0,0.2)' }}
+        style={{ background: 'rgba(255,107,0,0.07)', border: '1px solid rgba(255,107,0,0.2)' }}
       >
         <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background:'rgba(255,107,0,0.15)', border:'1px solid rgba(255,107,0,0.25)' }}>
+          style={{ background: 'rgba(255,107,0,0.15)', border: '1px solid rgba(255,107,0,0.25)' }}>
           <TrendingUp size={16} className="text-brand-accent" />
         </div>
         <div>
           <p className="text-white text-sm font-semibold">
-            Loved it? Earn by sharing 
+            Loved it? Earn by sharing 🌟
           </p>
           <p className="text-white/40 text-xs mt-0.5">
             Become an ambassador — earn 5% on every referral →

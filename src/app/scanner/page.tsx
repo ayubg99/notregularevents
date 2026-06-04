@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, useRef } from'react'
-import { BrowserQRCodeReader } from'@zxing/browser'
-import Image from'next/image'
+import { useState, useEffect, useRef } from 'react'
+import { BrowserQRCodeReader } from '@zxing/browser'
+import Image from 'next/image'
 
 type ScanResult = {
   valid: boolean
@@ -14,25 +14,25 @@ type ScanResult = {
     title: string
     booking_ref: string
     checked_in_at: string | null
-    type:'event' |'trip'
+    type: 'event' | 'trip'
   }
 }
 
 export default function ScannerPage() {
-  const [pin, setPin] = useState('')
-  const [unlocked, setUnlocked] = useState(false)
-  const [pinError, setPinError] = useState('')
-  const [scanning, setScanning] = useState(false)
-  const [result, setResult] = useState<ScanResult | null>(null)
-  const [checkedIn, setCheckedIn] = useState(false)
+  const [pin, setPin]               = useState('')
+  const [unlocked, setUnlocked]     = useState(false)
+  const [pinError, setPinError]     = useState('')
+  const [scanning, setScanning]     = useState(false)
+  const [result, setResult]         = useState<ScanResult | null>(null)
+  const [checkedIn, setCheckedIn]   = useState(false)
   const [checkinCount, setCheckinCount] = useState(0)
-  const [manualRef, setManualRef] = useState('')
+  const [manualRef, setManualRef]   = useState('')
   const videoRef = useRef<HTMLVideoElement>(null)
 
   function playBeep() {
     try {
-      const ctx = new AudioContext()
-      const osc = ctx.createOscillator()
+      const ctx  = new AudioContext()
+      const osc  = ctx.createOscillator()
       const gain = ctx.createGain()
       osc.connect(gain)
       gain.connect(ctx.destination)
@@ -47,17 +47,17 @@ export default function ScannerPage() {
   async function handleLookup(bookingRef: string) {
     const ref = bookingRef.toUpperCase().trim()
     if (!ref) return
-    const res = await fetch(`/api/scanner/lookup?ref=${encodeURIComponent(ref)}`)
+    const res  = await fetch(`/api/scanner/lookup?ref=${encodeURIComponent(ref)}`)
     const data = await res.json() as ScanResult
     setResult(data)
     setCheckedIn(false)
   }
 
-  async function handleCheckIn(bookingId: string, type:'event' |'trip') {
-    const res = await fetch('/api/scanner/checkin', {
-      method:'POST',
-      headers: {'Content-Type':'application/json' },
-      body: JSON.stringify({ bookingId, type }),
+  async function handleCheckIn(bookingId: string, type: 'event' | 'trip') {
+    const res  = await fetch('/api/scanner/checkin', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ bookingId, type }),
     })
     const data = await res.json()
     if (data.success) {
@@ -89,10 +89,10 @@ export default function ScannerPage() {
   async function handlePinSubmit() {
     setPinError('')
     try {
-      const res = await fetch('/api/scanner/validate-pin', {
-        method:'POST',
-        headers: {'Content-Type':'application/json' },
-        body: JSON.stringify({ pin }),
+      const res  = await fetch('/api/scanner/validate-pin', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ pin }),
       })
       const data = await res.json()
       if (data.valid) {
@@ -106,7 +106,7 @@ export default function ScannerPage() {
     }
   }
 
-  // PIN screen 
+  // ── PIN screen ──────────────────────────────────────────────────
   if (!unlocked) {
     return (
       <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center p-5">
@@ -127,7 +127,7 @@ export default function ScannerPage() {
             maxLength={6}
             value={pin}
             onChange={e => setPin(e.target.value)}
-            onKeyDown={e => e.key ==='Enter' && handlePinSubmit()}
+            onKeyDown={e => e.key === 'Enter' && handlePinSubmit()}
             placeholder="••••"
             className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white text-2xl text-center tracking-widest mb-4 outline-none focus:border-[#FF6B00] transition-colors"
           />
@@ -147,28 +147,28 @@ export default function ScannerPage() {
     )
   }
 
-  // Scanner screen 
+  // ── Scanner screen ───────────────────────────────────────────────
   const statusColor = result?.valid
-    ?'border-green-500 bg-green-500/10'
+    ? 'border-green-500 bg-green-500/10'
     : result?.alreadyScanned
-      ?'border-orange-400 bg-orange-400/10'
-      :'border-red-500 bg-red-500/10'
+      ? 'border-orange-400 bg-orange-400/10'
+      : 'border-red-500 bg-red-500/10'
 
-  const statusIcon = result?.valid ?'' : result?.alreadyScanned ?'' :''
+  const statusIcon = result?.valid ? '✅' : result?.alreadyScanned ? '⚠️' : '❌'
 
   const statusText = result?.valid
-    ?'VALID TICKET'
+    ? 'VALID TICKET'
     : result?.alreadyScanned
-      ?'ALREADY CHECKED IN'
+      ? 'ALREADY CHECKED IN'
       : result
-        ? (result.error ??'INVALID TICKET')
-        :''
+        ? (result.error ?? 'INVALID TICKET')
+        : ''
 
   const statusTextColor = result?.valid
-    ?'text-green-400'
+    ? 'text-green-400'
     : result?.alreadyScanned
-      ?'text-orange-400'
-      :'text-red-400'
+      ? 'text-orange-400'
+      : 'text-red-400'
 
   return (
     <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center p-5">
@@ -176,14 +176,14 @@ export default function ScannerPage() {
 
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-[#FF6B00] text-lg font-bold"> Ticket Scanner</h1>
+          <h1 className="text-[#FF6B00] text-lg font-bold">🎟️ Ticket Scanner</h1>
           <span className="bg-white/5 rounded-full px-3 py-1 text-xs text-white/50">
             {checkinCount} checked in
           </span>
         </div>
 
         {/* Camera viewfinder */}
-        <div className={`relative w-full aspect-square rounded-2xl overflow-hidden mb-6 border-2 transition-colors ${scanning ?'border-[#FF6B00]' :'border-white/10'} bg-black`}>
+        <div className={`relative w-full aspect-square rounded-2xl overflow-hidden mb-6 border-2 transition-colors ${scanning ? 'border-[#FF6B00]' : 'border-white/10'} bg-black`}>
           <video
             ref={videoRef}
             className="w-full h-full object-cover"
@@ -199,11 +199,11 @@ export default function ScannerPage() {
                 <span
                   key={c}
                   className={`absolute w-8 h-8 border-[#FF6B00] border-[3px]
-                    ${c ==='tl' ?'top-0 left-0 border-r-0 border-b-0' :''}
-                    ${c ==='tr' ?'top-0 right-0 border-l-0 border-b-0' :''}
-                    ${c ==='bl' ?'bottom-0 left-0 border-r-0 border-t-0' :''}
-                    ${c ==='br' ?'bottom-0 right-0 border-l-0 border-t-0' :''}
-`}
+                    ${c === 'tl' ? 'top-0 left-0 border-r-0 border-b-0' : ''}
+                    ${c === 'tr' ? 'top-0 right-0 border-l-0 border-b-0' : ''}
+                    ${c === 'bl' ? 'bottom-0 left-0 border-r-0 border-t-0' : ''}
+                    ${c === 'br' ? 'bottom-0 right-0 border-l-0 border-t-0' : ''}
+                  `}
                 />
               ))}
             </div>
@@ -240,7 +240,7 @@ export default function ScannerPage() {
             value={manualRef}
             onChange={e => setManualRef(e.target.value)}
             onKeyDown={e => {
-              if (e.key ==='Enter' && manualRef.trim()) {
+              if (e.key === 'Enter' && manualRef.trim()) {
                 handleLookup(manualRef)
                 setManualRef('')
               }
@@ -270,7 +270,7 @@ export default function ScannerPage() {
             {result.booking && (
               <div className="text-left border-t border-white/10 pt-4 mt-2">
                 <p className="text-white font-semibold text-lg mb-1">
-                  {result.booking.guest_name ??'Member'}
+                  {result.booking.guest_name ?? 'Member'}
                 </p>
                 <p className="text-white/60 text-sm mb-1">{result.booking.title}</p>
                 <p className="text-white/40 text-xs font-mono mb-4">
@@ -288,13 +288,13 @@ export default function ScannerPage() {
                     onClick={() => handleCheckIn(result.booking!.id, result.booking!.type)}
                     className="w-full py-3.5 bg-green-500 text-white rounded-full font-bold text-base hover:bg-green-400 transition-colors mb-3"
                   >
-                    Check In 
+                    Check In ✓
                   </button>
                 )}
 
                 {checkedIn && (
                   <p className="text-green-400 font-bold text-center mb-3">
-                     Checked in successfully!
+                    ✅ Checked in successfully!
                   </p>
                 )}
               </div>

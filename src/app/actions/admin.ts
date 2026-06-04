@@ -1,17 +1,17 @@
 'use server'
 
-import { revalidatePath } from'next/cache'
-import { createClient } from'@/lib/supabase/server'
-import { getAdminClient } from'@/lib/supabase/admin'
-import { getResend } from'@/lib/resend'
-import { NewEventAnnouncementEmail, NewTripAnnouncementEmail } from'@/lib/emails/AnnouncementEmail'
-import { confirmBooking, rejectBooking } from'@/lib/booking-utils'
+import { revalidatePath } from 'next/cache'
+import { createClient } from '@/lib/supabase/server'
+import { getAdminClient } from '@/lib/supabase/admin'
+import { getResend } from '@/lib/resend'
+import { NewEventAnnouncementEmail, NewTripAnnouncementEmail } from '@/lib/emails/AnnouncementEmail'
+import { confirmBooking, rejectBooking } from '@/lib/booking-utils'
 import type {
   EventInsert, EventUpdate, TripInsert, TripUpdate, UserRole, HousingStatus,
   HousingPartnerInsert, HousingPartnerUpdate, HousingPartnerStatus,
   PartnerRoomInsert, PartnerRoomUpdate, PartnerRoomStatus,
   RoomContactStatus, SponsorInsert, SponsorUpdate,
-} from'@/types/database'
+} from '@/types/database'
 
 type Subscriber = { email: string; unsubscribe_token: string }
 
@@ -37,21 +37,21 @@ async function batchSend(emails: Parameters<ReturnType<typeof getResend>['batch'
 async function verifyAdmin(): Promise<{ ok: true; userId: string } | { ok: false; error: string }> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { ok: false, error:'Unauthorized' }
+  if (!user) return { ok: false, error: 'Unauthorized' }
   const { data: userRow } = await supabase.from('users').select('role').eq('id', user.id).single()
-  if (userRow?.role !=='admin') return { ok: false, error:'Forbidden' }
+  if (userRow?.role !== 'admin') return { ok: false, error: 'Forbidden' }
   return { ok: true, userId: user.id }
 }
 
-// Events 
+// ── Events ────────────────────────────────────────────────────
 
 export async function createEvent(data: EventInsert, notifySubscribers = false): Promise<{ success: boolean; error?: string; notified?: number }> {
   const auth = await verifyAdmin()
   if (!auth.ok) return { success: false, error: auth.error }
 
-  const admin = getAdminClient()
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ??'https://erasmuslifevalencia.com'
-  const from = process.env.RESEND_FROM_EMAIL ??'bookings@erasmuslifevalencia.com'
+  const admin   = getAdminClient()
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from    = process.env.RESEND_FROM_EMAIL   ?? 'bookings@erasmuslifevalencia.com'
 
   const { data: row, error } = await admin
     .from('events')
@@ -68,21 +68,21 @@ export async function createEvent(data: EventInsert, notifySubscribers = false):
   const subscribers = await fetchSubscribers()
   if (!subscribers.length) return { success: true, notified: 0 }
 
-  const subject =` New event: ${row.title}`
-  const emails = subscribers.map(sub => ({
+  const subject = `🎉 New event: ${row.title}`
+  const emails  = subscribers.map(sub => ({
     from,
-    to: sub.email,
+    to:      sub.email,
     subject,
     html: NewEventAnnouncementEmail({
-      title: row.title,
-      slug: row.slug,
-      date: row.date,
-      location: row.location,
-      price: row.price,
-      isFree: row.is_free,
-      imageUrl: row.image_url,
+      title:          row.title,
+      slug:           row.slug,
+      date:           row.date,
+      location:       row.location,
+      price:          row.price,
+      isFree:         row.is_free,
+      imageUrl:       row.image_url,
       baseUrl,
-      unsubscribeUrl:`${baseUrl}/api/newsletter/unsubscribe?token=${sub.unsubscribe_token}`,
+      unsubscribeUrl: `${baseUrl}/api/newsletter/unsubscribe?token=${sub.unsubscribe_token}`,
     }),
   }))
 
@@ -123,29 +123,29 @@ export async function duplicateEvent(eventId: string): Promise<{ success: boolea
 
   const { data: orig, error: fetchErr } = await admin
     .from('events').select('*').eq('id', eventId).single()
-  if (fetchErr || !orig) return { success: false, error:'Event not found' }
+  if (fetchErr || !orig) return { success: false, error: 'Event not found' }
 
   const { data, error } = await admin
     .from('events')
     .insert({
-      title:`${orig.title} (Copy)`,
-      slug:`${orig.slug}-copy-${Date.now()}`,
-      description: orig.description,
-      category: orig.category,
-      date: orig.date,
-      location: orig.location,
-      image_url: orig.image_url,
-      is_free: orig.is_free,
-      members_only_free: orig.members_only_free,
-      price: orig.price,
-      price_early_bird: orig.price_early_bird,
-      price_group: orig.price_group,
+      title:               `${orig.title} (Copy)`,
+      slug:                `${orig.slug}-copy-${Date.now()}`,
+      description:         orig.description,
+      category:            orig.category,
+      date:                orig.date,
+      location:            orig.location,
+      image_url:           orig.image_url,
+      is_free:             orig.is_free,
+      members_only_free:   orig.members_only_free,
+      price:               orig.price,
+      price_early_bird:    orig.price_early_bird,
+      price_group:         orig.price_group,
       early_bird_deadline: null,
-      early_bird_seats: orig.early_bird_seats,
-      group_min_size: orig.group_min_size,
-      capacity: orig.capacity,
-      status:'draft',
-      created_by: auth.userId,
+      early_bird_seats:    orig.early_bird_seats,
+      group_min_size:      orig.group_min_size,
+      capacity:            orig.capacity,
+      status:              'draft',
+      created_by:          auth.userId,
     })
     .select()
     .single()
@@ -156,15 +156,15 @@ export async function duplicateEvent(eventId: string): Promise<{ success: boolea
   return { success: true, id: data.id }
 }
 
-// Trips 
+// ── Trips ─────────────────────────────────────────────────────
 
 export async function createTrip(data: TripInsert, notifySubscribers = false): Promise<{ success: boolean; error?: string; notified?: number }> {
   const auth = await verifyAdmin()
   if (!auth.ok) return { success: false, error: auth.error }
 
-  const admin = getAdminClient()
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ??'https://erasmuslifevalencia.com'
-  const from = process.env.RESEND_FROM_EMAIL ??'bookings@erasmuslifevalencia.com'
+  const admin   = getAdminClient()
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from    = process.env.RESEND_FROM_EMAIL   ?? 'bookings@erasmuslifevalencia.com'
 
   const { data: row, error } = await admin
     .from('trips')
@@ -181,21 +181,21 @@ export async function createTrip(data: TripInsert, notifySubscribers = false): P
   const subscribers = await fetchSubscribers()
   if (!subscribers.length) return { success: true, notified: 0 }
 
-  const subject =` New trip: ${row.title}`
-  const emails = subscribers.map(sub => ({
+  const subject = `✈️ New trip: ${row.title}`
+  const emails  = subscribers.map(sub => ({
     from,
-    to: sub.email,
+    to:      sub.email,
     subject,
     html: NewTripAnnouncementEmail({
-      title: row.title,
-      slug: row.slug,
-      startDate: row.start_date,
-      endDate: row.end_date,
-      destination: row.destination,
-      priceStandard: row.price_standard,
-      imageUrl: row.image_url,
+      title:          row.title,
+      slug:           row.slug,
+      startDate:      row.start_date,
+      endDate:        row.end_date,
+      destination:    row.destination,
+      priceStandard:  row.price_standard,
+      imageUrl:       row.image_url,
       baseUrl,
-      unsubscribeUrl:`${baseUrl}/api/newsletter/unsubscribe?token=${sub.unsubscribe_token}`,
+      unsubscribeUrl: `${baseUrl}/api/newsletter/unsubscribe?token=${sub.unsubscribe_token}`,
     }),
   }))
 
@@ -236,33 +236,33 @@ export async function duplicateTrip(tripId: string): Promise<{ success: boolean;
 
   const { data: orig, error: fetchErr } = await admin
     .from('trips').select('*').eq('id', tripId).single()
-  if (fetchErr || !orig) return { success: false, error:'Trip not found' }
+  if (fetchErr || !orig) return { success: false, error: 'Trip not found' }
 
   const { data, error } = await admin
     .from('trips')
     .insert({
-      title:`${orig.title} (Copy)`,
-      slug:`${orig.slug}-copy-${Date.now()}`,
-      description: orig.description,
-      category: orig.category,
-      destination: orig.destination,
-      start_date: orig.start_date,
-      end_date: orig.end_date,
-      price_standard: orig.price_standard,
-      price_early_bird: orig.price_early_bird,
-      price_group: orig.price_group,
+      title:               `${orig.title} (Copy)`,
+      slug:                `${orig.slug}-copy-${Date.now()}`,
+      description:         orig.description,
+      category:            orig.category,
+      destination:         orig.destination,
+      start_date:          orig.start_date,
+      end_date:            orig.end_date,
+      price_standard:      orig.price_standard,
+      price_early_bird:    orig.price_early_bird,
+      price_group:         orig.price_group,
       early_bird_deadline: null,
-      early_bird_seats: orig.early_bird_seats,
-      group_min_size: orig.group_min_size,
-      capacity: orig.capacity,
-      image_url: orig.image_url,
-      whatsapp_group_url: orig.whatsapp_group_url,
-      itinerary: orig.itinerary,
-      whats_included: orig.whats_included,
-      whats_excluded: orig.whats_excluded,
-      meeting_points: orig.meeting_points,
-      status:'draft',
-      created_by: auth.userId,
+      early_bird_seats:    orig.early_bird_seats,
+      group_min_size:      orig.group_min_size,
+      capacity:            orig.capacity,
+      image_url:           orig.image_url,
+      whatsapp_group_url:  orig.whatsapp_group_url,
+      itinerary:           orig.itinerary,
+      whats_included:      orig.whats_included,
+      whats_excluded:      orig.whats_excluded,
+      meeting_points:      orig.meeting_points,
+      status:              'draft',
+      created_by:          auth.userId,
     })
     .select()
     .single()
@@ -273,7 +273,7 @@ export async function duplicateTrip(tripId: string): Promise<{ success: boolean;
   return { success: true, id: data.id }
 }
 
-// Users 
+// ── Users ─────────────────────────────────────────────────────
 
 export async function updateUserRole(userId: string, role: UserRole): Promise<{ success: boolean; error?: string }> {
   const auth = await verifyAdmin()
@@ -287,7 +287,7 @@ export async function updateUserRole(userId: string, role: UserRole): Promise<{ 
   return { success: true }
 }
 
-// Housing 
+// ── Housing ───────────────────────────────────────────────────
 
 export async function updateHousingStatus(id: string, status: HousingStatus): Promise<{ success: boolean; error?: string }> {
   const auth = await verifyAdmin()
@@ -313,7 +313,7 @@ export async function deleteHousing(id: string): Promise<{ success: boolean; err
   return { success: true }
 }
 
-// Housing Partners 
+// ── Housing Partners ──────────────────────────────────────────
 
 export async function createHousingPartner(data: HousingPartnerInsert): Promise<{ success: boolean; id?: string; error?: string }> {
   const auth = await verifyAdmin()
@@ -355,7 +355,7 @@ export async function togglePartnerStatus(id: string, status: HousingPartnerStat
   return updateHousingPartner(id, { status })
 }
 
-// Partner Rooms 
+// ── Partner Rooms ─────────────────────────────────────────────
 
 export async function createPartnerRoom(data: PartnerRoomInsert): Promise<{ success: boolean; id?: string; error?: string }> {
   const auth = await verifyAdmin()
@@ -412,7 +412,7 @@ export async function updateRoomContactStatus(id: string, status: RoomContactSta
   return { success: true }
 }
 
-// Sponsors 
+// ── Sponsors ──────────────────────────────────────────────────
 
 export async function createSponsor(data: SponsorInsert): Promise<{ success: boolean; id?: string; error?: string }> {
   const auth = await verifyAdmin()
@@ -469,19 +469,19 @@ export async function rejectBookingAdmin(bookingRef: string): Promise<{ success:
   const auth = await verifyAdmin()
   if (!auth.ok) return { success: false, error: auth.error }
 
-  const result = await rejectBooking(bookingRef,'Rejected by admin')
+  const result = await rejectBooking(bookingRef, 'Rejected by admin')
   if (result.success) revalidatePath('/admin/housing-partners/contacts')
   return { success: result.success, error: result.error }
 }
 
-// Marketplace 
+// ── Marketplace ───────────────────────────────────────────────
 
 export async function deactivateMarketplaceListing(id: string): Promise<{ success: boolean; error?: string }> {
   const auth = await verifyAdmin()
   if (!auth.ok) return { success: false, error: auth.error }
 
   const admin = getAdminClient()
-  const { error } = await admin.from('marketplace_listings').update({ status:'inactive' }).eq('id', id)
+  const { error } = await admin.from('marketplace_listings').update({ status: 'inactive' }).eq('id', id)
   if (error) return { success: false, error: error.message }
 
   revalidatePath('/admin/marketplace')

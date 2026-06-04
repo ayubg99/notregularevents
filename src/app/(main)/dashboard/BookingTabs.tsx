@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from'react'
-import Link from'next/link'
-import { Calendar, MapPin, Download, ExternalLink, X } from'lucide-react'
-import type { EventTicketRow, TripBookingRow } from'@/types/database'
+import { useState } from 'react'
+import Link from 'next/link'
+import { Calendar, MapPin, Download, ExternalLink, X } from 'lucide-react'
+import type { EventTicketRow, TripBookingRow } from '@/types/database'
 
 type EventTicketWithEvent = EventTicketRow & {
   events: { id: string; title: string; date: string; location: string | null; slug: string } | null
@@ -14,8 +14,8 @@ type TripBookingWithTrip = TripBookingRow & {
 }
 
 type SelectedBooking =
-  | { kind:'event'; data: EventTicketWithEvent }
-  | { kind:'trip'; data: TripBookingWithTrip }
+  | { kind: 'event'; data: EventTicketWithEvent }
+  | { kind: 'trip';  data: TripBookingWithTrip  }
 
 interface Props {
   eventTickets: EventTicketWithEvent[]
@@ -23,12 +23,12 @@ interface Props {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  active:'bg-green-500/15 text-green-400 border-green-500/30',
-  confirmed:'bg-green-500/15 text-green-400 border-green-500/30',
-  used:'bg-white/10 text-white/40 border-white/10',
-  cancelled:'bg-red-500/15 text-red-400 border-red-500/30',
-  refunded:'bg-orange-500/15 text-orange-400 border-yellow-500/30',
-  pending:'bg-blue-500/15 text-blue-400 border-blue-500/30',
+  active:    'bg-green-500/15 text-green-400 border-green-500/30',
+  confirmed: 'bg-green-500/15 text-green-400 border-green-500/30',
+  used:      'bg-white/10 text-white/40 border-white/10',
+  cancelled: 'bg-red-500/15 text-red-400 border-red-500/30',
+  refunded:  'bg-orange-500/15 text-orange-400 border-yellow-500/30',
+  pending:   'bg-blue-500/15 text-blue-400 border-blue-500/30',
 }
 
 function isUpcoming(dateStr: string | undefined, now: number): boolean {
@@ -38,14 +38,14 @@ function isUpcoming(dateStr: string | undefined, now: number): boolean {
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('en-GB', {
-    day:'numeric', month:'short', year:'numeric', timeZone:'UTC',
+    day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC',
   })
 }
 
 function downloadQR(qrCode: string, ref: string) {
   const a = document.createElement('a')
   a.href = qrCode
-  a.download =`ticket-${ref}.png`
+  a.download = `ticket-${ref}.png`
   a.click()
 }
 
@@ -53,7 +53,7 @@ function DetailRow({ label, value, bold }: { label: string; value: string; bold?
   return (
     <div className="flex items-start justify-between gap-3">
       <span className="text-white/50 text-sm flex-shrink-0">{label}</span>
-      <span className={`text-sm text-right ${bold ?'text-white font-semibold' :'text-white/80'}`}>
+      <span className={`text-sm text-right ${bold ? 'text-white font-semibold' : 'text-white/80'}`}>
         {value}
       </span>
     </div>
@@ -61,30 +61,30 @@ function DetailRow({ label, value, bold }: { label: string; value: string; bold?
 }
 
 export default function BookingTabs({ eventTickets, tripBookings }: Props) {
-  const [tab, setTab] = useState<'upcoming' |'past'>('upcoming')
+  const [tab, setTab] = useState<'upcoming' | 'past'>('upcoming')
   const [now] = useState(() => Date.now())
   const [selectedBooking, setSelectedBooking] = useState<SelectedBooking | null>(null)
 
   const upcomingEvents = eventTickets.filter(t =>
-    isUpcoming(t.events?.date, now) && t.status !=='cancelled' && t.status !=='refunded'
+    isUpcoming(t.events?.date, now) && t.status !== 'cancelled' && t.status !== 'refunded'
   )
   const pastEvents = eventTickets.filter(t =>
-    !isUpcoming(t.events?.date, now) || t.status ==='cancelled' || t.status ==='refunded'
+    !isUpcoming(t.events?.date, now) || t.status === 'cancelled' || t.status === 'refunded'
   )
 
   const upcomingTrips = tripBookings.filter(t =>
-    isUpcoming(t.trips?.start_date, now) && t.status !=='cancelled' && t.status !=='refunded'
+    isUpcoming(t.trips?.start_date, now) && t.status !== 'cancelled' && t.status !== 'refunded'
   )
   const pastTrips = tripBookings.filter(t =>
-    !isUpcoming(t.trips?.start_date, now) || t.status ==='cancelled' || t.status ==='refunded'
+    !isUpcoming(t.trips?.start_date, now) || t.status === 'cancelled' || t.status === 'refunded'
   )
 
-  const upcoming = [...upcomingEvents.map(t => ({ kind:'event' as const, data: t })),
-                    ...upcomingTrips.map(t => ({ kind:'trip' as const, data: t }))]
-  const past = [...pastEvents.map(t => ({ kind:'event' as const, data: t })),
-                    ...pastTrips.map(t => ({ kind:'trip' as const, data: t }))]
+  const upcoming = [...upcomingEvents.map(t => ({ kind: 'event' as const, data: t })),
+                    ...upcomingTrips.map(t => ({ kind: 'trip' as const, data: t }))]
+  const past     = [...pastEvents.map(t => ({ kind: 'event' as const, data: t })),
+                    ...pastTrips.map(t => ({ kind: 'trip' as const, data: t }))]
 
-  const items = tab ==='upcoming' ? upcoming : past
+  const items = tab === 'upcoming' ? upcoming : past
 
   return (
     <>
@@ -92,17 +92,17 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
         <div className="flex items-center justify-between mb-5">
           <h2 className="font-heading text-lg font-bold text-white">My Bookings</h2>
           <div className="flex gap-1 rounded-xl bg-white/5 border border-white/10 p-1">
-            {(['upcoming','past'] as const).map(t => (
+            {(['upcoming', 'past'] as const).map(t => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
                 className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 capitalize ${
-                  tab === t ?'bg-brand-primary text-white' :'text-white/40 hover:text-white/70'
+                  tab === t ? 'bg-brand-primary text-white' : 'text-white/40 hover:text-white/70'
                 }`}
               >
                 {t}
                 <span className="ml-1.5 opacity-60">
-                  {t ==='upcoming' ? upcoming.length : past.length}
+                  {t === 'upcoming' ? upcoming.length : past.length}
                 </span>
               </button>
             ))}
@@ -112,7 +112,7 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
         {items.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-white/30 text-sm">No {tab} bookings</p>
-            {tab ==='upcoming' && (
+            {tab === 'upcoming' && (
               <Link href="/events" className="inline-block mt-3 text-brand-primary text-sm hover:brightness-110 transition-colors">
                 Browse events →
               </Link>
@@ -121,18 +121,18 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
         ) : (
           <div className="flex flex-col gap-3">
             {items.map(({ kind, data }) => {
-              const isEvent = kind ==='event'
-              const ticket = data as EventTicketWithEvent
+              const isEvent = kind === 'event'
+              const ticket  = data as EventTicketWithEvent
               const booking = data as TripBookingWithTrip
 
-              const title = isEvent ? ticket.events?.title : booking.trips?.title
-              const dateStr = isEvent ? ticket.events?.date : booking.trips?.start_date
+              const title    = isEvent ? ticket.events?.title    : booking.trips?.title
+              const dateStr  = isEvent ? ticket.events?.date     : booking.trips?.start_date
               const location = isEvent ? ticket.events?.location : booking.trips?.destination
-              const slug = isEvent ? ticket.events?.slug : booking.trips?.slug
-              const href = slug ?`/${isEvent ?'events' :'trips'}/${slug}` :'#'
-              const ref = data.booking_ref
-              const qr = data.qr_code
-              const status = data.status
+              const slug     = isEvent ? ticket.events?.slug     : booking.trips?.slug
+              const href     = slug ? `/${isEvent ? 'events' : 'trips'}/${slug}` : '#'
+              const ref      = data.booking_ref
+              const qr       = data.qr_code
+              const status   = data.status
 
               return (
                 <div
@@ -143,7 +143,7 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       <span className="text-xs font-semibold uppercase tracking-wider text-white/30">
-                        {isEvent ?'Event' :'Trip'}
+                        {isEvent ? 'Event' : 'Trip'}
                       </span>
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${STATUS_COLORS[status] ?? STATUS_COLORS.active}`}>
                         {status}
@@ -154,7 +154,7 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
                       onClick={e => e.stopPropagation()}
                       className="text-white font-semibold text-sm hover:text-brand-primary transition-colors truncate block"
                     >
-                      {title ??'Unknown'}
+                      {title ?? 'Unknown'}
                     </Link>
                     <div className="flex items-center gap-3 mt-1.5 text-white/40 text-xs flex-wrap">
                       {dateStr && (
@@ -209,18 +209,18 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
       {/* Booking detail modal */}
       {selectedBooking && (() => {
         const { kind, data } = selectedBooking
-        const isEvent = kind ==='event'
-        const ticket = data as EventTicketWithEvent
+        const isEvent = kind === 'event'
+        const ticket  = data as EventTicketWithEvent
         const booking = data as TripBookingWithTrip
 
-        const title = isEvent ? ticket.events?.title : booking.trips?.title
-        const dateStr = isEvent ? ticket.events?.date : booking.trips?.start_date
-        const location = isEvent ? ticket.events?.location : booking.trips?.destination
-        const tier = isEvent ? null : booking.tier
-        const qr = data.qr_code
-        const ref = data.booking_ref
-        const status = data.status
-        const amount = data.amount_paid
+        const title    = isEvent ? ticket.events?.title     : booking.trips?.title
+        const dateStr  = isEvent ? ticket.events?.date      : booking.trips?.start_date
+        const location = isEvent ? ticket.events?.location  : booking.trips?.destination
+        const tier     = isEvent ? null                     : booking.tier
+        const qr       = data.qr_code
+        const ref      = data.booking_ref
+        const status   = data.status
+        const amount   = data.amount_paid
         const bookedAt = data.created_at
 
         return (
@@ -255,12 +255,12 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  <DetailRow label={isEvent ?'Event' :'Trip'} value={title ??'Unknown'} bold />
+                  <DetailRow label={isEvent ? 'Event' : 'Trip'} value={title ?? 'Unknown'} bold />
                   {dateStr && (
                     <DetailRow
                       label="Date"
                       value={new Date(dateStr).toLocaleDateString('en-GB', {
-                        day:'numeric', month:'long', year:'numeric',
+                        day: 'numeric', month: 'long', year: 'numeric',
                       })}
                     />
                   )}
@@ -269,14 +269,14 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
                     <div className="flex items-center justify-between">
                       <span className="text-white/50 text-sm">Tier</span>
                       <span className="bg-brand-primary/20 text-brand-primary px-2.5 py-0.5 rounded-full text-xs font-bold capitalize">
-                        {tier.replace('_','')}
+                        {tier.replace('_', ' ')}
                       </span>
                     </div>
                   )}
                   <div className="flex items-center justify-between">
                     <span className="text-white/50 text-sm">Amount paid</span>
                     <span className="text-green-400 font-semibold text-sm">
-                      {amount != null ?`€${amount.toFixed(2)}` :'—'}
+                      {amount != null ? `€${amount.toFixed(2)}` : '—'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">

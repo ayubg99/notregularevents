@@ -1,8 +1,8 @@
-import Link from'next/link'
-import { ArrowRight } from'lucide-react'
-import { getPublicClient } from'@/lib/supabase/public'
-import type { TripRow } from'@/types/database'
-import TripCard from'@/components/trips/TripCard'
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
+import { getPublicClient } from '@/lib/supabase/public'
+import type { TripRow } from '@/types/database'
+import TripCard from '@/components/trips/TripCard'
 
 async function getPublishedTrips(): Promise<TripRow[]> {
   try {
@@ -10,7 +10,7 @@ async function getPublishedTrips(): Promise<TripRow[]> {
     const { data, error } = await supabase
       .from('trips')
       .select('*')
-      .eq('status','published')
+      .eq('status', 'published')
       .gte('start_date', new Date().toISOString())
       .order('start_date', { ascending: true })
       .limit(6)
@@ -37,7 +37,7 @@ export default async function FeaturedTrips() {
         <div className="flex items-end justify-between mb-10">
           <div>
             <p className="text-brand-accent font-semibold text-sm uppercase tracking-widest mb-2">
-              Erasmus Trips 
+              Erasmus Trips 🌍
             </p>
             <h2 className="font-heading text-4xl md:text-5xl font-bold text-white">
               Weekend Adventures

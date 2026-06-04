@@ -1,28 +1,28 @@
 'use client'
 
-import { useState } from'react'
-import Link from'next/link'
-import { useRouter } from'next/navigation'
-import { createClient } from'@/lib/supabase/client'
-import { Loader2, Mail, Lock, User, Phone, Globe, Building2 } from'lucide-react'
+import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+import { Loader2, Mail, Lock, User, Phone, Globe, Building2 } from 'lucide-react'
 
 export default function EmployerRegisterPage() {
   const router = useRouter()
 
-  const [companyName, setCompanyName] = useState('')
-  const [contactName, setContactName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [phone, setPhone] = useState('')
-  const [website, setWebsite] = useState('')
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [companyName,  setCompanyName]  = useState('')
+  const [contactName,  setContactName]  = useState('')
+  const [email,        setEmail]        = useState('')
+  const [password,     setPassword]     = useState('')
+  const [phone,        setPhone]        = useState('')
+  const [website,      setWebsite]      = useState('')
+  const [error,        setError]        = useState('')
+  const [isLoading,    setIsLoading]    = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!companyName.trim()) { setError('Company name is required.'); return }
-    if (!contactName.trim()) { setError('Contact name is required.'); return }
-    if (password.length < 8) { setError('Password must be at least 8 characters.'); return }
+    if (!companyName.trim())  { setError('Company name is required.'); return }
+    if (!contactName.trim())  { setError('Contact name is required.'); return }
+    if (password.length < 8)  { setError('Password must be at least 8 characters.'); return }
 
     setError('')
     setIsLoading(true)
@@ -36,7 +36,7 @@ export default function EmployerRegisterPage() {
         password,
         options: {
           data: {
-            role:'employer',
+            role:         'employer',
             company_name: companyName.trim(),
             contact_name: contactName.trim(),
           },
@@ -54,21 +54,21 @@ export default function EmployerRegisterPage() {
 
       // 2. Create employer_accounts record via API
       const res = await fetch('/api/employer/create-account', {
-        method:'POST',
-        headers: {'Content-Type':'application/json' },
-        body: JSON.stringify({
-          user_id: signUpData.user.id,
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          user_id:      signUpData.user.id,
           company_name: companyName.trim(),
           contact_name: contactName.trim(),
-          email: email.trim(),
-          phone: phone.trim() || null,
-          website: website.trim() || null,
+          email:        email.trim(),
+          phone:        phone.trim()   || null,
+          website:      website.trim() || null,
         }),
       })
 
       if (!res.ok) {
         const d = await res.json() as { error?: string }
-        setError(d.error ??'Account creation failed.')
+        setError(d.error ?? 'Account creation failed.')
         return
       }
 
@@ -86,7 +86,7 @@ export default function EmployerRegisterPage() {
     <main className="flex items-center justify-center px-4 py-16 min-h-[calc(100vh-56px)]">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <p className="text-brand-primary text-sm font-semibold uppercase tracking-widest mb-3"> Employer Portal</p>
+          <p className="text-brand-primary text-sm font-semibold uppercase tracking-widest mb-3">💼 Employer Portal</p>
           <h1 className="font-heading text-3xl font-bold text-white mb-2">Create Employer Account</h1>
           <p className="text-white/50 text-sm">Post jobs and reach international students in Valencia</p>
         </div>
@@ -177,20 +177,20 @@ export default function EmployerRegisterPage() {
               disabled={isLoading}
               className="w-full py-3.5 rounded-xl bg-brand-primary hover:brightness-110 active:brightness-90 text-white font-semibold text-sm transition-all duration-200 disabled:opacity-70 flex items-center justify-center gap-2 mt-2"
             >
-              {isLoading ? <><Loader2 size={15} className="animate-spin" /> Creating account…</> :'Create Employer Account →'}
+              {isLoading ? <><Loader2 size={15} className="animate-spin" /> Creating account…</> : 'Create Employer Account →'}
             </button>
           </form>
         </div>
 
         <div className="text-center mt-6 flex flex-col gap-2">
           <p className="text-white/40 text-sm">
-            Already have an account?{''}
+            Already have an account?{' '}
             <Link href="/employer/login" className="text-brand-primary hover:brightness-110 transition-colors font-medium">
               Sign in
             </Link>
           </p>
           <p className="text-white/25 text-xs">
-            Looking for a job?{''}
+            Looking for a job?{' '}
             <Link href="/jobs" className="hover:text-white/50 transition-colors">
               Browse listings
             </Link>

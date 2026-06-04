@@ -1,7 +1,7 @@
-import { getAdminClient } from'@/lib/supabase/admin'
-import NewsletterClient from'./NewsletterClient'
+import { getAdminClient } from '@/lib/supabase/admin'
+import NewsletterClient from './NewsletterClient'
 
-export const metadata = { title:'Newsletter — Admin' }
+export const metadata = { title: 'Newsletter — Admin' }
 
 export default async function AdminNewsletterPage() {
   const admin = getAdminClient()

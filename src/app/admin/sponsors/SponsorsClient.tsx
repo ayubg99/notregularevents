@@ -1,55 +1,55 @@
 'use client'
 
-import { useState, useTransition } from'react'
-import { useRouter } from'next/navigation'
-import { createSponsor, updateSponsor, deleteSponsor } from'@/app/actions/admin'
-import ImageUpload from'@/components/admin/ImageUpload'
-import type { SponsorRow, SponsorCategory, SponsorStatus } from'@/types/database'
+import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import { createSponsor, updateSponsor, deleteSponsor } from '@/app/actions/admin'
+import ImageUpload from '@/components/admin/ImageUpload'
+import type { SponsorRow, SponsorCategory, SponsorStatus } from '@/types/database'
 
 interface FormState {
-  name: string
-  logo_url: string
-  website_url: string
-  description: string
-  discount_text: string
-  discount_code: string
+  name:                    string
+  logo_url:                string
+  website_url:             string
+  description:             string
+  discount_text:           string
+  discount_code:           string
   redemption_instructions: string
-  members_only: boolean
-  category: SponsorCategory
-  is_featured: boolean
-  display_order: string
-  status: SponsorStatus
+  members_only:            boolean
+  category:                SponsorCategory
+  is_featured:             boolean
+  display_order:           string
+  status:                  SponsorStatus
 }
 
 const EMPTY_FORM: FormState = {
-  name:'', logo_url:'', website_url:'', description:'',
-  discount_text:'', discount_code:'', redemption_instructions:'',
-  members_only: true, category:'general', is_featured: false,
-  display_order:'0', status:'active',
+  name: '', logo_url: '', website_url: '', description: '',
+  discount_text: '', discount_code: '', redemption_instructions: '',
+  members_only: true, category: 'general', is_featured: false,
+  display_order: '0', status: 'active',
 }
 
 const CATEGORIES: { value: SponsorCategory; label: string }[] = [
-  { value:'general', label:'General' },
-  { value:'food_drink', label:'Food & Drink' },
-  { value:'fitness', label:'Fitness' },
-  { value:'nightlife', label:'Nightlife' },
-  { value:'travel', label:'Travel' },
-  { value:'fashion', label:'Fashion' },
-  { value:'tech', label:'Tech' },
-  { value:'other', label:'Other' },
+  { value: 'general',    label: 'General'     },
+  { value: 'food_drink', label: 'Food & Drink' },
+  { value: 'fitness',    label: 'Fitness'     },
+  { value: 'nightlife',  label: 'Nightlife'   },
+  { value: 'travel',     label: 'Travel'      },
+  { value: 'fashion',    label: 'Fashion'     },
+  { value: 'tech',       label: 'Tech'        },
+  { value: 'other',      label: 'Other'       },
 ]
 
-const inputClass ='w-full px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
-const labelClass ='text-white/50 text-xs mb-1.5 block'
+const inputClass = 'w-full px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
+const labelClass = 'text-white/50 text-xs mb-1.5 block'
 
 export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [modal, setModal] = useState<'add' |'edit' | null>(null)
-  const [editing, setEditing] = useState<SponsorRow | null>(null)
-  const [form, setForm] = useState<FormState>(EMPTY_FORM)
+  const [modal, setModal]             = useState<'add' | 'edit' | null>(null)
+  const [editing, setEditing]         = useState<SponsorRow | null>(null)
+  const [form, setForm]               = useState<FormState>(EMPTY_FORM)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
-  const [toast, setToast] = useState('')
+  const [toast, setToast]             = useState('')
 
   function showToast(msg: string) {
     setToast(msg)
@@ -69,18 +69,18 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
   function openEdit(s: SponsorRow) {
     setEditing(s)
     setForm({
-      name: s.name,
-      logo_url: s.logo_url ??'',
-      website_url: s.website_url ??'',
-      description: s.description ??'',
-      discount_text: s.discount_text ??'',
-      discount_code: s.discount_code ??'',
-      redemption_instructions: s.redemption_instructions ??'',
-      members_only: s.members_only,
-      category: s.category,
-      is_featured: s.is_featured,
-      display_order: String(s.display_order),
-      status: s.status,
+      name:                    s.name,
+      logo_url:                s.logo_url                ?? '',
+      website_url:             s.website_url             ?? '',
+      description:             s.description             ?? '',
+      discount_text:           s.discount_text           ?? '',
+      discount_code:           s.discount_code           ?? '',
+      redemption_instructions: s.redemption_instructions ?? '',
+      members_only:            s.members_only,
+      category:                s.category,
+      is_featured:             s.is_featured,
+      display_order:           String(s.display_order),
+      status:                  s.status,
     })
     setModal('edit')
   }
@@ -89,18 +89,18 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
     e.preventDefault()
     startTransition(async () => {
       const data = {
-        name: form.name,
-        logo_url: form.logo_url || null,
-        website_url: form.website_url || null,
-        description: form.description || null,
-        discount_text: form.discount_text || null,
-        discount_code: form.discount_code || null,
+        name:                    form.name,
+        logo_url:                form.logo_url                || null,
+        website_url:             form.website_url             || null,
+        description:             form.description             || null,
+        discount_text:           form.discount_text           || null,
+        discount_code:           form.discount_code           || null,
         redemption_instructions: form.redemption_instructions || null,
-        members_only: form.members_only,
-        category: form.category,
-        is_featured: form.is_featured,
-        display_order: parseInt(form.display_order, 10) || 0,
-        status: form.status,
+        members_only:            form.members_only,
+        category:                form.category,
+        is_featured:             form.is_featured,
+        display_order:           parseInt(form.display_order, 10) || 0,
+        status:                  form.status,
       }
       const result = editing
         ? await updateSponsor(editing.id, data)
@@ -109,9 +109,9 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
       if (result.success) {
         setModal(null)
         router.refresh()
-        showToast(editing ?'Sponsor updated.' :'Sponsor added.')
+        showToast(editing ? 'Sponsor updated.' : 'Sponsor added.')
       } else {
-        showToast(result.error ??'Failed to save sponsor.')
+        showToast(result.error ?? 'Failed to save sponsor.')
       }
     })
   }
@@ -124,7 +124,7 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
         router.refresh()
         showToast('Sponsor deleted.')
       } else {
-        showToast(result.error ??'Failed to delete.')
+        showToast(result.error ?? 'Failed to delete.')
       }
     })
   }
@@ -142,7 +142,7 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white">Sponsors &amp; Partners</h1>
-          <p className="text-white/40 text-sm mt-1">{sponsors.length} sponsor{sponsors.length !== 1 ?'s' :''}</p>
+          <p className="text-white/40 text-sm mt-1">{sponsors.length} sponsor{sponsors.length !== 1 ? 's' : ''}</p>
         </div>
         <button onClick={openAdd} className="btn-primary px-4 py-2 rounded-xl text-sm font-medium">
           + Add Sponsor
@@ -185,18 +185,18 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
                         <p className="text-white text-sm font-medium">{s.name}</p>
                         {s.website_url && (
                           <a href={s.website_url} target="_blank" rel="noopener noreferrer" className="text-white/30 text-xs hover:text-white/60 transition-colors">
-                            {s.website_url.replace(/^https?:\/\//,'')}
+                            {s.website_url.replace(/^https?:\/\//, '')}
                           </a>
                         )}
                       </div>
                     </div>
                   </td>
                   <td className="px-5 py-4">
-                    <span className="text-white/50 text-xs capitalize">{s.category.replace('_','')}</span>
+                    <span className="text-white/50 text-xs capitalize">{s.category.replace('_', ' ')}</span>
                   </td>
                   <td className="px-5 py-4">
                     {s.discount_text ? (
-                      <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background:'rgba(255,107,0,0.12)', color:'#FF6B00' }}>
+                      <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: 'rgba(255,107,0,0.12)', color: '#FF6B00' }}>
                         {s.discount_text}
                       </span>
                     ) : (
@@ -215,9 +215,9 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
                   </td>
                   <td className="px-5 py-4">
                     <span className={`text-xs px-2.5 py-1 rounded-full border font-medium ${
-                      s.status ==='active'
-                        ?'text-green-400 bg-green-400/10 border-green-400/20'
-                        :'text-orange-400 bg-yellow-400/10 border-yellow-400/20'
+                      s.status === 'active'
+                        ? 'text-green-400 bg-green-400/10 border-green-400/20'
+                        : 'text-orange-400 bg-yellow-400/10 border-yellow-400/20'
                     }`}>
                       {s.status}
                     </span>
@@ -250,7 +250,7 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="glass-card rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <h2 className="text-white font-bold text-lg mb-5">
-              {modal ==='edit' ?'Edit Sponsor' :'Add Sponsor'}
+              {modal === 'edit' ? 'Edit Sponsor' : 'Add Sponsor'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -329,7 +329,7 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
                   Cancel
                 </button>
                 <button type="submit" disabled={isPending} className="flex-1 btn-primary py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50">
-                  {isPending ?'Saving…' :'Save'}
+                  {isPending ? 'Saving…' : 'Save'}
                 </button>
               </div>
             </form>
@@ -348,7 +348,7 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
                 Cancel
               </button>
               <button onClick={() => handleDelete(confirmDelete)} disabled={isPending} className="flex-1 py-2.5 rounded-xl text-sm bg-red-500/80 hover:bg-red-500 text-white font-semibold transition-colors disabled:opacity-50">
-                {isPending ?'Deleting…' :'Delete'}
+                {isPending ? 'Deleting…' : 'Delete'}
               </button>
             </div>
           </div>

@@ -1,25 +1,25 @@
 'use client'
 
-import { useState } from'react'
-import { Check, Zap, Users, Tag, Loader2, X, Minus, Plus } from'lucide-react'
-import type { TripRow, TripTier, TripExtra } from'@/types/database'
+import { useState } from 'react'
+import { Check, Zap, Users, Tag, Loader2, X, Minus, Plus } from 'lucide-react'
+import type { TripRow, TripTier, TripExtra } from '@/types/database'
 
 interface Props {
-  trip: TripRow
-  onBook: (tier: TripTier, groupSize?: number, extras?: TripExtra[]) => void
-  isPending: boolean
-  seatsLeft: number
-  promoCode?: string
-  promoLabel?: string
+  trip:            TripRow
+  onBook:          (tier: TripTier, groupSize?: number, extras?: TripExtra[]) => void
+  isPending:       boolean
+  seatsLeft:       number
+  promoCode?:      string
+  promoLabel?:     string
   onPromoApplied?: (code: string, label: string, discountedUnit: number) => void
-  onPromoClear?: () => void
+  onPromoClear?:   () => void
 }
 
 function getUrgency(deadline: string | null, seatsLeft: number): string | null {
   if (!deadline) return null
   const hoursLeft = (new Date(deadline).getTime() - Date.now()) / 3_600_000
-  if (seatsLeft < 10) return` Only ${seatsLeft} early bird spot${seatsLeft === 1 ?'' :'s'} left!`
-  if (hoursLeft < 48) return` Early bird ends in ${Math.ceil(hoursLeft)}h!`
+  if (seatsLeft < 10) return `⚡ Only ${seatsLeft} early bird spot${seatsLeft === 1 ? '' : 's'} left!`
+  if (hoursLeft < 48) return `⏰ Early bird ends in ${Math.ceil(hoursLeft)}h!`
   return null
 }
 
@@ -35,16 +35,16 @@ export default function PricingTiers({
     ebSeatsLeft > 0
 
   const [selected, setSelected] = useState<TripTier>(
-    isEarlyBirdValid ?'early_bird' :'standard',
+    isEarlyBirdValid ? 'early_bird' : 'standard',
   )
-  const [groupSize, setGroupSize] = useState(4)
+  const [groupSize,      setGroupSize]      = useState(4)
   const [selectedExtras, setSelectedExtras] = useState<TripExtra[]>([])
-  const [promoOpen, setPromoOpen] = useState(false)
-  const [promoInput, setPromoInput] = useState('')
+  const [promoOpen, setPromoOpen]      = useState(false)
+  const [promoInput, setPromoInput]    = useState('')
   const [promoLoading, setPromoLoading] = useState(false)
-  const [promoError, setPromoError] = useState('')
+  const [promoError, setPromoError]    = useState('')
 
-  const minGroupSize = trip.group_min_size ?? 4
+  const minGroupSize     = trip.group_min_size ?? 4
   const isGroupAvailable = trip.price_group != null && seatsLeft >= minGroupSize
 
   const soldOut = seatsLeft === 0
@@ -53,8 +53,8 @@ export default function PricingTiers({
     : null
 
   function currentBasePrice(): number {
-    if (selected ==='early_bird') return trip.price_early_bird ?? trip.price_standard
-    if (selected ==='group') return trip.price_group ?? trip.price_standard
+    if (selected === 'early_bird') return trip.price_early_bird ?? trip.price_standard
+    if (selected === 'group')      return trip.price_group      ?? trip.price_standard
     return trip.price_standard
   }
 
@@ -62,13 +62,13 @@ export default function PricingTiers({
     if (!promoInput.trim() || !onPromoApplied) return
     setPromoLoading(true); setPromoError('')
     try {
-      const res = await fetch(`/api/stripe/validate-promo?code=${encodeURIComponent(promoInput)}&price=${currentBasePrice()}&quantity=1`)
+      const res  = await fetch(`/api/stripe/validate-promo?code=${encodeURIComponent(promoInput)}&price=${currentBasePrice()}&quantity=1`)
       const data = await res.json()
       if (data.valid) {
         onPromoApplied(promoInput.trim(), data.discountLabel, data.discountedUnit)
         setPromoError('')
       } else {
-        setPromoError(data.error ??'Invalid code.')
+        setPromoError(data.error ?? 'Invalid code.')
       }
     } catch {
       setPromoError('Could not validate code.')
@@ -86,7 +86,7 @@ export default function PricingTiers({
   }
 
   function handleBook() {
-    onBook(selected, selected ==='group' ? groupSize : undefined, selectedExtras)
+    onBook(selected, selected === 'group' ? groupSize : undefined, selectedExtras)
   }
 
   const extrasTotal = selectedExtras.reduce((s, e) => s + e.price, 0)
@@ -102,25 +102,25 @@ export default function PricingTiers({
       )}
 
       <div className="flex flex-col gap-2">
-        {/* Early Bird */}
+        {/* ── Early Bird ── */}
         {isEarlyBirdValid && (
           <button
             onClick={() => setSelected('early_bird')}
             disabled={soldOut || isPending}
             className={`w-full text-left rounded-xl border p-4 transition-all duration-200 ${
-              selected ==='early_bird'
-                ?'border-brand-primary bg-brand-primary/10'
-                :'border-white/10 bg-white/5 hover:border-white/20'
-            } ${soldOut || isPending ?'opacity-50 cursor-not-allowed' :'cursor-pointer'}`}
+              selected === 'early_bird'
+                ? 'border-brand-primary bg-brand-primary/10'
+                : 'border-white/10 bg-white/5 hover:border-white/20'
+            } ${soldOut || isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-2.5">
-                <Zap size={16} className={selected ==='early_bird' ?'text-brand-primary' :'text-white/40'} />
+                <Zap size={16} className={selected === 'early_bird' ? 'text-brand-primary' : 'text-white/40'} />
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-white font-semibold text-sm">Early Bird</span>
                     <span className="inline-block px-2 py-0.5 rounded-full border text-xs font-semibold bg-brand-accent/20 text-brand-accent border-brand-accent/30">
-                       Best Value
+                      🔥 Best Value
                     </span>
                   </div>
                   <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
@@ -136,19 +136,19 @@ export default function PricingTiers({
           </button>
         )}
 
-        {/* Standard */}
+        {/* ── Standard ── */}
         <button
           onClick={() => setSelected('standard')}
           disabled={soldOut || isPending}
           className={`w-full text-left rounded-xl border p-4 transition-all duration-200 ${
-            selected ==='standard'
-              ?'border-brand-primary bg-brand-primary/10'
-              :'border-white/10 bg-white/5 hover:border-white/20'
-          } ${soldOut || isPending ?'opacity-50 cursor-not-allowed' :'cursor-pointer'}`}
+            selected === 'standard'
+              ? 'border-brand-primary bg-brand-primary/10'
+              : 'border-white/10 bg-white/5 hover:border-white/20'
+          } ${soldOut || isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <Check size={16} className={selected ==='standard' ?'text-brand-primary' :'text-white/40'} />
+              <Check size={16} className={selected === 'standard' ? 'text-brand-primary' : 'text-white/40'} />
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-white font-semibold text-sm">Standard</span>
@@ -170,19 +170,19 @@ export default function PricingTiers({
           </div>
         </button>
 
-        {/* Group (4+) */}
+        {/* ── Group (4+) ── */}
         {isGroupAvailable && (
           <div
             onClick={() => !soldOut && !isPending && setSelected('group')}
             className={`w-full rounded-xl border p-4 transition-all duration-200 ${
-              selected ==='group'
-                ?'border-brand-primary bg-brand-primary/10'
-                :'border-white/10 bg-white/5 hover:border-white/20'
-            } ${soldOut || isPending ?'opacity-50 cursor-not-allowed' :'cursor-pointer'}`}
+              selected === 'group'
+                ? 'border-brand-primary bg-brand-primary/10'
+                : 'border-white/10 bg-white/5 hover:border-white/20'
+            } ${soldOut || isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                <Users size={16} className={selected ==='group' ?'text-brand-primary' :'text-white/40'} />
+                <Users size={16} className={selected === 'group' ? 'text-brand-primary' : 'text-white/40'} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-white font-semibold text-sm">Group (4+)</span>
@@ -190,7 +190,7 @@ export default function PricingTiers({
                       Group Deal
                     </span>
                   </div>
-                  {selected ==='group' && (
+                  {selected === 'group' && (
                     <div className="mt-3 flex flex-col gap-2">
                       <div className="flex items-center gap-3">
                         <button
@@ -208,7 +208,7 @@ export default function PricingTiers({
                         </button>
                       </div>
                       <p className="text-white/50 text-xs">
-                        {groupSize} × €{trip.price_group} ={''}
+                        {groupSize} × €{trip.price_group} ={' '}
                         <span className="text-white font-bold">€{(groupSize * trip.price_group!).toFixed(0)} total</span>
                       </p>
                     </div>
@@ -237,24 +237,24 @@ export default function PricingTiers({
                 disabled={soldOut || isPending}
                 className={`w-full text-left rounded-xl border p-3.5 transition-all duration-200 ${
                   checked
-                    ?'border-brand-primary bg-brand-primary/10'
-                    :'border-white/10 bg-white/5 hover:border-white/20'
-                } ${soldOut || isPending ?'opacity-50 cursor-not-allowed' :'cursor-pointer'}`}
+                    ? 'border-brand-primary bg-brand-primary/10'
+                    : 'border-white/10 bg-white/5 hover:border-white/20'
+                } ${soldOut || isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                    <div className={`w-4 h-4 rounded flex-shrink-0 border flex items-center justify-center transition-colors ${checked ?'bg-brand-primary border-brand-primary' :'border-white/30'}`}>
+                    <div className={`w-4 h-4 rounded flex-shrink-0 border flex items-center justify-center transition-colors ${checked ? 'bg-brand-primary border-brand-primary' : 'border-white/30'}`}>
                       {checked && <Check size={10} className="text-white" strokeWidth={3} />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`font-semibold text-sm ${checked ?'text-white' :'text-white/80'}`}>{extra.name}</p>
+                      <p className={`font-semibold text-sm ${checked ? 'text-white' : 'text-white/80'}`}>{extra.name}</p>
                       {extra.description && (
                         <p className="text-white/40 text-xs mt-0.5">{extra.description}</p>
                       )}
                     </div>
                   </div>
-                  <span className={`font-bold text-sm flex-shrink-0 ${checked ?'text-white' :'text-white/60'}`}>
-                    {extra.price === 0 ? <span className="text-green-400 text-xs font-semibold">Free</span> :`+€${extra.price.toFixed(2)}`}
+                  <span className={`font-bold text-sm flex-shrink-0 ${checked ? 'text-white' : 'text-white/60'}`}>
+                    {extra.price === 0 ? <span className="text-green-400 text-xs font-semibold">Free</span> : `+€${extra.price.toFixed(2)}`}
                   </span>
                 </div>
               </button>
@@ -286,7 +286,7 @@ export default function PricingTiers({
                     type="text"
                     value={promoInput}
                     onChange={e => setPromoInput(e.target.value.toUpperCase())}
-                    onKeyDown={e => e.key ==='Enter' && applyPromo()}
+                    onKeyDown={e => e.key === 'Enter' && applyPromo()}
                     placeholder="PROMO CODE"
                     className="flex-1 px-3 py-2 rounded-xl text-sm uppercase border border-white/10 bg-white/5 text-white placeholder:text-white/25 tracking-widest focus:outline-none focus:border-brand-primary/50 transition-colors"
                   />
@@ -295,7 +295,7 @@ export default function PricingTiers({
                     disabled={promoLoading || !promoInput.trim()}
                     className="px-4 py-2 rounded-xl text-sm font-medium bg-white/10 hover:bg-white/15 text-white transition-colors disabled:opacity-40"
                   >
-                    {promoLoading ? <Loader2 size={14} className="animate-spin" /> :'Apply'}
+                    {promoLoading ? <Loader2 size={14} className="animate-spin" /> : 'Apply'}
                   </button>
                 </div>
               )}
@@ -320,13 +320,13 @@ export default function PricingTiers({
         disabled={soldOut || isPending}
         className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all duration-200 ${
           soldOut
-            ?'bg-white/10 text-white/40 cursor-not-allowed'
+            ? 'bg-white/10 text-white/40 cursor-not-allowed'
             : isPending
-            ?'bg-brand-primary/60 text-brand-dark cursor-wait'
-            :'bg-brand-primary text-brand-dark hover:bg-brand-primary/90 active:scale-[0.98]'
+            ? 'bg-brand-primary/60 text-brand-dark cursor-wait'
+            : 'bg-brand-primary text-brand-dark hover:bg-brand-primary/90 active:scale-[0.98]'
         }`}
       >
-        {soldOut ?'Fully Booked' : isPending ?'Redirecting…' :'Book Now'}
+        {soldOut ? 'Fully Booked' : isPending ? 'Redirecting…' : 'Book Now'}
       </button>
     </div>
   )

@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from'next/server'
-import { createClient } from'@supabase/supabase-js'
-import type Stripe from'stripe'
-import { stripe } from'@/lib/stripe'
-import { generateQR } from'@/lib/qr'
-import { nanoid } from'nanoid'
-import { sendBookingConfirmation, sendGroupBookingConfirmation, sendMembershipWelcomeEmail, sendBookingPendingEmail, sendPartnerConfirmationRequest, sendRefundEmail } from'@/lib/email'
-import type { Database, MembershipPlan, MembershipStatus, TripTier } from'@/types/database'
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+import type Stripe from 'stripe'
+import { stripe } from '@/lib/stripe'
+import { generateQR } from '@/lib/qr'
+import { nanoid } from 'nanoid'
+import { sendBookingConfirmation, sendGroupBookingConfirmation, sendMembershipWelcomeEmail, sendBookingPendingEmail, sendPartnerConfirmationRequest, sendRefundEmail } from '@/lib/email'
+import type { Database, MembershipPlan, MembershipStatus, TripTier } from '@/types/database'
 
-export const runtime ='nodejs'
+export const runtime = 'nodejs'
 
 function getAdminClient() {
   return createClient<Database>(
@@ -24,20 +24,20 @@ async function getUserEmail(admin: ReturnType<typeof getAdminClient>, userId: st
 // Calculate membership end_date based on plan
 function membershipEndDate(plan: MembershipPlan): string {
   const d = new Date()
-  if (plan ==='basic') d.setDate(d.getDate() + 30)
-  if (plan ==='premium') d.setDate(d.getDate() + 180)
-  if (plan ==='vip') d.setDate(d.getDate() + 365)
-  if (plan ==='employer') d.setMonth(d.getMonth() + 1)
+  if (plan === 'basic')    d.setDate(d.getDate() + 30)
+  if (plan === 'premium')  d.setDate(d.getDate() + 180)
+  if (plan === 'vip')      d.setDate(d.getDate() + 365)
+  if (plan === 'employer') d.setMonth(d.getMonth() + 1)
   return d.toISOString()
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const admin = getAdminClient()
-  const meta = session.metadata ?? {}
-  const type = meta.type as'event' |'trip' |'membership' |'room_contact' |'job_listing' |'employer_subscription' |'job_upgrade' | undefined
-  const userId = meta.user_id || null
-  const itemId = meta.item_id as string | undefined
-  const guestName = meta.guest_name || null
+  const meta  = session.metadata ?? {}
+  const type       = meta.type    as 'event' | 'trip' | 'membership' | 'room_contact' | 'job_listing' | 'employer_subscription' | 'job_upgrade' | undefined
+  const userId     = meta.user_id  || null
+  const itemId     = meta.item_id as string | undefined
+  const guestName  = meta.guest_name  || null
   const guestEmail = meta.guest_email || null
   const guestPhone = meta.guest_phone || null
   const amountPaid = (session.amount_total ?? 0) / 100
@@ -50,8 +50,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   console.log('[webhook checkout.session.completed]', {
-    sessionId: session.id,
-    mode: session.mode,
+    sessionId:    session.id,
+    mode:         session.mode,
     type,
     itemId,
     userId,
@@ -64,13 +64,13 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   // room_contact, membership, and job_upgrade don't require item_id in all cases
-  if (type !=='room_contact' && type !=='membership' && type !=='job_upgrade' && !itemId) {
+  if (type !== 'room_contact' && type !== 'membership' && type !== 'job_upgrade' && !itemId) {
     console.error('[webhook] missing itemId for type:', type, meta)
     return
   }
 
-  // Event 
-  if (type ==='event') {
+  // ── Event ────────────────────────────────────────────────────
+  if (type === 'event') {
     const rawAttendees = meta.attendees
       ? (JSON.parse(meta.attendees) as { name: string; email: string }[])
       : []
@@ -79,52 +79,52 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       // Multi-ticket: one row + QR per named attendee
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: seatResult } = await (admin as any).rpc('book_event_tier_seats', {
-        p_event_id: itemId!,
+        p_event_id:  itemId!,
         p_tier_name: meta.ticket_tier_name || null,
-        p_quantity: rawAttendees.length,
+        p_quantity:  rawAttendees.length,
       })
       if (!seatResult?.success) {
         console.error('[webhook] event seat booking failed:', seatResult?.error)
         await stripe.refunds.create({ payment_intent: session.payment_intent as string })
         await sendRefundEmail({
-          email: guestEmail ??'',
-          name: guestName ??'there',
-          tripTitle: meta.event_title ??'your event',
-          amount: amountPaid,
-          reason: seatResult?.error ??'Event sold out',
+          email:     guestEmail ?? '',
+          name:      guestName  ?? 'there',
+          tripTitle: meta.event_title ?? 'your event',
+          amount:    amountPaid,
+          reason:    seatResult?.error ?? 'Event sold out',
         })
         return
       }
 
       const amountPerTicket = amountPaid / rawAttendees.length
       const allTickets: { name: string; bookingRef: string; qrCode: string }[] = []
-      let firstBookingRef =''
+      let firstBookingRef = ''
       const groupRef = nanoid(8).toUpperCase()
 
       for (let i = 0; i < rawAttendees.length; i++) {
-        const attendee = rawAttendees[i]
+        const attendee  = rawAttendees[i]
         const bookingRef = nanoid(8).toUpperCase()
-        const qrCode = await generateQR(bookingRef)
+        const qrCode     = await generateQR(bookingRef)
         const recipientEmail = attendee.email?.trim() || guestEmail || null
 
         const { error: insertErr } = await admin.from('event_tickets').insert({
-          event_id: itemId!,
-          user_id: i === 0 ? userId : null,
-          booking_ref: bookingRef,
-          qr_code: qrCode,
+          event_id:          itemId!,
+          user_id:           i === 0 ? userId : null,
+          booking_ref:       bookingRef,
+          qr_code:           qrCode,
           stripe_payment_id: session.id,
-          guest_name: attendee.name || null,
-          guest_email: recipientEmail,
-          guest_phone: i === 0 ? guestPhone : null,
-          status:'active' as const,
-          amount_paid: amountPerTicket,
+          guest_name:        attendee.name  || null,
+          guest_email:       recipientEmail,
+          guest_phone:       i === 0 ? guestPhone : null,
+          status:            'active' as const,
+          amount_paid:       amountPerTicket,
           group_booking_ref: groupRef,
-          is_group_booking: true,
-          lead_name: guestName || null,
-          lead_email: guestEmail || null,
-          referral_code: meta.referral_code || null,
-          ticket_tier_name: meta.ticket_tier_name || null,
-          promo_code_used: promoCodeUsed,
+          is_group_booking:  true,
+          lead_name:         guestName  || null,
+          lead_email:        guestEmail || null,
+          referral_code:     meta.referral_code || null,
+          ticket_tier_name:  meta.ticket_tier_name || null,
+          promo_code_used:   promoCodeUsed,
         })
         if (insertErr) console.error(`[webhook event ticket #${i + 1}]`, insertErr.message)
 
@@ -134,14 +134,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         // Individual email to every attendee who has an email address
         if (recipientEmail) {
           await sendBookingConfirmation({
-            to: recipientEmail,
-            name: attendee.name,
+            to:       recipientEmail,
+            name:     attendee.name,
             bookingRef,
             qrCode,
-            title: meta.event_title ??'your event',
-            type:'event',
-            date: meta.event_date || undefined,
-            location: meta.location || undefined,
+            title:    meta.event_title ?? 'your event',
+            type:     'event',
+            date:     meta.event_date  || undefined,
+            location: meta.location    || undefined,
           })
           console.log(`[webhook] individual ticket sent to: ${recipientEmail}`)
         }
@@ -150,9 +150,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       if (userId) {
         await admin.from('notifications').insert({
           user_id: userId,
-          type:'booking_confirmed',
-          message:`Your ${rawAttendees.length} tickets are confirmed. Ref: ${firstBookingRef}`,
-          read: false,
+          type:    'booking_confirmed',
+          message: `Your ${rawAttendees.length} tickets are confirmed. Ref: ${firstBookingRef}`,
+          read:    false,
         })
       }
 
@@ -160,48 +160,48 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       const toEmail = guestEmail ?? (userId ? await getUserEmail(admin, userId) : null)
       if (toEmail) {
         await sendGroupBookingConfirmation({
-          to: toEmail,
-          leadName: guestName ??'there',
-          eventTitle: meta.event_title ??'your event',
-          eventDate: meta.event_date || undefined,
-          eventLocation: meta.location || undefined,
-          tickets: allTickets,
+          to:            toEmail,
+          leadName:      guestName ?? 'there',
+          eventTitle:    meta.event_title ?? 'your event',
+          eventDate:     meta.event_date  || undefined,
+          eventLocation: meta.location    || undefined,
+          tickets:       allTickets,
         })
       }
     } else {
       // Single-ticket path (backward compat)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: seatResult } = await (admin as any).rpc('book_event_tier_seats', {
-        p_event_id: itemId!,
+        p_event_id:  itemId!,
         p_tier_name: meta.ticket_tier_name || null,
-        p_quantity: Number(meta.quantity ?? 1),
+        p_quantity:  Number(meta.quantity ?? 1),
       })
       if (!seatResult?.success) {
         console.error('[webhook] event seat booking failed:', seatResult?.error)
         await stripe.refunds.create({ payment_intent: session.payment_intent as string })
         await sendRefundEmail({
-          email: guestEmail ??'',
-          name: guestName ??'there',
-          tripTitle: meta.event_title ??'your event',
-          amount: amountPaid,
-          reason: seatResult?.error ??'Event sold out',
+          email:     guestEmail ?? '',
+          name:      guestName  ?? 'there',
+          tripTitle: meta.event_title ?? 'your event',
+          amount:    amountPaid,
+          reason:    seatResult?.error ?? 'Event sold out',
         })
         return
       }
 
       const bookingRef = nanoid(8).toUpperCase()
-      const qrCode = await generateQR(bookingRef)
+      const qrCode     = await generateQR(bookingRef)
 
       const { error } = await admin.rpc('create_event_ticket', {
-        p_event_id: itemId!,
-        p_booking_ref: bookingRef,
-        p_qr_code: qrCode,
+        p_event_id:          itemId!,
+        p_booking_ref:       bookingRef,
+        p_qr_code:           qrCode,
         p_stripe_payment_id: session.id,
-        p_quantity: Number(meta.quantity ?? 1),
-        p_user_id: userId || undefined,
-        p_guest_name: guestName || undefined,
-        p_guest_email: guestEmail || undefined,
-        p_guest_phone: guestPhone || undefined,
+        p_quantity:          Number(meta.quantity ?? 1),
+        p_user_id:           userId || undefined,
+        p_guest_name:        guestName  || undefined,
+        p_guest_email:       guestEmail || undefined,
+        p_guest_phone:       guestPhone || undefined,
       })
 
       if (error) {
@@ -210,41 +210,41 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       }
 
       await admin.from('event_tickets').update({
-        amount_paid: amountPaid,
-        referral_code: meta.referral_code || null,
+        amount_paid:      amountPaid,
+        referral_code:    meta.referral_code    || null,
         ticket_tier_name: meta.ticket_tier_name || null,
-        promo_code_used: promoCodeUsed,
+        promo_code_used:  promoCodeUsed,
       }).eq('booking_ref', bookingRef)
 
       if (userId) {
         await admin.from('notifications').insert({
           user_id: userId,
-          type:'booking_confirmed',
-          message:`Your ticket is confirmed. Ref: ${bookingRef}`,
-          read: false,
+          type:    'booking_confirmed',
+          message: `Your ticket is confirmed. Ref: ${bookingRef}`,
+          read:    false,
         })
       }
 
       const toEmail = guestEmail ?? (userId ? await getUserEmail(admin, userId) : null)
-      const toName = guestName ??'there'
+      const toName  = guestName ?? 'there'
       if (toEmail) {
         await sendBookingConfirmation({
-          to: toEmail,
-          name: toName,
+          to:       toEmail,
+          name:     toName,
           bookingRef,
           qrCode,
-          title: meta.event_title ??'your event',
-          type:'event',
-          date: meta.event_date || undefined,
-          location: meta.location || undefined,
+          title:    meta.event_title ?? 'your event',
+          type:     'event',
+          date:     meta.event_date  || undefined,
+          location: meta.location    || undefined,
         })
       }
     }
   }
 
-  // Trip 
-  if (type ==='trip') {
-    const tier = (meta.tier ??'standard') as TripTier
+  // ── Trip ─────────────────────────────────────────────────────
+  if (type === 'trip') {
+    const tier = (meta.tier ?? 'standard') as TripTier
     const rawAttendees: { name: string; email: string }[] =
       meta.attendees ? (JSON.parse(meta.attendees) as { name: string; email: string }[]) : []
     const selectedExtras = meta.selected_extras_json
@@ -253,60 +253,60 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     const tripAttendees = rawAttendees.length > 0
       ? rawAttendees
-      : [{ name: guestName ??'', email: guestEmail ??'' }]
+      : [{ name: guestName ?? '', email: guestEmail ?? '' }]
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: seatResult } = await (admin as any).rpc('book_trip_seats', {
-      p_trip_id: itemId!,
+      p_trip_id:  itemId!,
       p_quantity: tripAttendees.length,
     })
     if (!seatResult?.success) {
       console.error('[webhook] trip seat booking failed:', seatResult?.error)
       await stripe.refunds.create({ payment_intent: session.payment_intent as string })
       await sendRefundEmail({
-        email: guestEmail ??'',
-        name: guestName ??'there',
-        tripTitle: meta.trip_title ??'your trip',
-        amount: amountPaid,
-        reason: seatResult?.error ??'Trip fully booked',
+        email:     guestEmail ?? '',
+        name:      guestName  ?? 'there',
+        tripTitle: meta.trip_title ?? 'your trip',
+        amount:    amountPaid,
+        reason:    seatResult?.error ?? 'Trip fully booked',
       })
       return
     }
 
-    const groupRef = nanoid(8).toUpperCase()
-    const isGroup = tripAttendees.length > 1
+    const groupRef   = nanoid(8).toUpperCase()
+    const isGroup    = tripAttendees.length > 1
     const amountEach = amountPaid / tripAttendees.length
     const allTickets: { name: string; bookingRef: string; qrCode: string }[] = []
-    let firstRef =''
+    let firstRef = ''
 
     for (let i = 0; i < tripAttendees.length; i++) {
-      const attendee = tripAttendees[i]
+      const attendee   = tripAttendees[i]
       const bookingRef = nanoid(8).toUpperCase()
-      const qrCode = await generateQR(bookingRef)
-      const toAddr = attendee.email?.trim() || guestEmail || null
+      const qrCode     = await generateQR(bookingRef)
+      const toAddr     = attendee.email?.trim() || guestEmail || null
       if (!firstRef) firstRef = bookingRef
 
       const tripRow = {
-        trip_id: itemId!,
-        user_id: i === 0 ? userId : null,
+        trip_id:           itemId!,
+        user_id:           i === 0 ? userId : null,
         tier,
-        booking_ref: bookingRef,
-        qr_code: qrCode,
+        booking_ref:       bookingRef,
+        qr_code:           qrCode,
         stripe_payment_id: session.id,
-        guest_name: attendee.name || null,
-        guest_email: toAddr,
-        guest_phone: i === 0 ? guestPhone : null,
-        status:'confirmed' as const,
-        amount_paid: amountEach,
-        quantity: 1,
-        deposit_paid: true,
+        guest_name:        attendee.name  || null,
+        guest_email:       toAddr,
+        guest_phone:       i === 0 ? guestPhone : null,
+        status:            'confirmed' as const,
+        amount_paid:       amountEach,
+        quantity:          1,
+        deposit_paid:      true,
         group_booking_ref: isGroup ? groupRef : null,
-        is_group_booking: isGroup,
-        lead_name: isGroup ? (guestName || null) : null,
-        lead_email: isGroup ? (guestEmail || null) : null,
-        selected_extras: selectedExtras?.length ? selectedExtras : null,
-        referral_code: meta.referral_code || null,
-        promo_code_used: promoCodeUsed,
+        is_group_booking:  isGroup,
+        lead_name:         isGroup ? (guestName || null) : null,
+        lead_email:        isGroup ? (guestEmail || null) : null,
+        selected_extras:   selectedExtras?.length ? selectedExtras : null,
+        referral_code:     meta.referral_code || null,
+        promo_code_used:   promoCodeUsed,
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: insertErr } = await admin.from('trip_bookings').insert(tripRow as any)
@@ -316,36 +316,36 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
       if (toAddr) {
         await sendBookingConfirmation({
-          to: toAddr,
-          name: attendee.name,
+          to:          toAddr,
+          name:        attendee.name,
           bookingRef,
           qrCode,
-          title: meta.trip_title ??'your trip',
-          type:'trip',
-          date: meta.trip_date || undefined,
-          location: meta.destination || undefined,
+          title:       meta.trip_title ?? 'your trip',
+          type:        'trip',
+          date:        meta.trip_date   || undefined,
+          location:    meta.destination || undefined,
           whatsappUrl: meta.whatsapp_group_url || undefined,
         })
         console.log(`[webhook] trip ticket sent to: ${toAddr}`)
       }
     }
 
-    if (tier ==='early_bird') {
-      // @ts-expect-error — RPC added via SQL; types regenerate after`supabase gen types`
+    if (tier === 'early_bird') {
+      // @ts-expect-error — RPC added via SQL; types regenerate after `supabase gen types`
       const { error: ebErr } = await admin.rpc('increment_early_bird_sold', {
-        p_trip_id: itemId!,
+        p_trip_id:  itemId!,
         p_quantity: tripAttendees.length,
       })
-      if (ebErr) console.error(' Early bird seat update failed:', ebErr)
-      else console.log(' Early bird seats updated:', itemId, tripAttendees.length)
+      if (ebErr) console.error('❌ Early bird seat update failed:', ebErr)
+      else       console.log('✅ Early bird seats updated:', itemId, tripAttendees.length)
     }
 
     if (userId) {
       await admin.from('notifications').insert({
         user_id: userId,
-        type:'booking_confirmed',
-        message:`Your trip booking is confirmed. Ref: ${firstRef}`,
-        read: false,
+        type:    'booking_confirmed',
+        message: `Your trip booking is confirmed. Ref: ${firstRef}`,
+        read:    false,
       })
     }
 
@@ -353,30 +353,30 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       const toEmail = guestEmail ?? (userId ? await getUserEmail(admin, userId) : null)
       if (toEmail) {
         await sendGroupBookingConfirmation({
-          to: toEmail,
-          leadName: guestName ??'there',
-          eventTitle: meta.trip_title ??'your trip',
-          eventDate: meta.trip_date || undefined,
+          to:            toEmail,
+          leadName:      guestName ?? 'there',
+          eventTitle:    meta.trip_title ?? 'your trip',
+          eventDate:     meta.trip_date  || undefined,
           eventLocation: meta.destination || undefined,
-          tickets: allTickets,
-          type:'trip',
+          tickets:       allTickets,
+          type:          'trip',
         })
       }
     }
   }
 
-  // Membership 
-  if (type ==='membership') {
+  // ── Membership ───────────────────────────────────────────────
+  if (type === 'membership') {
     console.log('[webhook membership] received checkout.session.completed', {
-      sessionId: session.id,
-      mode: session.mode,
+      sessionId:      session.id,
+      mode:           session.mode,
       userId,
-      plan: itemId,
-      subscription: session.subscription,
-      customer: session.customer,
+      plan:           itemId,
+      subscription:   session.subscription,
+      customer:       session.customer,
     })
 
-    if (session.mode !=='subscription') {
+    if (session.mode !== 'subscription') {
       console.error('[webhook membership] unexpected session mode:', session.mode)
       return
     }
@@ -386,15 +386,15 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       return
     }
 
-    const plan = itemId as MembershipPlan
-    const subscriptionId = typeof session.subscription ==='string'
+    const plan           = itemId as MembershipPlan
+    const subscriptionId = typeof session.subscription === 'string'
       ? session.subscription
       : (session.subscription as Stripe.Subscription | null)?.id ?? null
-    const customerId = typeof session.customer ==='string'
+    const customerId     = typeof session.customer === 'string'
       ? session.customer
       : (session.customer as Stripe.Customer | null)?.id ?? null
-    const endDate = membershipEndDate(plan)
-    const startDate = new Date().toISOString()
+    const endDate        = membershipEndDate(plan)
+    const startDate      = new Date().toISOString()
 
     console.log('[webhook membership] upserting', {
       userId,
@@ -407,23 +407,23 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     const { error } = await admin.from('memberships').upsert(
       {
-        user_id: userId,
+        user_id:                userId,
         plan,
-        status:'active' as MembershipStatus,
+        status:                 'active' as MembershipStatus,
         stripe_subscription_id: subscriptionId,
-        stripe_customer_id: customerId,
-        start_date: startDate,
-        end_date: endDate,
+        stripe_customer_id:     customerId,
+        start_date:             startDate,
+        end_date:               endDate,
       },
-      { onConflict:'user_id', ignoreDuplicates: false },
+      { onConflict: 'user_id', ignoreDuplicates: false },
     )
 
     if (error) {
       console.error('[webhook membership] upsert failed:', {
         message: error.message,
-        code: error.code,
+        code:    error.code,
         details: error.details,
-        hint: error.hint,
+        hint:    error.hint,
       })
       return
     }
@@ -433,47 +433,47 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     // Send welcome email
     const toEmail = session.customer_details?.email
       ?? (userId ? await getUserEmail(admin, userId) : null)
-    const toName = session.customer_details?.name ??'there'
-    console.log('[webhook membership] sending welcome email to:', toEmail,'plan:', plan)
+    const toName  = session.customer_details?.name ?? 'there'
+    console.log('[webhook membership] sending welcome email to:', toEmail, 'plan:', plan)
     if (toEmail) {
       await sendMembershipWelcomeEmail({ to: toEmail, name: toName, plan, endDate })
     }
 
     // Also sync membership_status on the profiles table for fast lookups
-    await admin.from('profiles').update({ membership_status:'active' }).eq('user_id', userId)
+    await admin.from('profiles').update({ membership_status: 'active' }).eq('user_id', userId)
 
     await admin.from('notifications').insert({
       user_id: userId,
-      type:'booking_confirmed',
-      message:`Your ${plan} membership is now active. Welcome!`,
-      read: false,
+      type:    'booking_confirmed',
+      message: `Your ${plan} membership is now active. Welcome!`,
+      read:    false,
     })
   }
 
-  // Room contact 
-  if (type ==='room_contact') {
+  // ── Room contact ─────────────────────────────────────────────
+  if (type === 'room_contact') {
     const bookingRef = meta.booking_ref
-    const roomId = meta.room_id
-    const partnerId = meta.partner_id
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ??'https://erasmuslifevalencia.com'
-    const deadline = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString()
+    const roomId     = meta.room_id
+    const partnerId  = meta.partner_id
+    const baseUrl    = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+    const deadline   = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString()
 
     // 1. Save booking as PENDING
     const { error: rcErr } = await admin.from('room_contacts').insert({
-      room_id: roomId,
-      partner_id: partnerId,
-      booking_ref: bookingRef,
-      guest_name: meta.guest_name,
-      guest_email: meta.guest_email,
-      guest_phone: meta.guest_phone || null,
-      guest_nationality: meta.guest_nationality || null,
-      university: meta.university || null,
-      move_in_date: meta.move_in_date || null,
-      duration_months: parseInt(meta.duration ??'1', 10),
-      message: meta.message || null,
-      platform_fee: amountPaid,
-      stripe_payment_id: session.id,
-      status:'pending',
+      room_id:               roomId,
+      partner_id:            partnerId,
+      booking_ref:           bookingRef,
+      guest_name:            meta.guest_name,
+      guest_email:           meta.guest_email,
+      guest_phone:           meta.guest_phone        || null,
+      guest_nationality:     meta.guest_nationality  || null,
+      university:            meta.university         || null,
+      move_in_date:          meta.move_in_date       || null,
+      duration_months:       parseInt(meta.duration  ?? '1', 10),
+      message:               meta.message            || null,
+      platform_fee:          amountPaid,
+      stripe_payment_id:     session.id,
+      status:                'pending',
       confirmation_deadline: deadline,
     })
 
@@ -485,108 +485,108 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     // 2. Mark room as reserved
     await admin
       .from('partner_rooms')
-      .update({ status:'reserved' })
+      .update({ status: 'reserved' })
       .eq('id', roomId)
 
     // 3. Send pending email to student
     await sendBookingPendingEmail({
-      to: meta.guest_email,
-      guestName: meta.guest_name,
-      roomTitle: meta.room_title,
-      neighborhood: meta.neighborhood ??'',
-      monthlyRent: meta.monthly_rent ? Number(meta.monthly_rent) : undefined,
-      depositAmount: meta.deposit_amount ? Number(meta.deposit_amount) : undefined,
-      moveInDate: meta.move_in_date ??'',
-      duration: meta.duration ??'',
+      to:           meta.guest_email,
+      guestName:    meta.guest_name,
+      roomTitle:    meta.room_title,
+      neighborhood: meta.neighborhood      ?? '',
+      monthlyRent:  meta.monthly_rent      ? Number(meta.monthly_rent)   : undefined,
+      depositAmount: meta.deposit_amount   ? Number(meta.deposit_amount) : undefined,
+      moveInDate:   meta.move_in_date      ?? '',
+      duration:     meta.duration          ?? '',
       bookingRef,
     })
 
     // 4. Send confirmation request to partner
     if (meta.partner_email) {
       await sendPartnerConfirmationRequest({
-        to: meta.partner_email,
-        partnerName: meta.partner_name,
-        guestName: meta.guest_name,
-        guestEmail: meta.guest_email,
-        guestPhone: meta.guest_phone ??'',
-        guestNationality: meta.guest_nationality ??'',
-        university: meta.university ??'',
-        roomTitle: meta.room_title,
-        moveInDate: meta.move_in_date ??'',
-        duration: meta.duration ??'1',
-        message: meta.message ??'',
+        to:              meta.partner_email,
+        partnerName:     meta.partner_name,
+        guestName:       meta.guest_name,
+        guestEmail:      meta.guest_email,
+        guestPhone:      meta.guest_phone       ?? '',
+        guestNationality: meta.guest_nationality ?? '',
+        university:      meta.university        ?? '',
+        roomTitle:       meta.room_title,
+        moveInDate:      meta.move_in_date      ?? '',
+        duration:        meta.duration          ?? '1',
+        message:         meta.message           ?? '',
         bookingRef,
-        confirmUrl:`${baseUrl}/api/housing/confirm-booking?ref=${bookingRef}&action=confirm`,
-        rejectUrl:`${baseUrl}/api/housing/confirm-booking?ref=${bookingRef}&action=reject`,
+        confirmUrl: `${baseUrl}/api/housing/confirm-booking?ref=${bookingRef}&action=confirm`,
+        rejectUrl:  `${baseUrl}/api/housing/confirm-booking?ref=${bookingRef}&action=reject`,
       })
     }
 
     console.log('[webhook room_contact] pending booking created', bookingRef)
   }
 
-  // Job listing 
-  if (type ==='job_listing') {
-    const isFeatured = meta.is_featured ==='true'
-    const isUrgent = meta.is_urgent ==='true'
+  // ── Job listing ──────────────────────────────────────────────
+  if (type === 'job_listing') {
+    const isFeatured = meta.is_featured === 'true'
+    const isUrgent   = meta.is_urgent   === 'true'
     const daysActive = isFeatured ? 60 : 30
-    const expiresAt = new Date(Date.now() + daysActive * 24 * 60 * 60 * 1000).toISOString()
+    const expiresAt  = new Date(Date.now() + daysActive * 24 * 60 * 60 * 1000).toISOString()
 
     const { error: jobErr } = await admin
       .from('job_listings')
       .update({
-        status:'active',
+        status:      'active',
         is_featured: isFeatured,
-        is_urgent: isUrgent,
-        expires_at: expiresAt,
+        is_urgent:   isUrgent,
+        expires_at:  expiresAt,
       })
       .eq('id', itemId!)
 
     if (jobErr) console.error('[webhook job_listing]', jobErr.message)
-    else console.log('[webhook job_listing] activated job', itemId, { isFeatured, isUrgent })
+    else        console.log('[webhook job_listing] activated job', itemId, { isFeatured, isUrgent })
   }
 
-  // Employer subscription 
-  if (type ==='employer_subscription') {
-    const isUrgent = meta.is_urgent ==='true'
-    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-    const subscriptionId = typeof session.subscription ==='string'
+  // ── Employer subscription ────────────────────────────────────
+  if (type === 'employer_subscription') {
+    const isUrgent       = meta.is_urgent === 'true'
+    const expiresAt      = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    const subscriptionId = typeof session.subscription === 'string'
       ? session.subscription
       : (session.subscription as Stripe.Subscription | null)?.id ?? null
-    const customerId = typeof session.customer ==='string'
+    const customerId     = typeof session.customer === 'string'
       ? session.customer
       : (session.customer as Stripe.Customer | null)?.id ?? null
 
     // Activate the specific job listing
     const { error: jobErr } = await admin
       .from('job_listings')
-      .update({ status:'active', is_featured: true, is_urgent: isUrgent, expires_at: expiresAt })
+      .update({ status: 'active', is_featured: true, is_urgent: isUrgent, expires_at: expiresAt })
       .eq('id', itemId!)
     if (jobErr) console.error('[webhook employer_subscription job]', jobErr.message)
-    else console.log('[webhook employer_subscription] activated job', itemId, { isUrgent })
+    else        console.log('[webhook employer_subscription] activated job', itemId, { isUrgent })
 
     // Store employer subscription in memberships table
     if (userId) {
       const { error: memErr } = await admin.from('memberships').upsert(
         {
-          user_id: userId,
-          plan:'employer' as MembershipPlan,
-          status:'active' as MembershipStatus,
+          user_id:                userId,
+          plan:                   'employer' as MembershipPlan,
+          status:                 'active' as MembershipStatus,
           stripe_subscription_id: subscriptionId,
-          stripe_customer_id: customerId,
-          start_date: new Date().toISOString(),
-          end_date: expiresAt,
+          stripe_customer_id:     customerId,
+          start_date:             new Date().toISOString(),
+          end_date:               expiresAt,
         },
-        { onConflict:'user_id', ignoreDuplicates: false },
+        { onConflict: 'user_id', ignoreDuplicates: false },
       )
       if (memErr) console.error('[webhook employer_subscription membership]', memErr.message)
     }
   }
 
-  // Job upgrade (featured / employer subscription) 
-  if (type ==='job_upgrade') {
+  // ── Job upgrade (featured / employer subscription) ───────────
+  if (type === 'job_upgrade') {
     const upgradeType = meta.upgrade_type
-    const employerId = meta.employer_id || meta.item_id // item_id is fallback
-    const jobId = meta.item_id || null
+    const employerId  = meta.employer_id || meta.item_id   // item_id is fallback
+    const jobId       = meta.item_id || null
 
     console.log('[webhook job_upgrade] processing', { upgradeType, employerId, jobId, sessionId: session.id })
 
@@ -594,69 +594,69 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       console.error('[webhook job_upgrade] missing employer_id in metadata', meta)
     }
 
-    if (upgradeType ==='featured' && jobId) {
+    if (upgradeType === 'featured' && jobId) {
       const { error: jobErr } = await admin
         .from('job_listings')
         .update({
           is_featured: true,
-          expires_at: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
-          ...(meta.is_urgent ==='true' ? { is_urgent: true } : {}),
+          expires_at:  new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+          ...(meta.is_urgent === 'true' ? { is_urgent: true } : {}),
         })
         .eq('id', jobId)
-      if (jobErr) console.error('[webhook job_upgrade] feature job failed:', jobErr.message)
-      else console.log('[webhook job_upgrade] featured job', jobId)
+      if (jobErr) console.error('[webhook job_upgrade] ❌ feature job failed:', jobErr.message)
+      else        console.log('[webhook job_upgrade] ✅ featured job', jobId)
 
       if (employerId) {
         const { error: empErr } = await admin
           .from('employer_accounts')
-          .update({ plan:'featured' })
+          .update({ plan: 'featured' })
           .eq('id', employerId)
-        if (empErr) console.error('[webhook job_upgrade] employer plan update failed:', empErr.message)
-        else console.log('[webhook job_upgrade] employer plan set to featured', employerId)
+        if (empErr) console.error('[webhook job_upgrade] ❌ employer plan update failed:', empErr.message)
+        else        console.log('[webhook job_upgrade] ✅ employer plan set to featured', employerId)
       }
     }
 
-    if (upgradeType ==='subscription' && employerId) {
-      const subscriptionId = typeof session.subscription ==='string'
+    if (upgradeType === 'subscription' && employerId) {
+      const subscriptionId = typeof session.subscription === 'string'
         ? session.subscription
         : (session.subscription as Stripe.Subscription | null)?.id ?? null
-      const customerId = typeof session.customer ==='string'
+      const customerId     = typeof session.customer === 'string'
         ? session.customer
         : (session.customer as Stripe.Customer | null)?.id ?? null
-      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      const expiresAt      = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
 
       console.log('[webhook job_upgrade] upgrading employer to subscription', { employerId, subscriptionId, customerId })
 
       const { data: empData, error: empErr } = await admin
         .from('employer_accounts')
         .update({
-          plan:'subscription',
-          stripe_subscription_id: subscriptionId,
-          stripe_customer_id: customerId,
-          plan_expires_at: expiresAt,
+          plan:                    'subscription',
+          stripe_subscription_id:  subscriptionId,
+          stripe_customer_id:      customerId,
+          plan_expires_at:         expiresAt,
         })
         .eq('id', employerId)
         .select('id, plan')
-      if (empErr) console.error('[webhook job_upgrade] employer subscription update failed:', empErr.message, empErr)
-      else console.log('[webhook job_upgrade] employer upgraded to subscription', empData)
+      if (empErr) console.error('[webhook job_upgrade] ❌ employer subscription update failed:', empErr.message, empErr)
+      else        console.log('[webhook job_upgrade] ✅ employer upgraded to subscription', empData)
 
       // Feature ALL active listings for this employer
       const { error: featErr } = await admin
         .from('job_listings')
         .update({ is_featured: true })
         .eq('employer_account_id', employerId)
-        .eq('status','active')
-      if (featErr) console.error('[webhook job_upgrade] feature all listings failed:', featErr.message)
-      else console.log('[webhook job_upgrade] all active listings featured for employer', employerId)
+        .eq('status', 'active')
+      if (featErr) console.error('[webhook job_upgrade] ❌ feature all listings failed:', featErr.message)
+      else         console.log('[webhook job_upgrade] ✅ all active listings featured for employer', employerId)
     }
   }
 
-  // Ambassador commission 
-  if ((type ==='event' || type ==='trip') && meta.ambassador_id && meta.referral_code) {
+  // ── Ambassador commission ────────────────────────────────────
+  if ((type === 'event' || type === 'trip') && meta.ambassador_id && meta.referral_code) {
     await recordAmbassadorCommission(admin, meta, amountPaid, type)
   }
 
-  // Decrement promo code uses 
+  // ── Decrement promo code uses ────────────────────────────────
   if (meta.promo_code_id) {
     await admin.rpc('decrement_promo_uses', { p_id: meta.promo_code_id })
   }
@@ -664,10 +664,10 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
 async function checkMilestones(admin: ReturnType<typeof getAdminClient>, ambassadorId: string, totalReferrals: number) {
   const milestones = [
-    { count: 5, type:'free_ticket' as const, desc:'Free ticket — 5 referrals!', value: 1 },
-    { count: 10, type:'membership_upgrade' as const, desc:'Free membership upgrade — 10 referrals!', value: 9.99 },
-    { count: 25, type:'cash_bonus' as const, desc:'€50 cash bonus — 25 referrals!', value: 50 },
-    { count: 50, type:'cash_bonus' as const, desc:'€150 cash bonus — 50 referrals!', value: 150 },
+    { count: 5,  type: 'free_ticket'        as const, desc: 'Free ticket — 5 referrals!',             value: 1    },
+    { count: 10, type: 'membership_upgrade' as const, desc: 'Free membership upgrade — 10 referrals!', value: 9.99 },
+    { count: 25, type: 'cash_bonus'         as const, desc: '€50 cash bonus — 25 referrals!',          value: 50   },
+    { count: 50, type: 'cash_bonus'         as const, desc: '€150 cash bonus — 50 referrals!',         value: 150  },
   ]
   const milestone = milestones.find(m => m.count === totalReferrals)
   if (!milestone) return
@@ -675,11 +675,11 @@ async function checkMilestones(admin: ReturnType<typeof getAdminClient>, ambassa
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (admin as any).from('ambassador_rewards').insert({
     ambassador_id: ambassadorId,
-    reward_type: milestone.type,
-    description: milestone.desc,
-    value: milestone.value,
-    status:'pending',
-    expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    reward_type:   milestone.type,
+    description:   milestone.desc,
+    value:         milestone.value,
+    status:        'pending',
+    expires_at:    new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
   })
 }
 
@@ -687,7 +687,7 @@ async function recordAmbassadorCommission(
   admin: ReturnType<typeof getAdminClient>,
   meta: Record<string, string>,
   amountPaid: number,
-  bookingType:'event' |'trip',
+  bookingType: 'event' | 'trip',
 ) {
   const ambassadorId = meta.ambassador_id
   const referralCode = meta.referral_code
@@ -711,22 +711,22 @@ async function recordAmbassadorCommission(
     return
   }
 
-  const rate = (ambassador.commission_rate as number) ?? 5
+  const rate             = (ambassador.commission_rate as number) ?? 5
   const commissionEarned = +((amountPaid * rate) / 100).toFixed(2)
-  const newReferrals = ((ambassador.total_referrals as number) ?? 0) + 1
-  const newEarnings = +(((ambassador.total_earnings as number) ?? 0) + commissionEarned).toFixed(2)
-  const newPending = +(((ambassador.pending_earnings as number) ?? 0) + commissionEarned).toFixed(2)
+  const newReferrals     = ((ambassador.total_referrals as number) ?? 0) + 1
+  const newEarnings      = +(((ambassador.total_earnings  as number) ?? 0) + commissionEarned).toFixed(2)
+  const newPending       = +(((ambassador.pending_earnings as number) ?? 0) + commissionEarned).toFixed(2)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (admin as any).from('ambassador_commissions').insert({
-    ambassador_id: ambassadorId,
-    booking_type: bookingType,
-    booking_ref: meta.booking_ref || null,
-    event_title: meta.event_title || meta.trip_title || null,
-    amount_paid: amountPaid,
-    commission_rate: rate,
+    ambassador_id:     ambassadorId,
+    booking_type:      bookingType,
+    booking_ref:       meta.booking_ref || null,
+    event_title:       meta.event_title || meta.trip_title || null,
+    amount_paid:       amountPaid,
+    commission_rate:   rate,
     commission_earned: commissionEarned,
-    status:'pending',
+    status:            'pending',
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -737,7 +737,7 @@ async function recordAmbassadorCommission(
 
   await checkMilestones(admin, ambassadorId, newReferrals)
 
-  console.log(` Ambassador commission: €${commissionEarned} → ${ambassadorId}`)
+  console.log(`✅ Ambassador commission: €${commissionEarned} → ${ambassadorId}`)
 }
 
 async function handleSubscriptionChange(
@@ -746,62 +746,62 @@ async function handleSubscriptionChange(
 ) {
   const admin = getAdminClient()
 
-  // Employer subscription backup handler 
+  // ── Employer subscription backup handler ─────────────────────
   // checkout.session.completed should handle this, but this catches
   // cases where that event is missed or metadata is absent there.
   const subMeta = (subscription.metadata ?? {}) as Record<string, string>
-  if (subMeta.type ==='job_upgrade' && subMeta.upgrade_type ==='subscription') {
+  if (subMeta.type === 'job_upgrade' && subMeta.upgrade_type === 'subscription') {
     const employerId = subMeta.employer_id
     console.log('[webhook subscription change] employer subscription event', { employerId, status: subscription.status })
 
     if (employerId) {
-      const isActive = subscription.status ==='active' || subscription.status ==='trialing'
+      const isActive = subscription.status === 'active' || subscription.status === 'trialing'
       const periodEnd = (subscription as Stripe.Subscription & { current_period_end: number }).current_period_end
 
       const { error: empErr } = await admin
         .from('employer_accounts')
         .update({
-          plan: isActive ?'subscription' :'free',
-          stripe_subscription_id: subscription.id,
-          plan_expires_at: new Date(periodEnd * 1000).toISOString(),
+          plan:                    isActive ? 'subscription' : 'free',
+          stripe_subscription_id:  subscription.id,
+          plan_expires_at:         new Date(periodEnd * 1000).toISOString(),
         })
         .eq('id', employerId)
 
-      if (empErr) console.error('[webhook subscription change] employer update failed:', empErr.message)
-      else console.log('[webhook subscription change] employer plan synced', { employerId, isActive })
+      if (empErr) console.error('[webhook subscription change] ❌ employer update failed:', empErr.message)
+      else        console.log('[webhook subscription change] ✅ employer plan synced', { employerId, isActive })
 
       if (isActive) {
         await admin
           .from('job_listings')
           .update({ is_featured: true })
           .eq('employer_account_id', employerId)
-          .eq('status','active')
+          .eq('status', 'active')
       }
-      return // don't touch the memberships table
+      return  // don't touch the memberships table
     }
   }
 
   const statusMap: Record<string, MembershipStatus> = {
-    active:'active',
-    trialing:'trialing',
-    canceled:'expired',
-    past_due:'expired',
-    unpaid:'expired',
-    incomplete:'expired',
+    active:            'active',
+    trialing:          'trialing',
+    canceled:          'expired',
+    past_due:          'expired',
+    unpaid:            'expired',
+    incomplete:        'expired',
     incomplete_expired:'expired',
   }
-  const status: MembershipStatus = forceStatus ?? statusMap[subscription.status] ??'expired'
+  const status: MembershipStatus = forceStatus ?? statusMap[subscription.status] ?? 'expired'
 
   // When a subscription is deleted/cancelled, set end_date to current_period_end
   // so the user keeps access until their paid period is over.
-  const endDate = (forceStatus ==='expired' || status ==='expired')
+  const endDate = (forceStatus === 'expired' || status === 'expired')
     ? new Date((subscription as Stripe.Subscription & { current_period_end: number }).current_period_end * 1000).toISOString()
     : null
 
   console.log('[webhook subscription change]', {
     subscriptionId: subscription.id,
-    stripeStatus: subscription.status,
-    mappedStatus: status,
+    stripeStatus:   subscription.status,
+    mappedStatus:   status,
     endDate,
   })
 
@@ -817,7 +817,7 @@ async function handleSubscriptionChange(
   if (error) {
     console.error('[webhook subscription change] update failed:', {
       message: error.message,
-      code: error.code,
+      code:    error.code,
     })
     return
   }
@@ -830,24 +830,24 @@ async function handleSubscriptionChange(
   // checkout.session.completed, OR when checkout.session.completed was missed.
   // Stripe copies subscription_data.metadata onto the subscription object,
   // so user_id and plan are available here.
-  if ((count ?? 0) === 0 && (status ==='active' || status ==='trialing')) {
-    const subMeta = (subscription.metadata ?? {}) as Record<string, string>
-    const userId = subMeta.user_id || null
-    const plan = (subMeta.plan || subMeta.item_id) as MembershipPlan | undefined
+  if ((count ?? 0) === 0 && (status === 'active' || status === 'trialing')) {
+    const subMeta  = (subscription.metadata ?? {}) as Record<string, string>
+    const userId   = subMeta.user_id || null
+    const plan     = (subMeta.plan || subMeta.item_id) as MembershipPlan | undefined
 
     console.log('[webhook subscription change] no existing row — attempting upsert', { userId, plan, subscriptionId: subscription.id })
 
     if (userId && plan) {
       const { error: upsertErr } = await admin.from('memberships').upsert(
         {
-          user_id: userId,
+          user_id:                userId,
           plan,
           status,
           stripe_subscription_id: subscription.id,
-          start_date: new Date().toISOString(),
-          end_date: membershipEndDate(plan),
+          start_date:             new Date().toISOString(),
+          end_date:               membershipEndDate(plan),
         },
-        { onConflict:'user_id' },
+        { onConflict: 'user_id' },
       )
       if (upsertErr) {
         console.error('[webhook subscription change] fallback upsert failed:', upsertErr.message, upsertErr.code)
@@ -867,17 +867,17 @@ async function handleSubscriptionChange(
     await admin.from('profiles').update({ membership_status: status }).eq('user_id', updatedUserId)
   }
 
-  console.log('[webhook subscription change] updated status to', status,'for subscription', subscription.id)
+  console.log('[webhook subscription change] updated status to', status, 'for subscription', subscription.id)
 }
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
-  const sig = request.headers.get('stripe-signature')
+  const sig  = request.headers.get('stripe-signature')
 
-  console.log('[webhook] received event, sig present:', !!sig,'secret present:', !!process.env.STRIPE_WEBHOOK_SECRET)
+  console.log('[webhook] received event, sig present:', !!sig, 'secret present:', !!process.env.STRIPE_WEBHOOK_SECRET)
 
   if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
-    return NextResponse.json({ error:'Missing signature or webhook secret' }, { status: 400 })
+    return NextResponse.json({ error: 'Missing signature or webhook secret' }, { status: 400 })
   }
 
   let event: Stripe.Event
@@ -886,55 +886,55 @@ export async function POST(request: NextRequest) {
     event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET)
   } catch (err) {
     console.error('[webhook signature error]', err instanceof Error ? err.message : err)
-    return NextResponse.json({ error:'Invalid signature' }, { status: 400 })
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
-  console.log('[webhook] event type:', event.type,'id:', event.id)
+  console.log('[webhook] event type:', event.type, 'id:', event.id)
 
   try {
     switch (event.type) {
-      case'checkout.session.completed':
+      case 'checkout.session.completed':
         await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session)
         break
 
-      case'customer.subscription.created':
-      case'customer.subscription.updated':
+      case 'customer.subscription.created':
+      case 'customer.subscription.updated':
         await handleSubscriptionChange(event.data.object as Stripe.Subscription)
         break
 
-      case'customer.subscription.deleted':
-        await handleSubscriptionChange(event.data.object as Stripe.Subscription,'expired')
+      case 'customer.subscription.deleted':
+        await handleSubscriptionChange(event.data.object as Stripe.Subscription, 'expired')
         break
 
-      case'invoice.payment_succeeded': {
+      case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice
         // Only process invoices from a subscription (v22 API: subscription info is in invoice.parent)
-        if (invoice.parent?.type !=='subscription_details') break
+        if (invoice.parent?.type !== 'subscription_details') break
 
         const erasmusVibeAccountId = process.env.ERASMUS_VIBE_STRIPE_ACCOUNT_ID
         if (!erasmusVibeAccountId) break
 
-        const platformFeeMembership = parseInt(process.env.PLATFORM_FEE_MEMBERSHIP ||'50') / 100
-        const gross = invoice.amount_paid
-        const net = gross - Math.round(gross * 0.02) - 25
+        const platformFeeMembership = parseInt(process.env.PLATFORM_FEE_MEMBERSHIP || '50') / 100
+        const gross          = invoice.amount_paid
+        const net            = gross - Math.round(gross * 0.02) - 25
         const transferAmount = Math.round(net * platformFeeMembership)
 
         try {
           await stripe.transfers.create({
-            amount: transferAmount,
-            currency:'eur',
+            amount:      transferAmount,
+            currency:    'eur',
             destination: erasmusVibeAccountId,
             metadata: {
-              type:'membership_split',
-              invoice_id: invoice.id,
-              gross_amount: gross.toString(),
-              net_amount: net.toString(),
+              type:             'membership_split',
+              invoice_id:       invoice.id,
+              gross_amount:     gross.toString(),
+              net_amount:       net.toString(),
               transfer_percent: String(Math.round(platformFeeMembership * 100)),
             },
           })
-          console.log(' Membership split transferred:', transferAmount / 100,'EUR → Erasmus Life')
+          console.log('✅ Membership split transferred:', transferAmount / 100, 'EUR → Erasmus Life')
         } catch (err) {
-          console.error(' Membership transfer failed:', err)
+          console.error('❌ Membership transfer failed:', err)
         }
         break
       }

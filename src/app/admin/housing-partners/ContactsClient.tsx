@@ -1,40 +1,40 @@
 'use client'
 
-import { useTransition, useState } from'react'
-import { useRouter } from'next/navigation'
-import { confirmBookingAdmin, rejectBookingAdmin } from'@/app/actions/admin'
-import type { RoomContactStatus } from'@/types/database'
+import { useTransition, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { confirmBookingAdmin, rejectBookingAdmin } from '@/app/actions/admin'
+import type { RoomContactStatus } from '@/types/database'
 
 const STATUS_COLORS: Record<RoomContactStatus, string> = {
-  pending:'text-orange-400 bg-orange-400/10 border-orange-400/20',
-  confirmed:'text-green-400 bg-green-400/10 border-green-400/20',
-  contact_shared:'text-teal-400 bg-teal-400/10 border-teal-400/20',
-  rejected:'text-red-400 bg-red-400/10 border-red-400/20',
-  refunded:'text-red-400 bg-red-400/10 border-red-400/20',
-  cancelled:'text-white/40 bg-white/5 border-white/10',
+  pending:        'text-orange-400 bg-orange-400/10 border-orange-400/20',
+  confirmed:      'text-green-400 bg-green-400/10 border-green-400/20',
+  contact_shared: 'text-teal-400 bg-teal-400/10 border-teal-400/20',
+  rejected:       'text-red-400 bg-red-400/10 border-red-400/20',
+  refunded:       'text-red-400 bg-red-400/10 border-red-400/20',
+  cancelled:      'text-white/40 bg-white/5 border-white/10',
 }
 
 const STATUS_LABELS: Record<RoomContactStatus, string> = {
-  pending:'Pending',
-  confirmed:'Confirmed',
-  contact_shared:'Contact shared',
-  rejected:'Rejected',
-  refunded:'Refunded',
-  cancelled:'Cancelled',
+  pending:        'Pending',
+  confirmed:      'Confirmed',
+  contact_shared: 'Contact shared',
+  rejected:       'Rejected',
+  refunded:       'Refunded',
+  cancelled:      'Cancelled',
 }
 
 export type ContactRow = {
-  id: string
-  booking_ref: string
-  guest_name: string
-  guest_email: string
+  id:              string
+  booking_ref:     string
+  guest_name:      string
+  guest_email:     string
   guest_nationality: string | null
-  move_in_date: string | null
+  move_in_date:    string | null
   duration_months: number
-  platform_fee: number
-  created_at: string
-  status: RoomContactStatus
-  partner_rooms: { title: string; neighborhood: string; monthly_rent: number } | null
+  platform_fee:    number
+  created_at:      string
+  status:          RoomContactStatus
+  partner_rooms:   { title: string; neighborhood: string; monthly_rent: number } | null
   housing_partners: { name: string } | null
 }
 
@@ -58,7 +58,7 @@ export default function ContactsClient({ rows }: { rows: ContactRow[] }) {
         showToast('Booking confirmed — contact email sent to student')
         router.refresh()
       } else {
-        showToast(`Error: ${res.error ??'Unknown error'}`)
+        showToast(`Error: ${res.error ?? 'Unknown error'}`)
       }
     })
   }
@@ -72,7 +72,7 @@ export default function ContactsClient({ rows }: { rows: ContactRow[] }) {
         showToast('Booking rejected — full refund issued to student')
         router.refresh()
       } else {
-        showToast(`Error: ${res.error ??'Unknown error'}`)
+        showToast(`Error: ${res.error ?? 'Unknown error'}`)
       }
     })
   }
@@ -109,23 +109,23 @@ export default function ContactsClient({ rows }: { rows: ContactRow[] }) {
                 <tr key={c.id} className="border-b border-white/5 hover:bg-white/2 transition-colors">
                   <td className="px-5 py-3 text-white/60 text-xs font-mono">{c.booking_ref}</td>
                   <td className="px-5 py-3">
-                    <p className="text-white text-sm">{c.partner_rooms?.title ??'—'}</p>
+                    <p className="text-white text-sm">{c.partner_rooms?.title ?? '—'}</p>
                     <p className="text-white/40 text-xs">{c.partner_rooms?.neighborhood} · {c.housing_partners?.name}</p>
                   </td>
                   <td className="px-5 py-3">
                     <p className="text-white text-sm">{c.guest_name}</p>
                     <p className="text-white/40 text-xs">{c.guest_email}</p>
                   </td>
-                  <td className="px-5 py-3 text-white/60 text-sm">{c.guest_nationality ??'—'}</td>
+                  <td className="px-5 py-3 text-white/60 text-sm">{c.guest_nationality ?? '—'}</td>
                   <td className="px-5 py-3 text-white/60 text-sm">
                     {c.move_in_date
-                      ? new Date(c.move_in_date).toLocaleDateString('en-GB', { day:'numeric', month:'short' })
-                      :'—'}
+                      ? new Date(c.move_in_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+                      : '—'}
                   </td>
                   <td className="px-5 py-3 text-white/60 text-sm">{c.duration_months}mo</td>
                   <td className="px-5 py-3 text-brand-accent text-sm font-medium">€{c.platform_fee}</td>
                   <td className="px-5 py-3 text-white/40 text-xs">
-                    {new Date(c.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'2-digit' })}
+                    {new Date(c.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' })}
                   </td>
                   <td className="px-5 py-3">
                     <span className={`text-xs px-2 py-0.5 rounded-full border ${STATUS_COLORS[c.status]}`}>
@@ -133,7 +133,7 @@ export default function ContactsClient({ rows }: { rows: ContactRow[] }) {
                     </span>
                   </td>
                   <td className="px-5 py-3">
-                    {c.status ==='pending' ? (
+                    {c.status === 'pending' ? (
                       <div className="flex gap-1.5">
                         <button
                           onClick={() => handleConfirm(c.booking_ref)}

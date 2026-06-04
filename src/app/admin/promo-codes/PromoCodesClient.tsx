@@ -1,53 +1,53 @@
 'use client'
 
-import { useState, useTransition } from'react'
-import { useRouter } from'next/navigation'
-import { Plus, Pencil, Trash2, X, Tag } from'lucide-react'
-import DataTable from'@/components/admin/DataTable'
-import type { PromoCodeRow, PromoCodeInsert, PromoCodeUpdate, DiscountType, PromoAppliesTo } from'@/types/database'
+import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import { Plus, Pencil, Trash2, X, Tag } from 'lucide-react'
+import DataTable from '@/components/admin/DataTable'
+import type { PromoCodeRow, PromoCodeInsert, PromoCodeUpdate, DiscountType, PromoAppliesTo } from '@/types/database'
 
 type PromoTableRow = PromoCodeRow & Record<string, unknown>
-type PromoStatus ='active' |'expired' |'exhausted'
+type PromoStatus   = 'active' | 'expired' | 'exhausted'
 
 interface FormState {
-  code: string
-  discount_type: DiscountType
+  code:           string
+  discount_type:  DiscountType
   discount_value: string
-  applies_to: PromoAppliesTo
-  uses_limited: boolean
+  applies_to:     PromoAppliesTo
+  uses_limited:   boolean
   uses_remaining: string
-  has_expiry: boolean
-  expires_at: string
+  has_expiry:     boolean
+  expires_at:     string
 }
 
 const defaultForm = (): FormState => ({
-  code:'',
-  discount_type:'percentage',
-  discount_value:'',
-  applies_to:'both',
-  uses_limited: false,
-  uses_remaining:'',
-  has_expiry: false,
-  expires_at:'',
+  code:           '',
+  discount_type:  'percentage',
+  discount_value: '',
+  applies_to:     'both',
+  uses_limited:   false,
+  uses_remaining: '',
+  has_expiry:     false,
+  expires_at:     '',
 })
 
 const SHORTCUTS: { label: string; values: Partial<FormState> }[] = [
-  { label:'10% Welcome', values: { code:'WELCOME10', discount_type:'percentage', discount_value:'10' } },
-  { label:'€5 Off', values: { code:'SAVE5', discount_type:'fixed', discount_value:'5' } },
-  { label:'20% VIP', values: { code:'VIP20', discount_type:'percentage', discount_value:'20' } },
-  { label:'Free (100%)', values: { code:'FREE100', discount_type:'percentage', discount_value:'100'} },
+  { label: '10% Welcome', values: { code: 'WELCOME10', discount_type: 'percentage', discount_value: '10' } },
+  { label: '€5 Off',      values: { code: 'SAVE5',     discount_type: 'fixed',      discount_value: '5'  } },
+  { label: '20% VIP',     values: { code: 'VIP20',     discount_type: 'percentage', discount_value: '20' } },
+  { label: 'Free (100%)', values: { code: 'FREE100',   discount_type: 'percentage', discount_value: '100'} },
 ]
 
 const STATUS_COLORS: Record<PromoStatus, { bg: string; color: string; label: string }> = {
-  active: { bg:'rgba(46,204,113,0.13)', color:'#2ECC71', label:'Active' },
-  expired: { bg:'rgba(136,136,136,0.13)', color:'#888888', label:'Expired' },
-  exhausted: { bg:'rgba(255,68,68,0.13)', color:'#FF4444', label:'Exhausted' },
+  active:    { bg: 'rgba(46,204,113,0.13)',  color: '#2ECC71', label: 'Active'    },
+  expired:   { bg: 'rgba(136,136,136,0.13)', color: '#888888', label: 'Expired'   },
+  exhausted: { bg: 'rgba(255,68,68,0.13)',   color: '#FF4444', label: 'Exhausted' },
 }
 
 function computeStatus(row: PromoCodeRow): PromoStatus {
-  if (row.uses_remaining !== null && row.uses_remaining <= 0) return'exhausted'
-  if (row.expires_at && new Date(row.expires_at) < new Date()) return'expired'
-  return'active'
+  if (row.uses_remaining !== null && row.uses_remaining <= 0) return 'exhausted'
+  if (row.expires_at && new Date(row.expires_at) < new Date()) return 'expired'
+  return 'active'
 }
 
 function StatusBadge({ row }: { row: PromoCodeRow }) {
@@ -55,12 +55,12 @@ function StatusBadge({ row }: { row: PromoCodeRow }) {
   const { bg, color, label } = STATUS_COLORS[status]
   return (
     <span style={{
-      background: bg,
+      background:   bg,
       color,
-      padding:'2px 9px',
-      borderRadius:'9999px',
-      fontSize:'11px',
-      fontWeight: 700,
+      padding:      '2px 9px',
+      borderRadius: '9999px',
+      fontSize:     '11px',
+      fontWeight:   700,
     }}>
       {label}
     </span>
@@ -68,17 +68,17 @@ function StatusBadge({ row }: { row: PromoCodeRow }) {
 }
 
 function TypeBadge({ type }: { type: DiscountType }) {
-  const isPercent = type ==='percentage'
+  const isPercent = type === 'percentage'
   return (
     <span style={{
-      background: isPercent ?'rgba(78,205,196,0.15)' :'rgba(233,30,140,0.15)',
-      color: isPercent ?'#4ECDC4' :'#E91E8C',
-      padding:'2px 8px',
-      borderRadius:'9999px',
-      fontSize:'11px',
-      fontWeight: 700,
+      background:   isPercent ? 'rgba(78,205,196,0.15)'  : 'rgba(233,30,140,0.15)',
+      color:        isPercent ? '#4ECDC4'                 : '#E91E8C',
+      padding:      '2px 8px',
+      borderRadius: '9999px',
+      fontSize:     '11px',
+      fontWeight:   700,
     }}>
-      {isPercent ?'%' :'€'}
+      {isPercent ? '%' : '€'}
     </span>
   )
 }
@@ -87,10 +87,10 @@ interface Props { promoCodes: PromoCodeRow[] }
 
 export default function PromoCodesClient({ promoCodes }: Props) {
   const router = useRouter()
-  const [modal, setModal] = useState<'create' |'edit' | null>(null)
-  const [editing, setEditing] = useState<PromoCodeRow | null>(null)
-  const [form, setForm] = useState<FormState>(defaultForm())
-  const [toast, setToast] = useState('')
+  const [modal,    setModal]    = useState<'create' | 'edit' | null>(null)
+  const [editing,  setEditing]  = useState<PromoCodeRow | null>(null)
+  const [form,     setForm]     = useState<FormState>(defaultForm())
+  const [toast,    setToast]    = useState('')
   const [isPending, startTransition] = useTransition()
 
   function showToast(msg: string) {
@@ -108,14 +108,14 @@ export default function PromoCodesClient({ promoCodes }: Props) {
   function openEdit(row: PromoCodeRow) {
     setEditing(row)
     setForm({
-      code: row.code,
-      discount_type: row.discount_type,
+      code:           row.code,
+      discount_type:  row.discount_type,
       discount_value: String(row.discount_value),
-      applies_to: row.applies_to ??'both',
-      uses_limited: row.uses_remaining !== null,
-      uses_remaining: row.uses_remaining !== null ? String(row.uses_remaining) :'',
-      has_expiry: row.expires_at !== null,
-      expires_at: row.expires_at ? row.expires_at.slice(0, 16) :'',
+      applies_to:     row.applies_to ?? 'both',
+      uses_limited:   row.uses_remaining !== null,
+      uses_remaining: row.uses_remaining !== null ? String(row.uses_remaining) : '',
+      has_expiry:     row.expires_at !== null,
+      expires_at:     row.expires_at ? row.expires_at.slice(0, 16) : '',
     })
     setToast('')
     setModal('edit')
@@ -130,7 +130,7 @@ export default function PromoCodesClient({ promoCodes }: Props) {
 
     const value = parseFloat(form.discount_value)
     if (!form.discount_value || isNaN(value) || value <= 0) { showToast('Discount value must be greater than 0.'); return }
-    if (form.discount_type ==='percentage' && value > 100) { showToast('Percentage discount cannot exceed 100%.'); return }
+    if (form.discount_type === 'percentage' && value > 100) { showToast('Percentage discount cannot exceed 100%.'); return }
 
     if (form.uses_limited && (!form.uses_remaining || parseInt(form.uses_remaining, 10) < 1)) {
       showToast('Uses limit must be at least 1.')
@@ -143,33 +143,33 @@ export default function PromoCodesClient({ promoCodes }: Props) {
 
     const payload: PromoCodeInsert = {
       code,
-      discount_type: form.discount_type,
+      discount_type:  form.discount_type,
       discount_value: value,
-      applies_to: form.applies_to,
+      applies_to:     form.applies_to,
       uses_remaining: form.uses_limited ? parseInt(form.uses_remaining, 10) : null,
-      expires_at: form.has_expiry && form.expires_at
+      expires_at:     form.has_expiry && form.expires_at
                         ? new Date(form.expires_at).toISOString()
                         : null,
     }
 
     startTransition(async () => {
-      if (modal ==='edit' && editing) {
+      if (modal === 'edit' && editing) {
         const updatePayload: PromoCodeUpdate = payload
-        const res = await fetch(`/api/admin/promo-codes/${editing.id}`, {
-          method:'PATCH',
-          headers: {'Content-Type':'application/json' },
-          body: JSON.stringify(updatePayload),
+        const res  = await fetch(`/api/admin/promo-codes/${editing.id}`, {
+          method:  'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(updatePayload),
         })
         const data = await res.json() as { error?: string }
-        if (!res.ok) { showToast(data.error ??'Failed to update code.'); return }
+        if (!res.ok) { showToast(data.error ?? 'Failed to update code.'); return }
       } else {
-        const res = await fetch('/api/admin/promo-codes', {
-          method:'POST',
-          headers: {'Content-Type':'application/json' },
-          body: JSON.stringify(payload),
+        const res  = await fetch('/api/admin/promo-codes', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(payload),
         })
         const data = await res.json() as { error?: string }
-        if (!res.ok) { showToast(data.error ??'Failed to create code.'); return }
+        if (!res.ok) { showToast(data.error ?? 'Failed to create code.'); return }
       }
       setModal(null)
       router.refresh()
@@ -177,12 +177,12 @@ export default function PromoCodesClient({ promoCodes }: Props) {
   }
 
   function handleDelete(row: PromoCodeRow) {
-    if (!confirm(`Delete promo code"${row.code}"? This cannot be undone.`)) return
+    if (!confirm(`Delete promo code "${row.code}"? This cannot be undone.`)) return
     startTransition(async () => {
-      const res = await fetch(`/api/admin/promo-codes/${row.id}`, { method:'DELETE' })
+      const res = await fetch(`/api/admin/promo-codes/${row.id}`, { method: 'DELETE' })
       if (!res.ok) {
         const data = await res.json() as { error?: string }
-        showToast(data.error ??'Failed to delete code.')
+        showToast(data.error ?? 'Failed to delete code.')
         return
       }
       router.refresh()
@@ -193,8 +193,8 @@ export default function PromoCodesClient({ promoCodes }: Props) {
 
   const columns: PromoCol[] = [
     {
-      key:'code',
-      header:'Code',
+      key:    'code',
+      header: 'Code',
       sortable: true,
       render: (row) => (
         <span className="font-mono font-bold text-white tracking-wide">
@@ -203,54 +203,54 @@ export default function PromoCodesClient({ promoCodes }: Props) {
       ),
     },
     {
-      key:'discount_type',
-      header:'Type',
+      key:    'discount_type',
+      header: 'Type',
       render: (row) => <TypeBadge type={row.discount_type as DiscountType} />,
     },
     {
-      key:'discount_value',
-      header:'Value',
-      render: (row) => row.discount_type ==='percentage'
-        ?`${row.discount_value}%`
-        :`€${Number(row.discount_value).toFixed(2)}`,
+      key:    'discount_value',
+      header: 'Value',
+      render: (row) => row.discount_type === 'percentage'
+        ? `${row.discount_value}%`
+        : `€${Number(row.discount_value).toFixed(2)}`,
     },
     {
-      key:'applies_to',
-      header:'Applies To',
+      key:    'applies_to',
+      header: 'Applies To',
       render: (row) => {
-        const val = (row.applies_to as PromoAppliesTo) ??'both'
-        const label = val ==='both' ?'Events & Trips' : val ==='events' ?'Events only' :'Trips only'
-        const color = val ==='both' ?'#888' : val ==='events' ?'#4ECDC4' :'#FF6B00'
-        return <span style={{ color, fontSize:'12px', fontWeight: 600 }}>{label}</span>
+        const val = (row.applies_to as PromoAppliesTo) ?? 'both'
+        const label = val === 'both' ? 'Events & Trips' : val === 'events' ? 'Events only' : 'Trips only'
+        const color = val === 'both' ? '#888' : val === 'events' ? '#4ECDC4' : '#FF6B00'
+        return <span style={{ color, fontSize: '12px', fontWeight: 600 }}>{label}</span>
       },
     },
     {
-      key:'uses_remaining',
-      header:'Uses Left',
+      key:    'uses_remaining',
+      header: 'Uses Left',
       render: (row) => row.uses_remaining === null
         ? <span className="text-white/40 text-xs">Unlimited</span>
         : <span>{row.uses_remaining as number}</span>,
     },
     {
-      key:'expires_at',
-      header:'Expires',
+      key:    'expires_at',
+      header: 'Expires',
       sortable: true,
       render: (row) => row.expires_at === null
         ? <span className="text-white/40 text-xs">Never</span>
-        : new Date(row.expires_at as string).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }),
+        : new Date(row.expires_at as string).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
     },
     {
-      key:'_status',
-      header:'Status',
+      key:    '_status',
+      header: 'Status',
       render: (row) => <StatusBadge row={row as unknown as PromoCodeRow} />,
     },
   ]
 
-  const inputClass ='w-full px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
-  const labelClass ='text-white/50 text-xs mb-1.5 block'
+  const inputClass  = 'w-full px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
+  const labelClass  = 'text-white/50 text-xs mb-1.5 block'
   const toggleClass = (active: boolean) =>
-`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
-      active ?'bg-brand-primary text-white' :'text-white/40 hover:text-white/70'
+    `px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+      active ? 'bg-brand-primary text-white' : 'text-white/40 hover:text-white/70'
     }`
 
   return (
@@ -324,7 +324,7 @@ export default function PromoCodesClient({ promoCodes }: Props) {
             {/* Modal header */}
             <div className="flex items-center justify-between p-6 border-b border-white/10">
               <h2 className="font-heading font-bold text-white text-lg">
-                {modal ==='create' ?'New Promo Code' :'Edit Promo Code'}
+                {modal === 'create' ? 'New Promo Code' : 'Edit Promo Code'}
               </h2>
               <button onClick={() => setModal(null)} className="text-white/40 hover:text-white transition-colors">
                 <X size={20} />
@@ -353,15 +353,15 @@ export default function PromoCodesClient({ promoCodes }: Props) {
                   <div className="flex rounded-xl bg-white/5 border border-white/10 p-0.5">
                     <button
                       type="button"
-                      onClick={() => setForm(f => ({ ...f, discount_type:'percentage' }))}
-                      className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${toggleClass(form.discount_type ==='percentage')}`}
+                      onClick={() => setForm(f => ({ ...f, discount_type: 'percentage' }))}
+                      className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${toggleClass(form.discount_type === 'percentage')}`}
                     >
                       % Percentage
                     </button>
                     <button
                       type="button"
-                      onClick={() => setForm(f => ({ ...f, discount_type:'fixed' }))}
-                      className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${toggleClass(form.discount_type ==='fixed')}`}
+                      onClick={() => setForm(f => ({ ...f, discount_type: 'fixed' }))}
+                      className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${toggleClass(form.discount_type === 'fixed')}`}
                     >
                       € Fixed
                     </button>
@@ -369,17 +369,17 @@ export default function PromoCodesClient({ promoCodes }: Props) {
                 </div>
                 <div>
                   <label className={labelClass}>
-                    Value * {form.discount_type ==='percentage' ?'(%)' :'(€)'}
+                    Value * {form.discount_type === 'percentage' ? '(%)' : '(€)'}
                   </label>
                   <input
                     type="number"
                     min="0.01"
                     step="0.01"
-                    max={form.discount_type ==='percentage' ? 100 : undefined}
+                    max={form.discount_type === 'percentage' ? 100 : undefined}
                     value={form.discount_value}
                     onChange={e => setForm(f => ({ ...f, discount_value: e.target.value }))}
                     required
-                    placeholder={form.discount_type ==='percentage' ?'10' :'5'}
+                    placeholder={form.discount_type === 'percentage' ? '10' : '5'}
                     className={inputClass}
                   />
                 </div>
@@ -389,14 +389,14 @@ export default function PromoCodesClient({ promoCodes }: Props) {
               <div>
                 <label className={labelClass}>Applies To *</label>
                 <div className="flex rounded-xl bg-white/5 border border-white/10 p-0.5">
-                  {(['both','events','trips'] as PromoAppliesTo[]).map(opt => (
+                  {(['both', 'events', 'trips'] as PromoAppliesTo[]).map(opt => (
                     <button
                       key={opt}
                       type="button"
                       onClick={() => setForm(f => ({ ...f, applies_to: opt }))}
                       className={`flex-1 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${toggleClass(form.applies_to === opt)}`}
                     >
-                      {opt ==='both' ?'Events & Trips' : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                      {opt === 'both' ? 'Events & Trips' : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
@@ -409,7 +409,7 @@ export default function PromoCodesClient({ promoCodes }: Props) {
                   <div className="flex gap-0.5 rounded-lg bg-white/5 border border-white/10 p-0.5">
                     <button
                       type="button"
-                      onClick={() => setForm(f => ({ ...f, uses_limited: false, uses_remaining:'' }))}
+                      onClick={() => setForm(f => ({ ...f, uses_limited: false, uses_remaining: '' }))}
                       className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${toggleClass(!form.uses_limited)}`}
                     >
                       Unlimited
@@ -443,7 +443,7 @@ export default function PromoCodesClient({ promoCodes }: Props) {
                   <div className="flex gap-0.5 rounded-lg bg-white/5 border border-white/10 p-0.5">
                     <button
                       type="button"
-                      onClick={() => setForm(f => ({ ...f, has_expiry: false, expires_at:'' }))}
+                      onClick={() => setForm(f => ({ ...f, has_expiry: false, expires_at: '' }))}
                       className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${toggleClass(!form.has_expiry)}`}
                     >
                       Never
@@ -488,7 +488,7 @@ export default function PromoCodesClient({ promoCodes }: Props) {
                   disabled={isPending}
                   className="flex-1 py-2.5 rounded-xl bg-brand-primary hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all"
                 >
-                  {isPending ?'Saving…' : modal ==='create' ?'Create Code' :'Save Changes'}
+                  {isPending ? 'Saving…' : modal === 'create' ? 'Create Code' : 'Save Changes'}
                 </button>
               </div>
             </form>

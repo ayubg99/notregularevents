@@ -1,4 +1,4 @@
-import Stripe from'stripe'
+import Stripe from 'stripe'
 
 let _client: Stripe | null = null
 
@@ -12,7 +12,7 @@ export function getStripe(): Stripe {
   return _client
 }
 
-// Backward-compatible proxy so existing callers using`stripe.xxx` still work
+// Backward-compatible proxy so existing callers using `stripe.xxx` still work
 export const stripe: Stripe = new Proxy({} as Stripe, {
   get(_, prop: string | symbol) {
     return getStripe()[prop as keyof Stripe]

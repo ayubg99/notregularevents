@@ -1,46 +1,46 @@
 'use client'
 
-import { useState, useMemo } from'react'
-import { useRouter } from'next/navigation'
-import Link from'next/link'
-import { Download, QrCode, Ticket, X, QrCode as QrIcon, Printer } from'lucide-react'
-import DataTable from'@/components/admin/DataTable'
-import type { Column } from'@/components/admin/DataTable'
+import { useState, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Download, QrCode, Ticket, X, QrCode as QrIcon, Printer } from 'lucide-react'
+import DataTable from '@/components/admin/DataTable'
+import type { Column } from '@/components/admin/DataTable'
 
-type BookingType ='Event' |'Trip'
+type BookingType = 'Event' | 'Trip'
 
 export interface BookingExtra {
-  id: string
-  name: string
-  price: number
+  id:          string
+  name:        string
+  price:       number
   description: string
 }
 
 export interface Booking {
-  id: string
-  type: BookingType
-  booking_ref: string
-  status: string
-  created_at: string
-  guest_name: string | null
-  guest_email: string | null
-  guest_phone: string | null
+  id:                string
+  type:              BookingType
+  booking_ref:       string
+  status:            string
+  created_at:        string
+  guest_name:        string | null
+  guest_email:       string | null
+  guest_phone:       string | null
   stripe_payment_id: string | null
-  title: string
-  date: string | null
-  price: number | null
-  location: string | null
-  tier: string | null
-  quantity: number
-  qr_code: string | null
+  title:             string
+  date:              string | null
+  price:             number | null
+  location:          string | null
+  tier:              string | null
+  quantity:          number
+  qr_code:           string | null
   group_booking_ref: string | null
-  is_group_booking: boolean
-  lead_name: string | null
-  lead_email: string | null
-  referral_code: string | null
-  ticket_tier_name: string | null
-  promo_code_used: string | null
-  selected_extras: BookingExtra[] | null
+  is_group_booking:  boolean
+  lead_name:         string | null
+  lead_email:        string | null
+  referral_code:     string | null
+  ticket_tier_name:  string | null
+  promo_code_used:   string | null
+  selected_extras:   BookingExtra[] | null
 }
 
 type BookingRow = Booking & Record<string, unknown>
@@ -49,64 +49,64 @@ interface Props {
   bookings: Booking[]
 }
 
-type FilterTab ='all' |'events' |'trips' |'today' |'week'
+type FilterTab = 'all' | 'events' | 'trips' | 'today' | 'week'
 
 const STATUS_COLORS: Record<string, string> = {
-  active:'bg-green-500/15 text-green-400',
-  confirmed:'bg-green-500/15 text-green-400',
-  used:'bg-white/10 text-white/40',
-  cancelled:'bg-red-500/15 text-red-400',
-  refunded:'bg-orange-500/15 text-orange-400',
-  pending:'bg-blue-500/15 text-blue-400',
+  active:    'bg-green-500/15 text-green-400',
+  confirmed: 'bg-green-500/15 text-green-400',
+  used:      'bg-white/10 text-white/40',
+  cancelled: 'bg-red-500/15 text-red-400',
+  refunded:  'bg-orange-500/15 text-orange-400',
+  pending:   'bg-blue-500/15 text-blue-400',
 }
 
 function buildCSV(rows: Booking[]): string {
-  const headers = ['Type','Booking Ref','Guest Name','Guest Email','Title','Date','Status','Amount','Created At','Group Ref','Lead Name','Lead Email']
+  const headers = ['Type', 'Booking Ref', 'Guest Name', 'Guest Email', 'Title', 'Date', 'Status', 'Amount', 'Created At', 'Group Ref', 'Lead Name', 'Lead Email']
   const lines = [
     headers.join(','),
     ...rows.map(b => [
       b.type,
       b.booking_ref,
-      b.guest_name ??'Member',
-      b.guest_email ??'',
-`"${b.title.replace(/"/g,'""')}"`,
-      b.date ? new Date(b.date).toLocaleDateString('en-GB') :'',
+      b.guest_name  ?? 'Member',
+      b.guest_email ?? '',
+      `"${b.title.replace(/"/g, '""')}"`,
+      b.date ? new Date(b.date).toLocaleDateString('en-GB') : '',
       b.status,
-      b.price != null ?`€${b.price}` :'',
+      b.price != null ? `€${b.price}` : '',
       new Date(b.created_at).toLocaleDateString('en-GB'),
-      b.group_booking_ref ??'',
-      b.lead_name ??'',
-      b.lead_email ??'',
+      b.group_booking_ref ?? '',
+      b.lead_name         ?? '',
+      b.lead_email        ?? '',
     ].join(',')),
   ]
   return lines.join('\n')
 }
 
 function downloadCSV(content: string, filename: string) {
-  const blob = new Blob([content], { type:'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
   a.href = url; a.download = filename; a.click()
   URL.revokeObjectURL(url)
 }
 
 const TABS: { key: FilterTab; label: string }[] = [
-  { key:'all', label:'All Bookings' },
-  { key:'events', label:'Events Only' },
-  { key:'trips', label:'Trips Only' },
-  { key:'today', label:'Today' },
-  { key:'week', label:'This Week' },
+  { key: 'all',    label: 'All Bookings' },
+  { key: 'events', label: 'Events Only'  },
+  { key: 'trips',  label: 'Trips Only'   },
+  { key: 'today',  label: 'Today'        },
+  { key: 'week',   label: 'This Week'    },
 ]
 
-const EVENT_STATUSES = ['active','used','cancelled','refunded']
-const TRIP_STATUSES = ['pending','confirmed','cancelled','refunded']
+const EVENT_STATUSES  = ['active', 'used', 'cancelled', 'refunded']
+const TRIP_STATUSES   = ['pending', 'confirmed', 'cancelled', 'refunded']
 
 function TierBadge({ tier }: { tier: string }) {
-  const label = tier ==='early_bird' ?' Early Bird' : tier ==='group' ?' Group' :' Standard'
+  const label = tier === 'early_bird' ? '🔥 Early Bird' : tier === 'group' ? '👥 Group' : '💰 Standard'
   const style = {
-    padding:'2px 8px', borderRadius:'20px', fontSize:'11px', fontWeight: 700,
-    background: tier ==='early_bird' ?'#FF6B00' : tier ==='group' ?'#2ECC71' :'rgba(255,255,255,0.1)',
-    color: tier ==='early_bird' || tier ==='group' ?'#0D0D0D' :'#ffffff',
+    padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700,
+    background: tier === 'early_bird' ? '#FF6B00' : tier === 'group' ? '#2ECC71' : 'rgba(255,255,255,0.1)',
+    color: tier === 'early_bird' || tier === 'group' ? '#0D0D0D' : '#ffffff',
   }
   return <span style={style}>{label}</span>
 }
@@ -124,15 +124,15 @@ function BookingDetailModal({
 }) {
   const [changing, setChanging] = useState(false)
   const [currentStatus, setCurrentStatus] = useState(booking.status)
-  const statuses = booking.type ==='Event' ? EVENT_STATUSES : TRIP_STATUSES
+  const statuses = booking.type === 'Event' ? EVENT_STATUSES : TRIP_STATUSES
 
   async function changeStatus(newStatus: string) {
     if (newStatus === currentStatus) return
     setChanging(true)
     const res = await fetch(`/api/admin/bookings/${booking.id}/status`, {
-      method:'PATCH',
-      headers: {'Content-Type':'application/json' },
-      body: JSON.stringify({ type: booking.type ==='Event' ?'event' :'trip', status: newStatus }),
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: booking.type === 'Event' ? 'event' : 'trip', status: newStatus }),
     })
     setChanging(false)
     if (res.ok) {
@@ -144,9 +144,9 @@ function BookingDetailModal({
   async function handleRefund() {
     setChanging(true)
     const res = await fetch('/api/admin/refund-booking', {
-      method:'POST',
-      headers: {'Content-Type':'application/json' },
-      body: JSON.stringify({ bookingId: booking.id, type: booking.type ==='Event' ?'event' :'trip' }),
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ bookingId: booking.id, type: booking.type === 'Event' ? 'event' : 'trip' }),
     })
     setChanging(false)
     if (res.ok) {
@@ -168,9 +168,9 @@ function BookingDetailModal({
         <div className="flex items-start justify-between mb-6">
           <div>
             <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
-              booking.type ==='Event'
-                ?'bg-brand-primary/15 text-brand-primary'
-                :'bg-cyan-500/15 text-cyan-400'
+              booking.type === 'Event'
+                ? 'bg-brand-primary/15 text-brand-primary'
+                : 'bg-cyan-500/15 text-cyan-400'
             }`}>
               {booking.type}
             </span>
@@ -194,7 +194,7 @@ function BookingDetailModal({
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-2">Guest</p>
               <div className="flex flex-col gap-1">
-                <p className="text-white font-medium">{booking.guest_name ??'Member (logged in)'}</p>
+                <p className="text-white font-medium">{booking.guest_name ?? 'Member (logged in)'}</p>
                 {booking.guest_email && (
                   <p className="text-white/50 text-sm">{booking.guest_email}</p>
                 )}
@@ -211,7 +211,7 @@ function BookingDetailModal({
                 <p className="text-white/80 text-sm">{booking.title}</p>
                 {booking.date && (
                   <p className="text-white/50 text-sm">
-                    {new Date(booking.date).toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' })}
+                    {new Date(booking.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                   </p>
                 )}
               </div>
@@ -243,18 +243,18 @@ function BookingDetailModal({
                 )}
                 <div className="flex justify-between">
                   <span className="text-white/40 text-sm">Quantity</span>
-                  <span className="text-white/80 text-sm">{booking.quantity > 1 ?`${booking.quantity} people` :'1 person'}</span>
+                  <span className="text-white/80 text-sm">{booking.quantity > 1 ? `${booking.quantity} people` : '1 person'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-white/40 text-sm">Amount paid</span>
                   <span className="font-mono font-semibold text-green-400">
-                    {booking.price != null ?`€${booking.price.toFixed(2)}` :'—'}
+                    {booking.price != null ? `€${booking.price.toFixed(2)}` : '—'}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-white/40 text-sm">Booked at</span>
                   <span className="text-white/60 text-sm">
-                    {new Date(booking.created_at).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })}
+                    {new Date(booking.created_at).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
                 {/* Promo code */}
@@ -327,11 +327,11 @@ function BookingDetailModal({
                         <p className="text-white/40 text-xs mb-1.5">All tickets ({siblings.length})</p>
                         <div className="flex flex-col gap-1">
                           {siblings.map((s, idx) => (
-                            <div key={s.id} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs ${s.id === booking.id ?'bg-brand-primary/10 border border-brand-primary/20' :'bg-white/3'}`}>
+                            <div key={s.id} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs ${s.id === booking.id ? 'bg-brand-primary/10 border border-brand-primary/20' : 'bg-white/3'}`}>
                               <span className="text-white/30 font-mono w-5 text-center">{idx + 1}</span>
-                              <span className="text-white/70 flex-1">{s.guest_name ??'Unknown'}</span>
+                              <span className="text-white/70 flex-1">{s.guest_name ?? 'Unknown'}</span>
                               {s.guest_email && <span className="text-white/30 truncate max-w-[120px]">{s.guest_email}</span>}
-                              <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold capitalize ${STATUS_COLORS[s.status] ??'bg-white/10 text-white/40'}`}>{s.status}</span>
+                              <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold capitalize ${STATUS_COLORS[s.status] ?? 'bg-white/10 text-white/40'}`}>{s.status}</span>
                             </div>
                           ))}
                         </div>
@@ -353,8 +353,8 @@ function BookingDetailModal({
                     onClick={() => changeStatus(s)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all border ${
                       currentStatus === s
-                        ?`${STATUS_COLORS[s] ??'bg-white/10 text-white/40'} border-current`
-                        :'bg-transparent text-white/30 border-white/10 hover:border-white/30 hover:text-white/60'
+                        ? `${STATUS_COLORS[s] ?? 'bg-white/10 text-white/40'} border-current`
+                        : 'bg-transparent text-white/30 border-white/10 hover:border-white/30 hover:text-white/60'
                     }`}
                   >
                     {s}
@@ -364,7 +364,7 @@ function BookingDetailModal({
             </div>
 
             {/* Issue Refund */}
-            {(currentStatus ==='confirmed' || currentStatus ==='active') && (
+            {(currentStatus === 'confirmed' || currentStatus === 'active') && (
               <div className="pt-4 border-t border-white/10">
                 <button
                   onClick={handleRefund}
@@ -397,7 +397,7 @@ function BookingDetailModal({
             )}
             <p className="text-white/30 text-xs font-mono">{booking.booking_ref}</p>
             <a
-              href={`/api/admin/pdf/ticket/${booking.id}?type=${booking.type ==='Event' ?'event' :'trip'}`}
+              href={`/api/admin/pdf/ticket/${booking.id}?type=${booking.type === 'Event' ? 'event' : 'trip'}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 text-white/50 hover:text-white hover:border-white/30 text-xs font-medium transition-all"
@@ -414,54 +414,54 @@ function BookingDetailModal({
 
 export default function BookingsClient({ bookings }: Props) {
   const router = useRouter()
-  const [tab, setTab] = useState<FilterTab>('all')
+  const [tab,      setTab]      = useState<FilterTab>('all')
   const [selected, setSelected] = useState<Booking | null>(null)
 
   const filtered = useMemo(() => {
-    const now = new Date()
+    const now   = new Date()
     const today = now.toISOString().slice(0, 10)
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
 
     return bookings.filter(b => {
-      if (tab ==='events') return b.type ==='Event'
-      if (tab ==='trips') return b.type ==='Trip'
-      if (tab ==='today') return b.created_at.slice(0, 10) === today
-      if (tab ==='week') return b.created_at >= weekAgo
+      if (tab === 'events') return b.type === 'Event'
+      if (tab === 'trips')  return b.type === 'Trip'
+      if (tab === 'today')  return b.created_at.slice(0, 10) === today
+      if (tab === 'week')   return b.created_at >= weekAgo
       return true
     })
   }, [bookings, tab])
 
   const columns: Column<BookingRow>[] = [
     {
-      key:'type', header:'Type',
+      key: 'type', header: 'Type',
       render: (r) => (
         <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
-          r.type ==='Event'
-            ?'bg-brand-primary/15 text-brand-primary'
-            :'bg-cyan-500/15 text-cyan-400'
+          r.type === 'Event'
+            ? 'bg-brand-primary/15 text-brand-primary'
+            : 'bg-cyan-500/15 text-cyan-400'
         }`}>
           {r.type}
         </span>
       ),
     },
     {
-      key:'booking_ref', header:'Ref', sortable: true,
+      key: 'booking_ref', header: 'Ref', sortable: true,
       render: (r) => (
         <div>
           <span className="font-mono text-xs tracking-widest text-white/70">{r.booking_ref}</span>
           {r.is_group_booking && (
             <span className="ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-brand-primary/20 text-brand-primary align-middle">
-               GROUP
+              👥 GROUP
             </span>
           )}
         </div>
       ),
     },
     {
-      key:'guest_name', header:'Name',
+      key: 'guest_name', header: 'Name',
       render: (r) => (
         <div>
-          <span className="text-white/80">{r.guest_name ??'Member'}</span>
+          <span className="text-white/80">{r.guest_name ?? 'Member'}</span>
           {r.is_group_booking && r.lead_name && r.lead_name !== r.guest_name && (
             <p className="text-white/30 text-xs">via {r.lead_name}</p>
           )}
@@ -469,11 +469,11 @@ export default function BookingsClient({ bookings }: Props) {
       ),
     },
     {
-      key:'guest_email', header:'Email',
-      render: (r) => <span className="text-white/50 text-xs">{r.guest_email ??'—'}</span>,
+      key: 'guest_email', header: 'Email',
+      render: (r) => <span className="text-white/50 text-xs">{r.guest_email ?? '—'}</span>,
     },
     {
-      key:'title', header:'Event / Trip', sortable: true,
+      key: 'title', header: 'Event / Trip', sortable: true,
       render: (r) => (
         <div>
           <p className="text-white/80 text-sm font-medium truncate max-w-[200px]">{r.title}</p>
@@ -482,36 +482,36 @@ export default function BookingsClient({ bookings }: Props) {
       ),
     },
     {
-      key:'date', header:'Date', sortable: true,
+      key: 'date', header: 'Date', sortable: true,
       render: (r) => r.date
-        ? new Date(r.date).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
-        :'—',
+        ? new Date(r.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+        : '—',
     },
     {
-      key:'tier', header:'Tier',
-      render: (r) => r.tier ? <TierBadge tier={r.tier} /> :'—',
+      key: 'tier', header: 'Tier',
+      render: (r) => r.tier ? <TierBadge tier={r.tier} /> : '—',
     },
     {
-      key:'quantity', header:'Qty',
-      render: (r) => r.quantity > 1 ?`${r.quantity} people` :'1',
+      key: 'quantity', header: 'Qty',
+      render: (r) => r.quantity > 1 ? `${r.quantity} people` : '1',
     },
     {
-      key:'status', header:'Status',
+      key: 'status', header: 'Status',
       render: (r) => (
-        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_COLORS[r.status] ??'bg-white/10 text-white/40'}`}>
+        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_COLORS[r.status] ?? 'bg-white/10 text-white/40'}`}>
           {r.status}
         </span>
       ),
     },
     {
-      key:'price', header:'Amount',
+      key: 'price', header: 'Amount',
       render: (r) => r.price != null ? (
         <span className="font-mono text-sm font-semibold text-green-400">€{r.price.toFixed(2)}</span>
-      ) :'—',
+      ) : '—',
     },
     {
-      key:'created_at', header:'Booked', sortable: true,
-      render: (r) => new Date(r.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }),
+      key: 'created_at', header: 'Booked', sortable: true,
+      render: (r) => new Date(r.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
     },
   ]
 
@@ -521,12 +521,12 @@ export default function BookingsClient({ bookings }: Props) {
         <div>
           <h1 className="font-heading text-2xl font-bold text-white">Bookings</h1>
           <p className="text-white/40 text-sm mt-0.5">
-            {bookings.length} total · {bookings.filter(b => b.type ==='Event').length} events · {bookings.filter(b => b.type ==='Trip').length} trips
+            {bookings.length} total · {bookings.filter(b => b.type === 'Event').length} events · {bookings.filter(b => b.type === 'Trip').length} trips
           </p>
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => downloadCSV(buildCSV(filtered),'erasmus-vibe-bookings.csv')}
+            onClick={() => downloadCSV(buildCSV(filtered), 'erasmus-vibe-bookings.csv')}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-all"
           >
             <Download size={14} />
@@ -549,7 +549,7 @@ export default function BookingsClient({ bookings }: Props) {
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-150 ${
-              tab === t.key ?'bg-brand-primary text-white' :'text-white/40 hover:text-white/70'
+              tab === t.key ? 'bg-brand-primary text-white' : 'text-white/40 hover:text-white/70'
             }`}
           >
             {t.label}
@@ -569,7 +569,7 @@ export default function BookingsClient({ bookings }: Props) {
         <DataTable
           data={filtered as unknown as BookingRow[]}
           columns={columns}
-          searchKeys={['booking_ref','title','guest_name','guest_email'] as (keyof BookingRow)[]}
+          searchKeys={['booking_ref', 'title', 'guest_name', 'guest_email'] as (keyof BookingRow)[]}
           onRowClick={(row) => setSelected(row as unknown as Booking)}
         />
       )}

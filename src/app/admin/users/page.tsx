@@ -1,7 +1,7 @@
-export const dynamic ='force-dynamic'
+export const dynamic = 'force-dynamic'
 
-import { getAdminClient } from'@/lib/supabase/admin'
-import MembersClient, { type MemberRow } from'./MembersClient'
+import { getAdminClient } from '@/lib/supabase/admin'
+import MembersClient, { type MemberRow } from './MembersClient'
 
 export default async function AdminUsersPage() {
   const admin = getAdminClient()
@@ -32,20 +32,20 @@ export default async function AdminUsersPage() {
     : (users ?? []).map(u => ({ ...u, user_metadata: undefined as undefined, last_sign_in_at: undefined as string | undefined }))
 
   const rows: MemberRow[] = baseList.map(authUser => {
-    const u = users?.find(u => u.id === authUser.id)
-    const profile = profiles?.find(p => p.user_id === authUser.id)
+    const u          = users?.find(u => u.id === authUser.id)
+    const profile    = profiles?.find(p => p.user_id === authUser.id)
     const membership = memberships?.find(m => m.user_id === authUser.id)
     return {
-      id: authUser.id,
-      email: authUser.email ?? u?.email ??'—',
-      full_name: u?.full_name ?? (authUser.user_metadata?.full_name as string | undefined) ?? null,
-      role: u?.role ??'student',
-      created_at: u?.created_at ?? authUser.created_at,
-      nationality: profile?.nationality ?? null,
-      university: profile?.university ?? null,
-      membership_plan: membership?.plan ?? null,
+      id:                authUser.id,
+      email:             authUser.email ?? u?.email ?? '—',
+      full_name:         u?.full_name ?? (authUser.user_metadata?.full_name as string | undefined) ?? null,
+      role:              u?.role ?? 'student',
+      created_at:        u?.created_at ?? authUser.created_at,
+      nationality:       profile?.nationality ?? null,
+      university:        profile?.university ?? null,
+      membership_plan:   membership?.plan ?? null,
       membership_status: membership?.status ?? null,
-      last_sign_in: authUser.last_sign_in_at ?? null,
+      last_sign_in:      authUser.last_sign_in_at ?? null,
     }
   })
 

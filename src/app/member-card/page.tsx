@@ -1,10 +1,10 @@
-export const dynamic ='force-dynamic'
+export const dynamic = 'force-dynamic'
 
-import { redirect } from'next/navigation'
-import QRCode from'qrcode'
-import { createClient } from'@/lib/supabase/server'
-import MemberCardClient from'./MemberCardClient'
-import type { MembershipRow, ProfileRow, UserRow } from'@/types/database'
+import { redirect } from 'next/navigation'
+import QRCode from 'qrcode'
+import { createClient } from '@/lib/supabase/server'
+import MemberCardClient from './MemberCardClient'
+import type { MembershipRow, ProfileRow, UserRow } from '@/types/database'
 
 export default async function MemberCardPage() {
   const supabase = await createClient()
@@ -19,19 +19,19 @@ export default async function MemberCardPage() {
   ] = await Promise.all([
     supabase.from('users').select('full_name').eq('id', user.id).single(),
     supabase.from('profiles').select('nationality, university').eq('user_id', user.id).single(),
-    supabase.from('memberships').select('*').eq('user_id', user.id).eq('status','active').maybeSingle(),
+    supabase.from('memberships').select('*').eq('user_id', user.id).eq('status', 'active').maybeSingle(),
   ])
 
   if (!membership) redirect('/membership')
 
   const displayName =
-    (userRow as Pick<UserRow,'full_name'> | null)?.full_name ??
+    (userRow as Pick<UserRow, 'full_name'> | null)?.full_name ??
     user.email?.split('@')[0] ??
-'Student'
+    'Student'
 
   const qrCodeUrl = await QRCode.toDataURL(
-`ERASMUSLIFE-${user.id.slice(0, 8).toUpperCase()}`,
-    { width: 200, margin: 1, color: { dark:'#1A1A0E', light:'#FFF8E8' } },
+    `ERASMUSLIFE-${user.id.slice(0, 8).toUpperCase()}`,
+    { width: 200, margin: 1, color: { dark: '#1A1A0E', light: '#FFF8E8' } },
   )
 
   return (

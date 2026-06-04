@@ -1,56 +1,56 @@
-import { emailLayout } from'./emailLayout'
+import { emailLayout } from './emailLayout'
 
 export interface DigestEvent {
-  title: string
-  slug: string
-  date: string
-  location: string | null
-  price: number | null
-  is_free: boolean
+  title:     string
+  slug:      string
+  date:      string
+  location:  string | null
+  price:     number | null
+  is_free:   boolean
   image_url: string | null
 }
 
 export interface DigestTrip {
-  title: string
-  slug: string
-  start_date: string
-  end_date: string | null
-  destination: string | null
+  title:          string
+  slug:           string
+  start_date:     string
+  end_date:       string | null
+  destination:    string | null
   price_standard: number | null
-  image_url: string | null
+  image_url:      string | null
 }
 
 interface Props {
-  events: DigestEvent[]
-  trips: DigestTrip[]
-  baseUrl: string
+  events:         DigestEvent[]
+  trips:          DigestTrip[]
+  baseUrl:        string
   unsubscribeUrl: string
-  weekLabel: string
+  weekLabel:      string
 }
 
 function fmt(iso: string) {
-  return new Date(iso).toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' })
+  return new Date(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
 }
 
 export function WeeklyDigestEmail({ events, trips, baseUrl, unsubscribeUrl, weekLabel }: Props): string {
-  const eventCards = events.map(e =>`
+  const eventCards = events.map(e => `
     <table width="100%" cellpadding="0" cellspacing="0"
            style="background:#221608;border:1px solid rgba(255,248,238,0.09);border-radius:16px;margin-bottom:12px;">
-      ${e.image_url ?`
+      ${e.image_url ? `
       <tr>
         <td style="padding:0;line-height:0;">
           <img src="${e.image_url}" width="100%" alt="${e.title}"
                style="display:block;width:100%;height:180px;object-fit:cover;border-radius:16px 16px 0 0;" />
         </td>
-      </tr>` :''}
+      </tr>` : ''}
       <tr>
         <td style="padding:20px 24px;">
           <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">Event</p>
           <p style="margin:0 0 10px;font-size:16px;font-weight:700;color:#FFF8EE;">${e.title}</p>
-          <p style="margin:0 0 4px;font-size:13px;color:#B8A090;"> &nbsp;${fmt(e.date)}</p>
-          ${e.location ?`<p style="margin:0 0 4px;font-size:13px;color:#B8A090;"> &nbsp;${e.location}</p>` :''}
+          <p style="margin:0 0 4px;font-size:13px;color:#B8A090;">📅 &nbsp;${fmt(e.date)}</p>
+          ${e.location ? `<p style="margin:0 0 4px;font-size:13px;color:#B8A090;">📍 &nbsp;${e.location}</p>` : ''}
           <p style="margin:0 0 16px;font-size:13px;color:#B8A090;">
-             &nbsp;${e.is_free ?'Free entry' : e.price ?`From €${e.price} &nbsp;·&nbsp; Members −10%` :''}
+            🎟️ &nbsp;${e.is_free ? 'Free entry' : e.price ? `From €${e.price} &nbsp;·&nbsp; Members −10%` : ''}
           </p>
           <a href="${baseUrl}/events/${e.slug}"
              style="display:inline-block;background:#FF6B00;color:#0D0D0D;font-weight:700;
@@ -60,29 +60,29 @@ export function WeeklyDigestEmail({ events, trips, baseUrl, unsubscribeUrl, week
         </td>
       </tr>
     </table>
-`).join('')
+  `).join('')
 
   const tripCards = trips.map(t => {
-    const start = fmt(t.start_date)
-    const end = t.end_date ? fmt(t.end_date) : null
-    const dateRange = end ?`${start} – ${end}` : start
-    return`
+    const start     = fmt(t.start_date)
+    const end       = t.end_date ? fmt(t.end_date) : null
+    const dateRange = end ? `${start} – ${end}` : start
+    return `
     <table width="100%" cellpadding="0" cellspacing="0"
            style="background:#221608;border:1px solid rgba(255,248,238,0.09);border-radius:16px;margin-bottom:12px;">
-      ${t.image_url ?`
+      ${t.image_url ? `
       <tr>
         <td style="padding:0;line-height:0;">
           <img src="${t.image_url}" width="100%" alt="${t.title}"
                style="display:block;width:100%;height:180px;object-fit:cover;border-radius:16px 16px 0 0;" />
         </td>
-      </tr>` :''}
+      </tr>` : ''}
       <tr>
         <td style="padding:20px 24px;">
           <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">Trip</p>
           <p style="margin:0 0 10px;font-size:16px;font-weight:700;color:#FFF8EE;">${t.title}</p>
-          ${t.destination ?`<p style="margin:0 0 4px;font-size:13px;color:#B8A090;"> &nbsp;${t.destination}</p>` :''}
-          <p style="margin:0 0 4px;font-size:13px;color:#B8A090;"> &nbsp;${dateRange}</p>
-          ${t.price_standard ?`<p style="margin:0 0 16px;font-size:13px;color:#B8A090;"> &nbsp;From €${t.price_standard} &nbsp;·&nbsp; Members −10%</p>` :'<div style="height:16px;"></div>'}
+          ${t.destination ? `<p style="margin:0 0 4px;font-size:13px;color:#B8A090;">✈️ &nbsp;${t.destination}</p>` : ''}
+          <p style="margin:0 0 4px;font-size:13px;color:#B8A090;">📅 &nbsp;${dateRange}</p>
+          ${t.price_standard ? `<p style="margin:0 0 16px;font-size:13px;color:#B8A090;">💶 &nbsp;From €${t.price_standard} &nbsp;·&nbsp; Members −10%</p>` : '<div style="height:16px;"></div>'}
           <a href="${baseUrl}/trips/${t.slug}"
              style="display:inline-block;background:#E91E8C;color:#fff;font-weight:700;
                     font-size:13px;text-decoration:none;padding:10px 24px;border-radius:9999px;">
@@ -91,26 +91,26 @@ export function WeeklyDigestEmail({ events, trips, baseUrl, unsubscribeUrl, week
         </td>
       </tr>
     </table>
-`
+    `
   }).join('')
 
-  const content =`
+  const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
-      What's on this week 
+      What's on this week 🎉
     </p>
     <p style="margin:0 0 32px;font-size:15px;color:#B8A090;line-height:1.6;">
       ${weekLabel} — here's everything happening in Valencia.
     </p>
 
-    ${events.length ?`
+    ${events.length ? `
       <p style="margin:0 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">Events</p>
       ${eventCards}
-` :''}
+    ` : ''}
 
-    ${trips.length ?`
-      <p style="margin:${events.length ?'24px' :'0'} 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">Trips</p>
+    ${trips.length ? `
+      <p style="margin:${events.length ? '24px' : '0'} 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">Trips</p>
       ${tripCards}
-` :''}
+    ` : ''}
 
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:32px;margin-bottom:16px;">
       <tr>
@@ -123,11 +123,11 @@ export function WeeklyDigestEmail({ events, trips, baseUrl, unsubscribeUrl, week
         </td>
       </tr>
     </table>
-`
+  `
 
   return emailLayout(
     content,
     baseUrl,
-`Erasmus Life Valencia — your international community<br /><a href="${unsubscribeUrl}" style="color:#B8A090;font-size:11px;">Unsubscribe from newsletter</a>`,
+    `Erasmus Life Valencia — your international community<br /><a href="${unsubscribeUrl}" style="color:#B8A090;font-size:11px;">Unsubscribe from newsletter</a>`,
   )
 }

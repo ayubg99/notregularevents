@@ -1,11 +1,11 @@
-import { getRequestConfig } from'next-intl/server'
-import { headers } from'next/headers'
+import { getRequestConfig } from 'next-intl/server'
+import { headers } from 'next/headers'
 
 export default getRequestConfig(async () => {
   const headersList = await headers()
-  const acceptLanguage = headersList.get('accept-language') ??''
+  const acceptLanguage = headersList.get('accept-language') ?? ''
   const lang = acceptLanguage.toLowerCase()
-  const locale = (['es','fr','de','it'] as const).find(l => lang.startsWith(l)) ??'en'
+  const locale = (['es', 'fr', 'de', 'it'] as const).find(l => lang.startsWith(l)) ?? 'en'
 
   return {
     locale,

@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from'react'
-import { Users } from'lucide-react'
-import { createClient } from'@/lib/supabase/client'
+import { useEffect, useState } from 'react'
+import { Users } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 interface Props {
-  tripId: string
+  tripId:       string
   initialSeats: number
-  capacity: number
+  capacity:     number
 }
 
 export default function SeatCounter({ tripId, initialSeats, capacity }: Props) {
@@ -19,16 +19,16 @@ export default function SeatCounter({ tripId, initialSeats, capacity }: Props) {
     const channel = supabase
       .channel(`trip-seats-${tripId}`)
       .on(
-'postgres_changes' as const,
+        'postgres_changes' as const,
         {
-          event:'UPDATE',
-          schema:'public',
-          table:'trips',
-          filter:`id=eq.${tripId}`,
+          event:  'UPDATE',
+          schema: 'public',
+          table:  'trips',
+          filter: `id=eq.${tripId}`,
         },
         (payload: { new: Record<string, unknown> }) => {
           const updated = payload.new
-          if (typeof updated.seats_sold ==='number') {
+          if (typeof updated.seats_sold === 'number') {
             setSeatsSold(updated.seats_sold)
           }
         },
@@ -39,7 +39,7 @@ export default function SeatCounter({ tripId, initialSeats, capacity }: Props) {
   }, [tripId])
 
   const seatsLeft = capacity - seatsSold
-  const soldPct = (seatsSold / capacity) * 100
+  const soldPct   = (seatsSold / capacity) * 100
 
   return (
     <div className="glass-card rounded-2xl p-4">
@@ -50,20 +50,20 @@ export default function SeatCounter({ tripId, initialSeats, capacity }: Props) {
         </span>
         <span className={`text-xs font-semibold ${
           seatsLeft === 0
-            ?'text-red-400'
+            ? 'text-red-400'
             : seatsLeft <= 5
-            ?'text-orange-400'
-            :'text-white/60'
+            ? 'text-orange-400'
+            : 'text-white/60'
         }`}>
-          {seatsLeft === 0 ?'Sold Out' :`${seatsLeft} seat${seatsLeft === 1 ?'' :'s'} left`}
+          {seatsLeft === 0 ? 'Sold Out' : `${seatsLeft} seat${seatsLeft === 1 ? '' : 's'} left`}
         </span>
       </div>
       <div className="h-2 rounded-full bg-white/10 overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-700 ${
-            soldPct >= 90 ?'bg-red-500' : soldPct >= 60 ?'bg-orange-500' :'bg-brand-primary'
+            soldPct >= 90 ? 'bg-red-500' : soldPct >= 60 ? 'bg-orange-500' : 'bg-brand-primary'
           }`}
-          style={{ width:`${soldPct}%` }}
+          style={{ width: `${soldPct}%` }}
         />
       </div>
       <p className="text-white/30 text-xs mt-1.5 text-right">{seatsSold}/{capacity} booked</p>

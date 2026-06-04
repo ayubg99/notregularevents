@@ -1,39 +1,39 @@
 'use client'
 
-import { useState, useTransition } from'react'
-import { useRouter } from'next/navigation'
-import type { EmployerAccountRow, EmployerStatus } from'@/types/database'
+import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import type { EmployerAccountRow, EmployerStatus } from '@/types/database'
 
 const PLAN_COLORS: Record<string, string> = {
-  free:'text-white/50 bg-white/5',
-  featured:'text-orange-400 bg-orange-400/10',
-  subscription:'text-green-400 bg-green-400/10',
+  free:         'text-white/50 bg-white/5',
+  featured:     'text-orange-400 bg-orange-400/10',
+  subscription: 'text-green-400 bg-green-400/10',
 }
 
 const STATUS_COLORS: Record<EmployerStatus, string> = {
-  active:'text-green-400 bg-green-400/10 border border-green-400/20',
-  suspended:'text-red-400 bg-red-400/10 border border-red-400/20',
-  cancelled:'text-white/30 bg-white/5 border border-white/10',
+  active:    'text-green-400 bg-green-400/10 border border-green-400/20',
+  suspended: 'text-red-400 bg-red-400/10 border border-red-400/20',
+  cancelled: 'text-white/30 bg-white/5 border border-white/10',
 }
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'2-digit' })
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' })
 }
 
 interface Props { employers: EmployerAccountRow[] }
 
 export default function EmployersAdminClient({ employers }: Props) {
-  const router = useRouter()
+  const router  = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [filter, setFilter] = useState<'all' |'active' |'suspended'>('all')
+  const [filter, setFilter] = useState<'all' | 'active' | 'suspended'>('all')
 
-  const filtered = filter ==='all' ? employers : employers.filter(e => e.status === filter)
+  const filtered = filter === 'all' ? employers : employers.filter(e => e.status === filter)
 
   async function updateStatus(id: string, status: EmployerStatus) {
     await fetch(`/api/admin/employers/${id}`, {
-      method:'PATCH',
-      headers: {'Content-Type':'application/json' },
-      body: JSON.stringify({ status }),
+      method:  'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ status }),
     })
     startTransition(() => router.refresh())
   }
@@ -42,19 +42,19 @@ export default function EmployersAdminClient({ employers }: Props) {
     <div>
       {/* Filter tabs */}
       <div className="flex gap-2 mb-6">
-        {(['all','active','suspended'] as const).map(f => (
+        {(['all', 'active', 'suspended'] as const).map(f => (
           <button
             key={f}
             onClick={() => setFilter(f)}
             className={`px-4 py-2 rounded-xl text-sm font-medium capitalize transition-all ${
               filter === f
-                ?'bg-orange-500/20 text-orange-400 border border-orange-400/25'
-                :'text-white/50 hover:text-white hover:bg-white/5 border border-transparent'
+                ? 'bg-orange-500/20 text-orange-400 border border-orange-400/25'
+                : 'text-white/50 hover:text-white hover:bg-white/5 border border-transparent'
             }`}
           >
             {f}
             <span className="ml-1.5 text-xs opacity-60">
-              ({f ==='all' ? employers.length : employers.filter(e => e.status === f).length})
+              ({f === 'all' ? employers.length : employers.filter(e => e.status === f).length})
             </span>
           </button>
         ))}
@@ -64,7 +64,7 @@ export default function EmployersAdminClient({ employers }: Props) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-white/10">
-              {['Company','Contact','Email','Plan','Status','Joined','Actions'].map(h => (
+              {['Company', 'Contact', 'Email', 'Plan', 'Status', 'Joined', 'Actions'].map(h => (
                 <th key={h} className="text-left text-white/40 font-medium px-4 py-3 text-xs uppercase tracking-wide whitespace-nowrap">
                   {h}
                 </th>
@@ -83,7 +83,7 @@ export default function EmployersAdminClient({ employers }: Props) {
                   <td className="px-4 py-3 text-white/70 whitespace-nowrap">{emp.contact_name}</td>
                   <td className="px-4 py-3 text-white/50 text-xs max-w-[180px] truncate">{emp.email}</td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium capitalize ${PLAN_COLORS[emp.plan] ??''}`}>
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium capitalize ${PLAN_COLORS[emp.plan] ?? ''}`}>
                       {emp.plan}
                     </span>
                   </td>
@@ -94,9 +94,9 @@ export default function EmployersAdminClient({ employers }: Props) {
                   </td>
                   <td className="px-4 py-3 text-white/40 text-xs whitespace-nowrap">{formatDate(emp.created_at)}</td>
                   <td className="px-4 py-3">
-                    {emp.status ==='active' ? (
+                    {emp.status === 'active' ? (
                       <button
-                        onClick={() => updateStatus(emp.id,'suspended')}
+                        onClick={() => updateStatus(emp.id, 'suspended')}
                         disabled={isPending}
                         className="text-xs px-2.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors font-medium"
                       >
@@ -104,7 +104,7 @@ export default function EmployersAdminClient({ employers }: Props) {
                       </button>
                     ) : (
                       <button
-                        onClick={() => updateStatus(emp.id,'active')}
+                        onClick={() => updateStatus(emp.id, 'active')}
                         disabled={isPending}
                         className="text-xs px-2.5 py-1.5 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors font-medium"
                       >

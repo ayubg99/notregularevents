@@ -1,54 +1,54 @@
-import ApplicationForm from'./ApplicationForm'
+import ApplicationForm from './ApplicationForm'
 
 export const metadata = {
-  title:'Ambassadors — Erasmus Life',
-  description:'Become an Erasmus Life ambassador. Earn 5% commission on every booking, unlock milestone rewards, and get exclusive access in Valencia.',
+  title:       'Ambassadors — Erasmus Life',
+  description: 'Become an Erasmus Life ambassador. Earn 5% commission on every booking, unlock milestone rewards, and get exclusive access in Valencia.',
   openGraph: {
-    title:'Become an Ambassador — Erasmus Life Valencia',
-    description:'Earn 5% commission on every booking, unlock milestone rewards, and get exclusive access in Valencia.',
-    images: [{ url:'/og-default.png', width: 1200, height: 630 }],
-    type:'website',
+    title:       'Become an Ambassador — Erasmus Life Valencia',
+    description: 'Earn 5% commission on every booking, unlock milestone rewards, and get exclusive access in Valencia.',
+    images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
+    type:        'website',
   },
   twitter: {
-    card:'summary_large_image',
-    title:'Ambassadors — Erasmus Life',
-    description:'Earn commissions, get free trips, and help internationals in Valencia.',
+    card:        'summary_large_image',
+    title:       'Ambassadors — Erasmus Life',
+    description: 'Earn commissions, get free trips, and help internationals in Valencia.',
   },
 }
 
 const BENEFITS = [
   {
-    emoji:'',
-    title:'5% Commission',
-    desc:'Earn 5% on every booking made with your referral code — trips, events, and more.',
+    emoji: '💰',
+    title: '5% Commission',
+    desc:  'Earn 5% on every booking made with your referral code — trips, events, and more.',
   },
   {
-    emoji:'',
-    title:'Milestone Rewards',
-    desc:'Free tickets, upgrades & cash bonuses as you hit referral milestones.',
+    emoji: '🎁',
+    title: 'Milestone Rewards',
+    desc:  'Free tickets, upgrades & cash bonuses as you hit referral milestones.',
   },
   {
-    emoji:'',
-    title:'Exclusive Access',
-    desc:'Ambassador-only events and a private community of Erasmus Life reps.',
+    emoji: '🌟',
+    title: 'Exclusive Access',
+    desc:  'Ambassador-only events and a private community of Erasmus Life reps.',
   },
 ]
 
 const STEPS = [
   {
-    number:'01',
-    title:'Apply',
-    desc:'Fill in the application form below. Takes less than 3 minutes.',
+    number: '01',
+    title:  'Apply',
+    desc:   'Fill in the application form below. Takes less than 3 minutes.',
   },
   {
-    number:'02',
-    title:'Get Verified',
-    desc:'We review every application personally and get back to you within 48 hours.',
+    number: '02',
+    title:  'Get Verified',
+    desc:   'We review every application personally and get back to you within 48 hours.',
   },
   {
-    number:'03',
-    title:'Start Earning',
-    desc:'Receive your referral code, share it with friends, and watch commissions roll in.',
+    number: '03',
+    title:  'Start Earning',
+    desc:   'Receive your referral code, share it with friends, and watch commissions roll in.',
   },
 ]
 
@@ -56,7 +56,7 @@ export default function AmbassadorsPage() {
   return (
     <div className="min-h-screen bg-brand-dark">
 
-      {/* Hero */}
+      {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden pt-32 pb-20 px-4">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/15 via-brand-dark to-brand-primary/10 pointer-events-none" />
         <div className="absolute top-1/4 -left-32 w-80 h-80 rounded-full bg-brand-accent/15 blur-3xl pointer-events-none" />
@@ -75,7 +75,7 @@ export default function AmbassadorsPage() {
         </div>
       </section>
 
-      {/* Benefits */}
+      {/* ── Benefits ──────────────────────────────────────────────── */}
       <section className="max-w-5xl mx-auto px-4 pb-20">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {BENEFITS.map((b) => (
@@ -90,7 +90,7 @@ export default function AmbassadorsPage() {
         </div>
       </section>
 
-      {/* How it works */}
+      {/* ── How it works ──────────────────────────────────────────── */}
       <section className="max-w-2xl mx-auto px-4 pb-20">
         <h2 className="font-heading text-3xl font-bold text-white text-center mb-12">How It Works</h2>
         <div className="flex flex-col gap-0">
@@ -106,7 +106,7 @@ export default function AmbassadorsPage() {
                 )}
               </div>
               {/* Content */}
-              <div className={`pb-${i < STEPS.length - 1 ?'10' :'0'} pt-1.5 flex-1`}>
+              <div className={`pb-${i < STEPS.length - 1 ? '10' : '0'} pt-1.5 flex-1`}>
                 <p className="font-heading font-bold text-white text-base mb-1">{step.title}</p>
                 <p className="text-white/45 text-sm leading-relaxed">{step.desc}</p>
               </div>
@@ -115,7 +115,7 @@ export default function AmbassadorsPage() {
         </div>
       </section>
 
-      {/* Application form */}
+      {/* ── Application form ──────────────────────────────────────── */}
       <section className="max-w-2xl mx-auto px-4 pb-24">
         <div className="text-center mb-8">
           <h2 className="font-heading text-3xl font-bold text-white mb-2">Ready to Join?</h2>

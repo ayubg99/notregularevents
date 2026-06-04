@@ -1,19 +1,19 @@
 'use client'
 
-import { useState, useTransition } from'react'
-import { useRouter } from'next/navigation'
-import { Star, LogIn } from'lucide-react'
-import { addReview } from'@/app/actions/reviews'
-import type { ReviewRow } from'@/types/database'
-import { cn } from'@/lib/utils/cn'
+import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import { Star, LogIn } from 'lucide-react'
+import { addReview } from '@/app/actions/reviews'
+import type { ReviewRow } from '@/types/database'
+import { cn } from '@/lib/utils/cn'
 
-// Star picker / display 
+// ─── Star picker / display ──────────────────────────────────────
 
 function StarRow({
   value,
   onChange,
 }: {
-  value: number
+  value:     number
   onChange?: (v: number) => void
 }) {
   const [hovered, setHovered] = useState(0)
@@ -29,15 +29,15 @@ function StarRow({
           onMouseEnter={() => interactive && setHovered(i)}
           onMouseLeave={() => interactive && setHovered(0)}
           disabled={!interactive}
-          className={cn('p-0.5 transition-transform', interactive &&'hover:scale-110 cursor-pointer')}
+          className={cn('p-0.5 transition-transform', interactive && 'hover:scale-110 cursor-pointer')}
         >
           <Star
             size={interactive ? 20 : 15}
             className={cn(
-'transition-colors',
+              'transition-colors',
               (hovered || value) >= i
-                ?'text-amber-400 fill-amber-400'
-                :'text-white/20 fill-transparent',
+                ? 'text-amber-400 fill-amber-400'
+                : 'text-white/20 fill-transparent',
             )}
           />
         </button>
@@ -46,24 +46,24 @@ function StarRow({
   )
 }
 
-// Props 
+// ─── Props ──────────────────────────────────────────────────────
 
 interface Props {
-  targetId: string
-  targetType:'event' |'trip'
-  initialReviews: ReviewRow[]
+  targetId:        string
+  targetType:      'event' | 'trip'
+  initialReviews:  ReviewRow[]
   isAuthenticated: boolean
 }
 
-// Component 
+// ─── Component ──────────────────────────────────────────────────
 
 export default function ReviewsSection({ targetId, targetType, initialReviews, isAuthenticated }: Props) {
-  const router = useRouter()
-  const [rating, setRating] = useState(0)
-  const [comment, setComment] = useState('')
-  const [formError, setFormError] = useState('')
-  const [submitted, setSubmitted] = useState(false)
-  const [isPending, startTransition] = useTransition()
+  const router                        = useRouter()
+  const [rating,  setRating]          = useState(0)
+  const [comment, setComment]         = useState('')
+  const [formError,   setFormError]   = useState('')
+  const [submitted, setSubmitted]     = useState(false)
+  const [isPending, startTransition]  = useTransition()
 
   const avgRating = initialReviews.length
     ? initialReviews.reduce((s, r) => s + r.rating, 0) / initialReviews.length
@@ -97,7 +97,7 @@ export default function ReviewsSection({ targetId, targetType, initialReviews, i
         <h2 className="font-heading text-2xl font-bold text-white">Reviews</h2>
         {initialReviews.length > 0 && (
           <span className="text-white/40 text-sm">
-            {avgRating.toFixed(1)} avg · {initialReviews.length} review{initialReviews.length !== 1 ?'s' :''}
+            {avgRating.toFixed(1)} avg · {initialReviews.length} review{initialReviews.length !== 1 ? 's' : ''}
           </span>
         )}
       </div>
@@ -117,7 +117,7 @@ export default function ReviewsSection({ targetId, targetType, initialReviews, i
                   <p className="text-white text-sm font-medium">Student</p>
                   <p className="text-white/35 text-xs">
                     {new Date(review.created_at).toLocaleDateString('en-GB', {
-                      day:'numeric', month:'short', year:'numeric', timeZone:'UTC',
+                      day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC',
                     })}
                   </p>
                 </div>
@@ -137,12 +137,12 @@ export default function ReviewsSection({ targetId, targetType, initialReviews, i
           <LogIn size={18} className="text-white/40 flex-shrink-0" />
           <p className="text-white/60 text-sm">
             <a href="/auth/login" className="text-brand-primary hover:underline font-medium">Log in</a>
-            {''}to leave a review.
+            {' '}to leave a review.
           </p>
         </div>
       ) : submitted ? (
         <div className="glass-card rounded-xl p-5 text-center">
-          <p className="text-brand-success font-semibold">Thanks for your review! </p>
+          <p className="text-brand-success font-semibold">Thanks for your review! 🎉</p>
           <p className="text-white/50 text-sm mt-1">It will appear above after the page refreshes.</p>
         </div>
       ) : (
@@ -171,7 +171,7 @@ export default function ReviewsSection({ targetId, targetType, initialReviews, i
                 text-[var(--text-base)] placeholder:text-[var(--text-muted)]
                 focus:outline-none focus:border-brand-primary/60
                 transition-all duration-200
-"
+              "
             />
           </div>
 
@@ -182,7 +182,7 @@ export default function ReviewsSection({ targetId, targetType, initialReviews, i
             disabled={isPending}
             className="px-6 py-2.5 rounded-full bg-brand-primary hover:brightness-110 text-white text-sm font-semibold transition-all duration-200 disabled:opacity-70 self-start"
           >
-            {isPending ?'Submitting…' :'Submit Review'}
+            {isPending ? 'Submitting…' : 'Submit Review'}
           </button>
         </form>
       )}

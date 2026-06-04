@@ -1,75 +1,75 @@
 'use client'
 
-import { useState, useRef } from'react'
-import Link from'next/link'
-import { createClient } from'@/lib/supabase/client'
-import type { HousingRoomType, HousingGenderPref } from'@/types/database'
+import { useState, useRef } from 'react'
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
+import type { HousingRoomType, HousingGenderPref } from '@/types/database'
 
 const NEIGHBORHOODS = [
-'Ruzafa','El Carmen','Benimaclet','Malvarrosa',
-'Campanar','Mestalla','Patraix','Algirós','Quatre Carreres',
+  'Ruzafa', 'El Carmen', 'Benimaclet', 'Malvarrosa',
+  'Campanar', 'Mestalla', 'Patraix', 'Algirós', 'Quatre Carreres',
 ]
 
 const NATIONALITIES = [
-'Spanish','French','German','Italian','Portuguese','Dutch',
-'Polish','Romanian','Greek','American','British','Turkish',
-'Moroccan','Brazilian','Mexican','Chinese','Japanese','Korean',
-'Indian','Australian','Other',
+  'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Dutch',
+  'Polish', 'Romanian', 'Greek', 'American', 'British', 'Turkish',
+  'Moroccan', 'Brazilian', 'Mexican', 'Chinese', 'Japanese', 'Korean',
+  'Indian', 'Australian', 'Other',
 ]
 
 const AMENITIES = [
-  { id:'wifi', label:' WiFi' },
-  { id:'ac', label:' AC' },
-  { id:'washing', label:' Washing machine' },
-  { id:'balcony', label:' Balcony' },
-  { id:'bills', label:' Bills included' },
-  { id:'furnished', label:' Furnished' },
-  { id:'private_bath', label:' Private bathroom' },
-  { id:'near_uni', label:' Near university' },
-  { id:'parking', label:' Parking' },
+  { id: 'wifi',      label: '📶 WiFi'             },
+  { id: 'ac',        label: '❄️ AC'               },
+  { id: 'washing',   label: '🧺 Washing machine'  },
+  { id: 'balcony',   label: '🌿 Balcony'          },
+  { id: 'bills',     label: '💡 Bills included'   },
+  { id: 'furnished', label: '🪑 Furnished'        },
+  { id: 'private_bath', label: '🚿 Private bathroom' },
+  { id: 'near_uni',  label: '🏫 Near university'  },
+  { id: 'parking',   label: '🅿️ Parking'         },
 ]
 
-type ListingType ='room_available' |'looking_for_room'
+type ListingType = 'room_available' | 'looking_for_room'
 
 interface FormData {
   // Step 1
   listingType: ListingType | null
   // Step 2 — room available
-  title: string
-  neighborhood: string
-  roomType: string
-  price: string
-  availableFrom: string
-  availableUntil: string
-  flatmatesCount: number
+  title:                  string
+  neighborhood:           string
+  roomType:               string
+  price:                  string
+  availableFrom:          string
+  availableUntil:         string
+  flatmatesCount:         number
   flatmatesNationalities: string[]
-  genderPreference: string
-  amenities: string[]
-  description: string
-  photos: string[]
+  genderPreference:       string
+  amenities:              string[]
+  description:            string
+  photos:                 string[]
   // Step 2 — looking for room
-  neighborhoodPrefs: string[]
-  budgetMin: string
-  budgetMax: string
-  moveInDate: string
-  duration: string
-  aboutMe: string
+  neighborhoodPrefs:      string[]
+  budgetMin:              string
+  budgetMax:              string
+  moveInDate:             string
+  duration:               string
+  aboutMe:                string
   // Step 3
-  contactName: string
-  nationality: string
-  university: string
-  contactWhatsapp: string
-  contactEmail: string
-  agreedToTerms: boolean
+  contactName:            string
+  nationality:            string
+  university:             string
+  contactWhatsapp:        string
+  contactEmail:           string
+  agreedToTerms:          boolean
 }
 
 const initialForm: FormData = {
-  listingType: null, title:'', neighborhood:'', roomType:'', price:'',
-  availableFrom:'', availableUntil:'', flatmatesCount: 0,
-  flatmatesNationalities: [], genderPreference:'any', amenities: [],
-  description:'', photos: [], neighborhoodPrefs: [], budgetMin:'', budgetMax:'',
-  moveInDate:'', duration:'', aboutMe:'', contactName:'', nationality:'',
-  university:'', contactWhatsapp:'', contactEmail:'', agreedToTerms: false,
+  listingType: null, title: '', neighborhood: '', roomType: '', price: '',
+  availableFrom: '', availableUntil: '', flatmatesCount: 0,
+  flatmatesNationalities: [], genderPreference: 'any', amenities: [],
+  description: '', photos: [], neighborhoodPrefs: [], budgetMin: '', budgetMax: '',
+  moveInDate: '', duration: '', aboutMe: '', contactName: '', nationality: '',
+  university: '', contactWhatsapp: '', contactEmail: '', agreedToTerms: false,
 }
 
 function StepIndicator({ step }: { step: number }) {
@@ -79,14 +79,14 @@ function StepIndicator({ step }: { step: number }) {
         <div key={n} className="flex items-center gap-2">
           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
             n === step
-              ?'bg-brand-primary text-white'
+              ? 'bg-brand-primary text-white'
               : n < step
-              ?'bg-green-500 text-white'
-              :'bg-white/10 text-white/40'
+              ? 'bg-green-500 text-white'
+              : 'bg-white/10 text-white/40'
           }`}>
-            {n < step ?'' : n}
+            {n < step ? '✓' : n}
           </div>
-          {n < 3 && <div className={`w-8 h-0.5 ${n < step ?'bg-green-500' :'bg-white/10'}`} />}
+          {n < 3 && <div className={`w-8 h-0.5 ${n < step ? 'bg-green-500' : 'bg-white/10'}`} />}
         </div>
       ))}
       <span className="ml-2 text-white/40 text-sm">Step {step} of 3</span>
@@ -100,14 +100,14 @@ export default function PostListingForm({ userId }: { userId: string }) {
   const [uploading, setUploading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError]     = useState('')
   const photoInputRef = useRef<HTMLInputElement>(null)
 
   function update<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm(f => ({ ...f, [key]: value }))
   }
 
-  function toggleArrayItem(key:'amenities' |'flatmatesNationalities' |'neighborhoodPrefs', val: string) {
+  function toggleArrayItem(key: 'amenities' | 'flatmatesNationalities' | 'neighborhoodPrefs', val: string) {
     setForm(f => {
       const arr = f[key] as string[]
       return { ...f, [key]: arr.includes(val) ? arr.filter(x => x !== val) : [...arr, val] }
@@ -122,7 +122,7 @@ export default function PostListingForm({ userId }: { userId: string }) {
 
     for (let i = 0; i < Math.min(files.length, 4 - form.photos.length); i++) {
       const file = files[i]
-      const path =`${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`
       const { error: upErr } = await supabase.storage.from('housing-photos').upload(path, file)
       if (!upErr) {
         const { data: { publicUrl } } = supabase.storage.from('housing-photos').getPublicUrl(path)
@@ -141,27 +141,27 @@ export default function PostListingForm({ userId }: { userId: string }) {
     const supabase = createClient()
 
     const payload = {
-      type: form.listingType!,
-      title: form.title,
-      description: form.listingType ==='room_available' ? form.description || null : form.aboutMe || null,
-      price: form.listingType ==='room_available' && form.price ? Number(form.price) : null,
-      neighborhood: form.listingType ==='room_available' ? form.neighborhood || null : form.neighborhoodPrefs[0] ?? null,
-      room_type: form.listingType ==='room_available' ? (form.roomType as HousingRoomType) || null : null,
-      available_from: form.listingType ==='room_available' ? form.availableFrom || null : form.moveInDate || null,
-      available_until: form.listingType ==='room_available' ? form.availableUntil || null : null,
-      flatmates_count: form.flatmatesCount,
+      type:                    form.listingType!,
+      title:                   form.title,
+      description:             form.listingType === 'room_available' ? form.description || null : form.aboutMe || null,
+      price:                   form.listingType === 'room_available' && form.price ? Number(form.price) : null,
+      neighborhood:            form.listingType === 'room_available' ? form.neighborhood || null : form.neighborhoodPrefs[0] ?? null,
+      room_type:               form.listingType === 'room_available' ? (form.roomType as HousingRoomType) || null : null,
+      available_from:          form.listingType === 'room_available' ? form.availableFrom || null : form.moveInDate || null,
+      available_until:         form.listingType === 'room_available' ? form.availableUntil || null : null,
+      flatmates_count:         form.flatmatesCount,
       flatmates_nationalities: form.flatmatesNationalities,
-      amenities: form.amenities,
-      contact_name: form.contactName,
-      contact_whatsapp: form.contactWhatsapp || null,
-      contact_email: form.contactEmail || null,
-      nationality: form.nationality || null,
-      university: form.university || null,
-      gender_preference: (form.genderPreference as HousingGenderPref) ||'any',
-      photos: form.photos,
-      status:'active' as const,
-      expires_at: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
-      user_id: userId,
+      amenities:               form.amenities,
+      contact_name:            form.contactName,
+      contact_whatsapp:        form.contactWhatsapp || null,
+      contact_email:           form.contactEmail || null,
+      nationality:             form.nationality || null,
+      university:              form.university || null,
+      gender_preference:       (form.genderPreference as HousingGenderPref) || 'any',
+      photos:                  form.photos,
+      status:                  'active' as const,
+      expires_at:              new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+      user_id:                 userId,
     }
 
     const { error: insertErr } = await supabase.from('housing_listings').insert(payload)
@@ -178,7 +178,7 @@ export default function PostListingForm({ userId }: { userId: string }) {
     return (
       <main className="min-h-screen pt-24 pb-20 px-4 flex items-center justify-center">
         <div className="glass-card rounded-3xl p-10 max-w-md w-full text-center">
-          <div className="text-5xl mb-4"></div>
+          <div className="text-5xl mb-4">🎉</div>
           <h2 className="text-2xl font-bold text-white mb-2">Your listing is live!</h2>
           <p className="text-white/50 text-sm mb-8">Students can now find your listing on the housing board.</p>
           <div className="space-y-3">
@@ -188,7 +188,7 @@ export default function PostListingForm({ userId }: { userId: string }) {
               rel="noopener noreferrer"
               className="block bg-[#25D366] text-white py-3 rounded-full font-bold text-sm hover:opacity-90 transition-opacity"
             >
-               Share on WhatsApp
+              📲 Share on WhatsApp
             </a>
             <Link
               href="/housing"
@@ -202,8 +202,8 @@ export default function PostListingForm({ userId }: { userId: string }) {
     )
   }
 
-  const inputCls ='w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-primary/50'
-  const labelCls ='block text-xs text-white/50 mb-1.5 font-medium'
+  const inputCls = 'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-brand-primary/50'
+  const labelCls = 'block text-xs text-white/50 mb-1.5 font-medium'
 
   return (
     <main className="min-h-screen pt-24 pb-20 px-4">
@@ -218,27 +218,27 @@ export default function PostListingForm({ userId }: { userId: string }) {
 
         <StepIndicator step={step} />
 
-        {/* STEP 1 */}
+        {/* ─── STEP 1 ─────────────────────────────────────────── */}
         {step === 1 && (
           <div className="space-y-4">
             <p className="text-white/60 text-center text-sm mb-6">What are you posting?</p>
             <div className="grid grid-cols-2 gap-4">
-              {(['room_available','looking_for_room'] as const).map(type => (
+              {(['room_available', 'looking_for_room'] as const).map(type => (
                 <button
                   key={type}
                   onClick={() => update('listingType', type)}
                   className={`glass-card rounded-2xl p-6 text-center transition-all border-2 ${
                     form.listingType === type
-                      ?'border-brand-primary bg-brand-primary/10'
-                      :'border-transparent hover:border-white/20'
+                      ? 'border-brand-primary bg-brand-primary/10'
+                      : 'border-transparent hover:border-white/20'
                   }`}
                 >
-                  <div className="text-4xl mb-3">{type ==='room_available' ?'' :''}</div>
+                  <div className="text-4xl mb-3">{type === 'room_available' ? '🏠' : '👤'}</div>
                   <div className="font-semibold text-white text-sm">
-                    {type ==='room_available' ?'I have a room' :'I need a room'}
+                    {type === 'room_available' ? 'I have a room' : 'I need a room'}
                   </div>
                   <div className="text-white/40 text-xs mt-1">
-                    {type ==='room_available' ?'Room Available' :'Looking for Room'}
+                    {type === 'room_available' ? 'Room Available' : 'Looking for Room'}
                   </div>
                 </button>
               ))}
@@ -253,8 +253,8 @@ export default function PostListingForm({ userId }: { userId: string }) {
           </div>
         )}
 
-        {/* STEP 2 */}
-        {step === 2 && form.listingType ==='room_available' && (
+        {/* ─── STEP 2 ─────────────────────────────────────────── */}
+        {step === 2 && form.listingType === 'room_available' && (
           <div className="space-y-5">
             <div>
               <label className={labelCls}>Title *</label>
@@ -321,8 +321,8 @@ export default function PostListingForm({ userId }: { userId: string }) {
                     onClick={() => toggleArrayItem('flatmatesNationalities', n)}
                     className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
                       form.flatmatesNationalities.includes(n)
-                        ?'bg-brand-primary text-white'
-                        :'bg-white/5 text-white/50 hover:bg-white/10'
+                        ? 'bg-brand-primary text-white'
+                        : 'bg-white/5 text-white/50 hover:bg-white/10'
                     }`}
                   >
                     {n}
@@ -334,7 +334,7 @@ export default function PostListingForm({ userId }: { userId: string }) {
               <label className={labelCls}>Amenities</label>
               <div className="grid grid-cols-2 gap-2">
                 {AMENITIES.map(a => (
-                  <label key={a.id} className={`flex items-center gap-2 p-2 rounded-xl cursor-pointer transition-colors ${form.amenities.includes(a.id) ?'bg-brand-primary/10 border border-brand-primary/30' :'bg-white/5 border border-transparent hover:bg-white/10'}`}>
+                  <label key={a.id} className={`flex items-center gap-2 p-2 rounded-xl cursor-pointer transition-colors ${form.amenities.includes(a.id) ? 'bg-brand-primary/10 border border-brand-primary/30' : 'bg-white/5 border border-transparent hover:bg-white/10'}`}>
                     <input type="checkbox" checked={form.amenities.includes(a.id)} onChange={() => toggleArrayItem('amenities', a.id)} className="sr-only" />
                     <span className="text-sm">{a.label}</span>
                   </label>
@@ -361,7 +361,7 @@ export default function PostListingForm({ userId }: { userId: string }) {
                     disabled={uploading}
                     className="w-20 h-20 rounded-xl border-2 border-dashed border-white/20 flex items-center justify-center text-white/30 hover:border-white/40 hover:text-white/50 transition-colors disabled:opacity-40"
                   >
-                    {uploading ?'…' :'+'}
+                    {uploading ? '…' : '+'}
                   </button>
                 )}
               </div>
@@ -380,7 +380,7 @@ export default function PostListingForm({ userId }: { userId: string }) {
           </div>
         )}
 
-        {step === 2 && form.listingType ==='looking_for_room' && (
+        {step === 2 && form.listingType === 'looking_for_room' && (
           <div className="space-y-5">
             <div>
               <label className={labelCls}>Title *</label>
@@ -395,8 +395,8 @@ export default function PostListingForm({ userId }: { userId: string }) {
                     onClick={() => toggleArrayItem('neighborhoodPrefs', n)}
                     className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
                       form.neighborhoodPrefs.includes(n)
-                        ?'bg-brand-primary text-white'
-                        :'bg-white/5 text-white/50 hover:bg-white/10'
+                        ? 'bg-brand-primary text-white'
+                        : 'bg-white/5 text-white/50 hover:bg-white/10'
                     }`}
                   >
                     {n}
@@ -473,7 +473,7 @@ export default function PostListingForm({ userId }: { userId: string }) {
           </div>
         )}
 
-        {/* STEP 3 */}
+        {/* ─── STEP 3 ─────────────────────────────────────────── */}
         {step === 3 && (
           <div className="space-y-5">
             <p className="text-white/50 text-sm text-center mb-4">Your contact details (shown to members only)</p>
@@ -524,7 +524,7 @@ export default function PostListingForm({ userId }: { userId: string }) {
                 disabled={submitting || !form.contactName || !form.contactWhatsapp || !form.agreedToTerms}
                 className="flex-1 btn-primary py-3 rounded-full font-semibold text-sm disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {submitting ?'Posting…' :'Post Listing'}
+                {submitting ? 'Posting…' : 'Post Listing 🎉'}
               </button>
             </div>
           </div>

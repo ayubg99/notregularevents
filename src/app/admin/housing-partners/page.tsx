@@ -1,8 +1,8 @@
-import { redirect } from'next/navigation'
-import { createClient } from'@/lib/supabase/server'
-import { getAdminClient } from'@/lib/supabase/admin'
-import PartnersClient from'./PartnersClient'
-import type { HousingPartnerRow } from'@/types/database'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { getAdminClient } from '@/lib/supabase/admin'
+import PartnersClient from './PartnersClient'
+import type { HousingPartnerRow } from '@/types/database'
 
 type RawPartner = HousingPartnerRow & { partner_rooms: { count: number }[] | null }
 
@@ -12,7 +12,7 @@ export default async function HousingPartnersPage() {
   if (!user) redirect('/auth/login?redirectTo=/admin/housing-partners')
 
   const { data: userRow } = await supabase.from('users').select('role').eq('id', user.id).single()
-  if (userRow?.role !=='admin') redirect('/')
+  if (userRow?.role !== 'admin') redirect('/')
 
   const admin = getAdminClient()
 

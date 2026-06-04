@@ -1,35 +1,35 @@
 'use client'
 
-import { useState } from'react'
-import { X } from'lucide-react'
-import type { PartnerRoomRow } from'@/types/database'
+import { useState } from 'react'
+import { X } from 'lucide-react'
+import type { PartnerRoomRow } from '@/types/database'
 
 const NATIONALITIES = [
-'Afghan','Albanian','Algerian','American','Andorran','Angolan','Argentine','Armenian',
-'Australian','Austrian','Azerbaijani','Bahraini','Bangladeshi','Belarusian','Belgian',
-'Bolivian','Bosnian','Brazilian','British','Bulgarian','Cambodian','Cameroonian',
-'Canadian','Chilean','Chinese','Colombian','Congolese','Croatian','Cuban','Czech',
-'Danish','Dominican','Dutch','Ecuadorian','Egyptian','Eritrean','Estonian','Ethiopian',
-'Filipino','Finnish','French','Georgian','German','Ghanaian','Greek','Guatemalan',
-'Haitian','Honduran','Hungarian','Indian','Indonesian','Iranian','Iraqi','Irish',
-'Italian','Ivorian','Jamaican','Japanese','Jordanian','Kazakh','Kenyan',
-'Korean','Kosovan','Kuwaiti','Kyrgyz','Latvian','Lebanese','Libyan','Lithuanian',
-'Luxembourgish','Macedonian','Malaysian','Malian','Maltese','Mexican','Moldovan',
-'Moroccan','Mozambican','Myanmar (Burmese)','Namibian','Nepali','New Zealander',
-'Nicaraguan','Nigerian','Norwegian','Omani','Pakistani','Palestinian','Panamanian',
-'Paraguayan','Peruvian','Polish','Portuguese','Puerto Rican','Qatari','Romanian',
-'Russian','Saudi','Senegalese','Serbian','Singaporean','Slovak','Slovenian',
-'Somali','South African','Spanish','Sri Lankan','Sudanese','Swedish','Swiss',
-'Syrian','Taiwanese','Tajik','Tanzanian','Thai','Tunisian','Turkish','Ugandan',
-'Ukrainian','Emirati','Uruguayan','Uzbek','Venezuelan','Vietnamese','Yemeni',
-'Zambian','Zimbabwean',
+  'Afghan','Albanian','Algerian','American','Andorran','Angolan','Argentine','Armenian',
+  'Australian','Austrian','Azerbaijani','Bahraini','Bangladeshi','Belarusian','Belgian',
+  'Bolivian','Bosnian','Brazilian','British','Bulgarian','Cambodian','Cameroonian',
+  'Canadian','Chilean','Chinese','Colombian','Congolese','Croatian','Cuban','Czech',
+  'Danish','Dominican','Dutch','Ecuadorian','Egyptian','Eritrean','Estonian','Ethiopian',
+  'Filipino','Finnish','French','Georgian','German','Ghanaian','Greek','Guatemalan',
+  'Haitian','Honduran','Hungarian','Indian','Indonesian','Iranian','Iraqi','Irish',
+  'Italian','Ivorian','Jamaican','Japanese','Jordanian','Kazakh','Kenyan',
+  'Korean','Kosovan','Kuwaiti','Kyrgyz','Latvian','Lebanese','Libyan','Lithuanian',
+  'Luxembourgish','Macedonian','Malaysian','Malian','Maltese','Mexican','Moldovan',
+  'Moroccan','Mozambican','Myanmar (Burmese)','Namibian','Nepali','New Zealander',
+  'Nicaraguan','Nigerian','Norwegian','Omani','Pakistani','Palestinian','Panamanian',
+  'Paraguayan','Peruvian','Polish','Portuguese','Puerto Rican','Qatari','Romanian',
+  'Russian','Saudi','Senegalese','Serbian','Singaporean','Slovak','Slovenian',
+  'Somali','South African','Spanish','Sri Lankan','Sudanese','Swedish','Swiss',
+  'Syrian','Taiwanese','Tajik','Tanzanian','Thai','Tunisian','Turkish','Ugandan',
+  'Ukrainian','Emirati','Uruguayan','Uzbek','Venezuelan','Vietnamese','Yemeni',
+  'Zambian','Zimbabwean',
 ]
 
 const DURATION_OPTIONS = [
-  { value: 1, label:'1 month' },
-  { value: 3, label:'3 months' },
-  { value: 6, label:'Semester (~6 months)' },
-  { value: 12, label:'Year' },
+  { value: 1,   label: '1 month' },
+  { value: 3,   label: '3 months' },
+  { value: 6,   label: 'Semester (~6 months)' },
+  { value: 12,  label: 'Year' },
 ]
 
 interface Props {
@@ -40,17 +40,17 @@ interface Props {
 
 export default function BookRoomModal({ room, open, onClose }: Props) {
   const [form, setForm] = useState({
-    guestName:'',
-    guestEmail:'',
-    guestPhone:'',
-    nationality:'',
-    university:'',
-    moveInDate:'',
-    duration: 3,
-    message:'',
+    guestName:    '',
+    guestEmail:   '',
+    guestPhone:   '',
+    nationality:  '',
+    university:   '',
+    moveInDate:   '',
+    duration:     3,
+    message:      '',
   })
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError]     = useState('')
 
   if (!open) return null
 
@@ -70,31 +70,31 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
     setLoading(true)
     try {
       const res = await fetch('/api/housing/book-room', {
-        method:'POST',
-        headers: {'Content-Type':'application/json' },
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          roomId: room.id,
-          guestName: form.guestName,
-          guestEmail: form.guestEmail,
-          guestPhone: form.guestPhone,
+          roomId:      room.id,
+          guestName:   form.guestName,
+          guestEmail:  form.guestEmail,
+          guestPhone:  form.guestPhone,
           nationality: form.nationality,
-          university: form.university,
-          moveInDate: form.moveInDate,
-          duration: form.duration,
-          message: form.message,
+          university:  form.university,
+          moveInDate:  form.moveInDate,
+          duration:    form.duration,
+          message:     form.message,
         }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error ??'Failed to create checkout')
+      if (!res.ok) throw new Error(data.error ?? 'Failed to create checkout')
       window.location.href = data.url
     } catch (err) {
-      setError(err instanceof Error ? err.message :'Something went wrong')
+      setError(err instanceof Error ? err.message : 'Something went wrong')
       setLoading(false)
     }
   }
 
-  const inputClass ='w-full px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
-  const labelClass ='text-white/50 text-xs mb-1.5 block'
+  const inputClass = 'w-full px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
+  const labelClass = 'text-white/50 text-xs mb-1.5 block'
 
   return (
     <div
@@ -194,8 +194,8 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
                   onClick={() => set('duration', opt.value)}
                   className={`py-2 px-2 rounded-xl text-xs font-medium border transition-colors ${
                     form.duration === opt.value
-                      ?'border-brand-primary bg-brand-primary/15 text-brand-primary'
-                      :'border-white/10 bg-white/5 text-white/60 hover:border-white/25'
+                      ? 'border-brand-primary bg-brand-primary/15 text-brand-primary'
+                      : 'border-white/10 bg-white/5 text-white/60 hover:border-white/25'
                   }`}
                 >
                   {opt.label}
@@ -209,7 +209,7 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
             <textarea
               className={`${inputClass} resize-none`}
               rows={3}
-              placeholder={`Hi! I'm ${form.guestName ||'your name'} from ${form.nationality ||'your country'}...`}
+              placeholder={`Hi! I'm ${form.guestName || 'your name'} from ${form.nationality || 'your country'}...`}
               value={form.message}
               onChange={e => set('message', e.target.value)}
             />
@@ -237,7 +237,7 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
             disabled={loading}
             className="btn-primary w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50"
           >
-            {loading ?'Redirecting to payment…' :`Pay €${room.platform_fee} & Reserve Room →`}
+            {loading ? 'Redirecting to payment…' : `Pay €${room.platform_fee} & Reserve Room →`}
           </button>
         </form>
       </div>

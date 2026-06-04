@@ -1,19 +1,19 @@
 'use client'
 
-import { useState, useRef } from'react'
-import Image from'next/image'
-import { Upload, X, Loader2, ImageIcon } from'lucide-react'
-import { createClient } from'@/lib/supabase/client'
+import { useState, useRef } from 'react'
+import Image from 'next/image'
+import { Upload, X, Loader2, ImageIcon } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 interface Props {
-  value: string
+  value:    string
   onChange: (url: string) => void
-  folder:'events' |'trips' |'sponsors' |'jobs'
+  folder:   'events' | 'trips' | 'sponsors' | 'jobs'
 }
 
 export default function ImageUpload({ value, onChange, folder }: Props) {
   const [uploading, setUploading] = useState(false)
-  const [error, setError] = useState('')
+  const [error,     setError]     = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   async function handleFile(file: File) {
@@ -31,9 +31,9 @@ export default function ImageUpload({ value, onChange, folder }: Props) {
 
     try {
       const supabase = createClient()
-      const ext = file.name.split('.').pop() ??'jpg'
-      const name =`${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-      const path =`${folder}/${name}`
+      const ext  = file.name.split('.').pop() ?? 'jpg'
+      const name = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+      const path = `${folder}/${name}`
 
       const { error: uploadError } = await supabase.storage
         .from('images')
@@ -44,7 +44,7 @@ export default function ImageUpload({ value, onChange, folder }: Props) {
       const { data } = supabase.storage.from('images').getPublicUrl(path)
       onChange(data.publicUrl)
     } catch (err) {
-      setError(err instanceof Error ? err.message :'Upload failed')
+      setError(err instanceof Error ? err.message : 'Upload failed')
     } finally {
       setUploading(false)
     }
@@ -103,7 +103,7 @@ export default function ImageUpload({ value, onChange, folder }: Props) {
         onChange={e => {
           const file = e.target.files?.[0]
           if (file) handleFile(file)
-          e.target.value =''
+          e.target.value = ''
         }}
       />
 

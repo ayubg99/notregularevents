@@ -1,7 +1,7 @@
-import { type NextRequest } from'next/server'
-import { updateSession, requireAuth } from'@/lib/supabase/middleware'
+import { type NextRequest } from 'next/server'
+import { updateSession, requireAuth } from '@/lib/supabase/middleware'
 
-const PROTECTED = ['/dashboard','/booking','/admin']
+const PROTECTED = ['/dashboard', '/booking', '/admin']
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl

@@ -1,25 +1,25 @@
 'use client'
 
-import { useState, useTransition } from'react'
-import { updateProfile } from'@/app/actions/profile'
-import type { ProfileRow, UserRow } from'@/types/database'
-import { NATIONALITIES } from'@/lib/constants/nationalities'
+import { useState, useTransition } from 'react'
+import { updateProfile } from '@/app/actions/profile'
+import type { ProfileRow, UserRow } from '@/types/database'
+import { NATIONALITIES } from '@/lib/constants/nationalities'
 
 interface Props {
-  user: Pick<UserRow,'full_name'>
+  user:    Pick<UserRow, 'full_name'>
   profile: ProfileRow | null
 }
 
 export default function ProfileForm({ user, profile }: Props) {
-  const [fullName, setFullName] = useState(user.full_name ??'')
-  const [bio, setBio] = useState(profile?.bio ??'')
-  const [nationality, setNationality] = useState(profile?.nationality ??'')
-  const [university, setUniversity] = useState(profile?.university ??'')
-  const [instagram, setInstagram] = useState(profile?.instagram ??'')
-  const [whatsapp, setWhatsapp] = useState(profile?.whatsapp ??'')
+  const [fullName,    setFullName]    = useState(user.full_name ?? '')
+  const [bio,         setBio]         = useState(profile?.bio ?? '')
+  const [nationality, setNationality] = useState(profile?.nationality ?? '')
+  const [university,  setUniversity]  = useState(profile?.university ?? '')
+  const [instagram,   setInstagram]   = useState(profile?.instagram ?? '')
+  const [whatsapp,    setWhatsapp]    = useState(profile?.whatsapp ?? '')
 
-  const [saved, setSaved] = useState(false)
-  const [error, setError] = useState('')
+  const [saved,  setSaved]  = useState(false)
+  const [error,  setError]  = useState('')
   const [isPending, startTransition] = useTransition()
 
   function handleSubmit(e: React.FormEvent) {
@@ -32,12 +32,12 @@ export default function ProfileForm({ user, profile }: Props) {
         setSaved(true)
         setTimeout(() => setSaved(false), 3000)
       } else {
-        setError(result.error ??'Failed to save profile.')
+        setError(result.error ?? 'Failed to save profile.')
       }
     })
   }
 
-  const inputClass ='w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
+  const inputClass = 'w-full px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
 
   return (
     <div className="glass-card rounded-2xl p-6">
@@ -128,7 +128,7 @@ export default function ProfileForm({ user, profile }: Props) {
           disabled={isPending}
           className="w-full py-3 rounded-xl bg-brand-primary hover:brightness-110 active:brightness-90 text-white font-semibold text-sm transition-all duration-200 disabled:opacity-70"
         >
-          {isPending ?'Saving…' :'Save Profile'}
+          {isPending ? 'Saving…' : 'Save Profile'}
         </button>
       </form>
     </div>

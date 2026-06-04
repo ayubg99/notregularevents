@@ -1,66 +1,66 @@
 'use client'
 
-import { useState, useEffect, useCallback } from'react'
-import { motion, AnimatePresence } from'framer-motion'
-import { Star, ChevronLeft, ChevronRight } from'lucide-react'
-import { cn } from'@/lib/utils/cn'
+import { useState, useEffect, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Star, ChevronLeft, ChevronRight } from 'lucide-react'
+import { cn } from '@/lib/utils/cn'
 
 interface Testimonial {
-  id: number
-  name: string
-  country: string
-  flag: string
+  id:         number
+  name:       string
+  country:    string
+  flag:       string
   university: string
-  text: string
-  rating: number
-  avatar: string
+  text:       string
+  rating:     number
+  avatar:     string
 }
 
 const TESTIMONIALS: Testimonial[] = [
   {
-    id: 1,
-    name:'Sofia Müller',
-    country:'Germany',
-    flag:'',
-    university:'TU Munich',
-    text:'Erasmus Life completely transformed my time in Valencia. The events were incredible and I made friends for life. Absolutely worth every euro!',
-    rating: 5,
-    avatar:'SM',
+    id:         1,
+    name:       'Sofia Müller',
+    country:    'Germany',
+    flag:       '🇩🇪',
+    university: 'TU Munich',
+    text:       'Erasmus Life completely transformed my time in Valencia. The events were incredible and I made friends for life. Absolutely worth every euro!',
+    rating:     5,
+    avatar:     'SM',
   },
   {
-    id: 2,
-    name:'Marco Rossi',
-    country:'Italy',
-    flag:'',
-    university:'Bocconi University',
-    text:"The trips to Barcelona and Ibiza were mind-blowing. The team is super professional and the community is the best I've ever been part of.",
-    rating: 5,
-    avatar:'MR',
+    id:         2,
+    name:       'Marco Rossi',
+    country:    'Italy',
+    flag:       '🇮🇹',
+    university: 'Bocconi University',
+    text:       "The trips to Barcelona and Ibiza were mind-blowing. The team is super professional and the community is the best I've ever been part of.",
+    rating:     5,
+    avatar:     'MR',
   },
   {
-    id: 3,
-    name:'Ana Kowalski',
-    country:'Poland',
-    flag:'',
-    university:'Warsaw School of Economics',
-    text:'I was nervous about moving to Valencia alone, but from day one Erasmus Life made me feel at home. The WhatsApp group alone is a lifeline!',
-    rating: 5,
-    avatar:'AK',
+    id:         3,
+    name:       'Ana Kowalski',
+    country:    'Poland',
+    flag:       '🇵🇱',
+    university: 'Warsaw School of Economics',
+    text:       'I was nervous about moving to Valencia alone, but from day one Erasmus Life made me feel at home. The WhatsApp group alone is a lifeline!',
+    rating:     5,
+    avatar:     'AK',
   },
   {
-    id: 4,
-    name:"Liam O'Brien",
-    country:'Ireland',
-    flag:'',
-    university:'Trinity College Dublin',
-    text:'Best decision of my life was joining this community. The pool parties alone are worth coming to Valencia for. 10/10, no hesitation.',
-    rating: 5,
-    avatar:'LO',
+    id:         4,
+    name:       "Liam O'Brien",
+    country:    'Ireland',
+    flag:       '🇮🇪',
+    university: 'Trinity College Dublin',
+    text:       'Best decision of my life was joining this community. The pool parties alone are worth coming to Valencia for. 10/10, no hesitation.',
+    rating:     5,
+    avatar:     'LO',
   },
 ]
 
 export default function TestimonialsSection() {
-  const [current, setCurrent] = useState(0)
+  const [current,   setCurrent]   = useState(0)
   const [isHovered, setIsHovered] = useState(false)
   const total = TESTIMONIALS.length
 
@@ -99,10 +99,10 @@ export default function TestimonialsSection() {
           <AnimatePresence mode="wait">
             <motion.div
               key={testimonial.id}
-              initial={{ opacity: 0, x: 40, scale: 0.97 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: -40, scale: 0.97 }}
-              transition={{ duration: 0.35, ease:'easeInOut' }}
+              initial={{ opacity: 0, x: 40,  scale: 0.97 }}
+              animate={{ opacity: 1, x: 0,   scale: 1    }}
+              exit={{    opacity: 0, x: -40, scale: 0.97 }}
+              transition={{ duration: 0.35, ease: 'easeInOut' }}
               className="glass-card glow-accent rounded-3xl p-8 md:p-12 text-center"
             >
               {/* Stars */}
@@ -159,8 +159,8 @@ export default function TestimonialsSection() {
               onClick={() => setCurrent(i)}
               aria-label={`Go to testimonial ${i + 1}`}
               className={cn(
-'h-2 rounded-full transition-all duration-300',
-                i === current ?'w-8 bg-brand-primary' :'w-2 bg-white/20',
+                'h-2 rounded-full transition-all duration-300',
+                i === current ? 'w-8 bg-brand-primary' : 'w-2 bg-white/20',
               )}
             />
           ))}

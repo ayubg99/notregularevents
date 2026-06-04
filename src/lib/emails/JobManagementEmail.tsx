@@ -1,18 +1,18 @@
-import { emailLayout } from'./emailLayout'
+import { emailLayout } from './emailLayout'
 
 interface Props {
-  jobTitle: string
-  company: string
-  viewUrl: string
+  jobTitle:  string
+  company:   string
+  viewUrl:   string
   manageUrl: string
-  editUrl: string
-  baseUrl: string
+  editUrl:   string
+  baseUrl:   string
 }
 
 export function JobManagementEmail({ jobTitle, company, viewUrl, manageUrl, editUrl, baseUrl }: Props): string {
-  const content =`
+  const content = `
     <p style="margin:0 0 8px;font-size:20px;font-weight:700;color:#FFF8EE;">
-      Your job listing is live! 
+      Your job listing is live! 💼
     </p>
     <p style="margin:0 0 32px;font-size:15px;color:#B8A090;line-height:1.6;">
       Bookmark this email — it contains your private management link.
@@ -44,10 +44,10 @@ export function JobManagementEmail({ jobTitle, company, viewUrl, manageUrl, edit
       <tr>
         <td align="center" style="padding-top:12px;">
           <a href="${editUrl}" style="color:#FF6B00;font-size:13px;text-decoration:none;margin-right:24px;">
-             Edit listing
+            ✏️ Edit listing
           </a>
           <a href="${viewUrl}" style="color:#B8A090;font-size:13px;text-decoration:none;">
-             View listing
+            👁️ View listing
           </a>
         </td>
       </tr>
@@ -58,18 +58,18 @@ export function JobManagementEmail({ jobTitle, company, viewUrl, manageUrl, edit
       <tr>
         <td style="padding:16px 20px;">
           <p style="margin:0;font-size:12px;color:#B8A090;line-height:1.6;">
-             <strong style="color:#FFF8EE;">Keep this link private.</strong>
+            🔒 <strong style="color:#FFF8EE;">Keep this link private.</strong>
             Anyone with this link can edit or delete your listing.
             If you lose it, contact us at support@erasmuslifevalencia.com.
           </p>
         </td>
       </tr>
     </table>
-`
+  `
 
   return emailLayout(
     content,
     baseUrl,
-`Erasmus Life Valencia — jobs for internationals<br />Questions? Email <a href="mailto:support@erasmuslifevalencia.com" style="color:#FF6B00;">support@erasmuslifevalencia.com</a>`,
+    `Erasmus Life Valencia — jobs for internationals<br />Questions? Email <a href="mailto:support@erasmuslifevalencia.com" style="color:#FF6B00;">support@erasmuslifevalencia.com</a>`,
   )
 }

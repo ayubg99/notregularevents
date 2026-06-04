@@ -1,74 +1,74 @@
 'use client'
 
-import { useState, useMemo, useTransition } from'react'
-import { useRouter } from'next/navigation'
-import { ArrowLeft, Download, FileText, Search, CheckCircle, Clock } from'lucide-react'
-import Link from'next/link'
+import { useState, useMemo, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import { ArrowLeft, Download, FileText, Search, CheckCircle, Clock } from 'lucide-react'
+import Link from 'next/link'
 
 type TripBooking = {
-  id: string
-  booking_ref: string
-  status: string
-  tier: string
-  guest_name: string | null
-  guest_email: string | null
-  guest_phone: string | null
-  amount_paid: number | null
-  quantity: number
-  qr_code: string | null
-  created_at: string
-  checked_in: boolean | null
+  id:            string
+  booking_ref:   string
+  status:        string
+  tier:          string
+  guest_name:    string | null
+  guest_email:   string | null
+  guest_phone:   string | null
+  amount_paid:   number | null
+  quantity:      number
+  qr_code:       string | null
+  created_at:    string
+  checked_in:    boolean | null
   checked_in_at: string | null
 }
 
 type TripInfo = {
-  id: string
-  title: string
-  start_date: string
-  capacity: number
-  seats_sold: number
+  id:          string
+  title:       string
+  start_date:  string
+  capacity:    number
+  seats_sold:  number
   destination: string
 }
 
 interface Props {
-  trip: TripInfo
+  trip:     TripInfo
   bookings: TripBooking[]
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  pending:'bg-blue-500/15 text-blue-400',
-  confirmed:'bg-green-500/15 text-green-400',
-  cancelled:'bg-red-500/15 text-red-400',
-  refunded:'bg-orange-500/15 text-orange-400',
+  pending:   'bg-blue-500/15 text-blue-400',
+  confirmed: 'bg-green-500/15 text-green-400',
+  cancelled: 'bg-red-500/15 text-red-400',
+  refunded:  'bg-orange-500/15 text-orange-400',
 }
 
 function TierBadge({ tier }: { tier: string }) {
-  const label = tier ==='early_bird' ?' Early Bird' : tier ==='group' ?' Group' :' Standard'
+  const label = tier === 'early_bird' ? '🔥 Early Bird' : tier === 'group' ? '👥 Group' : '💰 Standard'
   const style = {
-    padding:'2px 8px', borderRadius:'20px', fontSize:'11px', fontWeight: 700,
-    background: tier ==='early_bird' ?'#FF6B00' : tier ==='group' ?'#2ECC71' :'rgba(255,255,255,0.1)',
-    color: tier ==='early_bird' || tier ==='group' ?'#0D0D0D' :'#ffffff',
+    padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700,
+    background: tier === 'early_bird' ? '#FF6B00' : tier === 'group' ? '#2ECC71' : 'rgba(255,255,255,0.1)',
+    color: tier === 'early_bird' || tier === 'group' ? '#0D0D0D' : '#ffffff',
   }
   return <span style={style}>{label}</span>
 }
 
 function buildCSV(trip: TripInfo, rows: TripBooking[]): string {
-  const headers = ['#','Name','Email','Phone','Tier','Qty','Booking Ref','QR Code','Status','Amount','Checked In','Check-in Time','Booked At']
+  const headers = ['#', 'Name', 'Email', 'Phone', 'Tier', 'Qty', 'Booking Ref', 'QR Code', 'Status', 'Amount', 'Checked In', 'Check-in Time', 'Booked At']
   const lines = [
     headers.join(','),
     ...rows.map((b, i) => [
       i + 1,
-      b.guest_name ??'Member',
-      b.guest_email ??'',
-      b.guest_phone ??'',
+      b.guest_name  ?? 'Member',
+      b.guest_email ?? '',
+      b.guest_phone ?? '',
       b.tier,
       b.quantity,
       b.booking_ref,
-      b.qr_code ??'',
+      b.qr_code    ?? '',
       b.status,
-      b.amount_paid != null ?`€${b.amount_paid.toFixed(2)}` :'',
-      b.checked_in ?'Yes' :'No',
-      b.checked_in_at ? new Date(b.checked_in_at).toLocaleString('en-GB') :'',
+      b.amount_paid != null ? `€${b.amount_paid.toFixed(2)}` : '',
+      b.checked_in ? 'Yes' : 'No',
+      b.checked_in_at ? new Date(b.checked_in_at).toLocaleString('en-GB') : '',
       new Date(b.created_at).toLocaleString('en-GB'),
     ].join(',')),
   ]
@@ -76,9 +76,9 @@ function buildCSV(trip: TripInfo, rows: TripBooking[]): string {
 }
 
 function downloadCSV(content: string, filename: string) {
-  const blob = new Blob([content], { type:'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
   a.href = url; a.download = filename; a.click()
   URL.revokeObjectURL(url)
 }
@@ -95,7 +95,7 @@ function CheckInButton({ booking }: { booking: TripBooking }) {
         </span>
         {booking.checked_in_at && (
           <span className="text-white/25 text-xs">
-            {new Date(booking.checked_in_at).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })}
+            {new Date(booking.checked_in_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
           </span>
         )}
       </div>
@@ -108,9 +108,9 @@ function CheckInButton({ booking }: { booking: TripBooking }) {
       onClick={() => {
         startTransition(async () => {
           await fetch('/api/admin/check-in', {
-            method:'POST',
-            headers: {'Content-Type':'application/json' },
-            body: JSON.stringify({ bookingId: booking.id, type:'trip' }),
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bookingId: booking.id, type: 'trip' }),
           })
           router.refresh()
         })
@@ -118,7 +118,7 @@ function CheckInButton({ booking }: { booking: TripBooking }) {
       className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-brand-primary/15 text-brand-primary hover:bg-brand-primary/25 transition-all disabled:opacity-50"
     >
       <Clock size={11} />
-      {isPending ?'Checking…' :'Check In'}
+      {isPending ? 'Checking…' : 'Check In'}
     </button>
   )
 }
@@ -130,20 +130,20 @@ export default function TripAttendeesClient({ trip, bookings }: Props) {
     if (!search.trim()) return bookings
     const q = search.toLowerCase()
     return bookings.filter(b =>
-      (b.guest_name ??'').toLowerCase().includes(q) ||
-      (b.guest_email ??'').toLowerCase().includes(q)
+      (b.guest_name  ?? '').toLowerCase().includes(q) ||
+      (b.guest_email ?? '').toLowerCase().includes(q)
     )
   }, [bookings, search])
 
-  const totalRevenue = bookings.reduce((sum, b) => sum + (b.amount_paid ?? 0), 0)
+  const totalRevenue   = bookings.reduce((sum, b) => sum + (b.amount_paid ?? 0), 0)
   const checkedInCount = bookings.filter(b => b.checked_in).length
-  const fillPct = trip.capacity > 0 ? (trip.seats_sold / trip.capacity) * 100 : 0
+  const fillPct        = trip.capacity > 0 ? (trip.seats_sold / trip.capacity) * 100 : 0
 
   // Tier breakdown
-  const tiers = ['early_bird','standard','group'] as const
+  const tiers = ['early_bird', 'standard', 'group'] as const
   const tierStats = tiers.map(tier => ({
     tier,
-    count: bookings.filter(b => b.tier === tier).length,
+    count:   bookings.filter(b => b.tier === tier).length,
     revenue: bookings.filter(b => b.tier === tier).reduce((s, b) => s + (b.amount_paid ?? 0), 0),
   })).filter(t => t.count > 0)
 
@@ -163,13 +163,13 @@ export default function TripAttendeesClient({ trip, bookings }: Props) {
         <div>
           <h1 className="font-heading text-2xl font-bold text-white">{trip.title}</h1>
           <p className="text-white/40 text-sm mt-0.5">
-            {new Date(trip.start_date).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })}
+            {new Date(trip.start_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
             {` · ${trip.destination}`}
           </p>
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => downloadCSV(buildCSV(trip, bookings),`attendees-trip-${trip.id}.csv`)}
+            onClick={() => downloadCSV(buildCSV(trip, bookings), `attendees-trip-${trip.id}.csv`)}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-all"
           >
             <Download size={14} />
@@ -197,8 +197,8 @@ export default function TripAttendeesClient({ trip, bookings }: Props) {
           <div
             className="h-full rounded-full transition-all"
             style={{
-              width:`${Math.min(fillPct, 100)}%`,
-              backgroundColor: fillPct >= 80 ?'#2ECC71' :'#E91E8C',
+              width: `${Math.min(fillPct, 100)}%`,
+              backgroundColor: fillPct >= 80 ? '#2ECC71' : '#E91E8C',
             }}
           />
         </div>
@@ -229,7 +229,7 @@ export default function TripAttendeesClient({ trip, bookings }: Props) {
             {tierStats.map(t => (
               <div key={t.tier} className="flex items-center gap-3">
                 <TierBadge tier={t.tier} />
-                <span className="text-white/70 text-sm">{t.count} booking{t.count !== 1 ?'s' :''}</span>
+                <span className="text-white/70 text-sm">{t.count} booking{t.count !== 1 ? 's' : ''}</span>
                 <span className="text-green-400 font-mono text-sm">€{t.revenue.toFixed(2)}</span>
               </div>
             ))}
@@ -255,7 +255,7 @@ export default function TripAttendeesClient({ trip, bookings }: Props) {
           <table className="w-full min-w-max">
             <thead>
               <tr className="border-b border-white/10">
-                {['#','Name','Email','Phone','Tier','Qty','Amount','Booking Ref','Status','Check-in'].map(h => (
+                {['#', 'Name', 'Email', 'Phone', 'Tier', 'Qty', 'Amount', 'Booking Ref', 'Status', 'Check-in'].map(h => (
                   <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-white/40 uppercase tracking-wider whitespace-nowrap">
                     {h}
                   </th>
@@ -271,21 +271,21 @@ export default function TripAttendeesClient({ trip, bookings }: Props) {
                 filtered.map((b, i) => (
                   <tr key={b.id} className="border-b border-white/5 hover:bg-white/[0.03] transition-colors">
                     <td className="px-4 py-3 text-sm text-white/30">{i + 1}</td>
-                    <td className="px-4 py-3 text-sm text-white/80 whitespace-nowrap">{b.guest_name ??'Member'}</td>
-                    <td className="px-4 py-3 text-xs text-white/50">{b.guest_email ??'—'}</td>
-                    <td className="px-4 py-3 text-xs text-white/50">{b.guest_phone ??'—'}</td>
+                    <td className="px-4 py-3 text-sm text-white/80 whitespace-nowrap">{b.guest_name ?? 'Member'}</td>
+                    <td className="px-4 py-3 text-xs text-white/50">{b.guest_email ?? '—'}</td>
+                    <td className="px-4 py-3 text-xs text-white/50">{b.guest_phone ?? '—'}</td>
                     <td className="px-4 py-3"><TierBadge tier={b.tier} /></td>
-                    <td className="px-4 py-3 text-sm text-white/70">{b.quantity > 1 ?`${b.quantity}×` :'1'}</td>
+                    <td className="px-4 py-3 text-sm text-white/70">{b.quantity > 1 ? `${b.quantity}×` : '1'}</td>
                     <td className="px-4 py-3 text-sm">
                       {b.amount_paid != null
                         ? <span className="font-mono font-semibold text-green-400">€{b.amount_paid.toFixed(2)}</span>
-                        :'—'}
+                        : '—'}
                     </td>
                     <td className="px-4 py-3">
                       <span className="font-mono text-xs tracking-widest text-white/60">{b.booking_ref}</span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_COLORS[b.status] ??'bg-white/10 text-white/40'}`}>
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_COLORS[b.status] ?? 'bg-white/10 text-white/40'}`}>
                         {b.status}
                       </span>
                     </td>
@@ -299,8 +299,8 @@ export default function TripAttendeesClient({ trip, bookings }: Props) {
           </table>
         </div>
         <div className="px-4 py-2 border-t border-white/5 text-white/25 text-xs">
-          {filtered.length} {filtered.length === 1 ?'booking' :'bookings'}
-          {search &&` (filtered from ${bookings.length})`}
+          {filtered.length} {filtered.length === 1 ? 'booking' : 'bookings'}
+          {search && ` (filtered from ${bookings.length})`}
         </div>
       </div>
     </>

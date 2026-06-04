@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from'next/server'
-import { createClient } from'@/lib/supabase/server'
-import { getAdminClient } from'@/lib/supabase/admin'
-import type { JobListingUpdate } from'@/types/database'
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { getAdminClient } from '@/lib/supabase/admin'
+import type { JobListingUpdate } from '@/types/database'
 
 interface Params { params: Promise<{ id: string }> }
 
@@ -10,12 +10,12 @@ async function requireAdmin() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
   const { data: u } = await supabase.from('users').select('role').eq('id', user.id).single()
-  return u?.role ==='admin' ? user : null
+  return u?.role === 'admin' ? user : null
 }
 
 export async function PATCH(request: NextRequest, { params }: Params) {
   const user = await requireAdmin()
-  if (!user) return NextResponse.json({ error:'Unauthorized' }, { status: 401 })
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
   const body = await request.json() as JobListingUpdate
@@ -36,7 +36,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
 export async function DELETE(_: NextRequest, { params }: Params) {
   const user = await requireAdmin()
-  if (!user) return NextResponse.json({ error:'Unauthorized' }, { status: 401 })
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id } = await params
 

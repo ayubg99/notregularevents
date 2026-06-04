@@ -1,18 +1,18 @@
 'use client'
 
-import { useState, useTransition } from'react'
-import { Loader2 } from'lucide-react'
-import { submitAmbassadorApplication } from'@/app/actions/ambassador'
+import { useState, useTransition } from 'react'
+import { Loader2 } from 'lucide-react'
+import { submitAmbassadorApplication } from '@/app/actions/ambassador'
 
 export default function ApplicationForm() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const [name,       setName]       = useState('')
+  const [email,      setEmail]      = useState('')
   const [university, setUniversity] = useState('')
-  const [instagram, setInstagram] = useState('')
-  const [whyJoin, setWhyJoin] = useState('')
-  const [error, setError] = useState('')
-  const [submitted, setSubmitted] = useState(false)
-  const [isPending, startTransition] = useTransition()
+  const [instagram,  setInstagram]  = useState('')
+  const [whyJoin,    setWhyJoin]    = useState('')
+  const [error,      setError]      = useState('')
+  const [submitted,  setSubmitted]  = useState(false)
+  const [isPending,  startTransition] = useTransition()
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -23,23 +23,23 @@ export default function ApplicationForm() {
         email,
         university,
         instagram: instagram || undefined,
-        why_join: whyJoin,
+        why_join:  whyJoin,
       })
       if (result.success) {
         setSubmitted(true)
       } else {
-        setError(result.error ??'Something went wrong.')
+        setError(result.error ?? 'Something went wrong.')
       }
     })
   }
 
-  const inputClass ='w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
+  const inputClass = 'w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/25 text-sm focus:outline-none focus:border-brand-primary/50 transition-colors'
 
   if (submitted) {
     return (
       <div className="glass-card rounded-2xl p-10 flex flex-col items-center gap-5 text-center">
         <div className="w-16 h-16 rounded-full bg-brand-primary/15 border border-brand-primary/30 flex items-center justify-center text-3xl">
-          
+          🎉
         </div>
         <div>
           <p className="font-heading text-2xl font-bold text-white mb-2">Application received!</p>
@@ -130,7 +130,7 @@ export default function ApplicationForm() {
         >
           {isPending
             ? <><Loader2 size={15} className="animate-spin" /> Submitting…</>
-            :'Submit Application'
+            : 'Submit Application'
           }
         </button>
       </form>

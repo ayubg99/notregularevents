@@ -1,6 +1,6 @@
-import { cache } from'react'
-import { createClient } from'@/lib/supabase/server'
-import type { EventRow, ReviewRow, EventCategory, TripRow } from'@/types/database'
+import { cache } from 'react'
+import { createClient } from '@/lib/supabase/server'
+import type { EventRow, ReviewRow, EventCategory, TripRow } from '@/types/database'
 
 // cache() deduplicates calls within a single React render pass —
 // generateMetadata and the page component can both call getEventBySlug
@@ -25,7 +25,7 @@ export async function getPublishedEvents(options?: {
   let q = supabase
     .from('events')
     .select('*')
-    .eq('status','published')
+    .eq('status', 'published')
     .gte('date', new Date().toISOString())
     .order('date', { ascending: true })
     .limit(options?.limit ?? 50)
@@ -47,7 +47,7 @@ export async function getEventReviews(eventId: string): Promise<ReviewRow[]> {
   const { data, error } = await supabase
     .from('reviews')
     .select('*')
-    .eq('target_type','event')
+    .eq('target_type', 'event')
     .eq('target_id', eventId)
     .order('created_at', { ascending: false })
 
@@ -58,7 +58,7 @@ export async function getEventReviews(eventId: string): Promise<ReviewRow[]> {
   return data ?? []
 }
 
-// Trips 
+// ─── Trips ────────────────────────────────────────────────────
 
 export const getTripBySlug = cache(async (slug: string): Promise<TripRow | null> => {
   const supabase = await createClient()
@@ -79,7 +79,7 @@ export async function getPublishedTrips(options?: {
   let q = supabase
     .from('trips')
     .select('*')
-    .eq('status','published')
+    .eq('status', 'published')
     .gte('start_date', new Date().toISOString())
     .order('start_date', { ascending: true })
     .limit(options?.limit ?? 50)
@@ -101,7 +101,7 @@ export async function getTripReviews(tripId: string): Promise<ReviewRow[]> {
   const { data, error } = await supabase
     .from('reviews')
     .select('*')
-    .eq('target_type','trip')
+    .eq('target_type', 'trip')
     .eq('target_id', tripId)
     .order('created_at', { ascending: false })
 

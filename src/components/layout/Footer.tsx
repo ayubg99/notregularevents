@@ -1,56 +1,56 @@
-import Link from'next/link'
-import Image from'next/image'
-import { Camera, MessageCircle, Music2, MapPin } from'lucide-react'
-import FooterNewsletter from'./FooterNewsletter'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Camera, MessageCircle, Music2, MapPin } from 'lucide-react'
+import FooterNewsletter from './FooterNewsletter'
 // lucide-react v1+ dropped brand icons; Camera ≈ Instagram, MessageCircle ≈ WhatsApp, Music2 ≈ TikTok
 
 const FOOTER_LINKS = {
   Explore: [
-    { href:'/events', label:'Events' },
-    { href:'/trips', label:'Trips' },
-    { href:'/marketplace', label:'Marketplace' },
-    { href:'/jobs', label:'Jobs' },
-    { href:'/employer/register', label:'Post a Job' },
-    { href:'/employer/login', label:'Employer Login' },
-    { href:'/community', label:'Community' },
-    { href:'/membership', label:'Membership' },
-    { href:'/ambassadors', label:'Ambassadors' },
+    { href: '/events',     label: 'Events'      },
+    { href: '/trips',      label: 'Trips'        },
+    { href: '/marketplace',       label: 'Marketplace'       },
+    { href: '/jobs',              label: 'Jobs'              },
+    { href: '/employer/register', label: 'Post a Job'        },
+    { href: '/employer/login',    label: 'Employer Login'    },
+    { href: '/community',  label: 'Community'    },
+    { href: '/membership', label: 'Membership'   },
+    { href: '/ambassadors', label: 'Ambassadors' },
   ],
   Community: [
-    { href:'/about', label:'About Us' },
-    { href:'/team', label:'Our Team' },
-    { href:'/reviews', label:'Reviews' },
-    { href:'/blog', label:'Blog' },
+    { href: '/about',    label: 'About Us'  },
+    { href: '/team',     label: 'Our Team'  },
+    { href: '/reviews',  label: 'Reviews'   },
+    { href: '/blog',     label: 'Blog'      },
   ],
   Legal: [
-    { href:'/privacy', label:'Privacy Policy' },
-    { href:'/terms', label:'Terms of Service' },
-    { href:'/cookies', label:'Cookie Policy' },
-    { href:'/refunds', label:'Refund Policy' },
+    { href: '/privacy', label: 'Privacy Policy' },
+    { href: '/terms',   label: 'Terms of Service' },
+    { href: '/cookies', label: 'Cookie Policy'   },
+    { href: '/refunds', label: 'Refund Policy'   },
   ],
 }
 
 const SOCIALS = [
   {
-    href:'https://instagram.com/erasmuslifevalencia',
-    icon: Camera,
-    label:'Instagram',
-    handle:'@erasmuslifevalencia',
-    color:'hover:text-pink-400',
+    href:    'https://instagram.com/erasmuslifevalencia',
+    icon:    Camera,
+    label:   'Instagram',
+    handle:  '@erasmuslifevalencia',
+    color:   'hover:text-pink-400',
   },
   {
-    href:'#whatsapp',
-    icon: MessageCircle,
-    label:'WhatsApp',
-    handle:'Community Chat',
-    color:'hover:text-green-400',
+    href:    '#whatsapp',
+    icon:    MessageCircle,
+    label:   'WhatsApp',
+    handle:  'Community Chat',
+    color:   'hover:text-green-400',
   },
   {
-    href:'#tiktok',
-    icon: Music2,
-    label:'TikTok',
-    handle:'@erasmuslifevalencia',
-    color:'hover:text-brand-accent',
+    href:    '#tiktok',
+    icon:    Music2,
+    label:   'TikTok',
+    handle:  '@erasmuslifevalencia',
+    color:   'hover:text-brand-accent',
   },
 ]
 
@@ -58,7 +58,7 @@ export default function Footer() {
   return (
     <footer className="bg-brand-dark text-white">
 
-      {/* Main content */}
+      {/* ── Main content ─────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
 
@@ -83,7 +83,7 @@ export default function Footer() {
             {/* Location */}
             <div className="flex items-center gap-2 text-white/40 text-sm">
               <MapPin size={14} className="flex-shrink-0" />
-              <span>Valencia, Spain </span>
+              <span>Valencia, Spain 🇪🇸</span>
             </div>
 
             {/* Socials */}
@@ -92,8 +92,8 @@ export default function Footer() {
                 <a
                   key={label}
                   href={href}
-                  target={href.startsWith('http') ?'_blank' : undefined}
-                  rel={href.startsWith('http') ?'noopener noreferrer' : undefined}
+                  target={href.startsWith('http') ? '_blank' : undefined}
+                  rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
                   className={`flex items-center gap-3 text-white/50 ${color} transition-colors duration-200 group w-fit`}
                   aria-label={label}
                 >
@@ -128,7 +128,7 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Newsletter */}
+        {/* ── Newsletter ─────────────────────────────────────────── */}
         <div className="mt-14 pt-10 border-t border-white/10">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div>
@@ -145,14 +145,14 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom bar */}
+      {/* ── Bottom bar ───────────────────────────────────────────── */}
       <div className="border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-white/25 text-xs">
             © {new Date().getFullYear()} Erasmus Life Valencia. All rights reserved.
           </p>
           <p className="text-white/20 text-xs">
-            Made for Erasmus students in Valencia 
+            Made for Erasmus students in Valencia 🎓
           </p>
         </div>
       </div>

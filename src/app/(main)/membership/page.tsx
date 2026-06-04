@@ -1,71 +1,71 @@
-export const dynamic ='force-dynamic'
+export const dynamic = 'force-dynamic'
 
-import { createClient } from'@/lib/supabase/server'
-import { getPublicClient } from'@/lib/supabase/public'
-import PricingCards from'./PricingCards'
-import type { MembershipPlan, MembershipRow, SponsorRow } from'@/types/database'
-import { CheckCircle, ShieldCheck, Zap } from'lucide-react'
+import { createClient } from '@/lib/supabase/server'
+import { getPublicClient } from '@/lib/supabase/public'
+import PricingCards from './PricingCards'
+import type { MembershipPlan, MembershipRow, SponsorRow } from '@/types/database'
+import { CheckCircle, ShieldCheck, Zap } from 'lucide-react'
 
 export const metadata = {
-  title:'Membership — Erasmus Life Valencia',
-  description:'The Erasmus Life Premium Card. Discounts, exclusive events, housing contacts and the full Valencia Erasmus experience.',
+  title:       'Membership — Erasmus Life Valencia',
+  description: 'The Erasmus Life Premium Card. Discounts, exclusive events, housing contacts and the full Valencia Erasmus experience.',
   openGraph: {
-    title:'Membership — Erasmus Life Valencia',
-    description:'Get more from your Erasmus semester. Discounts, exclusive events, housing contacts and the full Valencia experience.',
-    images: [{ url:'/og-default.png', width: 1200, height: 630 }],
-    type:'website',
+    title:       'Membership — Erasmus Life Valencia',
+    description: 'Get more from your Erasmus semester. Discounts, exclusive events, housing contacts and the full Valencia experience.',
+    images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
+    type:        'website',
   },
   twitter: {
-    card:'summary_large_image',
-    title:'Membership — Erasmus Life Valencia',
-    description:'The Erasmus Life Premium Card — discounts, exclusive events and the full Valencia Erasmus experience.',
+    card:        'summary_large_image',
+    title:       'Membership — Erasmus Life Valencia',
+    description: 'The Erasmus Life Premium Card — discounts, exclusive events and the full Valencia Erasmus experience.',
   },
 }
 
 const BENEFITS = [
   {
-    icon:'',
-    title:'10% Off All Events & Trips',
-    desc:'Save on every event ticket and trip booking.',
+    icon:  '🎟️',
+    title: '10% Off All Events & Trips',
+    desc:  'Save on every event ticket and trip booking.',
   },
   {
-    icon:'',
-    title:'Priority Trip Booking',
-    desc:'Get early access before popular trips sell out.',
+    icon:  '⚡',
+    title: 'Priority Trip Booking',
+    desc:  'Get early access before popular trips sell out.',
   },
   {
-    icon:'',
-    title:'Free Exclusive Member Events',
-    desc:'Access to events only available to members.',
+    icon:  '🎉',
+    title: 'Free Exclusive Member Events',
+    desc:  'Access to events only available to members.',
   },
   {
-    icon:'',
-    title:'Private Erasmus WhatsApp Groups',
-    desc:'Curated groups for Erasmus students in Valencia.',
+    icon:  '💬',
+    title: 'Private Erasmus WhatsApp Groups',
+    desc:  'Curated groups for Erasmus students in Valencia.',
   },
   {
-    icon:'',
-    title:'Housing Contact Details',
-    desc:'See landlord contacts directly — no middleman.',
+    icon:  '🏠',
+    title: 'Housing Contact Details',
+    desc:  'See landlord contacts directly — no middleman.',
   },
   {
-    icon:'',
-    title:'Partner Discounts in Valencia',
-    desc:'Exclusive deals with our partner businesses.',
+    icon:  '🎁',
+    title: 'Partner Discounts in Valencia',
+    desc:  'Exclusive deals with our partner businesses.',
   },
 ]
 
 const TRUST = [
-  { icon: <Zap size={16} />, label:'Instant activation' },
-  { icon: <CheckCircle size={16} />, label:'Cancel anytime' },
-  { icon: <ShieldCheck size={16} />, label:'Erasmus students worldwide' },
+  { icon: <Zap size={16} />,         label: 'Instant activation' },
+  { icon: <CheckCircle size={16} />, label: 'Cancel anytime'     },
+  { icon: <ShieldCheck size={16} />, label: 'Erasmus students worldwide' },
 ]
 
 const PLAN_LABELS: Record<MembershipPlan, string> = {
-  basic:'Monthly',
-  premium:'Semester',
-  vip:'Annual',
-  employer:'Employer',
+  basic:    'Monthly',
+  premium:  'Semester',
+  vip:      'Annual',
+  employer: 'Employer',
 }
 
 export default async function MembershipPage() {
@@ -78,7 +78,7 @@ export default async function MembershipPage() {
       .from('memberships')
       .select('*')
       .eq('user_id', user.id)
-      .eq('status','active')
+      .eq('status', 'active')
       .maybeSingle()
     membership = data as MembershipRow | null
   }
@@ -87,8 +87,8 @@ export default async function MembershipPage() {
   const { data: sponsorsData } = await pub
     .from('sponsors')
     .select('*')
-    .eq('status','active')
-    .not('discount_text','is', null)
+    .eq('status', 'active')
+    .not('discount_text', 'is', null)
     .order('display_order', { ascending: true })
   const sponsors = (sponsorsData ?? []) as SponsorRow[]
 
@@ -97,7 +97,7 @@ export default async function MembershipPage() {
   return (
     <div className="min-h-screen bg-brand-dark">
 
-      {/* Hero */}
+      {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden pt-32 pb-24 px-4">
         {/* Gradient background */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(255,107,0,0.15),transparent)] pointer-events-none" />
@@ -110,7 +110,7 @@ export default async function MembershipPage() {
             Membership
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-gradient mb-5 leading-tight">
-            The Erasmus Life<br />Premium Card 
+            The Erasmus Life<br />Premium Card 👑
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto">
             Get more from your Erasmus semester. Discounts, exclusive events, housing contacts and the full Valencia experience.
@@ -118,7 +118,7 @@ export default async function MembershipPage() {
         </div>
       </section>
 
-      {/* Benefits grid */}
+      {/* ── Benefits grid ─────────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-4 pt-10 pb-20 md:pt-20">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {BENEFITS.map((b) => (
@@ -133,7 +133,7 @@ export default async function MembershipPage() {
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* ── Pricing ───────────────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-4 pb-20">
         <div className="text-center mb-12">
           <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white mb-3">
@@ -148,7 +148,7 @@ export default async function MembershipPage() {
             <CheckCircle size={20} className="text-green-400 flex-shrink-0" />
             <p className="text-green-300 text-sm font-medium">
               You&apos;re currently on the <span className="font-bold">{PLAN_LABELS[currentPlan]}</span> plan.
-              Manage your subscription in your{''}
+              Manage your subscription in your{' '}
               <a href="/dashboard" className="underline hover:text-green-200 transition-colors">dashboard</a>.
             </p>
           </div>
@@ -157,7 +157,7 @@ export default async function MembershipPage() {
         <PricingCards currentPlan={currentPlan} isLoggedIn={!!user} />
       </section>
 
-      {/* Trust strip */}
+      {/* ── Trust strip ───────────────────────────────────────────── */}
       <section className="border-t border-white/5 py-10 px-4">
         <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12">
           {TRUST.map(({ icon, label }) => (
@@ -169,7 +169,7 @@ export default async function MembershipPage() {
         </div>
       </section>
 
-      {/* Partner Discounts */}
+      {/* ── Partner Discounts ─────────────────────────────────────── */}
       {sponsors.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 pb-24">
           <div className="text-center mb-10">
@@ -184,22 +184,22 @@ export default async function MembershipPage() {
               >
                 {/* Logo container */}
                 <div style={{
-                  background:'rgba(255,255,255,0.06)',
-                  borderRadius:'12px',
-                  padding:'16px',
-                  display:'flex',
-                  alignItems:'center',
-                  justifyContent:'center',
-                  height:'72px',
-                  width:'100%',
-                  marginBottom:'12px',
+                  background: 'rgba(255,255,255,0.06)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '72px',
+                  width: '100%',
+                  marginBottom: '12px',
                 }}>
                   {sponsor.logo_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={sponsor.logo_url}
                       alt={sponsor.name}
-                      style={{ maxHeight: 44, maxWidth: 120, width:'auto', objectFit:'contain' }}
+                      style={{ maxHeight: 44, maxWidth: 120, width: 'auto', objectFit: 'contain' }}
                     />
                   ) : (
                     <p className="text-white font-bold text-sm text-center leading-tight">{sponsor.name}</p>
@@ -208,7 +208,7 @@ export default async function MembershipPage() {
                 {/* Discount badge */}
                 <span
                   className="text-xs font-bold px-3 py-1 rounded-full mb-2"
-                  style={{ background:'rgba(255,107,0,0.15)', color:'#FF6B00' }}
+                  style={{ background: 'rgba(255,107,0,0.15)', color: '#FF6B00' }}
                 >
                   {sponsor.discount_text}
                 </span>
@@ -218,15 +218,15 @@ export default async function MembershipPage() {
                 )}
                 {/* Discount code — members only */}
                 {sponsor.discount_code && (
-                  (currentPlan ==='premium' || currentPlan ==='vip') ? (
-                    <div className="w-full mt-1 rounded-lg p-2" style={{ background:'rgba(255,255,255,0.04)' }}>
+                  (currentPlan === 'premium' || currentPlan === 'vip') ? (
+                    <div className="w-full mt-1 rounded-lg p-2" style={{ background: 'rgba(255,255,255,0.04)' }}>
                       <p className="text-white/30 text-[10px] uppercase tracking-wider mb-1">Your code</p>
-                      <p className="font-mono font-bold text-sm" style={{ color:'#FF6B00' }}>{sponsor.discount_code}</p>
+                      <p className="font-mono font-bold text-sm" style={{ color: '#FF6B00' }}>{sponsor.discount_code}</p>
                     </div>
                   ) : (
-                    <div className="w-full mt-1 rounded-lg p-2 text-center" style={{ background:'rgba(255,255,255,0.03)' }}>
+                    <div className="w-full mt-1 rounded-lg p-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
                       <p className="text-white/20 text-xs">
-                        {currentPlan ==='basic' ?' Semester+ only' :' Semester+ only'}
+                        {currentPlan === 'basic' ? '⬆️ Semester+ only' : '🔒 Semester+ only'}
                       </p>
                     </div>
                   )

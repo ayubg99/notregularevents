@@ -1,39 +1,39 @@
 'use client'
 
-import { useState, useEffect } from'react'
-import Link from'next/link'
-import Image from'next/image'
-import { useRouter, usePathname } from'next/navigation'
-import { Menu, X, ChevronRight, LogOut, LayoutDashboard, CreditCard } from'lucide-react'
-import type { User } from'@supabase/supabase-js'
-import { useTranslations } from'next-intl'
-import { createClient } from'@/lib/supabase/client'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { useRouter, usePathname } from 'next/navigation'
+import { Menu, X, ChevronRight, LogOut, LayoutDashboard, CreditCard } from 'lucide-react'
+import type { User } from '@supabase/supabase-js'
+import { useTranslations } from 'next-intl'
+import { createClient } from '@/lib/supabase/client'
 
 const NAV_HREFS = [
-  { href:'/events', key:'events' },
-  { href:'/trips', key:'trips' },
-  { href:'/community', key:'community' },
-  { href:'/housing', key:'housing' },
-  { href:'/jobs', key:'jobs' },
-  { href:'/marketplace', key:'marketplace' },
-  { href:'/membership', key:'membership' },
-  { href:'/about', key:'about' },
+  { href: '/events',     key: 'events'     },
+  { href: '/trips',      key: 'trips'      },
+  { href: '/community',  key: 'community'  },
+  { href: '/housing',    key: 'housing'    },
+  { href: '/jobs',         key: 'jobs'         },
+  { href: '/marketplace',  key: 'marketplace'  },
+  { href: '/membership',   key: 'membership'   },
+  { href: '/about',      key: 'about'      },
 ] as const
 
 function getInitials(name: string | null | undefined, email: string | null | undefined): string {
-  if (name) return name.split('').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+  if (name) return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
   if (email) return email[0].toUpperCase()
-  return'?'
+  return '?'
 }
 
 export default function Navbar() {
-  const router = useRouter()
+  const router   = useRouter()
   const pathname = usePathname()
   const t = useTranslations('nav')
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [menuKey, setMenuKey] = useState(0)
-  const [authUser, setAuthUser] = useState<User | null>(null)
+  const [isScrolled,  setIsScrolled]  = useState(false)
+  const [isMenuOpen,  setIsMenuOpen]  = useState(false)
+  const [menuKey,     setMenuKey]     = useState(0)
+  const [authUser,    setAuthUser]    = useState<User | null>(null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -58,8 +58,8 @@ export default function Navbar() {
   }, [])
 
   useEffect(() => {
-    document.body.style.overflow = isMenuOpen ?'hidden' :''
-    return () => { document.body.style.overflow ='' }
+    document.body.style.overflow = isMenuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
   }, [isMenuOpen])
 
   const openMenu = () => {
@@ -70,14 +70,14 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Main nav bar */}
+      {/* ── Main nav bar ─────────────────────────────────────────── */}
       <nav
         className={`
           fixed top-0 left-0 right-0 z-50
           transition-all duration-300
-          ${isScrolled ?'backdrop-blur-2xl bg-brand-dark/80 border-b border-white/5 shadow-brand-sm py-3' :'bg-brand-dark/50 py-5'}
-`}
-        style={{ animation:'navSlideDown 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) both' }}
+          ${isScrolled ? 'backdrop-blur-2xl bg-brand-dark/80 border-b border-white/5 shadow-brand-sm py-3' : 'bg-brand-dark/50 py-5'}
+        `}
+        style={{ animation: 'navSlideDown 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) both' }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
@@ -102,10 +102,10 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`relative text-sm font-medium transition-colors duration-200 group ${isActive ?'text-white' :'text-white/70 hover:text-white'}`}
+                    className={`relative text-sm font-medium transition-colors duration-200 group ${isActive ? 'text-white' : 'text-white/70 hover:text-white'}`}
                   >
                     {t(link.key)}
-                    <span className={`absolute -bottom-0.5 left-0 h-px bg-brand-primary rounded-full transition-all duration-300 ${isActive ?'w-full' :'w-0 group-hover:w-full'}`} />
+                    <span className={`absolute -bottom-0.5 left-0 h-px bg-brand-primary rounded-full transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`} />
                   </Link>
                 )
               })}
@@ -118,11 +118,11 @@ export default function Navbar() {
               {authUser ? (
                 <div className="hidden md:flex items-center gap-2">
                   <Link
-                    href={authUser.user_metadata?.role ==='employer' ?'/employer/dashboard' :'/dashboard'}
+                    href={authUser.user_metadata?.role === 'employer' ? '/employer/dashboard' : '/dashboard'}
                     className="flex items-center gap-1.5 px-3 py-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 text-sm font-medium transition-all duration-200"
                   >
                     <LayoutDashboard size={15} />
-                    {authUser.user_metadata?.role ==='employer' ?'My Listings' : t('dashboard')}
+                    {authUser.user_metadata?.role === 'employer' ? 'My Listings' : t('dashboard')}
                   </Link>
                   <Link
                     href="/member-card"
@@ -169,7 +169,7 @@ export default function Navbar() {
               <button
                 onClick={() => (isMenuOpen ? closeMenu() : openMenu())}
                 className="md:hidden flex items-center justify-center w-10 h-10 rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200"
-                aria-label={isMenuOpen ?'Close menu' :'Open menu'}
+                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={isMenuOpen}
               >
                 <span className="transition-transform duration-150">
@@ -182,13 +182,13 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile full-screen menu */}
+      {/* ── Mobile full-screen menu ───────────────────────────────── */}
       <div
         className={`
           fixed inset-0 z-40 glass-dark flex flex-col items-center md:hidden overflow-y-auto py-20
           transition-opacity duration-200
-          ${isMenuOpen ?'opacity-100 pointer-events-auto' :'opacity-0 pointer-events-none'}
-`}
+          ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
+        `}
       >
         <div className="flex flex-col items-center gap-2 my-auto w-full">
         {/* Nav links with CSS stagger */}
@@ -197,7 +197,7 @@ export default function Navbar() {
             <div
               key={`${menuKey}-${link.href}`}
               style={isMenuOpen ? {
-                animation:`menuItemIn 0.3s ease-out ${0.05 + i * 0.07}s both`,
+                animation: `menuItemIn 0.3s ease-out ${0.05 + i * 0.07}s both`,
               } : undefined}
             >
               <Link
@@ -216,18 +216,18 @@ export default function Navbar() {
           key={`${menuKey}-cta`}
           className="flex flex-col items-center gap-4 mb-8"
           style={isMenuOpen ? {
-            animation:`menuItemIn 0.3s ease-out ${0.05 + NAV_HREFS.length * 0.07}s both`,
+            animation: `menuItemIn 0.3s ease-out ${0.05 + NAV_HREFS.length * 0.07}s both`,
           } : undefined}
         >
           {authUser ? (
             <div className="flex flex-col items-center gap-4">
               <Link
-                href={authUser.user_metadata?.role ==='employer' ?'/employer/dashboard' :'/dashboard'}
+                href={authUser.user_metadata?.role === 'employer' ? '/employer/dashboard' : '/dashboard'}
                 onClick={closeMenu}
                 className="flex items-center gap-2 px-8 py-3 bg-white/10 text-white font-semibold text-base rounded-full active:brightness-90 transition-all"
               >
                 <LayoutDashboard size={20} />
-                {authUser.user_metadata?.role ==='employer' ?'My Listings' : t('dashboard')}
+                {authUser.user_metadata?.role === 'employer' ? 'My Listings' : t('dashboard')}
               </Link>
               <Link
                 href="/member-card"

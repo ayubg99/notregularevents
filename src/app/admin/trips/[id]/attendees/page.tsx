@@ -1,6 +1,6 @@
-import { getAdminClient } from'@/lib/supabase/admin'
-import { notFound } from'next/navigation'
-import TripAttendeesClient from'./TripAttendeesClient'
+import { getAdminClient } from '@/lib/supabase/admin'
+import { notFound } from 'next/navigation'
+import TripAttendeesClient from './TripAttendeesClient'
 
 export default async function TripAttendeesPage({
   params,
@@ -8,7 +8,7 @@ export default async function TripAttendeesPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const admin = getAdminClient()
+  const admin   = getAdminClient()
 
   const [{ data: trip, error: tripError }, { data: bookings }] = await Promise.all([
     admin
@@ -44,10 +44,10 @@ export default async function TripAttendeesPage({
         guest_email: string | null
         guest_phone: string | null
         amount_paid: number | null
-        quantity: number
-        qr_code: string | null
-        created_at: string
-        checked_in: boolean | null
+        quantity:    number
+        qr_code:     string | null
+        created_at:  string
+        checked_in:  boolean | null
         checked_in_at: string | null
       }[]}
     />
