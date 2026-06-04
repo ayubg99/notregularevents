@@ -123,7 +123,7 @@ export default function HeroSection() {
           Your Erasmus{' '}
           <span className="text-gradient">in Valencia</span>
           <br />
-          Starts Here 🎓
+          Starts Here
         </motion.h1>
 
         {/* Subheadline */}

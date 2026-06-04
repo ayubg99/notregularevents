@@ -116,7 +116,6 @@ export default function HousingTabs({ partnerRooms, initialListings, hasMembersh
           {/* Rooms grid */}
           {filtered.length === 0 ? (
             <div className="text-center py-20 text-white/40">
-              <p className="text-4xl mb-4">🏠</p>
               <p className="text-lg font-medium text-white/60 mb-2">No verified rooms available right now</p>
               <p className="text-sm">Try adjusting your filters or check back soon</p>
             </div>
