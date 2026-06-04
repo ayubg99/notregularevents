@@ -484,7 +484,7 @@ export default function BookingModal(props: Props) {
               <div>
                 <h3 className="font-heading text-xl font-bold text-white mb-2">Members Only Event</h3>
                 <p className="text-white/50 text-sm leading-relaxed">
-                  This event is free but exclusively for Erasmus Vibe members. Join to register.
+                  This event is free but exclusively for Erasmus Life members. Join to register.
                 </p>
               </div>
               <a

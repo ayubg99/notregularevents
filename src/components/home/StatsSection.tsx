@@ -14,10 +14,10 @@ interface StatItem {
 }
 
 const STATS: StatItem[] = [
-  { end: 500, suffix: '+', label: 'Members',         desc: 'From 50+ countries',      icon: Users    },
-  { end: 20,  suffix: '+', label: 'Nationalities',   desc: 'All in one community',    icon: Globe    },
-  { end: 100, suffix: '+', label: 'Events Hosted',   desc: 'Parties, culture & more', icon: Calendar },
-  { end: 48,  suffix: '+', label: 'Trips Completed', desc: 'Across Europe & beyond',  icon: MapPin   },
+  { end: 5000, suffix: '+', label: 'Students',      desc: 'Across 50+ nationalities',      icon: Users    },
+  { end: 50,   suffix: '+', label: 'Nationalities', desc: 'All in one community',           icon: Globe    },
+  { end: 6,    suffix: '',  label: 'Events/Week',   desc: 'Parties, culture & more',        icon: Calendar },
+  { end: 1994, suffix: '',  label: 'Est.',          desc: 'The official Erasmus community', icon: MapPin   },
 ]
 
 function StatCard({ item }: { item: StatItem }) {

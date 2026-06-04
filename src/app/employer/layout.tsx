@@ -20,10 +20,10 @@ export default function EmployerLayout({ children }: { children: ReactNode }) {
       }}>
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <img src="/logo-circle.png" width={36} height={36} alt="Erasmus Vibe" style={{ borderRadius: '50%' }} />
+          <img src="/logo-circle.png" width={36} height={36} alt="Erasmus Life" style={{ borderRadius: '50%' }} />
           <div>
             <p style={{ color: '#fff', fontWeight: 700, fontSize: '14px', margin: 0, lineHeight: 1 }}>
-              Erasmus Vibe
+              Erasmus Life
             </p>
             <p style={{ color: '#FF6B00', fontSize: '11px', margin: 0, fontWeight: 600 }}>
               Employer Portal

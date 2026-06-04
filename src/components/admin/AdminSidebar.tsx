@@ -43,7 +43,7 @@ export default function AdminSidebar() {
       <div className="px-5 py-4 border-b border-white/10 flex items-center gap-2">
         <Image
           src="/logo.png"
-          alt="Erasmus Vibe"
+          alt="Erasmus Life"
           width={120}
           height={36}
           className="h-9 w-auto object-contain"

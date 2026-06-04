@@ -59,7 +59,7 @@ export default function CommunitySection() {
             Join WhatsApp Group
           </a>
           <a
-            href="https://instagram.com/erasmus_vibe"
+            href="https://instagram.com/erasmuslifevalencia"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 px-8 py-4 glass border border-white/20 hover:bg-white/10 text-white font-semibold rounded-full transition-all duration-200 w-full sm:w-auto"

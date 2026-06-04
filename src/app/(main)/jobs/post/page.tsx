@@ -5,7 +5,7 @@ import PostJobClient from '@/components/jobs/PostJobClient'
 import EmployerAuthPrompt from '@/components/jobs/EmployerAuthPrompt'
 
 export const metadata: Metadata = {
-  title: 'Post a Job | Erasmus Vibe',
+  title: 'Post a Job | Erasmus Life',
   description: 'Reach international students and young professionals in Valencia. Post your job for free.',
 }
 

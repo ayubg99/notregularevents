@@ -86,7 +86,7 @@ export default function Navbar() {
             <Link href="/" className="flex-shrink-0">
               <Image
                 src="/logo.png"
-                alt="Erasmus Vibe"
+                alt="Erasmus Life"
                 width={180}
                 height={48}
                 className="h-12 w-auto"

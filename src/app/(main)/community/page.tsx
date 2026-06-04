@@ -2,18 +2,18 @@ import type { Metadata } from 'next'
 import { MessageCircle, Briefcase, Home, Languages } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title:       'Community | Erasmus Vibe Valencia',
-  description: 'Join the Erasmus Vibe international community in Valencia. Find flatmates, language exchange partners, job leads and events.',
+  title:       'Erasmus Community Valencia | Erasmus Life',
+  description: 'Join the official Erasmus community in Valencia. Connect with students from 50+ countries, find flatmates, join WhatsApp groups and discover events.',
   openGraph: {
-    title:       'Community | Erasmus Vibe Valencia',
-    description: 'Find flatmates, language exchange partners, job leads and events for internationals in Valencia.',
+    title:       'Erasmus Community Valencia | Erasmus Life',
+    description: 'Connect with Erasmus students in Valencia. WhatsApp groups, flatmate finder, language exchange and weekly events.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'Community | Erasmus Vibe Valencia',
-    description: 'Find flatmates, language exchange partners, job leads and events for internationals in Valencia.',
+    title:       'Erasmus Community Valencia | Erasmus Life',
+    description: 'Connect with Erasmus students in Valencia. Events, WhatsApp groups, language exchange and more.',
   },
 }
 
@@ -69,12 +69,12 @@ export default function CommunityPage() {
             Community
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-white mb-5 leading-tight">
-            Your Community<br />
-            <span className="text-gradient">in Valencia</span>
+            The Erasmus Community<br />
+            <span className="text-gradient">in Valencia 🌍</span>
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto leading-relaxed">
-            Connect with expats, students, digital nomads and young professionals.
-            Find flatmates, exchange languages, and discover your crowd.
+            50+ nationalities. Weekly events. Lifelong friendships.
+            This is your Erasmus community in Valencia.
           </p>
         </div>
       </section>
@@ -127,7 +127,7 @@ export default function CommunityPage() {
             More Ways to Connect
           </h2>
           <p className="text-white/50 text-sm max-w-md mx-auto">
-            We&apos;re building tools specifically for Valencia&apos;s international community.
+            We&apos;re building more tools specifically for Erasmus students in Valencia.
           </p>
         </div>
 
@@ -145,7 +145,7 @@ export default function CommunityPage() {
           <ComingSoonCard
             icon={Briefcase}
             title="Job Board"
-            desc="Job listings, freelance gigs and internships for internationals in Valencia. English-friendly employers."
+            desc="Job listings, internships and part-time opportunities for Erasmus students in Valencia. English-friendly employers."
           />
         </div>
       </section>

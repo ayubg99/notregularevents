@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { ChevronRight, ChevronDown } from 'lucide-react'
 
 const VIBE_PILLS = [
-  { emoji: '🎉', text: '500+ events',      delay: 0,   pos: 'top-[22%] left-[7%]'    },
+  { emoji: '🎓', text: '5,000+ students',  delay: 0,   pos: 'top-[22%] left-[7%]'    },
   { emoji: '✈️', text: 'Weekend trips',    delay: 0.6, pos: 'top-[18%] right-[9%]'   },
   { emoji: '🌍', text: '50+ nationalities', delay: 1.2, pos: 'bottom-[32%] left-[5%]' },
   { emoji: '💬', text: 'Active community',  delay: 1.8, pos: 'bottom-[28%] right-[7%]' },
@@ -109,7 +109,7 @@ export default function HeroSection() {
         >
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-white/20 text-white/80 text-sm font-medium mb-8">
             <span className="w-2 h-2 rounded-full bg-brand-success animate-pulse flex-shrink-0" />
-            Valencia&apos;s International Community
+            The Official Erasmus Community in Valencia
           </span>
         </motion.div>
 
@@ -120,10 +120,10 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          Live. Explore.{' '}
-          <span className="text-gradient">Connect</span>
+          Your Erasmus{' '}
+          <span className="text-gradient">in Valencia</span>
           <br />
-          in Valencia.
+          Starts Here 🎓
         </motion.h1>
 
         {/* Subheadline */}
@@ -133,8 +133,8 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.25, ease: 'easeOut' }}
         >
-          Events, trips and community for internationals in Valencia.
-          Join 500+ members from 50+ countries.
+          The official platform for Erasmus students in Valencia.
+          Events, trips, parties and everything you need for the best semester of your life.
         </motion.p>
 
         {/* CTA buttons */}
@@ -152,10 +152,10 @@ export default function HeroSection() {
             <ChevronRight size={18} strokeWidth={2.5} />
           </Link>
           <Link
-            href="/trips"
+            href="/membership"
             className="flex items-center gap-2 px-8 py-4 btn-secondary text-base w-full sm:w-auto justify-center"
           >
-            Explore Trips
+            Join Membership
             <ChevronRight size={18} strokeWidth={2.5} />
           </Link>
         </motion.div>

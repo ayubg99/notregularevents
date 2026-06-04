@@ -60,7 +60,7 @@ export function JobManagementEmail({ jobTitle, company, viewUrl, manageUrl, edit
           <p style="margin:0;font-size:12px;color:#B8A090;line-height:1.6;">
             🔒 <strong style="color:#FFF8EE;">Keep this link private.</strong>
             Anyone with this link can edit or delete your listing.
-            If you lose it, contact us at support@erasmusvibe.com.
+            If you lose it, contact us at support@erasmuslifevalencia.com.
           </p>
         </td>
       </tr>
@@ -70,6 +70,6 @@ export function JobManagementEmail({ jobTitle, company, viewUrl, manageUrl, edit
   return emailLayout(
     content,
     baseUrl,
-    `Erasmus Vibe Valencia — jobs for internationals<br />Questions? Email <a href="mailto:support@erasmusvibe.com" style="color:#FF6B00;">support@erasmusvibe.com</a>`,
+    `Erasmus Life Valencia — jobs for internationals<br />Questions? Email <a href="mailto:support@erasmuslifevalencia.com" style="color:#FF6B00;">support@erasmuslifevalencia.com</a>`,
   )
 }

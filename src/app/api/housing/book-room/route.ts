@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Room is no longer available' }, { status: 400 })
   }
 
-  const baseUrl   = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+  const baseUrl   = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
   const bookingRef = nanoid(8).toUpperCase()
   const partner   = room.housing_partners as (typeof room.housing_partners & Record<string, string>) | null
 
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
         currency:     'eur',
         product_data: {
           name:        `Room contact — ${room.title}`,
-          description: `${room.neighborhood} · €${room.monthly_rent}/month · Verified by Erasmus Vibe`,
+          description: `${room.neighborhood} · €${room.monthly_rent}/month · Verified by Erasmus Life`,
         },
         unit_amount: Math.round((room.platform_fee ?? 50) * 100),
       },

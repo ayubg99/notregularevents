@@ -28,11 +28,11 @@ const PLANS: PlanDef[] = [
     saving:   null,
     perMonth: '€9.99/mo',
     perks:    [
-      'Free entry to night parties',
+      'Free entry to exclusive member events',
       '10% off all events & trips',
       'Free housing & marketplace contact reveals',
       'Member card & dashboard access',
-      'Weekly newsletter with deals',
+      'Weekly newsletter with exclusive deals',
     ],
     featured: false,
   },
@@ -302,7 +302,7 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
 
             {/* Subtitle */}
             <p style={{ color: '#888', fontSize: '14px', margin: '0 0 32px', lineHeight: 1.6 }}>
-              Create a free account to get started with exclusive Erasmus Vibe benefits
+              Create a free account to get started with exclusive Erasmus Life benefits
             </p>
 
             {/* CTA buttons */}

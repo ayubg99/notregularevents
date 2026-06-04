@@ -132,10 +132,10 @@ export default function MemberCardClient({ membership, displayName, nationality,
             <div className="flex items-center gap-2">
               <span style={{ fontSize: 18 }}>🌴</span>
               <span style={{ color: '#1A1A0E', fontSize: 14, fontWeight: 800, letterSpacing: '0.07em' }}>
-                ERASMUS VIBE
+                ERASMUS LIFE
               </span>
             </div>
-            <Image src="/logo.png" alt="Erasmus Vibe" width={40} height={40} className="rounded-full flex-shrink-0" />
+            <Image src="/logo.png" alt="Erasmus Life" width={40} height={40} className="rounded-full flex-shrink-0" />
           </div>
 
           <hr style={{ border: 'none', borderTop: '1px solid rgba(0,0,0,0.15)', marginBottom: 20 }} />

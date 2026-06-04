@@ -6,7 +6,7 @@ import type { EmployerAccountRow, JobListingRow } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = { title: 'Employer Dashboard — Erasmus Vibe Jobs' }
+export const metadata = { title: 'Employer Dashboard — Erasmus Life Jobs' }
 
 interface Props {
   searchParams: Promise<{ upgraded?: string }>

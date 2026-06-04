@@ -6,7 +6,7 @@ export default function EmployerAuthPrompt() {
       <div className="max-w-md mx-auto text-center">
         <p style={{ fontSize: '48px', marginBottom: '16px' }}>💼</p>
         <h1 className="font-heading text-3xl font-bold text-white mb-3">
-          Post jobs on Erasmus Vibe
+          Post jobs on Erasmus Life
         </h1>
         <p className="text-white/50 text-base mb-8 leading-relaxed">
           Create a free employer account to post jobs and reach international students in Valencia.

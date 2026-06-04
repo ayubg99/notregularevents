@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 
 export const metadata: Metadata = {
-  title: 'My Member Card — Erasmus Vibe',
-  description: 'Your Erasmus Vibe membership card',
+  title: 'My Member Card — Erasmus Life',
+  description: 'Your Erasmus Life membership card',
   manifest: '/manifest-member-card.json',
   appleWebApp: {
     capable: true,

@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import PostListingForm from './PostListingForm'
 
 export const metadata: Metadata = {
-  title: 'Sell Something | Erasmus Vibe Marketplace',
+  title: 'Sell Something | Erasmus Life Marketplace',
 }
 
 export default async function PostListingPage() {

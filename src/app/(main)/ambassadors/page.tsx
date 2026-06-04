@@ -1,17 +1,17 @@
 import ApplicationForm from './ApplicationForm'
 
 export const metadata = {
-  title:       'Ambassadors — Erasmus Vibe',
-  description: 'Become an Erasmus Vibe ambassador. Earn 5% commission on every booking, unlock milestone rewards, and get exclusive access in Valencia.',
+  title:       'Ambassadors — Erasmus Life',
+  description: 'Become an Erasmus Life ambassador. Earn 5% commission on every booking, unlock milestone rewards, and get exclusive access in Valencia.',
   openGraph: {
-    title:       'Become an Ambassador — Erasmus Vibe Valencia',
+    title:       'Become an Ambassador — Erasmus Life Valencia',
     description: 'Earn 5% commission on every booking, unlock milestone rewards, and get exclusive access in Valencia.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'Ambassadors — Erasmus Vibe',
+    title:       'Ambassadors — Erasmus Life',
     description: 'Earn commissions, get free trips, and help internationals in Valencia.',
   },
 }
@@ -30,7 +30,7 @@ const BENEFITS = [
   {
     emoji: '🌟',
     title: 'Exclusive Access',
-    desc:  'Ambassador-only events and a private community of Erasmus Vibe reps.',
+    desc:  'Ambassador-only events and a private community of Erasmus Life reps.',
   },
 ]
 
@@ -67,7 +67,7 @@ export default function AmbassadorsPage() {
             Ambassadors
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-gradient mb-5 leading-tight">
-            Become an Erasmus Vibe Ambassador
+            Become an Erasmus Life Ambassador
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto">
             Earn while you explore. Share the vibe, build your network, and get rewarded for doing what you already do.

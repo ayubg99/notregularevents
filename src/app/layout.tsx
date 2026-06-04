@@ -10,20 +10,20 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'),
   title: {
-    default:  'Erasmus Vibe Valencia',
-    template: '%s | Erasmus Vibe Valencia',
+    default:  'Erasmus Life Valencia',
+    template: '%s | Erasmus Life Valencia',
   },
   description:
-    'The international community in Valencia, Spain. Events, trips and connections for expats, students, digital nomads and young professionals.',
+    'The official platform for Erasmus students in Valencia. Book events, trips, find housing and join the community. Since 1994.',
   keywords: [
-    'Valencia expats', 'international community Valencia', 'things to do Valencia expats',
-    'meet people Valencia', 'Valencia digital nomads', 'international students Valencia',
-    'English speaking events Valencia', 'expat events Valencia',
-    'Valencia networking', 'Erasmus Valencia',
+    'Erasmus Valencia', 'Erasmus Life', 'Erasmus students Valencia',
+    'events Valencia students', 'trips Valencia', 'Erasmus community',
+    'Erasmus Valencia parties', 'student housing Valencia',
+    'Erasmus Valencia 2025', 'international students Valencia',
   ],
-  authors:  [{ name: 'Erasmus Vibe Valencia' }],
+  authors:  [{ name: 'Erasmus Life Valencia' }],
   icons: {
     icon:     '/logo.png',
     shortcut: '/logo.png',
@@ -32,15 +32,15 @@ export const metadata: Metadata = {
   openGraph: {
     type:        'website',
     locale:      'en_US',
-    siteName:    'Erasmus Vibe Valencia',
-    title:       'Erasmus Vibe Valencia',
-    description: 'The international community in Valencia, Spain. Events, trips and connections for expats, students and professionals.',
+    siteName:    'Erasmus Life Valencia',
+    title:       'Erasmus Life Valencia',
+    description: 'The official platform for Erasmus students in Valencia. Book events, trips, find housing and join the community.',
     images:      [{ url: '/logo.png' }],
   },
   twitter: {
     card:        'summary',
-    title:       'Erasmus Vibe Valencia',
-    description: 'The international community in Valencia — events, trips and connections for expats, students and professionals.',
+    title:       'Erasmus Life Valencia',
+    description: 'The official platform for Erasmus students in Valencia. Events, trips, parties and more. Since 1994.',
     images:      ['/logo.png'],
   },
 }

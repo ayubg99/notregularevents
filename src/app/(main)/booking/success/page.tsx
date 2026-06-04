@@ -12,7 +12,7 @@ import BookingConfirmation from './BookingConfirmation'
 import BookingPolling from './BookingPolling'
 
 export const metadata: Metadata = {
-  title: 'Booking Confirmed | Erasmus Vibe Valencia',
+  title: 'Booking Confirmed | Erasmus Life Valencia',
 }
 
 type Props = {
@@ -39,7 +39,7 @@ function buildIcs(params: {
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Erasmus Vibe//EN',
+    'PRODID:-//Erasmus Life//EN',
     'BEGIN:VEVENT',
     `DTSTART:${fmt(params.start)}`,
     `DTEND:${fmt(params.end)}`,
@@ -252,7 +252,7 @@ async function MembershipSuccess({ session }: { session: Stripe.Checkout.Session
         </h1>
         <p className="text-white/50 text-center max-w-xs">
           {activated
-            ? `Welcome to Erasmus Vibe${info ? ` — ${info.name} plan` : ''}.`
+            ? `Welcome to Erasmus Life${info ? ` — ${info.name} plan` : ''}.`
             : 'Your membership is being set up. Check your email or refresh in a moment.'}
         </p>
       </div>

@@ -13,8 +13,8 @@ interface RefundEmailParams {
 }
 
 export async function sendRefundEmail({ email, name, tripTitle, amount, reason }: RefundEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
 
   const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
@@ -89,8 +89,8 @@ interface BookingConfirmationParams {
 }
 
 export async function sendBookingConfirmation(params: BookingConfirmationParams) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
-  const from    = process.env.RESEND_FROM_EMAIL   ?? 'bookings@erasmusvibe.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from    = process.env.RESEND_FROM_EMAIL   ?? 'info@erasmuslifevalencia.com'
 
   const { qrCode, ...templateParams } = params
   const html = BookingConfirmationEmail({ ...templateParams, baseUrl })
@@ -135,8 +135,8 @@ interface BookingPendingEmailParams {
 }
 
 export async function sendBookingPendingEmail(params: BookingPendingEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
 
   const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
@@ -257,8 +257,8 @@ interface PartnerConfirmationRequestParams {
 }
 
 export async function sendPartnerConfirmationRequest(params: PartnerConfirmationRequestParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
 
   const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
@@ -368,7 +368,7 @@ export async function sendPartnerConfirmationRequest(params: PartnerConfirmation
   const html = emailLayout(
     content,
     baseUrl,
-    `Need help? Contact us at <a href="mailto:info@erasmusvibe.com" style="color:#FF6B00;">info@erasmusvibe.com</a> · Powered by Erasmus Vibe`,
+    `Need help? Contact us at <a href="mailto:info@erasmuslifevalencia.com" style="color:#FF6B00;">info@erasmuslifevalencia.com</a> · Powered by Erasmus Life`,
   )
 
   try {
@@ -394,8 +394,8 @@ interface BookingRefundEmailParams {
 }
 
 export async function sendBookingRefundEmail(params: BookingRefundEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
 
   const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
@@ -488,11 +488,11 @@ interface RoomContactEmailParams {
 }
 
 export async function sendRoomContactEmail(params: RoomContactEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
   const waNumber  = params.partnerWhatsapp.replace(/[^0-9]/g, '')
   const waMessage = encodeURIComponent(
-    `Hi ${params.partnerContactName || params.partnerName}! I'm ${params.guestName} and I found your room "${params.roomTitle}" on Erasmus Vibe. I'm interested in moving in on ${params.moveInDate}. Is it still available?`,
+    `Hi ${params.partnerContactName || params.partnerName}! I'm ${params.guestName} and I found your room "${params.roomTitle}" on Erasmus Life. I'm interested in moving in on ${params.moveInDate}. Is it still available?`,
   )
   const waLink = waNumber ? `https://wa.me/${waNumber}?text=${waMessage}` : ''
 
@@ -568,7 +568,7 @@ export async function sendRoomContactEmail(params: RoomContactEmailParams) {
       <tr>
         <td style="padding:16px 20px;">
           <p style="margin:0;font-size:13px;color:#B8A090;line-height:1.6;">
-            ℹ️ <strong style="color:#FFF8EE;">Please note:</strong> Monthly rent and deposit are paid <strong style="color:#FFF8EE;">directly to the landlord</strong>, not through Erasmus Vibe. The €50 booking fee covers our platform service only.
+            ℹ️ <strong style="color:#FFF8EE;">Please note:</strong> Monthly rent and deposit are paid <strong style="color:#FFF8EE;">directly to the landlord</strong>, not through Erasmus Life. The €50 booking fee covers our platform service only.
           </p>
         </td>
       </tr>
@@ -609,15 +609,15 @@ interface PartnerNotificationEmailParams {
 }
 
 export async function sendPartnerNotificationEmail(params: PartnerNotificationEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
 
   const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
       Hi ${params.partnerName},
     </p>
     <p style="margin:0 0 32px;font-size:15px;color:#B8A090;line-height:1.6;">
-      A student has purchased your contact details via Erasmus Vibe and will be reaching out soon.
+      A student has purchased your contact details via Erasmus Life and will be reaching out soon.
     </p>
 
     <table width="100%" cellpadding="0" cellspacing="0"
@@ -682,7 +682,7 @@ export async function sendPartnerNotificationEmail(params: PartnerNotificationEm
   const html = emailLayout(
     content,
     baseUrl,
-    `Powered by Erasmus Vibe · <a href="https://instagram.com/erasmus_vibe" style="color:#FF6B00;">@erasmus_vibe</a>`,
+    `Powered by Erasmus Life · <a href="https://instagram.com/erasmuslifevalencia" style="color:#FF6B00;">@erasmuslifevalencia</a>`,
   )
 
   try {
@@ -710,8 +710,8 @@ interface GroupBookingEmailParams {
 }
 
 export async function sendGroupBookingConfirmation(params: GroupBookingEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
   const isTrip  = params.type === 'trip'
   const n       = params.tickets.length
   const scanCopy = isTrip
@@ -803,15 +803,15 @@ interface MembershipWelcomeParams {
 }
 
 export async function sendMembershipWelcomeEmail(params: MembershipWelcomeParams) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
-  const from    = process.env.RESEND_FROM_EMAIL   ?? 'bookings@erasmusvibe.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from    = process.env.RESEND_FROM_EMAIL   ?? 'info@erasmuslifevalencia.com'
   const html    = MembershipWelcomeEmail({ ...params, baseUrl })
 
   try {
     const { error } = await getResend().emails.send({
       from,
       to:      params.to,
-      subject: '🌴 Welcome to Erasmus Vibe Membership!',
+      subject: '🌴 Welcome to Erasmus Life Membership!',
       html,
     })
     if (error) console.error('[email membership] send failed:', error)
@@ -830,8 +830,8 @@ interface JobManagementEmailParams {
 }
 
 export async function sendJobManagementEmail(params: JobManagementEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
   const html    = JobManagementEmail({ ...params, baseUrl })
 
   try {
@@ -858,15 +858,15 @@ interface AmbassadorApprovalEmailParams {
 }
 
 export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
 
   const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
       Hey ${params.name.split(' ')[0]} 🌟
     </p>
     <p style="margin:0 0 32px;font-size:15px;color:#B8A090;line-height:1.6;">
-      Congratulations! Your application has been approved — you're now an official Erasmus Vibe Ambassador in Valencia.
+      Congratulations! Your application has been approved — you're now an official Erasmus Life Ambassador in Valencia.
     </p>
 
     <table width="100%" cellpadding="0" cellspacing="0"
@@ -875,7 +875,7 @@ export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmai
         <td align="center" style="padding:28px 24px;">
           <p style="font-size:40px;margin:0 0 12px;">🌟</p>
           <p style="margin:0 0 6px;font-size:22px;font-weight:700;color:#FF6B00;">You're an Ambassador!</p>
-          <p style="margin:0;font-size:14px;color:#B8A090;">Welcome to the Erasmus Vibe Ambassador Program</p>
+          <p style="margin:0;font-size:14px;color:#B8A090;">Welcome to the Erasmus Life Ambassador Program</p>
         </td>
       </tr>
     </table>
@@ -940,7 +940,7 @@ export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmai
     const { error } = await getResend().emails.send({
       from,
       to:      params.to,
-      subject: "🌟 You're an Erasmus Vibe Ambassador!",
+      subject: "🌟 You're an Erasmus Life Ambassador!",
       html,
     })
     if (error) console.error('[email ambassador approval] send failed:', error)
@@ -958,8 +958,8 @@ interface AmbassadorCommissionEmailParams {
 }
 
 export async function sendAmbassadorCommissionEmail(params: AmbassadorCommissionEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'bookings@erasmusvibe.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
 
   const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">

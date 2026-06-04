@@ -7,58 +7,58 @@ import type { MembershipPlan, MembershipRow, SponsorRow } from '@/types/database
 import { CheckCircle, ShieldCheck, Zap } from 'lucide-react'
 
 export const metadata = {
-  title:       'Membership — Erasmus Vibe',
-  description: 'Unlock your Valencia experience. Exclusive events, trip discounts, international dinners, and a professional network — open to all internationals.',
+  title:       'Membership — Erasmus Life Valencia',
+  description: 'The Erasmus Life Premium Card. Discounts, exclusive events, housing contacts and the full Valencia Erasmus experience.',
   openGraph: {
-    title:       'Membership — Erasmus Vibe Valencia',
-    description: 'Unlock your Valencia experience with exclusive access, trip discounts, and a professional network.',
+    title:       'Membership — Erasmus Life Valencia',
+    description: 'Get more from your Erasmus semester. Discounts, exclusive events, housing contacts and the full Valencia experience.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'Membership — Erasmus Vibe',
-    description: 'Unlock your Valencia experience — exclusive events, trip discounts, and a professional network.',
+    title:       'Membership — Erasmus Life Valencia',
+    description: 'The Erasmus Life Premium Card — discounts, exclusive events and the full Valencia Erasmus experience.',
   },
 }
 
 const BENEFITS = [
   {
     icon:  '🎟️',
-    title: 'Priority Event Access',
-    desc:  'Get early access before tickets sell out to the general public.',
+    title: '10% Off All Events & Trips',
+    desc:  'Save on every event ticket and trip booking.',
   },
   {
-    icon:  '✈️',
-    title: 'Trip Discounts',
-    desc:  'Save on every trip with exclusive member-only pricing tiers.',
+    icon:  '⚡',
+    title: 'Priority Trip Booking',
+    desc:  'Get early access before popular trips sell out.',
   },
   {
-    icon:  '🌍',
-    title: 'Meet People from 50+ Countries',
-    desc:  'Join an exclusive international community right here in Valencia.',
-  },
-  {
-    icon:  '🍽️',
-    title: 'Monthly International Dinners',
-    desc:  'Exclusive sit-down dinners for members only — new cuisines, new friends.',
-  },
-  {
-    icon:  '💼',
-    title: 'Professional Network in Valencia',
-    desc:  'Connect with expats, entrepreneurs and professionals building careers here.',
+    icon:  '🎉',
+    title: 'Free Exclusive Member Events',
+    desc:  'Access to events only available to members.',
   },
   {
     icon:  '💬',
-    title: 'Private WhatsApp Groups',
-    desc:  'Curated communities by nationality, interest and city area.',
+    title: 'Private Erasmus WhatsApp Groups',
+    desc:  'Curated groups for Erasmus students in Valencia.',
+  },
+  {
+    icon:  '🏠',
+    title: 'Housing Contact Details',
+    desc:  'See landlord contacts directly — no middleman.',
+  },
+  {
+    icon:  '🎁',
+    title: 'Partner Discounts in Valencia',
+    desc:  'Exclusive deals with our partner businesses.',
   },
 ]
 
 const TRUST = [
   { icon: <Zap size={16} />,         label: 'Instant activation' },
   { icon: <CheckCircle size={16} />, label: 'Cancel anytime'     },
-  { icon: <ShieldCheck size={16} />, label: 'Open to all internationals' },
+  { icon: <ShieldCheck size={16} />, label: 'Erasmus students worldwide' },
 ]
 
 const PLAN_LABELS: Record<MembershipPlan, string> = {
@@ -110,10 +110,10 @@ export default async function MembershipPage() {
             Membership
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-gradient mb-5 leading-tight">
-            Unlock Your<br />Valencia Experience
+            The Erasmus Life<br />Premium Card 👑
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto">
-            Exclusive access, discounts, and a community that feels like home.
+            Get more from your Erasmus semester. Discounts, exclusive events, housing contacts and the full Valencia experience.
           </p>
         </div>
       </section>

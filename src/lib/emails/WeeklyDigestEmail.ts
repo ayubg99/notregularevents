@@ -128,6 +128,6 @@ export function WeeklyDigestEmail({ events, trips, baseUrl, unsubscribeUrl, week
   return emailLayout(
     content,
     baseUrl,
-    `Erasmus Vibe Valencia — your international community<br /><a href="${unsubscribeUrl}" style="color:#B8A090;font-size:11px;">Unsubscribe from newsletter</a>`,
+    `Erasmus Life Valencia — your international community<br /><a href="${unsubscribeUrl}" style="color:#B8A090;font-size:11px;">Unsubscribe from newsletter</a>`,
   )
 }

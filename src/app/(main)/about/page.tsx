@@ -1,24 +1,24 @@
 export const metadata = {
-  title:       'About — Erasmus Vibe',
-  description: 'Founded for internationals in Valencia. We bring together expats, students, digital nomads and young professionals into one community.',
+  title:       'About — Erasmus Life Valencia',
+  description: 'Since 1994, the official Erasmus community in Valencia. Thousands of students, hundreds of events, and one unforgettable semester.',
   openGraph: {
-    title:       'About — Erasmus Vibe Valencia',
-    description: 'Founded for internationals in Valencia. We bring together expats, students, digital nomads and young professionals into one community.',
+    title:       'About — Erasmus Life Valencia',
+    description: 'Since 1994, the official Erasmus community in Valencia. Thousands of students, hundreds of events, and one unforgettable semester.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'About — Erasmus Vibe',
-    description: 'Founded for internationals in Valencia — expats, students, digital nomads and young professionals.',
+    title:       'About — Erasmus Life Valencia',
+    description: 'Since 1994, the official Erasmus community in Valencia.',
   },
 }
 
 const TEAM = [
-  { name: 'Alex M.',  role: 'Co-Founder & CEO',   nationality: '🇩🇪', emoji: '👨‍💼' },
-  { name: 'Sofia R.', role: 'Head of Events',      nationality: '🇪🇸', emoji: '🎉' },
-  { name: 'Luca B.',  role: 'Trips & Experiences', nationality: '🇮🇹', emoji: '✈️' },
-  { name: 'Mia K.',   role: 'Community & Growth',  nationality: '🇫🇷', emoji: '💬' },
+  { name: 'Leadership',     role: 'Co-Founders & Strategy', nationality: '🇪🇸', emoji: '🌟' },
+  { name: 'Events Team',    role: 'Events & Nightlife',     nationality: '🎉', emoji: '🎉' },
+  { name: 'Trips Team',     role: 'Travel & Adventures',    nationality: '🌍', emoji: '✈️' },
+  { name: 'Community Team', role: 'Community & Growth',     nationality: '💬', emoji: '💬' },
 ]
 
 const PHOTO_GRADIENTS = [
@@ -45,10 +45,10 @@ export default function AboutPage() {
             Our Story
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-gradient mb-5 leading-tight">
-            We Are Erasmus Vibe
+            About Erasmus Life Valencia
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto">
-            Born in Valencia, built for every international who calls this city home.
+            Since 1994, the official Erasmus community in Valencia.
           </p>
         </div>
 
@@ -65,22 +65,20 @@ export default function AboutPage() {
       <section className="max-w-2xl mx-auto px-4 pb-20">
         <div className="flex flex-col gap-6 text-white/65 text-base leading-relaxed">
           <p>
-            It started in September 2023 when two Erasmus students — Alex from Berlin and Sofia from Madrid — landed
-            in Valencia with two suitcases and zero plans. They found a city bursting with energy but no real hub
-            for internationals to connect. WhatsApp groups, scattered Facebook posts, and missed opportunities
-            were the norm.
+            Erasmus Life Valencia was founded in 1994 with a single mission: to make every Erasmus student&apos;s
+            semester in Valencia unforgettable. What started as a small welcome team for incoming international
+            students grew into the official Erasmus community trusted by thousands of students each year.
           </p>
           <p>
-            So they built one. Erasmus Vibe started as a simple events newsletter and quickly became the go-to
-            platform for internationals in Valencia. With Luca joining to lead trips and Mia building the community
-            side, the team organised over 50 events in the first semester alone — beach parties, hiking trips,
-            city tours, and paella nights that turned strangers into lifelong friends.
+            Over three decades, we&apos;ve organised thousands of events, trips, and experiences for Erasmus students
+            from every corner of Europe and beyond. From rooftop parties in the old town to weekend trips to Ibiza,
+            Lisbon and Barcelona — we&apos;ve been there, every semester, for every student.
           </p>
           <p>
-            Today, Erasmus Vibe is home to 500+ members from 50+ nationalities — Erasmus students, expats,
-            digital nomads, au pairs, and young professionals who all chose Valencia and want to make every
-            single day count. We&apos;ve grown beyond one audience because Valencia&apos;s international
-            community is bigger than any one label. That&apos;s the mission. That&apos;s the vibe.
+            Today, Erasmus Life Valencia is the go-to platform for Erasmus students in Valencia. 5,000+ students.
+            50+ nationalities. Events every week of the semester. Housing support, job listings, a marketplace,
+            and a community that feels like a second family. If you&apos;re coming to Valencia for your Erasmus,
+            you&apos;re already home.
           </p>
         </div>
       </section>
@@ -89,7 +87,7 @@ export default function AboutPage() {
       <section className="max-w-2xl mx-auto px-4 pb-20">
         <blockquote className="border-l-4 border-brand-primary pl-6">
           <p className="font-heading text-2xl sm:text-3xl font-bold italic text-white leading-snug">
-            &ldquo;To make Valencia feel like home for every international — one experience at a time.&rdquo;
+            &ldquo;To give every Erasmus student in Valencia the best semester of their life — one experience at a time.&rdquo;
           </p>
         </blockquote>
       </section>

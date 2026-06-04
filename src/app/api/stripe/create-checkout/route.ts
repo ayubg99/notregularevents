@@ -657,7 +657,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
         price_data: {
           currency:     'eur',
           unit_amount:  4900,
-          product_data: { name: 'Employer Plan — Erasmus Vibe Jobs' },
+          product_data: { name: 'Employer Plan — Erasmus Life Jobs' },
           recurring:    { interval: 'month' },
         },
         quantity: 1,
@@ -742,7 +742,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
           price_data: {
             currency:     'eur',
             unit_amount:  4900,
-            product_data: { name: 'Employer Plan — Erasmus Vibe Jobs' },
+            product_data: { name: 'Employer Plan — Erasmus Life Jobs' },
             recurring:    { interval: 'month' },
           },
           quantity: 1,

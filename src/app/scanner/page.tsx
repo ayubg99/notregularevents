@@ -113,7 +113,7 @@ export default function ScannerPage() {
         <div className="w-full max-w-sm bg-white/5 rounded-2xl p-10 text-center">
           <Image
             src="/logo-circle.png"
-            alt="Erasmus Vibe"
+            alt="Erasmus Life"
             width={64}
             height={64}
             className="rounded-full mx-auto mb-5"

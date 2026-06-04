@@ -2,18 +2,18 @@ import { Mail, MessageCircle, ExternalLink } from 'lucide-react'
 import ContactForm from './ContactForm'
 
 export const metadata = {
-  title:       'Contact — Erasmus Vibe',
-  description: "Get in touch with the Erasmus Vibe team. We're always happy to hear from you.",
+  title:       'Contact — Erasmus Life',
+  description: "Get in touch with the Erasmus Life team. We're always happy to hear from you.",
   openGraph: {
-    title:       'Contact — Erasmus Vibe Valencia',
-    description: "Get in touch with the Erasmus Vibe team.",
+    title:       'Contact — Erasmus Life Valencia',
+    description: "Get in touch with the Erasmus Life team.",
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'Contact — Erasmus Vibe',
-    description: "Get in touch with the Erasmus Vibe team.",
+    title:       'Contact — Erasmus Life',
+    description: "Get in touch with the Erasmus Life team.",
   },
 }
 
@@ -29,16 +29,16 @@ const CONTACT_LINKS = [
   {
     icon:  <Mail size={20} />,
     label: 'Email',
-    value: 'info@erasmusvibe.com',
-    href:  'mailto:info@erasmusvibe.com',
+    value: 'info@erasmuslifevalencia.com',
+    href:  'mailto:info@erasmuslifevalencia.com',
     color: 'text-brand-primary',
     bg:    'bg-brand-primary/10 border-brand-primary/20',
   },
   {
     icon:  <ExternalLink size={20} />,
     label: 'Instagram',
-    value: '@erasmus_vibe',
-    href:  'https://instagram.com/erasmus_vibe',
+    value: '@erasmuslifevalencia',
+    href:  'https://instagram.com/erasmuslifevalencia',
     color: 'text-pink-400',
     bg:    'bg-pink-500/10 border-pink-500/20',
   },

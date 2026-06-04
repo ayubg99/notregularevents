@@ -50,8 +50,8 @@ export async function createEvent(data: EventInsert, notifySubscribers = false):
   if (!auth.ok) return { success: false, error: auth.error }
 
   const admin   = getAdminClient()
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
-  const from    = process.env.RESEND_FROM_EMAIL   ?? 'bookings@erasmusvibe.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from    = process.env.RESEND_FROM_EMAIL   ?? 'bookings@erasmuslifevalencia.com'
 
   const { data: row, error } = await admin
     .from('events')
@@ -163,8 +163,8 @@ export async function createTrip(data: TripInsert, notifySubscribers = false): P
   if (!auth.ok) return { success: false, error: auth.error }
 
   const admin   = getAdminClient()
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
-  const from    = process.env.RESEND_FROM_EMAIL   ?? 'bookings@erasmusvibe.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from    = process.env.RESEND_FROM_EMAIL   ?? 'bookings@erasmuslifevalencia.com'
 
   const { data: row, error } = await admin
     .from('trips')

@@ -5,7 +5,7 @@ import HousingTabs from './HousingTabs'
 import type { PartnerRoomRow } from '@/types/database'
 
 export const metadata: Metadata = {
-  title: 'Housing Board | Erasmus Vibe',
+  title: 'Housing Board | Erasmus Life',
   description: 'Find rooms and roommates in Valencia with fellow Erasmus students.',
 }
 
@@ -49,10 +49,10 @@ export default async function HousingPage() {
         {/* Hero */}
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Find Your Home in Valencia 🏠
+            Find Your Room in Valencia 🏠
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto">
-            Verified partner rooms and student listings — all in one place
+            Rooms posted by Erasmus students and verified partner landlords. Find your home before you arrive.
           </p>
         </div>
 

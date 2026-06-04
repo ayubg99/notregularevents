@@ -19,15 +19,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .eq('id', id)
     .single()
 
-  if (!job) return { title: 'Job Not Found | Erasmus Vibe' }
+  if (!job) return { title: 'Job Not Found | Erasmus Life' }
 
-  const title = `${job.title} — ${job.company_name} | Erasmus Vibe Valencia`
+  const title = `${job.title} — ${job.company_name} | Erasmus Life Valencia`
   const description =
     `${job.job_type.replace('_', ' ')} position at ` +
     `${job.company_name} in ${job.location}. ` +
     `${job.salary_text ? `${job.salary_text}. ` : ''}` +
     `${job.hours_per_week ? `${job.hours_per_week}h/week. ` : ''}` +
-    `Apply now on Erasmus Vibe.`
+    `Apply now on Erasmus Life.`
 
   return {
     title,
@@ -380,7 +380,7 @@ export default async function JobDetailPage({ params }: Props) {
                 {job.apply_email?.trim() && (
                   <>
                     <a
-                      href={`mailto:${job.apply_email.trim()}?subject=${encodeURIComponent(`Application: ${job.title} — Erasmus Vibe`)}&body=${encodeURIComponent(`Hi ${job.contact_name || 'there'},\n\nI found your job posting "${job.title}" on Erasmus Vibe and I am interested in applying.\n\nName: \nNationality: \nUniversity: \nAvailable from: \n\nBest regards`)}`}
+                      href={`mailto:${job.apply_email.trim()}?subject=${encodeURIComponent(`Application: ${job.title} — Erasmus Life`)}&body=${encodeURIComponent(`Hi ${job.contact_name || 'there'},\n\nI found your job posting "${job.title}" on Erasmus Life and I am interested in applying.\n\nName: \nNationality: \nUniversity: \nAvailable from: \n\nBest regards`)}`}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -411,7 +411,7 @@ export default async function JobDetailPage({ params }: Props) {
                 {/* Apply on WhatsApp */}
                 {job.apply_whatsapp && (
                   <a
-                    href={`https://wa.me/${job.apply_whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi! I found your job "${job.title}" on Erasmus Vibe and I am interested.`)}`}
+                    href={`https://wa.me/${job.apply_whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi! I found your job "${job.title}" on Erasmus Life and I am interested.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{

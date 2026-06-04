@@ -183,7 +183,7 @@ export default function PostListingForm({ userId }: { userId: string }) {
           <p className="text-white/50 text-sm mb-8">Students can now find your listing on the housing board.</p>
           <div className="space-y-3">
             <a
-              href={`https://wa.me/?text=${encodeURIComponent('I posted my room on Erasmus Vibe! erasmusvibe.vercel.app/housing')}`}
+              href={`https://wa.me/?text=${encodeURIComponent('I posted my room on Erasmus Life! erasmuslifevalencia.vercel.app/housing')}`}
               target="_blank"
               rel="noopener noreferrer"
               className="block bg-[#25D366] text-white py-3 rounded-full font-bold text-sm hover:opacity-90 transition-opacity"

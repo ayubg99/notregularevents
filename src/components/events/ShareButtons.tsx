@@ -11,7 +11,7 @@ interface Props {
 export default function ShareButtons({ title, slug }: Props) {
   const [copied, setCopied] = useState(false)
   const [url] = useState(() =>
-    typeof window !== 'undefined' ? window.location.href : `https://erasmusvibe.com/${slug}`
+    typeof window !== 'undefined' ? window.location.href : `https://erasmuslifevalencia.com/${slug}`
   )
 
   const waText = encodeURIComponent(`Check out this event: ${title} — ${url}`)

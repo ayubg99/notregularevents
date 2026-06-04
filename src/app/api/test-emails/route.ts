@@ -8,10 +8,10 @@ import {
 
 export const runtime = 'nodejs'
 
-const TEST_TO = process.env.TEST_EMAIL ?? 'test@erasmusvibe.com'
+const TEST_TO = process.env.TEST_EMAIL ?? 'test@erasmuslifevalencia.com'
 
 const FAKE_BOOKING_REF = 'EV-TEST1'
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmusvibe.com'
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
 
 export async function GET(req: NextRequest) {
   if (process.env.NODE_ENV !== 'development') {

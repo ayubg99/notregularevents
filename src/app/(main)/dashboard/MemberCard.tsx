@@ -64,7 +64,7 @@ export default function MemberCard({ membership, displayName, nationality, unive
   const [copied, setCopied] = useState(false)
 
   function handleCopy() {
-    navigator.clipboard.writeText('ERASMUSVIBE').then(() => {
+    navigator.clipboard.writeText('ERASMUSLIFE').then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
@@ -88,10 +88,10 @@ export default function MemberCard({ membership, displayName, nationality, unive
           <div className="flex items-center gap-1.5">
             <span style={{ fontSize: 16 }}>🌴</span>
             <span style={{ color: dark, fontSize: 13, fontWeight: 800, letterSpacing: '0.05em' }}>
-              ERASMUS VIBE
+              ERASMUS LIFE
             </span>
           </div>
-          <Image src="/logo.png" alt="Erasmus Vibe" width={36} height={36} className="rounded-full flex-shrink-0" />
+          <Image src="/logo.png" alt="Erasmus Life" width={36} height={36} className="rounded-full flex-shrink-0" />
         </div>
 
         {/* Divider */}
@@ -151,7 +151,7 @@ export default function MemberCard({ membership, displayName, nationality, unive
               Member Code
             </p>
             <p style={{ color: dark, fontSize: 15, fontWeight: 700, margin: 0, fontFamily: 'monospace', letterSpacing: '0.1em' }}>
-              ERASMUSVIBE
+              ERASMUSLIFE
             </p>
           </div>
           <button

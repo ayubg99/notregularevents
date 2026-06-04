@@ -7,7 +7,7 @@ import EditJobClient from '@/components/jobs/EditJobClient'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Edit Job Listing | Erasmus Vibe',
+  title: 'Edit Job Listing | Erasmus Life',
 }
 
 interface Props {

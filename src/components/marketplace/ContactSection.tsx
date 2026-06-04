@@ -47,7 +47,7 @@ export function ContactSection({ listing }: Props) {
 
   if (hasMembership) {
     const waMsg = encodeURIComponent(
-      `Hi! I saw your listing "${listing.title}" on Erasmus Vibe. Is it still available?`
+      `Hi! I saw your listing "${listing.title}" on Erasmus Life. Is it still available?`
     )
     const waNumber = listing.contact_whatsapp?.replace(/[^0-9]/g, '') ?? ''
 
@@ -88,7 +88,7 @@ export function ContactSection({ listing }: Props) {
 
         {listing.contact_email && (
           <a
-            href={`mailto:${listing.contact_email}?subject=Re: ${listing.title} on Erasmus Vibe`}
+            href={`mailto:${listing.contact_email}?subject=Re: ${listing.title} on Erasmus Life`}
             style={{
               display:         'flex',
               alignItems:      'center',

@@ -3,7 +3,7 @@ import { getAdminClient } from '@/lib/supabase/admin'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const admin = getAdminClient()
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://erasmusvibe.com'
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://erasmuslifevalencia.com'
 
   const staticRoutes: { path: string; freq: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number }[] = [
     { path: '',             freq: 'daily',   priority: 1   },

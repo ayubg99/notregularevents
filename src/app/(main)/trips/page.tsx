@@ -3,17 +3,17 @@ import TripsClient from '@/components/trips/TripsClient'
 import { getPublishedTrips } from '@/lib/supabase/queries'
 
 export const metadata: Metadata = {
-  title:       'Trips | Erasmus Vibe Valencia',
-  description: 'Explore Spain and beyond with Erasmus Vibe. Weekend getaways, cultural road trips, wine tours and international group travel — organised for Valencia\'s international community.',
+  title:       'Trips | Erasmus Life Valencia',
+  description: 'Explore Spain and beyond with Erasmus Life. Weekend getaways, cultural road trips, wine tours and international group travel — organised for Valencia\'s international community.',
   openGraph: {
-    title:       'Trips | Erasmus Vibe Valencia',
+    title:       'Trips | Erasmus Life Valencia',
     description: 'Weekend getaways, cultural road trips, wine tours and adventures — organised for Valencia\'s international community.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'Trips | Erasmus Vibe Valencia',
+    title:       'Trips | Erasmus Life Valencia',
     description: 'Weekend getaways, cultural road trips and wine tours — organised for Valencia\'s international community.',
   },
 }

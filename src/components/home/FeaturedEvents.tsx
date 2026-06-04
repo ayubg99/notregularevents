@@ -38,7 +38,7 @@ export default async function FeaturedEvents() {
         <div className="flex items-end justify-between mb-10">
           <div>
             <p className="text-brand-primary font-semibold text-sm uppercase tracking-widest mb-2">
-              What&apos;s On
+              This Week in Valencia 🎉
             </p>
             <h2 className="font-heading text-4xl md:text-5xl font-bold text-[var(--text-base)]">
               Upcoming Events

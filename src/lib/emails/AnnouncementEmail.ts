@@ -68,7 +68,7 @@ export function NewEventAnnouncementEmail(p: NewEventProps): string {
   return emailLayout(
     content,
     p.baseUrl,
-    `Erasmus Vibe Valencia — your international community<br /><a href="${p.unsubscribeUrl}" style="color:#B8A090;font-size:11px;">Unsubscribe from newsletter</a>`,
+    `Erasmus Life Valencia — your international community<br /><a href="${p.unsubscribeUrl}" style="color:#B8A090;font-size:11px;">Unsubscribe from newsletter</a>`,
   )
 }
 
@@ -114,6 +114,6 @@ export function NewTripAnnouncementEmail(p: NewTripProps): string {
   return emailLayout(
     content,
     p.baseUrl,
-    `Erasmus Vibe Valencia — your international community<br /><a href="${p.unsubscribeUrl}" style="color:#B8A090;font-size:11px;">Unsubscribe from newsletter</a>`,
+    `Erasmus Life Valencia — your international community<br /><a href="${p.unsubscribeUrl}" style="color:#B8A090;font-size:11px;">Unsubscribe from newsletter</a>`,
   )
 }

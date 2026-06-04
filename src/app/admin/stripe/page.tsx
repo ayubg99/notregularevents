@@ -60,7 +60,7 @@ export default async function StripeStatusPage() {
               background:   accountStatus.chargesEnabled ? '#2ECC71' : '#FF4444',
             }} />
             <p style={{ color: '#fff', fontWeight: 600, margin: 0, fontSize: '16px' }}>
-              Erasmus Vibe — {accountStatus.chargesEnabled ? 'Active' : 'Pending Setup'}
+              Erasmus Life — {accountStatus.chargesEnabled ? 'Active' : 'Pending Setup'}
             </p>
           </div>
 

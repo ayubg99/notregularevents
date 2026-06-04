@@ -30,7 +30,7 @@ export default async function MemberCardPage() {
     'Student'
 
   const qrCodeUrl = await QRCode.toDataURL(
-    `ERASMUSVIBE-${user.id.slice(0, 8).toUpperCase()}`,
+    `ERASMUSLIFE-${user.id.slice(0, 8).toUpperCase()}`,
     { width: 200, margin: 1, color: { dark: '#1A1A0E', light: '#FFF8E8' } },
   )
 

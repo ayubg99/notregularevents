@@ -32,10 +32,10 @@ const FOOTER_LINKS = {
 
 const SOCIALS = [
   {
-    href:    'https://instagram.com/erasmus_vibe',
+    href:    'https://instagram.com/erasmuslifevalencia',
     icon:    Camera,
     label:   'Instagram',
-    handle:  '@erasmus_vibe',
+    handle:  '@erasmuslifevalencia',
     color:   'hover:text-pink-400',
   },
   {
@@ -49,7 +49,7 @@ const SOCIALS = [
     href:    '#tiktok',
     icon:    Music2,
     label:   'TikTok',
-    handle:  '@erasmus_vibe',
+    handle:  '@erasmuslifevalencia',
     color:   'hover:text-brand-accent',
   },
 ]
@@ -68,7 +68,7 @@ export default function Footer() {
             <Link href="/" className="w-fit">
               <Image
                 src="/logo.png"
-                alt="Erasmus Vibe"
+                alt="Erasmus Life"
                 width={200}
                 height={52}
                 className="h-14 w-auto"
@@ -77,7 +77,7 @@ export default function Footer() {
 
             {/* Tagline */}
             <p className="text-white/60 text-sm leading-relaxed max-w-xs">
-              Your community in Valencia — events, trips, and connections for internationals, expats, and students.
+              The official Erasmus community in Valencia since 1994. Events, trips, and everything students need for an unforgettable semester.
             </p>
 
             {/* Location */}
@@ -149,10 +149,10 @@ export default function Footer() {
       <div className="border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-white/25 text-xs">
-            © {new Date().getFullYear()} Erasmus Vibe Valencia. All rights reserved.
+            © {new Date().getFullYear()} Erasmus Life Valencia. All rights reserved.
           </p>
           <p className="text-white/20 text-xs">
-            Made with ♥ for internationals in Valencia
+            Made for Erasmus students in Valencia 🎓
           </p>
         </div>
       </div>

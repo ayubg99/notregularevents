@@ -22,10 +22,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const trip = await getTripBySlug(slug)
   if (!trip) return { title: 'Trip Not Found' }
 
-  const description = trip.description?.slice(0, 155) ?? `Join Erasmus Vibe on a trip to ${trip.destination}`
+  const description = trip.description?.slice(0, 155) ?? `Join Erasmus Life on a trip to ${trip.destination}`
 
   return {
-    title:       `${trip.title} | Erasmus Vibe Valencia`,
+    title:       `${trip.title} | Erasmus Life Valencia`,
     description,
     openGraph: {
       title:       trip.title,
