@@ -99,7 +99,7 @@ export default function HeroSection() {
       ))}
 
       {/* ── Main content ─────────────────────────────────────── */}
-      <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
+      <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-32 sm:pt-20">
 
         {/* Eyebrow badge */}
         <motion.div
