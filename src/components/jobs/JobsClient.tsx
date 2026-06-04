@@ -100,9 +100,9 @@ export default function JobsClient({ jobs }: Props) {
                 fontSize: '13px',
                 fontWeight: 600,
                 cursor: 'pointer',
-                border: jobType === tab.value ? '1px solid #F5A623' : '1px solid rgba(255,255,255,0.1)',
-                background: jobType === tab.value ? 'rgba(245,166,35,0.15)' : 'transparent',
-                color: jobType === tab.value ? '#F5A623' : '#888',
+                border: jobType === tab.value ? '1px solid #FF6B00' : '1px solid rgba(255,255,255,0.1)',
+                background: jobType === tab.value ? 'rgba(255,107,0,0.15)' : 'transparent',
+                color: jobType === tab.value ? '#FF6B00' : '#888',
                 transition: 'all 0.15s',
               }}
             >
@@ -129,7 +129,7 @@ export default function JobsClient({ jobs }: Props) {
             }}
           >
             {CATEGORIES.map(c => (
-              <option key={c.value} value={c.value} style={{ background: '#1A1A2E' }}>
+              <option key={c.value} value={c.value} style={{ background: '#0D0D0D' }}>
                 {c.label}
               </option>
             ))}
@@ -151,7 +151,7 @@ export default function JobsClient({ jobs }: Props) {
             }}
           >
             {LANGUAGES.map(l => (
-              <option key={l.value} value={l.value} style={{ background: '#1A1A2E' }}>
+              <option key={l.value} value={l.value} style={{ background: '#0D0D0D' }}>
                 {l.label}
               </option>
             ))}
@@ -179,7 +179,7 @@ export default function JobsClient({ jobs }: Props) {
           </p>
           <p style={{ fontSize: '14px', marginBottom: '24px' }}>
             Try adjusting your filters or{' '}
-            <Link href="/jobs/post" style={{ color: '#F5A623' }}>
+            <Link href="/jobs/post" style={{ color: '#FF6B00' }}>
               post a job
             </Link>
           </p>

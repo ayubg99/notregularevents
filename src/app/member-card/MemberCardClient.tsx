@@ -98,7 +98,7 @@ export default function MemberCardClient({ membership, displayName, nationality,
     <div
       className="min-h-screen flex flex-col items-center justify-between"
       style={{
-        background:    '#1A1A2E',
+        background:    '#0D0D0D',
         paddingTop:    'max(1.25rem, env(safe-area-inset-top, 1.25rem))',
         paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom, 1.25rem))',
         paddingLeft:   '1.25rem',
@@ -119,7 +119,7 @@ export default function MemberCardClient({ membership, displayName, nationality,
       {/* Card */}
       <div
         className="w-full max-w-sm rounded-3xl overflow-hidden relative"
-        style={{ background: 'linear-gradient(145deg, #F5A623 0%, #FF6B35 55%, #E05828 100%)' }}
+        style={{ background: 'linear-gradient(145deg, #FF6B00 0%, #E91E8C 55%, #E05828 100%)' }}
       >
         {/* decorative blobs */}
         <div style={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,0.08)', pointerEvents: 'none' }} />
@@ -231,7 +231,7 @@ export default function MemberCardClient({ membership, displayName, nationality,
                 <div key={n} className="flex items-start gap-3 mb-4">
                   <div
                     className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5"
-                    style={{ background: 'rgba(245,166,35,0.18)', color: '#F5A623' }}
+                    style={{ background: 'rgba(255,107,0,0.18)', color: '#FF6B00' }}
                   >
                     {n}
                   </div>
@@ -242,7 +242,7 @@ export default function MemberCardClient({ membership, displayName, nationality,
               <button
                 onClick={() => setShowIOSHint(false)}
                 className="mt-2 w-full py-3 rounded-xl text-sm font-semibold"
-                style={{ background: 'rgba(245,166,35,0.12)', color: '#F5A623' }}
+                style={{ background: 'rgba(255,107,0,0.12)', color: '#FF6B00' }}
               >
                 Got it
               </button>

@@ -342,7 +342,7 @@ export default function PartnerDetailClient({
                   <td className="px-5 py-3 text-white/50 text-sm">{room.views}</td>
                   <td className="px-5 py-3 text-white/50 text-sm">{room.contacts_sold}</td>
                   <td className="px-5 py-3">
-                    <span className={`text-xs ${room.featured ? 'text-amber-400' : 'text-white/30'}`}>
+                    <span className={`text-xs ${room.featured ? 'text-orange-400' : 'text-white/30'}`}>
                       {room.featured ? '⭐ Yes' : 'No'}
                     </span>
                   </td>

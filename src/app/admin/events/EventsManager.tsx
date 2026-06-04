@@ -445,8 +445,8 @@ export default function EventsManager({ initialEvents }: Props) {
                   <>
                     <div className="grid grid-cols-3 gap-3">
                       {/* Early Bird */}
-                      <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 flex flex-col gap-2">
-                        <span className="text-xs font-semibold text-amber-400">🔥 Early Bird</span>
+                      <div className="rounded-xl border border-orange-500/30 bg-orange-500/5 p-3 flex flex-col gap-2">
+                        <span className="text-xs font-semibold text-orange-400">🔥 Early Bird</span>
                         <div>
                           <label className={labelClass}>Price (€)</label>
                           <input type="number" min="0" step="0.01" value={form.price_early_bird} onChange={e => setForm(f => ({ ...f, price_early_bird: e.target.value }))} className={inputClass} placeholder="optional" />
@@ -499,7 +499,7 @@ export default function EventsManager({ initialEvents }: Props) {
                       <div className="rounded-xl bg-white/5 border border-white/10 p-3 text-xs text-white/60 flex flex-col gap-1">
                         <span className="text-white/30 font-semibold uppercase tracking-wider text-[10px]">Preview</span>
                         <div className="flex gap-4 flex-wrap">
-                          {ebNum !== null && <span>🔥 Early Bird: <strong className="text-amber-400">€{ebNum.toFixed(2)}</strong> <span className="text-white/30">/ €{(ebNum * 0.90).toFixed(2)} members</span></span>}
+                          {ebNum !== null && <span>🔥 Early Bird: <strong className="text-orange-400">€{ebNum.toFixed(2)}</strong> <span className="text-white/30">/ €{(ebNum * 0.90).toFixed(2)} members</span></span>}
                           {stdNum > 0 && <span>💰 Standard: <strong className="text-white/80">€{stdNum.toFixed(2)}</strong> <span className="text-white/30">/ €{(stdNum * 0.90).toFixed(2)} members</span></span>}
                           {grpNum !== null && <span>👥 Group: <strong className="text-green-400">€{grpNum!.toFixed(2)}/pp</strong> <span className="text-white/30">min {form.group_min_size}</span></span>}
                         </div>

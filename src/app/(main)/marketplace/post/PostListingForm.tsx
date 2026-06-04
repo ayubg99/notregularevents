@@ -246,7 +246,7 @@ export default function PostListingForm({ userId }: Props) {
     padding:      '8px 14px',
     border:       active ? 'none' : '1px solid rgba(255,255,255,0.1)',
     borderRadius: '50px',
-    background:   active ? '#F5A623' : 'rgba(255,255,255,0.04)',
+    background:   active ? '#FF6B00' : 'rgba(255,255,255,0.04)',
     color:        active ? '#1A1A0E' : '#888',
     cursor:       'pointer',
     fontSize:     '13px',
@@ -304,7 +304,7 @@ export default function PostListingForm({ userId }: Props) {
                   key={cat.id}
                   onClick={() => set('category', cat.id)}
                   style={{
-                    background:    form.category === cat.id ? '#F5A623' : 'rgba(255,255,255,0.03)',
+                    background:    form.category === cat.id ? '#FF6B00' : 'rgba(255,255,255,0.03)',
                     border:        form.category === cat.id ? 'none'    : '1px solid rgba(255,255,255,0.08)',
                     borderRadius:  '12px',
                     padding:       '16px 8px',
@@ -325,8 +325,8 @@ export default function PostListingForm({ userId }: Props) {
               ))}
             </div>
             {selectedCat && 'isTicket' in selectedCat && selectedCat.isTicket && (
-              <div style={{ marginTop: '16px', background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.2)', borderRadius: '10px', padding: '12px 16px' }}>
-                <p style={{ color: '#F5A623', fontSize: '13px', margin: 0 }}>
+              <div style={{ marginTop: '16px', background: 'rgba(255,107,0,0.08)', border: '1px solid rgba(255,107,0,0.2)', borderRadius: '10px', padding: '12px 16px' }}>
+                <p style={{ color: '#FF6B00', fontSize: '13px', margin: 0 }}>
                   🎟️ Selling event tickets? Add event details so buyers know what they&apos;re getting.
                 </p>
               </div>
@@ -684,7 +684,7 @@ export default function PostListingForm({ userId }: Props) {
           ) : <div />}
 
           {step < 5 && (
-            <button onClick={next} style={{ padding: '12px 24px', background: '#F5A623', border: 'none', borderRadius: '50px', color: '#1A1A0E', cursor: 'pointer', fontWeight: 700, fontSize: '14px' }}>
+            <button onClick={next} style={{ padding: '12px 24px', background: '#FF6B00', border: 'none', borderRadius: '50px', color: '#1A1A0E', cursor: 'pointer', fontWeight: 700, fontSize: '14px' }}>
               Continue →
             </button>
           )}

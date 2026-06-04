@@ -147,11 +147,11 @@ export async function sendBookingPendingEmail(params: BookingPendingEmailParams)
     </p>
 
     <table width="100%" cellpadding="0" cellspacing="0"
-           style="background:#221608;border:1px solid rgba(245,166,35,0.2);border-radius:16px;margin-bottom:24px;">
+           style="background:#221608;border:1px solid rgba(255,107,0,0.2);border-radius:16px;margin-bottom:24px;">
       <tr>
         <td align="center" style="padding:24px;">
           <p style="font-size:32px;margin:0 0 8px;">⏳</p>
-          <p style="margin:0 0 4px;font-size:20px;font-weight:700;color:#F5A623;">Booking Pending</p>
+          <p style="margin:0 0 4px;font-size:20px;font-weight:700;color:#FF6B00;">Booking Pending</p>
           <p style="margin:0;font-size:14px;color:#B8A090;">${params.roomTitle}${params.neighborhood ? ` · ${params.neighborhood}` : ''}</p>
         </td>
       </tr>
@@ -170,7 +170,7 @@ export async function sendBookingPendingEmail(params: BookingPendingEmailParams)
               <td style="padding:5px 0;font-size:14px;color:#FFF8EE;text-align:right;font-weight:600;">${params.roomTitle}</td>
             </tr>
             ${params.neighborhood ? `<tr><td style="padding:5px 0;font-size:14px;color:#B8A090;">Neighborhood</td><td style="padding:5px 0;font-size:14px;color:#FFF8EE;text-align:right;">${params.neighborhood}</td></tr>` : ''}
-            ${params.monthlyRent !== undefined ? `<tr><td style="padding:5px 0;font-size:14px;color:#B8A090;">Monthly rent</td><td style="padding:5px 0;font-size:14px;color:#F5A623;font-weight:700;text-align:right;">€${params.monthlyRent}/month</td></tr>` : ''}
+            ${params.monthlyRent !== undefined ? `<tr><td style="padding:5px 0;font-size:14px;color:#B8A090;">Monthly rent</td><td style="padding:5px 0;font-size:14px;color:#FF6B00;font-weight:700;text-align:right;">€${params.monthlyRent}/month</td></tr>` : ''}
             ${params.depositAmount !== undefined ? `<tr><td style="padding:5px 0;font-size:14px;color:#B8A090;">Deposit</td><td style="padding:5px 0;font-size:14px;color:#FFF8EE;text-align:right;">€${params.depositAmount}</td></tr>` : ''}
             ${params.moveInDate ? `<tr><td style="padding:5px 0;font-size:14px;color:#B8A090;">Move-in date</td><td style="padding:5px 0;font-size:14px;color:#FFF8EE;text-align:right;">${params.moveInDate}</td></tr>` : ''}
             ${params.duration ? `<tr><td style="padding:5px 0;font-size:14px;color:#B8A090;">Duration</td><td style="padding:5px 0;font-size:14px;color:#FFF8EE;text-align:right;">${params.duration} month(s)</td></tr>` : ''}
@@ -178,7 +178,7 @@ export async function sendBookingPendingEmail(params: BookingPendingEmailParams)
           </table>
           <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,248,238,0.06);">
             <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">Booking Reference</p>
-            <p style="margin:0;font-family:'Courier New',monospace;font-size:20px;font-weight:700;color:#FF6B35;letter-spacing:0.12em;">${params.bookingRef}</p>
+            <p style="margin:0;font-family:'Courier New',monospace;font-size:20px;font-weight:700;color:#E91E8C;letter-spacing:0.12em;">${params.bookingRef}</p>
           </div>
         </td>
       </tr>
@@ -270,7 +270,7 @@ export async function sendPartnerConfirmationRequest(params: PartnerConfirmation
     </p>
 
     <table width="100%" cellpadding="0" cellspacing="0"
-           style="background:#221608;border:1px solid rgba(245,166,35,0.2);border-radius:16px;margin-bottom:24px;">
+           style="background:#221608;border:1px solid rgba(255,107,0,0.2);border-radius:16px;margin-bottom:24px;">
       <tr>
         <td style="padding:20px 24px;">
           <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">🔔 New Booking Request</p>
@@ -361,14 +361,14 @@ export async function sendPartnerConfirmationRequest(params: PartnerConfirmation
     </table>
 
     <p style="margin:0 0 4px;font-size:12px;color:#B8A090;">
-      Booking reference: <strong style="font-family:'Courier New',monospace;color:#FF6B35;letter-spacing:0.08em;">${params.bookingRef}</strong>
+      Booking reference: <strong style="font-family:'Courier New',monospace;color:#E91E8C;letter-spacing:0.08em;">${params.bookingRef}</strong>
     </p>
   `
 
   const html = emailLayout(
     content,
     baseUrl,
-    `Need help? Contact us at <a href="mailto:info@erasmusvibe.com" style="color:#F5A623;">info@erasmusvibe.com</a> · Powered by Erasmus Vibe`,
+    `Need help? Contact us at <a href="mailto:info@erasmusvibe.com" style="color:#FF6B00;">info@erasmusvibe.com</a> · Powered by Erasmus Vibe`,
   )
 
   try {
@@ -432,7 +432,7 @@ export async function sendBookingRefundEmail(params: BookingRefundEmailParams) {
           </p>
           <div style="padding-top:14px;border-top:1px solid rgba(255,248,238,0.06);">
             <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">Booking Reference</p>
-            <p style="margin:0;font-family:'Courier New',monospace;font-size:18px;font-weight:700;color:#FF6B35;letter-spacing:0.1em;">${params.bookingRef}</p>
+            <p style="margin:0;font-family:'Courier New',monospace;font-size:18px;font-weight:700;color:#E91E8C;letter-spacing:0.1em;">${params.bookingRef}</p>
           </div>
         </td>
       </tr>
@@ -446,7 +446,7 @@ export async function sendBookingRefundEmail(params: BookingRefundEmailParams) {
       <tr>
         <td align="center">
           <a href="${baseUrl}/housing"
-             style="display:inline-block;background:#F5A623;color:#1A1209;font-weight:700;
+             style="display:inline-block;background:#FF6B00;color:#0D0D0D;font-weight:700;
                     font-size:14px;text-decoration:none;padding:14px 32px;border-radius:9999px;">
             Browse Other Rooms →
           </a>
@@ -525,7 +525,7 @@ export async function sendRoomContactEmail(params: RoomContactEmailParams) {
           <p style="margin:0 0 12px;font-size:18px;font-weight:700;color:#FFF8EE;">${params.partnerName}</p>
           ${params.partnerContactName ? `<p style="margin:0 0 8px;font-size:14px;color:#B8A090;">Contact person: ${params.partnerContactName}</p>` : ''}
           ${params.partnerWhatsapp ? `<p style="margin:0 0 8px;font-size:15px;color:#FFF8EE;">📱 &nbsp;WhatsApp: <a href="https://wa.me/${params.partnerWhatsapp.replace(/[^0-9]/g, '')}" style="color:#25D366;font-weight:600;">${params.partnerWhatsapp}</a></p>` : ''}
-          ${params.partnerEmail ? `<p style="margin:0 0 8px;font-size:15px;color:#FFF8EE;">✉️ &nbsp;Email: <a href="mailto:${params.partnerEmail}" style="color:#F5A623;font-weight:600;">${params.partnerEmail}</a></p>` : ''}
+          ${params.partnerEmail ? `<p style="margin:0 0 8px;font-size:15px;color:#FFF8EE;">✉️ &nbsp;Email: <a href="mailto:${params.partnerEmail}" style="color:#FF6B00;font-weight:600;">${params.partnerEmail}</a></p>` : ''}
           ${params.partnerPhone ? `<p style="margin:0;font-size:15px;color:#FFF8EE;">📞 &nbsp;Phone: <strong>${params.partnerPhone}</strong></p>` : ''}
         </td>
       </tr>
@@ -575,7 +575,7 @@ export async function sendRoomContactEmail(params: RoomContactEmailParams) {
     </table>
 
     <p style="margin:0 0 4px;font-size:12px;color:#B8A090;">
-      Booking reference: <strong style="font-family:'Courier New',monospace;color:#FF6B35;letter-spacing:0.08em;">${params.bookingRef}</strong>
+      Booking reference: <strong style="font-family:'Courier New',monospace;color:#E91E8C;letter-spacing:0.08em;">${params.bookingRef}</strong>
     </p>
   `
 
@@ -621,7 +621,7 @@ export async function sendPartnerNotificationEmail(params: PartnerNotificationEm
     </p>
 
     <table width="100%" cellpadding="0" cellspacing="0"
-           style="background:#221608;border:1px solid rgba(245,166,35,0.2);border-radius:16px;margin-bottom:24px;">
+           style="background:#221608;border:1px solid rgba(255,107,0,0.2);border-radius:16px;margin-bottom:24px;">
       <tr>
         <td style="padding:20px 24px;">
           <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">New Room Enquiry</p>
@@ -682,7 +682,7 @@ export async function sendPartnerNotificationEmail(params: PartnerNotificationEm
   const html = emailLayout(
     content,
     baseUrl,
-    `Powered by Erasmus Vibe · <a href="https://instagram.com/erasmus_vibe" style="color:#F5A623;">@erasmus_vibe</a>`,
+    `Powered by Erasmus Vibe · <a href="https://instagram.com/erasmus_vibe" style="color:#FF6B00;">@erasmus_vibe</a>`,
   )
 
   try {
@@ -727,7 +727,7 @@ export async function sendGroupBookingConfirmation(params: GroupBookingEmailPara
            style="background:#221608;border:1px solid rgba(255,248,238,0.09);border-radius:16px;margin-bottom:12px;">
       <tr>
         <td align="center" style="padding:24px;">
-          <p style="margin:0 0 16px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#F5A623;font-weight:700;">
+          <p style="margin:0 0 16px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#FF6B00;font-weight:700;">
             ${isTrip ? '✈️ Traveller' : 'Ticket'} ${i + 1}${i === 0 ? ' — You' : ''}: ${t.name}
           </p>
           <img src="cid:qr-${i}" width="160" height="160" alt="QR Code"
@@ -747,7 +747,7 @@ export async function sendGroupBookingConfirmation(params: GroupBookingEmailPara
     </p>
 
     <table width="100%" cellpadding="0" cellspacing="0"
-           style="background:#221608;border:1px solid rgba(245,166,35,0.2);border-radius:16px;margin-bottom:24px;">
+           style="background:#221608;border:1px solid rgba(255,107,0,0.2);border-radius:16px;margin-bottom:24px;">
       <tr>
         <td align="center" style="padding:24px;">
           <p style="margin:0 0 4px;font-size:18px;font-weight:700;color:#FFF8EE;">${params.eventTitle}</p>
@@ -870,11 +870,11 @@ export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmai
     </p>
 
     <table width="100%" cellpadding="0" cellspacing="0"
-           style="background:#221608;border:1px solid rgba(245,166,35,0.2);border-radius:16px;margin-bottom:24px;">
+           style="background:#221608;border:1px solid rgba(255,107,0,0.2);border-radius:16px;margin-bottom:24px;">
       <tr>
         <td align="center" style="padding:28px 24px;">
           <p style="font-size:40px;margin:0 0 12px;">🌟</p>
-          <p style="margin:0 0 6px;font-size:22px;font-weight:700;color:#F5A623;">You're an Ambassador!</p>
+          <p style="margin:0 0 6px;font-size:22px;font-weight:700;color:#FF6B00;">You're an Ambassador!</p>
           <p style="margin:0;font-size:14px;color:#B8A090;">Welcome to the Erasmus Vibe Ambassador Program</p>
         </td>
       </tr>
@@ -887,7 +887,7 @@ export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmai
           <p style="margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">
             Your Referral Code
           </p>
-          <p style="margin:0;font-family:'Courier New',monospace;font-size:28px;font-weight:700;color:#F5A623;letter-spacing:0.1em;">
+          <p style="margin:0;font-family:'Courier New',monospace;font-size:28px;font-weight:700;color:#FF6B00;letter-spacing:0.1em;">
             ${params.referralCode}
           </p>
         </td>
@@ -901,7 +901,7 @@ export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmai
           <p style="margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">
             Your Referral Link
           </p>
-          <p style="margin:0;font-size:13px;color:#FF6B35;word-break:break-all;">${params.referralLink}</p>
+          <p style="margin:0;font-size:13px;color:#E91E8C;word-break:break-all;">${params.referralLink}</p>
         </td>
       </tr>
     </table>
@@ -914,7 +914,7 @@ export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmai
             How It Works
           </p>
           <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">🔗 &nbsp;Share your referral link with friends interested in Erasmus Valencia</p>
-          <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">💸 &nbsp;Earn <strong style="color:#F5A623;">${params.commissionRate}% commission</strong> when they book an event or trip</p>
+          <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">💸 &nbsp;Earn <strong style="color:#FF6B00;">${params.commissionRate}% commission</strong> when they book an event or trip</p>
           <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">📊 &nbsp;Track your earnings and referrals in your dashboard</p>
           <p style="margin:0;font-size:14px;color:#FFF8EE;">🎁 &nbsp;Hit milestones for bonus rewards — free tickets, membership upgrades, cash bonuses</p>
         </td>
@@ -925,7 +925,7 @@ export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmai
       <tr>
         <td align="center">
           <a href="${baseUrl}/dashboard"
-             style="display:inline-block;background:linear-gradient(135deg,#F5A623,#FF6B35);color:#1A1A0E;
+             style="display:inline-block;background:linear-gradient(135deg,#FF6B00,#E91E8C);color:#1A1A0E;
                     font-weight:700;font-size:15px;text-decoration:none;padding:14px 36px;border-radius:9999px;">
             View Your Dashboard →
           </a>
@@ -994,7 +994,7 @@ export async function sendAmbassadorCommissionEmail(params: AmbassadorCommission
             </tr>
             <tr>
               <td style="padding:6px 0;font-size:14px;color:#B8A090;">Total earned</td>
-              <td style="padding:6px 0;font-size:18px;font-weight:700;color:#F5A623;text-align:right;">€${params.totalEarnings.toFixed(2)}</td>
+              <td style="padding:6px 0;font-size:18px;font-weight:700;color:#FF6B00;text-align:right;">€${params.totalEarnings.toFixed(2)}</td>
             </tr>
           </table>
         </td>
@@ -1005,7 +1005,7 @@ export async function sendAmbassadorCommissionEmail(params: AmbassadorCommission
       <tr>
         <td align="center">
           <a href="${baseUrl}/dashboard"
-             style="display:inline-block;background:linear-gradient(135deg,#F5A623,#FF6B35);color:#1A1A0E;
+             style="display:inline-block;background:linear-gradient(135deg,#FF6B00,#E91E8C);color:#1A1A0E;
                     font-weight:700;font-size:15px;text-decoration:none;padding:14px 36px;border-radius:9999px;">
             View Dashboard →
           </a>

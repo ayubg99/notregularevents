@@ -29,8 +29,8 @@ export const SHOES_SIZES = [
 export const CONDITIONS = [
   { id: 'new_with_tags',    label: 'New with tags',    color: '#2ECC71', desc: 'Never worn, original tags' },
   { id: 'new_without_tags', label: 'New without tags', color: '#4ECDC4', desc: 'Never worn, no tags'       },
-  { id: 'very_good',        label: 'Very good',        color: '#F5A623', desc: 'Worn a few times'          },
-  { id: 'good',             label: 'Good',             color: '#FF6B35', desc: 'Some signs of wear'        },
+  { id: 'very_good',        label: 'Very good',        color: '#FF6B00', desc: 'Worn a few times'          },
+  { id: 'good',             label: 'Good',             color: '#E91E8C', desc: 'Some signs of wear'        },
   { id: 'satisfactory',     label: 'Satisfactory',     color: '#888',    desc: 'Visible signs of wear'     },
 ] as const
 

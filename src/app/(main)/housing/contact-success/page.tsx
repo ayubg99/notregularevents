@@ -29,7 +29,7 @@ export default async function ContactSuccessPage({
 
         {/* Pending banner */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-amber-400/20 flex items-center justify-center mx-auto mb-4 text-3xl">
+          <div className="w-16 h-16 rounded-full bg-orange-400/20 flex items-center justify-center mx-auto mb-4 text-3xl">
             ⏳
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">Booking Pending!</h1>

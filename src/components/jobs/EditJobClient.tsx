@@ -187,7 +187,7 @@ export default function EditJobClient({ job, token }: Props) {
         <button
           onClick={handleSave}
           disabled={loading}
-          style={{ padding: '12px 28px', borderRadius: '50px', background: loading ? 'rgba(245,166,35,0.5)' : '#F5A623', border: 'none', color: '#1A1A2E', fontWeight: 700, fontSize: '14px', cursor: loading ? 'not-allowed' : 'pointer' }}
+          style={{ padding: '12px 28px', borderRadius: '50px', background: loading ? 'rgba(255,107,0,0.5)' : '#FF6B00', border: 'none', color: '#0D0D0D', fontWeight: 700, fontSize: '14px', cursor: loading ? 'not-allowed' : 'pointer' }}
         >
           {loading ? 'Saving...' : 'Save Changes'}
         </button>

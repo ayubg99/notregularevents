@@ -47,7 +47,7 @@ export default function ActivityChart({ data }: Props) {
             allowDecimals={false}
           />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
-          <Bar dataKey="bookings" fill="var(--color-brand-primary, #ff6b4a)" radius={[4, 4, 0, 0]} maxBarSize={24} />
+          <Bar dataKey="bookings" fill="var(--color-brand-primary, #FF6B00)" radius={[4, 4, 0, 0]} maxBarSize={24} />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -199,6 +199,7 @@ export default function BookingModal(props: Props) {
     const saved  = localStorage.getItem('referral_code')
     const code   = urlRef ?? saved ?? null
     if (code) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setReferralInput(code)
       validateReferralCode(code)
     }
@@ -445,9 +446,9 @@ export default function BookingModal(props: Props) {
       onClick={e => { if (e.target === e.currentTarget) handleClose() }}
     >
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-      <div className="relative w-full sm:max-w-md bg-[#1A1209] border border-white/10 rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[92dvh] overflow-y-auto">
+      <div className="relative w-full sm:max-w-md bg-[#0D0D0D] border border-white/10 rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[92dvh] overflow-y-auto">
 
-        <div className="sticky top-0 bg-[#1A1209] z-10 flex items-center justify-between px-6 pt-5 pb-4 border-b border-white/8">
+        <div className="sticky top-0 bg-[#0D0D0D] z-10 flex items-center justify-between px-6 pt-5 pb-4 border-b border-white/8">
           <div>
             <p className="text-white/40 text-xs uppercase tracking-widest mb-0.5">
               {props.type === 'trip' ? 'Book Trip' : 'Get Tickets'}
@@ -465,10 +466,10 @@ export default function BookingModal(props: Props) {
               <p style={{ fontSize: '48px', margin: '0 0 16px' }}>🎉</p>
               <h2 style={{ color: '#2ECC71', margin: '0 0 8px' }}>You&apos;re registered!</h2>
               <p style={{ color: '#888', margin: '0 0 16px' }}>Check your email for your QR ticket</p>
-              <p style={{ color: '#F5A623', fontFamily: 'monospace', fontSize: '18px', fontWeight: 700 }}>{bookingRef}</p>
+              <p style={{ color: '#FF6B00', fontFamily: 'monospace', fontSize: '18px', fontWeight: 700 }}>{bookingRef}</p>
               <button
                 onClick={handleClose}
-                style={{ marginTop: '24px', padding: '12px 32px', background: '#F5A623', color: '#1A1A2E', border: 'none', borderRadius: '50px', fontWeight: 700, cursor: 'pointer' }}
+                style={{ marginTop: '24px', padding: '12px 32px', background: '#FF6B00', color: '#0D0D0D', border: 'none', borderRadius: '50px', fontWeight: 700, cursor: 'pointer' }}
               >
                 Done ✓
               </button>
@@ -489,7 +490,7 @@ export default function BookingModal(props: Props) {
               <a
                 href="/membership"
                 className="w-full block py-4 rounded-full font-bold text-sm text-center shadow-brand-sm"
-                style={{ background: 'linear-gradient(135deg, #F5A623, #FF6B35)', color: '#1A1A0E' }}
+                style={{ background: 'linear-gradient(135deg, #FF6B00, #E91E8C)', color: '#1A1A0E' }}
               >
                 Join for €9.99/month →
               </a>

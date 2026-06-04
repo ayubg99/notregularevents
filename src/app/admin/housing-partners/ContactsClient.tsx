@@ -6,7 +6,7 @@ import { confirmBookingAdmin, rejectBookingAdmin } from '@/app/actions/admin'
 import type { RoomContactStatus } from '@/types/database'
 
 const STATUS_COLORS: Record<RoomContactStatus, string> = {
-  pending:        'text-amber-400 bg-amber-400/10 border-amber-400/20',
+  pending:        'text-orange-400 bg-orange-400/10 border-orange-400/20',
   confirmed:      'text-green-400 bg-green-400/10 border-green-400/20',
   contact_shared: 'text-teal-400 bg-teal-400/10 border-teal-400/20',
   rejected:       'text-red-400 bg-red-400/10 border-red-400/20',

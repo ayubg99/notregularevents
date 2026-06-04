@@ -53,7 +53,7 @@ export function WeeklyDigestEmail({ events, trips, baseUrl, unsubscribeUrl, week
             🎟️ &nbsp;${e.is_free ? 'Free entry' : e.price ? `From €${e.price} &nbsp;·&nbsp; Members −10%` : ''}
           </p>
           <a href="${baseUrl}/events/${e.slug}"
-             style="display:inline-block;background:#F5A623;color:#1A1209;font-weight:700;
+             style="display:inline-block;background:#FF6B00;color:#0D0D0D;font-weight:700;
                     font-size:13px;text-decoration:none;padding:10px 24px;border-radius:9999px;">
             Book Now →
           </a>
@@ -84,7 +84,7 @@ export function WeeklyDigestEmail({ events, trips, baseUrl, unsubscribeUrl, week
           <p style="margin:0 0 4px;font-size:13px;color:#B8A090;">📅 &nbsp;${dateRange}</p>
           ${t.price_standard ? `<p style="margin:0 0 16px;font-size:13px;color:#B8A090;">💶 &nbsp;From €${t.price_standard} &nbsp;·&nbsp; Members −10%</p>` : '<div style="height:16px;"></div>'}
           <a href="${baseUrl}/trips/${t.slug}"
-             style="display:inline-block;background:#FF6B35;color:#fff;font-weight:700;
+             style="display:inline-block;background:#E91E8C;color:#fff;font-weight:700;
                     font-size:13px;text-decoration:none;padding:10px 24px;border-radius:9999px;">
             View Trip →
           </a>
@@ -116,7 +116,7 @@ export function WeeklyDigestEmail({ events, trips, baseUrl, unsubscribeUrl, week
       <tr>
         <td align="center">
           <a href="${baseUrl}/events"
-             style="display:inline-block;background:#F5A623;color:#1A1209;font-weight:700;
+             style="display:inline-block;background:#FF6B00;color:#0D0D0D;font-weight:700;
                     font-size:14px;text-decoration:none;padding:14px 32px;border-radius:9999px;">
             See All Events &amp; Trips →
           </a>

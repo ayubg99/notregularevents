@@ -37,7 +37,7 @@ const STATUS_COLORS: Record<string, string> = {
   active:    'bg-green-500/15 text-green-400',
   used:      'bg-white/10 text-white/40',
   cancelled: 'bg-red-500/15 text-red-400',
-  refunded:  'bg-yellow-500/15 text-yellow-400',
+  refunded:  'bg-orange-500/15 text-orange-400',
 }
 
 function buildCSV(event: EventInfo, rows: Ticket[]): string {
@@ -176,7 +176,7 @@ export default function EventAttendeesClient({ event, tickets }: Props) {
             className="h-full rounded-full transition-all"
             style={{
               width: `${Math.min(fillPct, 100)}%`,
-              backgroundColor: fillPct >= 80 ? '#2ECC71' : '#FF6B35',
+              backgroundColor: fillPct >= 80 ? '#2ECC71' : '#E91E8C',
             }}
           />
         </div>

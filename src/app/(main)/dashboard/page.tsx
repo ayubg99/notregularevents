@@ -188,7 +188,7 @@ export default async function DashboardPage() {
                       </div>
                       {/* Discount badge */}
                       {sponsor.discount_text && (
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(245,166,35,0.15)', color: '#F5A623' }}>
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(255,107,0,0.15)', color: '#FF6B00' }}>
                           {sponsor.discount_text}
                         </span>
                       )}
@@ -199,7 +199,7 @@ export default async function DashboardPage() {
                       {/* Code — Semester/Annual only */}
                       {sponsor.discount_code && (
                         (activeMembership?.plan === 'premium' || activeMembership?.plan === 'vip') ? (
-                          <span className="text-[12px] font-bold px-2 py-0.5 rounded" style={{ fontFamily: 'monospace', color: '#F5A623', background: 'rgba(255,255,255,0.05)' }}>
+                          <span className="text-[12px] font-bold px-2 py-0.5 rounded" style={{ fontFamily: 'monospace', color: '#FF6B00', background: 'rgba(255,255,255,0.05)' }}>
                             {sponsor.discount_code}
                           </span>
                         ) : (
@@ -220,19 +220,19 @@ export default async function DashboardPage() {
                 href="/ambassadors"
                 className="relative rounded-2xl p-5 flex items-start gap-4 overflow-hidden transition-all duration-300 group"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(255,107,53,0.10) 0%, rgba(245,166,35,0.08) 100%)',
-                  border: '1px solid rgba(255,107,53,0.25)',
-                  boxShadow: '0 0 24px rgba(255,107,53,0.08)',
+                  background: 'linear-gradient(135deg, rgba(233,30,140,0.10) 0%, rgba(255,107,0,0.08) 100%)',
+                  border: '1px solid rgba(233,30,140,0.25)',
+                  boxShadow: '0 0 24px rgba(233,30,140,0.08)',
                 }}
               >
                 {/* subtle glow on hover */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl pointer-events-none"
-                  style={{ background: 'linear-gradient(135deg, rgba(255,107,53,0.08) 0%, rgba(245,166,35,0.06) 100%)' }} />
+                  style={{ background: 'linear-gradient(135deg, rgba(233,30,140,0.08) 0%, rgba(255,107,0,0.06) 100%)' }} />
 
                 <div className="relative w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(255,107,53,0.25) 0%, rgba(245,166,35,0.20) 100%)',
-                    border: '1px solid rgba(255,107,53,0.35)',
+                    background: 'linear-gradient(135deg, rgba(233,30,140,0.25) 0%, rgba(255,107,0,0.20) 100%)',
+                    border: '1px solid rgba(233,30,140,0.35)',
                   }}>
                   <span className="text-lg">🌟</span>
                 </div>
@@ -243,7 +243,7 @@ export default async function DashboardPage() {
                       Become an Ambassador
                     </p>
                     <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                      style={{ background: 'rgba(255,107,53,0.2)', color: '#FF6B35', border: '1px solid rgba(255,107,53,0.3)' }}>
+                      style={{ background: 'rgba(233,30,140,0.2)', color: '#E91E8C', border: '1px solid rgba(233,30,140,0.3)' }}>
                       NEW
                     </span>
                   </div>

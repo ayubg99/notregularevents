@@ -84,7 +84,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
             {/* Title + badges */}
             <div className="mb-6">
               <div className="flex flex-wrap items-center gap-2 mb-2">
-                <span className="bg-amber-400 text-brand-dark text-xs font-bold px-2.5 py-1 rounded-full">
+                <span className="bg-orange-400 text-brand-dark text-xs font-bold px-2.5 py-1 rounded-full">
                   ⭐ VERIFIED PARTNER
                 </span>
                 <span className="text-xs text-white/50 bg-white/5 border border-white/10 px-2.5 py-1 rounded-full">

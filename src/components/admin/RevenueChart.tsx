@@ -66,9 +66,9 @@ export default function RevenueChart({ data }: { data: MonthData[] }) {
           <Legend
             wrapperStyle={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', paddingTop: 12 }}
           />
-          <Bar dataKey="events"      name="Events"      fill="#ff6b4a" radius={[3, 3, 0, 0]} maxBarSize={20} />
+          <Bar dataKey="events"      name="Events"      fill="#E91E8C" radius={[3, 3, 0, 0]} maxBarSize={20} />
           <Bar dataKey="trips"       name="Trips"       fill="#2dd4bf" radius={[3, 3, 0, 0]} maxBarSize={20} />
-          <Bar dataKey="memberships" name="Memberships" fill="#f59e0b" radius={[3, 3, 0, 0]} maxBarSize={20} />
+          <Bar dataKey="memberships" name="Memberships" fill="#8B1A6B" radius={[3, 3, 0, 0]} maxBarSize={20} />
         </BarChart>
       </ResponsiveContainer>
     </div>

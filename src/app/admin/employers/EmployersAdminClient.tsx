@@ -6,7 +6,7 @@ import type { EmployerAccountRow, EmployerStatus } from '@/types/database'
 
 const PLAN_COLORS: Record<string, string> = {
   free:         'text-white/50 bg-white/5',
-  featured:     'text-amber-400 bg-amber-400/10',
+  featured:     'text-orange-400 bg-orange-400/10',
   subscription: 'text-green-400 bg-green-400/10',
 }
 
@@ -48,7 +48,7 @@ export default function EmployersAdminClient({ employers }: Props) {
             onClick={() => setFilter(f)}
             className={`px-4 py-2 rounded-xl text-sm font-medium capitalize transition-all ${
               filter === f
-                ? 'bg-amber-500/20 text-amber-400 border border-amber-400/25'
+                ? 'bg-orange-500/20 text-orange-400 border border-orange-400/25'
                 : 'text-white/50 hover:text-white hover:bg-white/5 border border-transparent'
             }`}
           >

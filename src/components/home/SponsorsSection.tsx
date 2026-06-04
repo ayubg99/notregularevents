@@ -75,7 +75,7 @@ export default async function SponsorsSection() {
               {sponsor.discount_text && (
                 <span
                   className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                  style={{ background: 'rgba(245,166,35,0.12)', color: '#F5A623' }}
+                  style={{ background: 'rgba(255,107,0,0.12)', color: '#FF6B00' }}
                 >
                   {sponsor.discount_text}
                 </span>

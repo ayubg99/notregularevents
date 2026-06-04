@@ -202,7 +202,7 @@ export default function PartnersClient({ partners }: { partners: PartnerWithCoun
                       className={`text-xs px-2.5 py-1 rounded-full border font-medium transition-colors ${
                         p.status === 'active'
                           ? 'text-green-400 bg-green-400/10 border-green-400/20 hover:bg-green-400/20'
-                          : 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20 hover:bg-yellow-400/20'
+                          : 'text-orange-400 bg-yellow-400/10 border-yellow-400/20 hover:bg-yellow-400/20'
                       }`}
                     >
                       {p.status}

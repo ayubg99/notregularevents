@@ -74,7 +74,7 @@ export default function AdminSidebar() {
 
           const baseClass = 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150'
           const activeClass = isActive
-            ? 'bg-amber-500/20 text-amber-400 border border-amber-400/25'
+            ? 'bg-orange-500/20 text-orange-400 border border-orange-400/25'
             : 'text-white/50 hover:text-white hover:bg-white/5'
 
           if (external) {

@@ -105,7 +105,7 @@ export default async function ListingDetailPage({
                 <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
                   isRoom
                     ? 'bg-teal-400/90 text-brand-dark'
-                    : 'bg-amber-400/90 text-brand-dark'
+                    : 'bg-orange-400/90 text-brand-dark'
                 }`}>
                   {isRoom ? '🏠 Room Available' : '👤 Looking for Room'}
                 </span>

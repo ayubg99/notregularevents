@@ -50,7 +50,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const CATEGORY_COLORS: Record<string, string> = {
   party:      'bg-purple-500/20 text-purple-300 border-purple-500/30',
-  cultural:   'bg-amber-500/20  text-amber-300  border-amber-500/30',
+  cultural:   'bg-orange-500/20  text-orange-300  border-orange-500/30',
   sport:      'bg-green-500/20  text-green-300  border-green-500/30',
   networking: 'bg-blue-500/20   text-blue-300   border-blue-500/30',
   trip:       'bg-orange-500/20 text-orange-300 border-orange-500/30',

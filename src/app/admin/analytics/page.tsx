@@ -171,7 +171,7 @@ export default async function AnalyticsPage() {
   const badgeColor = (type: string) => {
     if (type === 'Event') return 'bg-brand-primary/20 text-brand-primary'
     if (type === 'Trip')  return 'bg-teal-500/20 text-teal-400'
-    return 'bg-amber-500/20 text-amber-400'
+    return 'bg-orange-500/20 text-orange-400'
   }
 
   return (
@@ -207,7 +207,7 @@ export default async function AnalyticsPage() {
           label="Avg Order Value"
           value={`€${fmt(avgOrderValue)}`}
           icon={<BarChart2 size={18} />}
-          color="bg-amber-500/15"
+          color="bg-orange-500/15"
         />
       </div>
 
@@ -216,7 +216,7 @@ export default async function AnalyticsPage() {
         {[
           { label: 'Events', revenue: eventRevenue, sub: `${eb.length} bookings`, icon: <Calendar size={16} />, color: 'text-brand-primary' },
           { label: 'Trips',  revenue: tripRevenue,  sub: `${tb.length} bookings`, icon: <MapPin size={16} />,   color: 'text-teal-400'     },
-          { label: 'Memberships', revenue: membershipRevenue, sub: `${mb.length} active`, icon: <Users size={16} />, color: 'text-amber-400' },
+          { label: 'Memberships', revenue: membershipRevenue, sub: `${mb.length} active`, icon: <Users size={16} />, color: 'text-orange-400' },
         ].map(({ label, revenue, sub, icon, color }) => (
           <div key={label} className="glass-card rounded-2xl p-6 flex items-start gap-4">
             <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
@@ -306,7 +306,7 @@ export default async function AnalyticsPage() {
       {/* F — Membership breakdown */}
       <div className="glass-card rounded-2xl p-6">
         <h3 className="font-heading font-bold text-white text-base mb-4 flex items-center gap-2">
-          <Users size={15} className="text-amber-400" />
+          <Users size={15} className="text-orange-400" />
           Membership Breakdown
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -319,7 +319,7 @@ export default async function AnalyticsPage() {
               <p className="text-white/40 text-xs uppercase tracking-wider font-medium mb-2">{label}</p>
               <p className="font-heading text-3xl font-bold text-white">{mCount[plan]}</p>
               <p className="text-white/30 text-xs mt-1">€{price.toFixed(2)} / member</p>
-              <p className="text-amber-400 text-xs font-semibold mt-0.5">
+              <p className="text-orange-400 text-xs font-semibold mt-0.5">
                 €{fmt(mCount[plan] * price)} total
               </p>
             </div>

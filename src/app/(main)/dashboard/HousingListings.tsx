@@ -51,8 +51,8 @@ export default function HousingListings({ myListings }: Props) {
           href="/housing/post"
           style={{
             padding: '8px 16px',
-            background: '#F5A623',
-            color: '#1A1A2E',
+            background: '#FF6B00',
+            color: '#0D0D0D',
             borderRadius: '50px',
             textDecoration: 'none',
             fontWeight: 700,
@@ -77,8 +77,8 @@ export default function HousingListings({ myListings }: Props) {
             href="/housing/post"
             style={{
               display: 'inline-block',
-              background: '#F5A623',
-              color: '#1A1A2E',
+              background: '#FF6B00',
+              color: '#0D0D0D',
               padding: '10px 24px',
               borderRadius: '50px',
               textDecoration: 'none',
@@ -115,11 +115,11 @@ export default function HousingListings({ myListings }: Props) {
                     <span style={{
                       background:
                         listing.status === 'active'  ? 'rgba(46,204,113,0.15)'  :
-                        listing.status === 'rented'  ? 'rgba(245,166,35,0.15)'  :
+                        listing.status === 'rented'  ? 'rgba(255,107,0,0.15)'  :
                         'rgba(255,68,68,0.15)',
                       color:
                         listing.status === 'active'  ? '#2ECC71' :
-                        listing.status === 'rented'  ? '#F5A623' :
+                        listing.status === 'rented'  ? '#FF6B00' :
                         '#FF4444',
                       padding: '2px 10px',
                       borderRadius: '20px',
@@ -143,7 +143,7 @@ export default function HousingListings({ myListings }: Props) {
                       </span>
                     )}
                     {listing.price && (
-                      <span style={{ color: '#F5A623', fontSize: '13px', fontWeight: 600 }}>
+                      <span style={{ color: '#FF6B00', fontSize: '13px', fontWeight: 600 }}>
                         €{listing.price}/mo
                       </span>
                     )}

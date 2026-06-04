@@ -25,7 +25,7 @@ export default function EmployerLayout({ children }: { children: ReactNode }) {
             <p style={{ color: '#fff', fontWeight: 700, fontSize: '14px', margin: 0, lineHeight: 1 }}>
               Erasmus Vibe
             </p>
-            <p style={{ color: '#F5A623', fontSize: '11px', margin: 0, fontWeight: 600 }}>
+            <p style={{ color: '#FF6B00', fontSize: '11px', margin: 0, fontWeight: 600 }}>
               Employer Portal
             </p>
           </div>

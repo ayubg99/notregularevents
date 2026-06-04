@@ -56,7 +56,7 @@ const STATUS_COLORS: Record<string, string> = {
   confirmed: 'bg-green-500/15 text-green-400',
   used:      'bg-white/10 text-white/40',
   cancelled: 'bg-red-500/15 text-red-400',
-  refunded:  'bg-yellow-500/15 text-yellow-400',
+  refunded:  'bg-orange-500/15 text-orange-400',
   pending:   'bg-blue-500/15 text-blue-400',
 }
 
@@ -105,8 +105,8 @@ function TierBadge({ tier }: { tier: string }) {
   const label = tier === 'early_bird' ? '🔥 Early Bird' : tier === 'group' ? '👥 Group' : '💰 Standard'
   const style = {
     padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700,
-    background: tier === 'early_bird' ? '#F5A623' : tier === 'group' ? '#2ECC71' : 'rgba(255,255,255,0.1)',
-    color: tier === 'early_bird' || tier === 'group' ? '#1A1A2E' : '#ffffff',
+    background: tier === 'early_bird' ? '#FF6B00' : tier === 'group' ? '#2ECC71' : 'rgba(255,255,255,0.1)',
+    color: tier === 'early_bird' || tier === 'group' ? '#0D0D0D' : '#ffffff',
   }
   return <span style={style}>{label}</span>
 }

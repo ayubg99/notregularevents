@@ -71,8 +71,8 @@ function TypeBadge({ type }: { type: DiscountType }) {
   const isPercent = type === 'percentage'
   return (
     <span style={{
-      background:   isPercent ? 'rgba(78,205,196,0.15)'  : 'rgba(255,107,53,0.15)',
-      color:        isPercent ? '#4ECDC4'                 : '#FF6B35',
+      background:   isPercent ? 'rgba(78,205,196,0.15)'  : 'rgba(233,30,140,0.15)',
+      color:        isPercent ? '#4ECDC4'                 : '#E91E8C',
       padding:      '2px 8px',
       borderRadius: '9999px',
       fontSize:     '11px',
@@ -220,7 +220,7 @@ export default function PromoCodesClient({ promoCodes }: Props) {
       render: (row) => {
         const val = (row.applies_to as PromoAppliesTo) ?? 'both'
         const label = val === 'both' ? 'Events & Trips' : val === 'events' ? 'Events only' : 'Trips only'
-        const color = val === 'both' ? '#888' : val === 'events' ? '#4ECDC4' : '#F5A623'
+        const color = val === 'both' ? '#888' : val === 'events' ? '#4ECDC4' : '#FF6B00'
         return <span style={{ color, fontSize: '12px', fontWeight: 600 }}>{label}</span>
       },
     },

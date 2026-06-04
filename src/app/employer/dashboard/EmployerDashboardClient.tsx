@@ -106,10 +106,10 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
       )}
 
       {/* ── Header card ─────────────────────────────────────────── */}
-      <div style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.08), rgba(255,107,53,0.04))', border: '1px solid rgba(245,166,35,0.15)', borderRadius: '20px', padding: '28px 32px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+      <div style={{ background: 'linear-gradient(135deg, rgba(255,107,0,0.08), rgba(233,30,140,0.04))', border: '1px solid rgba(255,107,0,0.15)', borderRadius: '20px', padding: '28px 32px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           {/* Company initial avatar */}
-          <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'linear-gradient(135deg, #F5A623, #FF6B35)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '24px', color: '#1A1A0E', flexShrink: 0, boxShadow: '0 8px 24px rgba(245,166,35,0.25)' }}>
+          <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'linear-gradient(135deg, #FF6B00, #E91E8C)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '24px', color: '#1A1A0E', flexShrink: 0, boxShadow: '0 8px 24px rgba(255,107,0,0.25)' }}>
             {employer.company_name.charAt(0).toUpperCase()}
           </div>
           <div>
@@ -120,7 +120,7 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
         </div>
         <Link
           href="/jobs/post"
-          style={{ padding: '13px 24px', background: 'linear-gradient(135deg, #F5A623, #FF6B35)', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '14px', whiteSpace: 'nowrap', boxShadow: '0 4px 20px rgba(245,166,35,0.3)', transition: 'transform 0.2s' }}
+          style={{ padding: '13px 24px', background: 'linear-gradient(135deg, #FF6B00, #E91E8C)', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '14px', whiteSpace: 'nowrap', boxShadow: '0 4px 20px rgba(255,107,0,0.3)', transition: 'transform 0.2s' }}
         >
           + Post a Job
         </Link>
@@ -136,10 +136,10 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
             <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Standard listings • 30 days active</p>
           </div>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <a href="/employer/upgrade?type=featured" style={{ padding: '10px 18px', background: 'transparent', border: '1px solid rgba(245,166,35,0.4)', color: '#F5A623', borderRadius: '50px', textDecoration: 'none', fontWeight: 600, fontSize: '13px', whiteSpace: 'nowrap' }}>
+            <a href="/employer/upgrade?type=featured" style={{ padding: '10px 18px', background: 'transparent', border: '1px solid rgba(255,107,0,0.4)', color: '#FF6B00', borderRadius: '50px', textDecoration: 'none', fontWeight: 600, fontSize: '13px', whiteSpace: 'nowrap' }}>
               ⭐ Feature listing — €29
             </a>
-            <a href="/employer/upgrade?type=subscription" style={{ padding: '10px 18px', background: 'linear-gradient(135deg, #F5A623, #FF6B35)', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap', boxShadow: '0 4px 16px rgba(245,166,35,0.2)' }}>
+            <a href="/employer/upgrade?type=subscription" style={{ padding: '10px 18px', background: 'linear-gradient(135deg, #FF6B00, #E91E8C)', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap', boxShadow: '0 4px 16px rgba(255,107,0,0.2)' }}>
               🏢 Employer Plan — €49/mo
             </a>
           </div>
@@ -147,22 +147,22 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
       )}
 
       {employer.plan === 'featured' && (
-        <div style={{ background: 'rgba(245,166,35,0.05)', border: '1px solid rgba(245,166,35,0.15)', borderRadius: '16px', padding: '20px 24px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ background: 'rgba(255,107,0,0.05)', border: '1px solid rgba(255,107,0,0.15)', borderRadius: '16px', padding: '20px 24px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <div>
-            <p style={{ color: '#F5A623', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>⭐ Featured Plan</p>
+            <p style={{ color: '#FF6B00', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>⭐ Featured Plan</p>
             <p style={{ color: '#fff', fontWeight: 600, fontSize: '16px', margin: '0 0 4px' }}>One listing featured for 60 days</p>
             <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Want all listings featured automatically?</p>
           </div>
-          <a href="/employer/upgrade?type=subscription" style={{ padding: '10px 18px', background: 'linear-gradient(135deg, #F5A623, #FF6B35)', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap', boxShadow: '0 4px 16px rgba(245,166,35,0.2)' }}>
+          <a href="/employer/upgrade?type=subscription" style={{ padding: '10px 18px', background: 'linear-gradient(135deg, #FF6B00, #E91E8C)', color: '#1A1A0E', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap', boxShadow: '0 4px 16px rgba(255,107,0,0.2)' }}>
             Upgrade to €49/mo →
           </a>
         </div>
       )}
 
       {employer.plan === 'subscription' && (
-        <div style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.08), rgba(255,107,53,0.04))', border: '1px solid rgba(245,166,35,0.2)', borderRadius: '16px', padding: '20px 24px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ background: 'linear-gradient(135deg, rgba(255,107,0,0.08), rgba(233,30,140,0.04))', border: '1px solid rgba(255,107,0,0.2)', borderRadius: '16px', padding: '20px 24px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <div>
-            <p style={{ color: '#F5A623', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>🏢 Employer Plan — Active</p>
+            <p style={{ color: '#FF6B00', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>🏢 Employer Plan — Active</p>
             <p style={{ color: '#fff', fontWeight: 600, fontSize: '16px', margin: '0 0 4px' }}>€49/month — Unlimited featured listings</p>
             {employer.plan_expires_at && (
               <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>
@@ -184,7 +184,7 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '32px' }}>
         {[
           { label: 'Active listings', value: activeCount,  color: '#2ECC71' },
-          { label: 'Total views',     value: totalViews,   color: '#F5A623' },
+          { label: 'Total views',     value: totalViews,   color: '#FF6B00' },
           { label: 'Total posted',    value: jobs.length,  color: '#4ECDC4' },
         ].map(stat => (
           <div key={stat.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '24px 20px', textAlign: 'center' }}>
@@ -200,7 +200,7 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
       {jobs.length === 0 ? (
         <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', textAlign: 'center', padding: '48px 20px' }}>
           <p style={{ color: '#888', margin: '0 0 20px', fontSize: '15px' }}>No job listings yet</p>
-          <Link href="/jobs/post" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #F5A623, #FF6B35)', color: '#1A1A0E', padding: '12px 28px', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, boxShadow: '0 4px 16px rgba(245,166,35,0.25)' }}>
+          <Link href="/jobs/post" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #FF6B00, #E91E8C)', color: '#1A1A0E', padding: '12px 28px', borderRadius: '50px', textDecoration: 'none', fontWeight: 700, boxShadow: '0 4px 16px rgba(255,107,0,0.25)' }}>
             Post Your First Job
           </Link>
         </div>
@@ -211,7 +211,7 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
             <div
               key={job.id}
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '20px', marginBottom: '10px', transition: 'border 0.15s, background 0.15s' }}
-              onMouseEnter={e => { e.currentTarget.style.border = '1px solid rgba(245,166,35,0.15)'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+              onMouseEnter={e => { e.currentTarget.style.border = '1px solid rgba(255,107,0,0.15)'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
               onMouseLeave={e => { e.currentTarget.style.border = '1px solid rgba(255,255,255,0.07)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
@@ -223,11 +223,11 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
                     <span style={{ color: '#888', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       {job.job_type.replace(/_/g, ' ')}
                     </span>
-                    <span style={{ background: job.status === 'active' ? 'rgba(46,204,113,0.15)' : job.status === 'draft' ? 'rgba(245,166,35,0.15)' : 'rgba(255,68,68,0.15)', color: job.status === 'active' ? '#2ECC71' : job.status === 'draft' ? '#F5A623' : '#FF4444', padding: '2px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700 }}>
+                    <span style={{ background: job.status === 'active' ? 'rgba(46,204,113,0.15)' : job.status === 'draft' ? 'rgba(255,107,0,0.15)' : 'rgba(255,68,68,0.15)', color: job.status === 'active' ? '#2ECC71' : job.status === 'draft' ? '#FF6B00' : '#FF4444', padding: '2px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700 }}>
                       ● {job.status}
                     </span>
                     {job.is_featured && (
-                      <span style={{ background: 'rgba(245,166,35,0.15)', color: '#F5A623', padding: '2px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700 }}>
+                      <span style={{ background: 'rgba(255,107,0,0.15)', color: '#FF6B00', padding: '2px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700 }}>
                         ⭐ Featured
                       </span>
                     )}
@@ -263,14 +263,14 @@ export default function EmployerDashboardClient({ employer, jobs: initial, upgra
                   {!job.is_featured && employer.plan !== 'subscription' && (
                     <a
                       href={`/employer/upgrade?type=featured&job=${job.id}`}
-                      style={{ padding: '7px 14px', background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.25)', borderRadius: '20px', color: '#F5A623', fontSize: '12px', textDecoration: 'none', textAlign: 'center', fontWeight: 600 }}
+                      style={{ padding: '7px 14px', background: 'rgba(255,107,0,0.08)', border: '1px solid rgba(255,107,0,0.25)', borderRadius: '20px', color: '#FF6B00', fontSize: '12px', textDecoration: 'none', textAlign: 'center', fontWeight: 600 }}
                     >
                       ⭐ Feature
                     </a>
                   )}
 
                   {employer.plan === 'subscription' && !job.is_featured && (
-                    <span style={{ padding: '7px 14px', background: 'rgba(245,166,35,0.05)', borderRadius: '20px', color: '#888', fontSize: '11px', textAlign: 'center', display: 'block' }}>
+                    <span style={{ padding: '7px 14px', background: 'rgba(255,107,0,0.05)', borderRadius: '20px', color: '#888', fontSize: '11px', textAlign: 'center', display: 'block' }}>
                       Auto-featured ✓
                     </span>
                   )}

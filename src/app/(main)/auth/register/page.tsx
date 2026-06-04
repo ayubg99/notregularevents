@@ -128,7 +128,7 @@ function RegisterForm() {
               >
                 <option value="" disabled>Select your nationality</option>
                 {NATIONALITIES.map(n => (
-                  <option key={n.value} value={n.value} style={{ background: '#1A1A2E' }}>{n.label}</option>
+                  <option key={n.value} value={n.value} style={{ background: '#0D0D0D' }}>{n.label}</option>
                 ))}
               </select>
             </div>

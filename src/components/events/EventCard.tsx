@@ -103,7 +103,7 @@ export default function EventCard({ event, className }: Props) {
 
         {/* Price / Early Bird badge */}
         {event.members_only_free ? (
-          <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: 'rgba(245,166,35,0.2)', color: '#F5A623', border: '1px solid rgba(245,166,35,0.4)' }}>
+          <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: 'rgba(255,107,0,0.2)', color: '#FF6B00', border: '1px solid rgba(255,107,0,0.4)' }}>
             👑 Members Free
           </span>
         ) : isFree ? (
@@ -111,7 +111,7 @@ export default function EventCard({ event, className }: Props) {
             🎉 FREE
           </span>
         ) : earlyBirdActive ? (
-          <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: '#F5A623', color: '#1A1A2E' }}>
+          <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: '#FF6B00', color: '#0D0D0D' }}>
             🔥 Early Bird {formattedPrice}
           </span>
         ) : (
@@ -161,7 +161,7 @@ export default function EventCard({ event, className }: Props) {
               <div
                 className={cn(
                   'h-full rounded-full transition-all duration-700',
-                  isAlmostGone ? 'bg-red-500' : fillPct > 60 ? 'bg-amber-400' : 'bg-brand-success',
+                  isAlmostGone ? 'bg-red-500' : fillPct > 60 ? 'bg-orange-400' : 'bg-brand-success',
                 )}
                 style={{ width: `${fillPct}%` }}
               />

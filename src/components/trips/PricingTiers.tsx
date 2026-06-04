@@ -96,7 +96,7 @@ export default function PricingTiers({
       <h2 className="font-heading text-lg font-bold text-white">Choose Your Tier</h2>
 
       {urgency && (
-        <div className="rounded-xl bg-amber-500/10 border border-amber-500/25 px-3 py-2 text-amber-400 text-xs font-semibold">
+        <div className="rounded-xl bg-orange-500/10 border border-orange-500/25 px-3 py-2 text-orange-400 text-xs font-semibold">
           {urgency}
         </div>
       )}

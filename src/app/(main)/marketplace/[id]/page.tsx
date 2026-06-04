@@ -68,7 +68,7 @@ export default async function MarketplaceDetailPage({
                 {cat?.label}
               </p>
               <p style={{
-                color:      listing.is_free ? '#2ECC71' : '#F5A623',
+                color:      listing.is_free ? '#2ECC71' : '#FF6B00',
                 fontSize:   '32px',
                 fontWeight: 700,
                 margin:     '0 0 4px',
@@ -122,7 +122,7 @@ export default async function MarketplaceDetailPage({
             <h1 style={{ color: '#fff', fontSize: '24px', fontWeight: 700, margin: '0 0 8px' }}>
               {listing.title}
             </h1>
-            <p style={{ color: listing.is_free ? '#2ECC71' : '#F5A623', fontSize: '28px', fontWeight: 700, margin: '0 0 4px', lineHeight: 1 }}>
+            <p style={{ color: listing.is_free ? '#2ECC71' : '#FF6B00', fontSize: '28px', fontWeight: 700, margin: '0 0 4px', lineHeight: 1 }}>
               {listing.is_free ? 'Free' : `€${listing.price}`}
             </p>
             {listing.is_negotiable && (
@@ -178,8 +178,8 @@ export default async function MarketplaceDetailPage({
 
             {/* Ticket info card */}
             {listing.category === 'tickets_events' && (
-              <div style={{ background: 'rgba(245,166,35,0.08)', border: '1px solid rgba(245,166,35,0.2)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
-                <h3 style={{ color: '#F5A623', fontSize: '14px', fontWeight: 700, margin: '0 0 12px' }}>Event Ticket Details</h3>
+              <div style={{ background: 'rgba(255,107,0,0.08)', border: '1px solid rgba(255,107,0,0.2)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+                <h3 style={{ color: '#FF6B00', fontSize: '14px', fontWeight: 700, margin: '0 0 12px' }}>Event Ticket Details</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {listing.event_date && (
                     <p style={{ color: '#ccc', fontSize: '13px', margin: 0 }}>

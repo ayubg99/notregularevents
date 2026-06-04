@@ -77,8 +77,8 @@ export default function JobListings({ myJobs }: Props) {
           href="/jobs/post"
           style={{
             padding:        '8px 16px',
-            background:     '#F5A623',
-            color:          '#1A1A2E',
+            background:     '#FF6B00',
+            color:          '#0D0D0D',
             borderRadius:   '50px',
             textDecoration: 'none',
             fontWeight:     700,
@@ -114,17 +114,17 @@ export default function JobListings({ myJobs }: Props) {
               </span>
               <span style={{
                 background: job.status === 'active' ? 'rgba(46,204,113,0.15)' :
-                            job.status === 'draft'  ? 'rgba(245,166,35,0.15)' :
+                            job.status === 'draft'  ? 'rgba(255,107,0,0.15)' :
                             'rgba(255,68,68,0.15)',
                 color:      job.status === 'active' ? '#2ECC71' :
-                            job.status === 'draft'  ? '#F5A623' :
+                            job.status === 'draft'  ? '#FF6B00' :
                             '#FF4444',
                 padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700,
               }}>
                 ● {job.status}
               </span>
               {job.is_featured && (
-                <span style={{ background: 'rgba(245,166,35,0.15)', color: '#F5A623', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700 }}>
+                <span style={{ background: 'rgba(255,107,0,0.15)', color: '#FF6B00', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700 }}>
                   ⭐ Featured
                 </span>
               )}
@@ -174,7 +174,7 @@ export default function JobListings({ myJobs }: Props) {
             {job.status === 'active' && (
               <button
                 onClick={() => handleClose(job.id)}
-                style={{ padding: '7px 14px', background: 'transparent', border: '1px solid rgba(245,166,35,0.3)', borderRadius: '20px', color: '#F5A623', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}
+                style={{ padding: '7px 14px', background: 'transparent', border: '1px solid rgba(255,107,0,0.3)', borderRadius: '20px', color: '#FF6B00', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}
               >
                 Close
               </button>

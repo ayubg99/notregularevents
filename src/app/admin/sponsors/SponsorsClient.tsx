@@ -196,7 +196,7 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
                   </td>
                   <td className="px-5 py-4">
                     {s.discount_text ? (
-                      <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: 'rgba(245,166,35,0.12)', color: '#F5A623' }}>
+                      <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: 'rgba(255,107,0,0.12)', color: '#FF6B00' }}>
                         {s.discount_text}
                       </span>
                     ) : (
@@ -205,7 +205,7 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
                   </td>
                   <td className="px-5 py-4">
                     {s.is_featured ? (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/20 font-medium">Featured</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-orange-400/10 text-orange-400 border border-orange-400/20 font-medium">Featured</span>
                     ) : (
                       <span className="text-white/20 text-xs">—</span>
                     )}
@@ -217,7 +217,7 @@ export default function SponsorsClient({ sponsors }: { sponsors: SponsorRow[] })
                     <span className={`text-xs px-2.5 py-1 rounded-full border font-medium ${
                       s.status === 'active'
                         ? 'text-green-400 bg-green-400/10 border-green-400/20'
-                        : 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20'
+                        : 'text-orange-400 bg-yellow-400/10 border-yellow-400/20'
                     }`}>
                       {s.status}
                     </span>

@@ -31,8 +31,8 @@ function TabLink({ label, count, active, href }: { label: string; count?: number
           : 'text-white/45 hover:text-white/75 hover:bg-white/5 border border-transparent'
       }`}
       style={active ? {
-        background: 'linear-gradient(135deg, rgba(255,107,53,0.15) 0%, rgba(245,166,35,0.10) 100%)',
-        borderColor: 'rgba(255,107,53,0.30)',
+        background: 'linear-gradient(135deg, rgba(233,30,140,0.15) 0%, rgba(255,107,0,0.10) 100%)',
+        borderColor: 'rgba(233,30,140,0.30)',
       } : undefined}
     >
       {label}
@@ -42,7 +42,7 @@ function TabLink({ label, count, active, href }: { label: string; count?: number
             ? 'text-white'
             : 'bg-white/10 text-white/40'
         }`}
-          style={active ? { background: 'rgba(255,107,53,0.25)', color: '#FF6B35' } : undefined}
+          style={active ? { background: 'rgba(233,30,140,0.25)', color: '#E91E8C' } : undefined}
         >
           {count}
         </span>
@@ -80,9 +80,9 @@ function ApplicationRow({ app }: { app: AmbassadorApplicationRow }) {
       <div className="flex items-start gap-4">
         {/* Avatar */}
         <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ background: 'linear-gradient(135deg, rgba(255,107,53,0.22), rgba(245,166,35,0.15))', border: '1px solid rgba(255,107,53,0.30)' }}
+          style={{ background: 'linear-gradient(135deg, rgba(233,30,140,0.22), rgba(255,107,0,0.15))', border: '1px solid rgba(233,30,140,0.30)' }}
         >
-          <span className="text-sm font-bold" style={{ color: '#FF6B35' }}>{getInitials(app.name, app.email)}</span>
+          <span className="text-sm font-bold" style={{ color: '#E91E8C' }}>{getInitials(app.name, app.email)}</span>
         </div>
 
         {/* Info */}
@@ -148,7 +148,7 @@ function ApplicationRow({ app }: { app: AmbassadorApplicationRow }) {
           </button>
           {expanded && (
             <p className="mt-2 text-white/55 text-sm leading-relaxed border-l-2 pl-3 italic"
-              style={{ borderColor: 'rgba(255,107,53,0.30)' }}>
+              style={{ borderColor: 'rgba(233,30,140,0.30)' }}>
               &ldquo;{app.why_join}&rdquo;
             </p>
           )}
@@ -204,9 +204,9 @@ function ActiveRow({ amb }: { amb: AmbassadorWithUser }) {
       <div className="flex items-center gap-4">
         {/* Avatar */}
         <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.22), rgba(255,107,53,0.15))', border: '1px solid rgba(245,166,35,0.30)' }}
+          style={{ background: 'linear-gradient(135deg, rgba(255,107,0,0.22), rgba(233,30,140,0.15))', border: '1px solid rgba(255,107,0,0.30)' }}
         >
-          <span className="text-sm font-bold" style={{ color: '#F5A623' }}>{getInitials(amb.user_name, amb.user_email)}</span>
+          <span className="text-sm font-bold" style={{ color: '#FF6B00' }}>{getInitials(amb.user_name, amb.user_email)}</span>
         </div>
 
         {/* Info */}
@@ -214,7 +214,7 @@ function ActiveRow({ amb }: { amb: AmbassadorWithUser }) {
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-white font-bold">{amb.user_name ?? amb.user_email ?? '—'}</p>
             <code className="text-xs px-2 py-0.5 rounded-md font-mono"
-              style={{ background: 'rgba(245,166,35,0.12)', color: '#F5A623', border: '1px solid rgba(245,166,35,0.22)' }}>
+              style={{ background: 'rgba(255,107,0,0.12)', color: '#FF6B00', border: '1px solid rgba(255,107,0,0.22)' }}>
               {amb.referral_code}
             </code>
           </div>
@@ -351,7 +351,7 @@ export default function AmbassadorsClient({ applications, ambassadors, tab }: Pr
           {/* Summary card */}
           <div className="rounded-2xl p-5 mb-5 flex items-center justify-between"
             style={{
-              background: 'linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(245,166,35,0.05) 100%)',
+              background: 'linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(255,107,0,0.05) 100%)',
               border: '1px solid rgba(34,197,94,0.18)',
               boxShadow: '0 0 32px rgba(34,197,94,0.06)',
             }}
@@ -399,14 +399,14 @@ export default function AmbassadorsClient({ applications, ambassadors, tab }: Pr
                       </div>
 
                       <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{ background: 'rgba(245,166,35,0.15)', border: '1px solid rgba(245,166,35,0.25)' }}
+                        style={{ background: 'rgba(255,107,0,0.15)', border: '1px solid rgba(255,107,0,0.25)' }}
                       >
-                        <span className="text-xs font-bold" style={{ color: '#F5A623' }}>{getInitials(amb.user_name, amb.user_email)}</span>
+                        <span className="text-xs font-bold" style={{ color: '#FF6B00' }}>{getInitials(amb.user_name, amb.user_email)}</span>
                       </div>
 
                       <div className="flex-1 min-w-0">
                         <p className="text-white font-semibold text-sm">{amb.user_name ?? amb.user_email ?? '—'}</p>
-                        <code className="text-xs" style={{ color: 'rgba(245,166,35,0.55)' }}>{amb.referral_code}</code>
+                        <code className="text-xs" style={{ color: 'rgba(255,107,0,0.55)' }}>{amb.referral_code}</code>
                       </div>
 
                       <div className="text-right flex-shrink-0">

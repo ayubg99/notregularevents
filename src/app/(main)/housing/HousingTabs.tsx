@@ -135,13 +135,13 @@ export default function HousingTabs({ partnerRooms, initialListings, hasMembersh
         <div>
           {/* Membership banner */}
           {!hasMembership && (
-            <div className="flex items-center gap-4 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-4 mb-6">
+            <div className="flex items-center gap-4 bg-brand-accent/10 border border-brand-accent/30 rounded-2xl p-4 mb-6">
               <span className="text-2xl flex-shrink-0">👑</span>
               <div className="flex-1">
-                <p className="text-yellow-400 font-semibold text-sm mb-0.5">Members see contact details</p>
+                <p className="text-brand-accent font-semibold text-sm mb-0.5">Members see contact details</p>
                 <p className="text-white/50 text-xs">
                   Join membership to see WhatsApp and email contacts.{' '}
-                  <Link href="/membership" className="text-yellow-400 hover:underline">
+                  <Link href="/membership" className="text-brand-accent hover:underline">
                     Join now →
                   </Link>
                 </p>

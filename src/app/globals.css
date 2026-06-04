@@ -1,23 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 /* ── Tailwind v4 Design Tokens (CSS-first config) ─────────────────── */
 @theme {
-  /* Brand Colors — warm Mediterranean sun palette */
-  --color-brand-primary: #F5A623;
-  --color-brand-accent:  #E8A87C;
-  --color-brand-dark:    #1A1209;
-  --color-brand-light:   #FFF8EE;
+  /* Brand Colors — Erasmus Life Valencia identity */
+  --color-brand-primary: #FF6B00;
+  --color-brand-accent:  #E91E8C;
+  --color-brand-dark:    #0D0D0D;
+  --color-brand-light:   #FFFFFF;
+  --color-brand-purple:  #8B1A6B;
   --color-brand-success: #4CAF50;
 
   /* Extended palette */
-  --color-brand-primary-light: #F7B84B;
-  --color-brand-primary-dark:  #D4880F;
-  --color-brand-accent-light:  #F5C9A0;
-  --color-brand-accent-dark:   #C4784A;
+  --color-brand-primary-light: #FF8C00;
+  --color-brand-primary-dark:  #CC5500;
+  --color-brand-accent-light:  #F060B0;
+  --color-brand-accent-dark:   #8B1A6B;
 
-  /* Font Families — Clash Display loaded via CDN in layout.tsx */
-  --font-heading: "Clash Display", Inter, ui-sans-serif, system-ui, sans-serif;
-  --font-body:    Inter,            ui-sans-serif, system-ui, sans-serif;
+  /* Font Families */
+  --font-heading: "Barlow", "Clash Display", Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-body:    Inter,    ui-sans-serif, system-ui, sans-serif;
 
   /* Animations */
   --animate-fade-in:  fadeIn  0.5s ease-in-out both;
@@ -25,10 +27,10 @@
   --animate-float:    float   3s   ease-in-out infinite;
 
   /* Shadows */
-  --shadow-brand-sm:  0 2px  12px rgb(245 166  35 / 0.25);
-  --shadow-brand-md:  0 4px  24px rgb(245 166  35 / 0.35);
-  --shadow-brand-lg:  0 8px  40px rgb(245 166  35 / 0.45);
-  --shadow-glow-sand: 0 0    20px rgb(232 168 124 / 0.40);
+  --shadow-brand-sm:  0 2px  12px rgb(255 107   0 / 0.25);
+  --shadow-brand-md:  0 4px  24px rgb(255 107   0 / 0.35);
+  --shadow-brand-lg:  0 8px  40px rgb(255 107   0 / 0.45);
+  --shadow-glow-sand: 0 0    20px rgb(139  26 107 / 0.40);
 }
 
 /* ── Keyframes ─────────────────────────────────────────────────────── */
@@ -58,8 +60,8 @@
 }
 
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 20px rgba(245, 166, 35, 0.30); }
-  50%       { box-shadow: 0 0 40px rgba(245, 166, 35, 0.60); }
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 0, 0.30); }
+  50%       { box-shadow: 0 0 40px rgba(255, 107, 0, 0.60); }
 }
 
 @keyframes palmSway {
@@ -68,14 +70,21 @@
   66%       { transform: rotate(-0.4deg) translateY(-2px); }
 }
 
-/* ── Semantic CSS variables (dark mode — warm tones) ───────────────── */
+/* ── Semantic CSS variables ────────────────────────────────────────── */
 :root {
-  --bg-base:    #1A1209;
-  --bg-card:    #221608;
-  --bg-subtle:  #150E05;
-  --text-base:  #FFF8EE;
-  --text-muted: #B8A090;
-  --border-clr: rgba(255, 248, 238, 0.10);
+  --bg-base:    #0D0D0D;
+  --bg-card:    #1A0A14;
+  --bg-subtle:  #0A0008;
+  --text-base:  #FFFFFF;
+  --text-muted: #B8A0B0;
+  --border-clr: rgba(139, 26, 107, 0.30);
+}
+
+/* ── Heading base styles ───────────────────────────────────────────── */
+h1, h2, h3 {
+  font-weight:     800;
+  text-transform:  uppercase;
+  letter-spacing:  -0.02em;
 }
 
 /* ── Base ──────────────────────────────────────────────────────────── */
@@ -92,81 +101,83 @@ body {
 .glass {
   backdrop-filter:         blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  background:              rgba(255, 248, 238, 0.08);
-  border:                  1px solid rgba(255, 248, 238, 0.16);
+  background:              rgba(255, 255, 255, 0.08);
+  border:                  1px solid rgba(139, 26, 107, 0.30);
 }
 
 .glass-dark {
   backdrop-filter:         blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  background:              rgba(26, 18, 9, 0.88);
-  border:                  1px solid rgba(255, 248, 238, 0.08);
+  background:              rgba(13, 13, 13, 0.88);
+  border:                  1px solid rgba(139, 26, 107, 0.15);
 }
 
 .glass-card {
   backdrop-filter:         blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  background:              rgba(255, 248, 238, 0.045);
-  border:                  1px solid rgba(255, 248, 238, 0.09);
+  background:              rgba(26, 10, 20, 0.50);
+  border:                  1px solid rgba(139, 26, 107, 0.20);
   transition:              border-color 0.3s ease, box-shadow 0.3s ease;
 }
-.glass-card:hover { border-color: rgba(245, 166, 35, 0.22); }
+.glass-card:hover { border-color: rgba(233, 30, 140, 0.30); }
 
 /* ── Gradient text utilities ───────────────────────────────────────── */
 .text-gradient {
-  background:              linear-gradient(135deg, #F5A623, #E8A87C);
+  background:              linear-gradient(135deg, #FF6B00, #E91E8C);
   -webkit-background-clip: text;
   background-clip:         text;
   -webkit-text-fill-color: transparent;
 }
 .text-gradient-primary {
-  background:              linear-gradient(135deg, #F5A623, #F7B84B);
+  background:              linear-gradient(135deg, #FF6B00, #FF8C00);
   -webkit-background-clip: text;
   background-clip:         text;
   -webkit-text-fill-color: transparent;
 }
 .text-gradient-accent {
-  background:              linear-gradient(135deg, #E8A87C, #F5C9A0);
+  background:              linear-gradient(135deg, #E91E8C, #FF6B00);
   -webkit-background-clip: text;
   background-clip:         text;
   -webkit-text-fill-color: transparent;
 }
 
 /* ── Gradient backgrounds ──────────────────────────────────────────── */
-.bg-gradient-brand   { background: linear-gradient(135deg, #F5A623, #F7B84B); }
-.bg-gradient-vibrant { background: linear-gradient(135deg, #F5A623, #E8A87C); }
-.bg-gradient-dark    { background: linear-gradient(135deg, #1A1209, #221608); }
-.bg-gradient-sunset  { background: linear-gradient(160deg, #1A1209 0%, #2A1A08 40%, #1A1209 100%); }
+.bg-gradient-brand   { background: linear-gradient(135deg, #FF6B00, #E91E8C); }
+.bg-gradient-vibrant { background: linear-gradient(135deg, #FF6B00, #E91E8C); }
+.bg-gradient-dark    { background: linear-gradient(135deg, #0D0D0D, #1A0A14); }
+.bg-gradient-sunset  { background: linear-gradient(160deg, #0D0D0D 0%, #1A0A14 40%, #0D0D0D 100%); }
 
 /* ── Premium button system ─────────────────────────────────────────── */
 .btn-primary {
-  background:    linear-gradient(135deg, #F5A623 0%, #F7B84B 100%);
-  box-shadow:    0 4px 24px rgba(245, 166, 35, 0.40);
-  border-radius: 9999px;
-  color:         #1A1209;
-  font-weight:   700;
+  background:    linear-gradient(135deg, #FF6B00, #E91E8C);
+  box-shadow:    0 4px 24px rgba(255, 107, 0, 0.40);
+  border-radius: 8px;
+  color:         #fff;
+  font-weight:   800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   transition:    all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .btn-primary:hover {
-  box-shadow:    0 8px 40px rgba(245, 166, 35, 0.55);
-  transform:     translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 40px rgba(233, 30, 140, 0.55);
+  transform:  translateY(-2px) scale(1.02);
 }
 .btn-primary:active { transform: translateY(0) scale(0.99); }
 
 .btn-secondary {
   backdrop-filter:         blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  background:              rgba(255, 248, 238, 0.08);
-  border:                  1px solid rgba(255, 248, 238, 0.18);
-  border-radius:           9999px;
-  color:                   #FFF8EE;
+  background:              rgba(255, 255, 255, 0.08);
+  border:                  1px solid rgba(255, 255, 255, 0.18);
+  border-radius:           8px;
+  color:                   #FFFFFF;
   font-weight:             600;
   transition:              all 0.3s ease;
 }
 .btn-secondary:hover {
-  background:    rgba(255, 248, 238, 0.13);
-  border-color:  rgba(245, 166, 35, 0.45);
-  box-shadow:    0 0 24px rgba(245, 166, 35, 0.18);
+  background:   rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 107, 0, 0.45);
+  box-shadow:   0 0 24px rgba(255, 107, 0, 0.18);
 }
 
 /* ── Card premium hover ────────────────────────────────────────────── */
@@ -176,29 +187,27 @@ body {
 }
 .card-hover:hover {
   transform:  translateY(-8px) scale(1.015);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.40), 0 4px 24px rgba(245, 166, 35, 0.22);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.40), 0 4px 24px rgba(233, 30, 140, 0.22);
 }
 
 /* ── Glow utilities ────────────────────────────────────────────────── */
-.glow-primary { box-shadow: 0 0 30px rgba(245, 166, 35, 0.45); }
-.glow-accent  { box-shadow: 0 0 30px rgba(232, 168, 124, 0.40); }
+.glow-primary { box-shadow: 0 0 30px rgba(255, 107, 0, 0.45); }
+.glow-accent  { box-shadow: 0 0 30px rgba(233, 30, 140, 0.40); }
 
-/* ── Palm tree & Mediterranean decorative utilities ────────────────── */
+/* ── Palm tree & decorative utilities ──────────────────────────────── */
 .palm-sway {
   animation: palmSway 6s ease-in-out infinite;
   transform-origin: bottom center;
 }
 
-/* Subtle sun-burst overlay — apply to section backgrounds */
 .bg-sunburst {
-  background-image: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(245, 166, 35, 0.10) 0%, transparent 70%);
+  background-image: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(139, 26, 107, 0.15) 0%, transparent 70%);
 }
 
-/* Warm sand grain texture (very subtle) */
 .bg-warm-grain {
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(245, 166, 35, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 30% at 80% 80%, rgba(232, 168, 124, 0.06) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139, 26, 107, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 80% 80%, rgba(233, 30, 140, 0.07) 0%, transparent 50%);
 }
 
 /* ── Job detail page — responsive two-column layout ───────────────── */
@@ -230,5 +239,5 @@ body {
 /* ── Custom scrollbar ──────────────────────────────────────────────── */
 ::-webkit-scrollbar              { width: 6px; }
 ::-webkit-scrollbar-track        { background: transparent; }
-::-webkit-scrollbar-thumb        { background: #F5A623; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover  { background: #D4880F; }
+::-webkit-scrollbar-thumb        { background: #E91E8C; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover  { background: #8B1A6B; }

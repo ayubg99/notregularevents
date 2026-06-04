@@ -52,7 +52,7 @@ export default function SeatCounter({ tripId, initialSeats, capacity }: Props) {
           seatsLeft === 0
             ? 'text-red-400'
             : seatsLeft <= 5
-            ? 'text-amber-400'
+            ? 'text-orange-400'
             : 'text-white/60'
         }`}>
           {seatsLeft === 0 ? 'Sold Out' : `${seatsLeft} seat${seatsLeft === 1 ? '' : 's'} left`}
@@ -61,7 +61,7 @@ export default function SeatCounter({ tripId, initialSeats, capacity }: Props) {
       <div className="h-2 rounded-full bg-white/10 overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-700 ${
-            soldPct >= 90 ? 'bg-red-500' : soldPct >= 60 ? 'bg-amber-500' : 'bg-brand-primary'
+            soldPct >= 90 ? 'bg-red-500' : soldPct >= 60 ? 'bg-orange-500' : 'bg-brand-primary'
           }`}
           style={{ width: `${soldPct}%` }}
         />

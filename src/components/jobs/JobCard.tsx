@@ -42,7 +42,7 @@ export default function JobCard({ job }: Props) {
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           ) : (
-            <span style={{ color: '#F5A623', fontWeight: 700, fontSize: '18px' }}>
+            <span style={{ color: '#FF6B00', fontWeight: 700, fontSize: '18px' }}>
               {job.company_name.charAt(0)}
             </span>
           )}
@@ -66,14 +66,14 @@ export default function JobCard({ job }: Props) {
                   job.job_type === 'internship'
                     ? 'rgba(78,205,196,0.15)'
                     : job.job_type === 'part_time'
-                      ? 'rgba(245,166,35,0.15)'
-                      : 'rgba(255,107,53,0.15)',
+                      ? 'rgba(255,107,0,0.15)'
+                      : 'rgba(233,30,140,0.15)',
                 color:
                   job.job_type === 'internship'
                     ? '#4ECDC4'
                     : job.job_type === 'part_time'
-                      ? '#F5A623'
-                      : '#FF6B35',
+                      ? '#FF6B00'
+                      : '#E91E8C',
                 padding: '2px 10px',
                 borderRadius: '20px',
                 fontSize: '11px',
@@ -102,8 +102,8 @@ export default function JobCard({ job }: Props) {
             {job.is_featured && (
               <span
                 style={{
-                  background: 'rgba(245,166,35,0.15)',
-                  color: '#F5A623',
+                  background: 'rgba(255,107,0,0.15)',
+                  color: '#FF6B00',
                   padding: '2px 10px',
                   borderRadius: '20px',
                   fontSize: '11px',

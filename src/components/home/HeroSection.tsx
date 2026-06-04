@@ -34,7 +34,7 @@ export default function HeroSection() {
         )}
         {/* Layered gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/70 via-brand-dark/25 to-brand-dark/90" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(245,166,35,0.13),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(255,107,0,0.13),transparent)]" />
       </div>
 
       {/* ── Decorative blur orbs ─────────────────────────────── */}
@@ -49,13 +49,13 @@ export default function HeroSection() {
         style={{ transformOrigin: 'bottom center', opacity: 0.07 }}
       >
         <svg viewBox="0 0 100 200" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M54 200 C52 168 49 138 51 108 C53 88 59 70 62 54" stroke="#F5A623" strokeWidth="7" strokeLinecap="round"/>
-          <path d="M62 54 C42 34 18 40 4 30" stroke="#F5A623" strokeWidth="5" strokeLinecap="round"/>
-          <path d="M62 54 C84 34 100 38 112 28" stroke="#F5A623" strokeWidth="5" strokeLinecap="round"/>
-          <path d="M62 54 C38 46 16 60 8 76" stroke="#F5A623" strokeWidth="4" strokeLinecap="round"/>
-          <path d="M62 54 C86 46 104 58 114 72" stroke="#F5A623" strokeWidth="4" strokeLinecap="round"/>
-          <path d="M62 54 C54 36 48 20 44 8" stroke="#F5A623" strokeWidth="4" strokeLinecap="round"/>
-          <path d="M62 54 C70 36 76 20 80 8" stroke="#F5A623" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M54 200 C52 168 49 138 51 108 C53 88 59 70 62 54" stroke="#FF6B00" strokeWidth="7" strokeLinecap="round"/>
+          <path d="M62 54 C42 34 18 40 4 30" stroke="#FF6B00" strokeWidth="5" strokeLinecap="round"/>
+          <path d="M62 54 C84 34 100 38 112 28" stroke="#FF6B00" strokeWidth="5" strokeLinecap="round"/>
+          <path d="M62 54 C38 46 16 60 8 76" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M62 54 C86 46 104 58 114 72" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M62 54 C54 36 48 20 44 8" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M62 54 C70 36 76 20 80 8" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
         </svg>
       </motion.div>
 
@@ -66,13 +66,13 @@ export default function HeroSection() {
         style={{ transformOrigin: 'bottom center', opacity: 0.07 }}
       >
         <svg viewBox="0 0 100 200" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M44 200 C46 165 50 132 48 102 C46 82 40 64 38 48" stroke="#F5A623" strokeWidth="7" strokeLinecap="round"/>
-          <path d="M38 48 C58 28 82 34 96 24" stroke="#F5A623" strokeWidth="5" strokeLinecap="round"/>
-          <path d="M38 48 C16 28 0 32 -12 22" stroke="#F5A623" strokeWidth="5" strokeLinecap="round"/>
-          <path d="M38 48 C62 40 84 54 92 70" stroke="#F5A623" strokeWidth="4" strokeLinecap="round"/>
-          <path d="M38 48 C14 40 -4 52 -14 66" stroke="#F5A623" strokeWidth="4" strokeLinecap="round"/>
-          <path d="M38 48 C46 30 52 14 56 2" stroke="#F5A623" strokeWidth="4" strokeLinecap="round"/>
-          <path d="M38 48 C30 30 24 14 20 2" stroke="#F5A623" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M44 200 C46 165 50 132 48 102 C46 82 40 64 38 48" stroke="#FF6B00" strokeWidth="7" strokeLinecap="round"/>
+          <path d="M38 48 C58 28 82 34 96 24" stroke="#FF6B00" strokeWidth="5" strokeLinecap="round"/>
+          <path d="M38 48 C16 28 0 32 -12 22" stroke="#FF6B00" strokeWidth="5" strokeLinecap="round"/>
+          <path d="M38 48 C62 40 84 54 92 70" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M38 48 C14 40 -4 52 -14 66" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M38 48 C46 30 52 14 56 2" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M38 48 C30 30 24 14 20 2" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
         </svg>
       </motion.div>
 

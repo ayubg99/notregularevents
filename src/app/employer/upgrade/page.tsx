@@ -77,12 +77,12 @@ function UpgradePage() {
         {(!type || type === 'featured') && <div
           style={{
             background:   'rgba(255,255,255,0.03)',
-            border:       featuredHighlighted ? '2px solid #F5A623' : '1px solid rgba(255,255,255,0.08)',
+            border:       featuredHighlighted ? '2px solid #FF6B00' : '1px solid rgba(255,255,255,0.08)',
             borderRadius: '20px',
             padding:      '28px',
           }}
         >
-          <p style={{ color: '#F5A623', fontWeight: 700, fontSize: '18px', margin: '0 0 8px' }}>⭐ Feature a Listing</p>
+          <p style={{ color: '#FF6B00', fontWeight: 700, fontSize: '18px', margin: '0 0 8px' }}>⭐ Feature a Listing</p>
           <p style={{ color: '#fff', fontSize: '32px', fontWeight: 700, margin: '0 0 4px' }}>
             €29{' '}
             <span style={{ fontSize: '14px', color: '#888', fontWeight: 400 }}>one time</span>
@@ -94,7 +94,7 @@ function UpgradePage() {
             <li>For one specific listing</li>
           </ul>
           {jobId && (
-            <p style={{ color: '#F5A623', fontSize: '13px', margin: '12px 0 0', fontWeight: 600 }}>
+            <p style={{ color: '#FF6B00', fontSize: '13px', margin: '12px 0 0', fontWeight: 600 }}>
               ✓ Will feature the selected listing
             </p>
           )}
@@ -143,8 +143,8 @@ function UpgradePage() {
               width:        '100%',
               marginTop:    '20px',
               padding:      '14px',
-              background:   loadingType ? 'rgba(245,166,35,0.5)' : '#F5A623',
-              color:        '#1A1A2E',
+              background:   loadingType ? 'rgba(255,107,0,0.5)' : '#FF6B00',
+              color:        '#0D0D0D',
               border:       'none',
               borderRadius: '50px',
               fontWeight:   700,
@@ -166,18 +166,18 @@ function UpgradePage() {
         {(!type || type === 'subscription') && <div
           style={{
             background:   'rgba(255,255,255,0.03)',
-            border:       subscriptionHighlighted ? '2px solid #F5A623' : '1px solid rgba(255,255,255,0.08)',
+            border:       subscriptionHighlighted ? '2px solid #FF6B00' : '1px solid rgba(255,255,255,0.08)',
             borderRadius: '20px',
             padding:      '28px',
             position:     'relative',
           }}
         >
           {/* Best value badge */}
-          <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: '#F5A623', color: '#1A1A2E', padding: '4px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 700, whiteSpace: 'nowrap' }}>
+          <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: '#FF6B00', color: '#0D0D0D', padding: '4px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 700, whiteSpace: 'nowrap' }}>
             Best Value
           </div>
 
-          <p style={{ color: '#F5A623', fontWeight: 700, fontSize: '18px', margin: '0 0 8px' }}>🏢 Employer Plan</p>
+          <p style={{ color: '#FF6B00', fontWeight: 700, fontSize: '18px', margin: '0 0 8px' }}>🏢 Employer Plan</p>
           <p style={{ color: '#fff', fontSize: '32px', fontWeight: 700, margin: '0 0 4px' }}>
             €49{' '}
             <span style={{ fontSize: '14px', color: '#888', fontWeight: 400 }}>/month</span>
@@ -196,8 +196,8 @@ function UpgradePage() {
               width:        '100%',
               marginTop:    '20px',
               padding:      '14px',
-              background:   loadingType ? 'rgba(245,166,35,0.5)' : '#F5A623',
-              color:        '#1A1A2E',
+              background:   loadingType ? 'rgba(255,107,0,0.5)' : '#FF6B00',
+              color:        '#0D0D0D',
               border:       'none',
               borderRadius: '50px',
               fontWeight:   700,

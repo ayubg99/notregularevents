@@ -76,7 +76,7 @@ export default function MarketplaceClient({ initialListings }: Props) {
           onClick={() => setCategory('all')}
           style={{
             ...btnBase,
-            background: category === 'all' ? '#F5A623' : btnBase.background,
+            background: category === 'all' ? '#FF6B00' : btnBase.background,
             border:     category === 'all' ? 'none'    : btnBase.border,
             display:    'flex',
             flexDirection: 'column',
@@ -102,7 +102,7 @@ export default function MarketplaceClient({ initialListings }: Props) {
             onClick={() => setCategory(cat.id)}
             style={{
               ...btnBase,
-              background:    category === cat.id ? '#F5A623' : btnBase.background,
+              background:    category === cat.id ? '#FF6B00' : btnBase.background,
               border:        category === cat.id ? 'none'    : btnBase.border,
               display:       'flex',
               flexDirection: 'column',

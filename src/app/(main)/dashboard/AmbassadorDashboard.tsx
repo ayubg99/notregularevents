@@ -52,7 +52,7 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
-          style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.22), rgba(255,107,53,0.12))', border: '1px solid rgba(245,166,35,0.32)' }}>
+          style={{ background: 'linear-gradient(135deg, rgba(255,107,0,0.22), rgba(233,30,140,0.12))', border: '1px solid rgba(255,107,0,0.32)' }}>
           🌟
         </div>
         <div>
@@ -62,7 +62,7 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
       </div>
 
       {/* Referral link */}
-      <div className="rounded-2xl p-4" style={{ background: 'linear-gradient(135deg, rgba(245,166,35,0.08), rgba(255,107,53,0.04))', border: '1px solid rgba(245,166,35,0.2)' }}>
+      <div className="rounded-2xl p-4" style={{ background: 'linear-gradient(135deg, rgba(255,107,0,0.08), rgba(233,30,140,0.04))', border: '1px solid rgba(255,107,0,0.2)' }}>
         <p className="text-brand-accent text-[10px] font-bold uppercase tracking-widest mb-3">Your Referral Link</p>
         <div className="flex gap-2 items-center mb-3">
           <div className="flex-1 rounded-xl px-3 py-2.5 min-w-0"
@@ -71,7 +71,7 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
           </div>
           <button onClick={copyLink}
             className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all"
-            style={{ background: copied ? 'rgba(46,204,113,0.2)' : 'linear-gradient(135deg, #F5A623, #FF6B35)', color: copied ? '#2ECC71' : '#1A1A0E' }}
+            style={{ background: copied ? 'rgba(46,204,113,0.2)' : 'linear-gradient(135deg, #FF6B00, #E91E8C)', color: copied ? '#2ECC71' : '#1A1A0E' }}
           >
             {copied ? <Check size={14} /> : <Copy size={14} />}
             {copied ? 'Copied!' : 'Copy'}
@@ -86,7 +86,7 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
       <div className="grid grid-cols-3 gap-2">
         {[
           { icon: <Users size={13} />, color: 'text-cyan-400', bg: 'rgba(78,205,196,0.07)', border: 'rgba(78,205,196,0.18)', value: String(totalReferrals), label: 'Referrals' },
-          { icon: <TrendingUp size={13} />, color: 'text-brand-accent', bg: 'rgba(245,166,35,0.07)', border: 'rgba(245,166,35,0.18)', value: `€${totalEarnings.toFixed(2)}`, label: 'Total earned' },
+          { icon: <TrendingUp size={13} />, color: 'text-brand-accent', bg: 'rgba(255,107,0,0.07)', border: 'rgba(255,107,0,0.18)', value: `€${totalEarnings.toFixed(2)}`, label: 'Total earned' },
           { icon: <Clock size={13} />, color: 'text-green-400', bg: 'rgba(46,204,113,0.07)', border: 'rgba(46,204,113,0.18)', value: `€${pendingEarnings.toFixed(2)}`, label: 'Pending payout' },
         ].map(({ icon, color, bg, border, value, label }) => (
           <div key={label} className="rounded-xl p-4 text-center" style={{ background: bg, border: `1px solid ${border}` }}>
@@ -116,7 +116,7 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
           </div>
           <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
             <div className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${Math.min(progress, 100)}%`, background: 'linear-gradient(90deg, #F5A623, #FF6B35)' }}
+              style={{ width: `${Math.min(progress, 100)}%`, background: 'linear-gradient(90deg, #FF6B00, #E91E8C)' }}
             />
           </div>
         </div>
@@ -130,8 +130,8 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
           return (
             <div key={m} className="rounded-xl p-3 text-center transition-all"
               style={{
-                background: done ? 'rgba(245,166,35,0.08)' : 'rgba(255,255,255,0.02)',
-                border: done ? '1px solid rgba(245,166,35,0.25)' : '1px solid rgba(255,255,255,0.06)',
+                background: done ? 'rgba(255,107,0,0.08)' : 'rgba(255,255,255,0.02)',
+                border: done ? '1px solid rgba(255,107,0,0.25)' : '1px solid rgba(255,255,255,0.06)',
               }}
             >
               <p className="text-base mb-1">{done ? '✅' : info.icon}</p>
@@ -152,8 +152,8 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
             {rewards.map(reward => (
               <div key={reward.id} className="rounded-xl px-4 py-3 flex justify-between items-center"
                 style={{
-                  background: reward.status === 'pending' ? 'rgba(245,166,35,0.07)' : 'rgba(255,255,255,0.02)',
-                  border: reward.status === 'pending' ? '1px solid rgba(245,166,35,0.25)' : '1px solid rgba(255,255,255,0.06)',
+                  background: reward.status === 'pending' ? 'rgba(255,107,0,0.07)' : 'rgba(255,255,255,0.02)',
+                  border: reward.status === 'pending' ? '1px solid rgba(255,107,0,0.25)' : '1px solid rgba(255,255,255,0.06)',
                 }}
               >
                 <div>
@@ -198,7 +198,7 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
               >
                 {/* Status bar on left edge */}
                 <div className="absolute left-0 top-2 bottom-2 w-0.5 rounded-full"
-                  style={{ background: c.status === 'paid' ? 'rgba(74,222,128,0.5)' : 'rgba(245,166,35,0.6)' }} />
+                  style={{ background: c.status === 'paid' ? 'rgba(74,222,128,0.5)' : 'rgba(255,107,0,0.6)' }} />
                 <div className="pl-2">
                   <p className="text-white text-sm font-semibold">{c.event_title ?? 'Booking'}</p>
                   <p className="text-white/35 text-xs mt-0.5 capitalize">

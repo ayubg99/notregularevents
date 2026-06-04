@@ -71,7 +71,7 @@ function Field({ label, required, children }: { label: string; required?: boolea
   return (
     <div style={{ marginBottom: '16px' }}>
       <label style={labelStyle}>
-        {label} {required && <span style={{ color: '#FF6B35' }}>*</span>}
+        {label} {required && <span style={{ color: '#E91E8C' }}>*</span>}
       </label>
       {children}
     </div>
@@ -174,8 +174,8 @@ export default function PostJobClient({ employerId }: Props) {
       <div style={{ display: 'flex', gap: '8px', marginBottom: '32px' }}>
         {STEPS.map((s, i) => (
           <div key={s} style={{ flex: 1, textAlign: 'center' }}>
-            <div style={{ height: '4px', borderRadius: '4px', background: i <= step ? '#F5A623' : 'rgba(255,255,255,0.1)', marginBottom: '6px', transition: 'background 0.2s' }} />
-            <span style={{ color: i === step ? '#F5A623' : '#555', fontSize: '11px', fontWeight: 600 }}>{s}</span>
+            <div style={{ height: '4px', borderRadius: '4px', background: i <= step ? '#FF6B00' : 'rgba(255,255,255,0.1)', marginBottom: '6px', transition: 'background 0.2s' }} />
+            <span style={{ color: i === step ? '#FF6B00' : '#555', fontSize: '11px', fontWeight: 600 }}>{s}</span>
           </div>
         ))}
       </div>
@@ -301,25 +301,25 @@ export default function PostJobClient({ employerId }: Props) {
             <div
               onClick={() => setIsFeatured(f => !f)}
               style={{
-                background:   isFeatured ? 'rgba(245,166,35,0.08)' : 'rgba(255,255,255,0.02)',
-                border:       isFeatured ? '2px solid rgba(245,166,35,0.4)' : '1px solid rgba(255,255,255,0.06)',
+                background:   isFeatured ? 'rgba(255,107,0,0.08)' : 'rgba(255,255,255,0.02)',
+                border:       isFeatured ? '2px solid rgba(255,107,0,0.4)' : '1px solid rgba(255,255,255,0.06)',
                 borderRadius: '12px', padding: '16px', cursor: 'pointer', marginBottom: '10px',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               }}
             >
               <div>
-                <p style={{ color: '#F5A623', fontWeight: 700, margin: '0 0 4px', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <p style={{ color: '#FF6B00', fontWeight: 700, margin: '0 0 4px', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   ⭐ Featured
-                  <span style={{ background: 'rgba(245,166,35,0.2)', color: '#F5A623', padding: '1px 8px', borderRadius: '20px', fontSize: '11px' }}>Most popular</span>
+                  <span style={{ background: 'rgba(255,107,0,0.2)', color: '#FF6B00', padding: '1px 8px', borderRadius: '20px', fontSize: '11px' }}>Most popular</span>
                 </p>
                 <p style={{ color: '#888', fontSize: '13px', margin: 0 }}>Active 60 days • Appears first in results</p>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ color: '#F5A623', fontWeight: 700, fontSize: '16px' }}>€29</span>
+                <span style={{ color: '#FF6B00', fontWeight: 700, fontSize: '16px' }}>€29</span>
                 <div style={{
                   width: '22px', height: '22px', borderRadius: '6px',
                   border:     isFeatured ? 'none' : '2px solid rgba(255,255,255,0.2)',
-                  background: isFeatured ? '#F5A623' : 'transparent',
+                  background: isFeatured ? '#FF6B00' : 'transparent',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   color: '#1A1A0E', fontSize: '14px', fontWeight: 700,
                 }}>
@@ -372,7 +372,7 @@ export default function PostJobClient({ employerId }: Props) {
                   {isFeatured && <p style={{ color: '#888', margin: '0 0 2px' }}>⭐ Featured listing: €29</p>}
                   {isUrgent   && <p style={{ color: '#888', margin: 0 }}>🔥 Urgent badge: €9</p>}
                 </div>
-                <p style={{ color: '#F5A623', fontWeight: 700, fontSize: '18px', margin: 0 }}>
+                <p style={{ color: '#FF6B00', fontWeight: 700, fontSize: '18px', margin: 0 }}>
                   Total: €{totalPrice}
                 </p>
               </div>
@@ -392,11 +392,11 @@ export default function PostJobClient({ employerId }: Props) {
           ) : <div />}
 
           {step < STEPS.length - 1 ? (
-            <button type="button" onClick={handleNext} style={{ background: '#F5A623', border: 'none', borderRadius: '50px', padding: '12px 28px', color: '#1A1A2E', fontWeight: 700, cursor: 'pointer', fontSize: '14px' }}>
+            <button type="button" onClick={handleNext} style={{ background: '#FF6B00', border: 'none', borderRadius: '50px', padding: '12px 28px', color: '#0D0D0D', fontWeight: 700, cursor: 'pointer', fontSize: '14px' }}>
               Next →
             </button>
           ) : (
-            <button type="button" onClick={handleSubmit} disabled={loading} style={{ background: loading ? 'rgba(245,166,35,0.5)' : '#F5A623', border: 'none', borderRadius: '50px', padding: '12px 28px', color: '#1A1A2E', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', fontSize: '14px' }}>
+            <button type="button" onClick={handleSubmit} disabled={loading} style={{ background: loading ? 'rgba(255,107,0,0.5)' : '#FF6B00', border: 'none', borderRadius: '50px', padding: '12px 28px', color: '#0D0D0D', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', fontSize: '14px' }}>
               {loading ? 'Posting…' : totalPrice > 0 ? `Post Job & Pay €${totalPrice} →` : 'Post Job for Free →'}
             </button>
           )}

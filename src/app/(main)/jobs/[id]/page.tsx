@@ -195,7 +195,7 @@ export default async function JobDetailPage({ params }: Props) {
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 ) : (
-                  <span style={{ color: '#F5A623', fontWeight: 700, fontSize: '24px' }}>
+                  <span style={{ color: '#FF6B00', fontWeight: 700, fontSize: '24px' }}>
                     {job.company_name.charAt(0)}
                   </span>
                 )}
@@ -210,8 +210,8 @@ export default async function JobDetailPage({ params }: Props) {
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
               <span
                 style={{
-                  background: 'rgba(245,166,35,0.15)',
-                  color: '#F5A623',
+                  background: 'rgba(255,107,0,0.15)',
+                  color: '#FF6B00',
                   padding: '4px 12px',
                   borderRadius: '20px',
                   fontSize: '12px',
@@ -251,8 +251,8 @@ export default async function JobDetailPage({ params }: Props) {
               {job.is_featured && (
                 <span
                   style={{
-                    background: 'rgba(245,166,35,0.15)',
-                    color: '#F5A623',
+                    background: 'rgba(255,107,0,0.15)',
+                    color: '#FF6B00',
                     padding: '4px 12px',
                     borderRadius: '20px',
                     fontSize: '12px',
@@ -340,7 +340,7 @@ export default async function JobDetailPage({ params }: Props) {
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   ) : (
-                    <span style={{ color: '#F5A623', fontWeight: 700, fontSize: '16px' }}>
+                    <span style={{ color: '#FF6B00', fontWeight: 700, fontSize: '16px' }}>
                       {job.company_name.charAt(0)}
                     </span>
                   )}
@@ -386,7 +386,7 @@ export default async function JobDetailPage({ params }: Props) {
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '10px',
-                        background: 'linear-gradient(135deg, #F5A623, #FF6B35)',
+                        background: 'linear-gradient(135deg, #FF6B00, #E91E8C)',
                         color: '#1A1A0E',
                         padding: '16px 24px',
                         borderRadius: '50px',
@@ -395,7 +395,7 @@ export default async function JobDetailPage({ params }: Props) {
                         fontSize: '15px',
                         width: '100%',
                         boxSizing: 'border-box',
-                        boxShadow: '0 4px 20px rgba(245,166,35,0.3)',
+                        boxShadow: '0 4px 20px rgba(255,107,0,0.3)',
                         marginBottom: '12px',
                       }}
                     >
@@ -480,7 +480,7 @@ export default async function JobDetailPage({ params }: Props) {
             {/* Post a job CTA */}
             <div style={{ textAlign: 'center', marginTop: '16px' }}>
               <Link href="/jobs/post" style={{ color: '#888', fontSize: '13px', textDecoration: 'none' }}>
-                Want to hire? <span style={{ color: '#F5A623' }}>Post a job →</span>
+                Want to hire? <span style={{ color: '#FF6B00' }}>Post a job →</span>
               </Link>
             </div>
 
@@ -504,7 +504,7 @@ export default async function JobDetailPage({ params }: Props) {
                       marginBottom: '10px',
                     }}
                   >
-                    <p style={{ color: '#F5A623', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', margin: '0 0 6px' }}>
+                    <p style={{ color: '#FF6B00', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', margin: '0 0 6px' }}>
                       {similar.job_type.replace(/_/g, ' ')}
                     </p>
                     <p style={{ color: '#fff', fontWeight: 600, fontSize: '14px', margin: '0 0 4px' }}>

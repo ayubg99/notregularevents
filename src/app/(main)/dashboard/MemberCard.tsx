@@ -75,7 +75,7 @@ export default function MemberCard({ membership, displayName, nationality, unive
   return (
     <div
       className="rounded-2xl overflow-hidden relative"
-      style={{ background: 'linear-gradient(135deg, #F5A623 0%, #FF6B35 100%)' }}
+      style={{ background: 'linear-gradient(135deg, #FF6B00 0%, #E91E8C 100%)' }}
     >
       {/* Decorative circles */}
       <div style={{ position: 'absolute', top: -24, right: -24, width: 160, height: 160, borderRadius: '50%', background: 'rgba(255,255,255,0.10)', pointerEvents: 'none' }} />

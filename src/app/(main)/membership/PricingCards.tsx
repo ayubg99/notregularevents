@@ -141,7 +141,7 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
                 <span className={`absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-bold border whitespace-nowrap ${
                   plan.featured
                     ? 'bg-brand-primary text-white border-brand-primary'
-                    : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                    : 'bg-orange-500/20 text-orange-300 border-orange-500/30'
                 }`}>
                   {plan.badge}
                 </span>
@@ -177,14 +177,14 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
               {/* CTA button */}
               {isUpgrade && (
                 <div style={{
-                  background:    'rgba(245,166,35,0.1)',
-                  border:        '1px solid rgba(245,166,35,0.4)',
+                  background:    'rgba(255,107,0,0.1)',
+                  border:        '1px solid rgba(255,107,0,0.4)',
                   borderRadius:  '10px',
                   padding:       '10px 12px',
                   marginBottom:  '12px',
                   textAlign:     'center',
                 }}>
-                  <p style={{ color: '#F5A623', margin: 0, fontSize: '12px', lineHeight: 1.4 }}>
+                  <p style={{ color: '#FF6B00', margin: 0, fontSize: '12px', lineHeight: 1.4 }}>
                     Upgrading will cancel your current <strong>{currentPlan}</strong> plan.
                   </p>
                 </div>
@@ -240,14 +240,14 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
             onClick={e => e.stopPropagation()}
             style={{
               position:     'relative',
-              background:   'linear-gradient(145deg, #1C1400, #1A1200)',
-              border:       '1px solid rgba(245,166,35,0.25)',
+              background:   'linear-gradient(145deg, #1A0A14, #0D0D0D)',
+              border:       '1px solid rgba(255,107,0,0.25)',
               borderRadius: '24px',
               padding:      '48px 40px',
               maxWidth:     '420px',
               width:        '100%',
               textAlign:    'center',
-              boxShadow:    '0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(245,166,35,0.05)',
+              boxShadow:    '0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,107,0,0.05)',
             }}
           >
             {/* Close button */}
@@ -278,13 +278,13 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
               width:          '64px',
               height:         '64px',
               borderRadius:   '50%',
-              background:     'linear-gradient(135deg, #F5A623, #FF6B35)',
+              background:     'linear-gradient(135deg, #FF6B00, #E91E8C)',
               display:        'flex',
               alignItems:     'center',
               justifyContent: 'center',
               margin:         '0 auto 20px',
               fontSize:       '28px',
-              boxShadow:      '0 8px 24px rgba(245,166,35,0.3)',
+              boxShadow:      '0 8px 24px rgba(255,107,0,0.3)',
             }}>
               👑
             </div>
@@ -310,15 +310,15 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
               href="/auth/register?redirect=/membership"
               style={{
                 display:        'block',
-                background:     'linear-gradient(135deg, #F5A623, #FF6B35)',
-                color:          '#1A1A2E',
+                background:     'linear-gradient(135deg, #FF6B00, #E91E8C)',
+                color:          '#FFFFFF',
                 padding:        '16px',
-                borderRadius:   '50px',
+                borderRadius:   '8px',
                 textDecoration: 'none',
-                fontWeight:     700,
+                fontWeight:     800,
                 fontSize:       '15px',
                 marginBottom:   '10px',
-                boxShadow:      '0 8px 24px rgba(245,166,35,0.35)',
+                boxShadow:      '0 8px 24px rgba(255,107,0,0.35)',
                 textAlign:      'center',
                 letterSpacing:  '0.3px',
               }}
@@ -345,7 +345,7 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
               Already have an account? Login
             </Link>
 
-            <p style={{ color: 'rgba(245,166,35,0.4)', fontSize: '12px', marginTop: '20px' }}>
+            <p style={{ color: 'rgba(255,107,0,0.4)', fontSize: '12px', marginTop: '20px' }}>
               Free to join • Cancel anytime
             </p>
           </div>

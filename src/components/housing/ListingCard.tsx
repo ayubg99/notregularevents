@@ -56,7 +56,7 @@ export default function ListingCard({ listing }: Props) {
             <div className={`w-full h-full flex items-center justify-center text-5xl ${
               isRoom
                 ? 'bg-gradient-to-br from-teal-500/30 to-brand-dark'
-                : 'bg-gradient-to-br from-amber-500/30 to-brand-dark'
+                : 'bg-gradient-to-br from-orange-500/30 to-brand-dark'
             }`}>
               {isRoom ? '🏠' : '👤'}
             </div>
@@ -66,7 +66,7 @@ export default function ListingCard({ listing }: Props) {
           <span className={`absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full ${
             isRoom
               ? 'bg-teal-400/90 text-brand-dark'
-              : 'bg-amber-400/90 text-brand-dark'
+              : 'bg-orange-400/90 text-brand-dark'
           }`}>
             {isRoom ? '🏠 Room Available' : '👤 Looking for Room'}
           </span>
@@ -139,8 +139,8 @@ export default function ListingCard({ listing }: Props) {
             style={{
               display: 'block',
               padding: '10px',
-              background: '#F5A623',
-              color: '#1A1A2E',
+              background: '#FF6B00',
+              color: '#0D0D0D',
               borderRadius: '50px',
               fontWeight: 700,
               fontSize: '14px',

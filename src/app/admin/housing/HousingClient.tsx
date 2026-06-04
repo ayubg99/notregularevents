@@ -8,7 +8,7 @@ import type { HousingListingRow, HousingStatus } from '@/types/database'
 
 const STATUS_COLORS: Record<HousingStatus, string> = {
   active:   'text-green-400 bg-green-400/10 border border-green-400/20',
-  inactive: 'text-yellow-400 bg-yellow-400/10 border border-yellow-400/20',
+  inactive: 'text-orange-400 bg-orange-400/10 border border-orange-400/20',
   rented:   'text-blue-400 bg-blue-400/10 border border-blue-400/20',
 }
 
@@ -139,7 +139,7 @@ export default function HousingClient({ listings }: Props) {
               <button
                 onClick={() => handleDeactivate(row.id)}
                 disabled={isPending}
-                className="text-xs px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 transition-colors disabled:opacity-40"
+                className="text-xs px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 hover:bg-yellow-500/20 transition-colors disabled:opacity-40"
               >
                 Deactivate
               </button>

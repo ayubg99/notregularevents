@@ -55,7 +55,7 @@ export default async function MarketplacePage() {
             href="/marketplace/post"
             style={{
               display:        'inline-block',
-              background:     'linear-gradient(135deg, #FF6B35, #F5A623)',
+              background:     'linear-gradient(135deg, #E91E8C, #FF6B00)',
               color:          '#1A1A0E',
               padding:        '11px 22px',
               borderRadius:   '50px',
@@ -63,7 +63,7 @@ export default async function MarketplacePage() {
               fontWeight:     700,
               fontSize:       '14px',
               whiteSpace:     'nowrap',
-              boxShadow:      '0 4px 16px rgba(255,107,53,0.25)',
+              boxShadow:      '0 4px 16px rgba(233,30,140,0.25)',
             }}
           >
             + Sell Something
@@ -73,8 +73,8 @@ export default async function MarketplacePage() {
         {/* Members banner for non-members */}
         {!hasMembership && (
           <div style={{
-            background:     'rgba(245,166,35,0.08)',
-            border:         '1px solid rgba(245,166,35,0.2)',
+            background:     'rgba(255,107,0,0.08)',
+            border:         '1px solid rgba(255,107,0,0.2)',
             borderRadius:   '12px',
             padding:        '14px 18px',
             marginBottom:   '24px',
@@ -86,13 +86,13 @@ export default async function MarketplacePage() {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span style={{ fontSize: '20px' }}>👑</span>
-              <p style={{ color: '#F5A623', fontSize: '14px', fontWeight: 600, margin: 0 }}>
+              <p style={{ color: '#FF6B00', fontSize: '14px', fontWeight: 600, margin: 0 }}>
                 Members see seller contact details
               </p>
             </div>
             <Link
               href="/membership"
-              style={{ color: '#F5A623', fontSize: '13px', textDecoration: 'none', fontWeight: 700, whiteSpace: 'nowrap' }}
+              style={{ color: '#FF6B00', fontSize: '13px', textDecoration: 'none', fontWeight: 700, whiteSpace: 'nowrap' }}
             >
               Join Membership →
             </Link>

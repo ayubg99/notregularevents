@@ -128,10 +128,10 @@ export default function BookingConfirmation({
       <Link
         href="/ambassadors"
         className="w-full max-w-sm flex items-center gap-3 rounded-2xl px-5 py-4 transition-all group hover:brightness-110"
-        style={{ background: 'rgba(245,166,35,0.07)', border: '1px solid rgba(245,166,35,0.2)' }}
+        style={{ background: 'rgba(255,107,0,0.07)', border: '1px solid rgba(255,107,0,0.2)' }}
       >
         <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: 'rgba(245,166,35,0.15)', border: '1px solid rgba(245,166,35,0.25)' }}>
+          style={{ background: 'rgba(255,107,0,0.15)', border: '1px solid rgba(255,107,0,0.25)' }}>
           <TrendingUp size={16} className="text-brand-accent" />
         </div>
         <div>

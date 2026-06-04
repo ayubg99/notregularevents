@@ -109,7 +109,7 @@ export default function ScannerPage() {
   // ── PIN screen ──────────────────────────────────────────────────
   if (!unlocked) {
     return (
-      <div className="min-h-screen bg-[#1A1A2E] flex items-center justify-center p-5">
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center p-5">
         <div className="w-full max-w-sm bg-white/5 rounded-2xl p-10 text-center">
           <Image
             src="/logo-circle.png"
@@ -118,7 +118,7 @@ export default function ScannerPage() {
             height={64}
             className="rounded-full mx-auto mb-5"
           />
-          <h1 className="text-[#F5A623] text-xl font-bold mb-2">Staff Access</h1>
+          <h1 className="text-[#FF6B00] text-xl font-bold mb-2">Staff Access</h1>
           <p className="text-white/50 text-sm mb-8">Enter PIN to access scanner</p>
 
           <input
@@ -129,7 +129,7 @@ export default function ScannerPage() {
             onChange={e => setPin(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handlePinSubmit()}
             placeholder="••••"
-            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white text-2xl text-center tracking-widest mb-4 outline-none focus:border-[#F5A623] transition-colors"
+            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white text-2xl text-center tracking-widest mb-4 outline-none focus:border-[#FF6B00] transition-colors"
           />
 
           {pinError && (
@@ -138,7 +138,7 @@ export default function ScannerPage() {
 
           <button
             onClick={handlePinSubmit}
-            className="w-full py-3.5 bg-[#F5A623] text-[#1A1A2E] rounded-full font-bold text-base hover:bg-[#e59920] transition-colors"
+            className="w-full py-3.5 bg-[#FF6B00] text-[#0D0D0D] rounded-full font-bold text-base hover:bg-[#e59920] transition-colors"
           >
             Unlock Scanner
           </button>
@@ -171,19 +171,19 @@ export default function ScannerPage() {
       : 'text-red-400'
 
   return (
-    <div className="min-h-screen bg-[#1A1A2E] flex flex-col items-center p-5">
+    <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center p-5">
       <div className="w-full max-w-md">
 
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-[#F5A623] text-lg font-bold">🎟️ Ticket Scanner</h1>
+          <h1 className="text-[#FF6B00] text-lg font-bold">🎟️ Ticket Scanner</h1>
           <span className="bg-white/5 rounded-full px-3 py-1 text-xs text-white/50">
             {checkinCount} checked in
           </span>
         </div>
 
         {/* Camera viewfinder */}
-        <div className={`relative w-full aspect-square rounded-2xl overflow-hidden mb-6 border-2 transition-colors ${scanning ? 'border-[#F5A623]' : 'border-white/10'} bg-black`}>
+        <div className={`relative w-full aspect-square rounded-2xl overflow-hidden mb-6 border-2 transition-colors ${scanning ? 'border-[#FF6B00]' : 'border-white/10'} bg-black`}>
           <video
             ref={videoRef}
             className="w-full h-full object-cover"
@@ -198,7 +198,7 @@ export default function ScannerPage() {
               {(['tl','tr','bl','br'] as const).map(c => (
                 <span
                   key={c}
-                  className={`absolute w-8 h-8 border-[#F5A623] border-[3px]
+                  className={`absolute w-8 h-8 border-[#FF6B00] border-[3px]
                     ${c === 'tl' ? 'top-0 left-0 border-r-0 border-b-0' : ''}
                     ${c === 'tr' ? 'top-0 right-0 border-l-0 border-b-0' : ''}
                     ${c === 'bl' ? 'bottom-0 left-0 border-r-0 border-t-0' : ''}
@@ -220,7 +220,7 @@ export default function ScannerPage() {
         {!scanning ? (
           <button
             onClick={() => { setScanning(true); setResult(null) }}
-            className="w-full py-4 bg-[#F5A623] text-[#1A1A2E] rounded-full font-bold text-base mb-3 hover:bg-[#e59920] transition-colors"
+            className="w-full py-4 bg-[#FF6B00] text-[#0D0D0D] rounded-full font-bold text-base mb-3 hover:bg-[#e59920] transition-colors"
           >
             Start Scanning
           </button>
@@ -246,7 +246,7 @@ export default function ScannerPage() {
               }
             }}
             placeholder="Or enter booking ref manually"
-            className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white text-sm placeholder:text-white/30 outline-none focus:border-[#F5A623] transition-colors"
+            className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white text-sm placeholder:text-white/30 outline-none focus:border-[#FF6B00] transition-colors"
           />
           <button
             onClick={() => {

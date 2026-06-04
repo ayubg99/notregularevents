@@ -18,8 +18,8 @@ export type PdfTicket = {
   type:       'EVENT' | 'TRIP'
 }
 
-const CORAL  = '#FF6B35'
-const NAVY   = '#1A1A2E'
+const CORAL  = '#E91E8C'
+const NAVY   = '#0D0D0D'
 const GREY   = '#666680'
 const BORDER = '#E8E8F0'
 

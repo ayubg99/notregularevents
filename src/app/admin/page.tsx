@@ -75,7 +75,7 @@ export default async function AdminPage() {
         <StatsCard label="Event Tickets"    value={totalTickets  ?? 0} icon={<Ticket   size={18} />} color="bg-brand-primary/15" />
         <StatsCard label="Trip Bookings"    value={totalTrips    ?? 0} icon={<MapPin   size={18} />} color="bg-purple-500/15" />
         <StatsCard label="Active Members"   value={activeMembers ?? 0} icon={<Users    size={18} />} color="bg-green-500/15" />
-        <StatsCard label="Upcoming Events"  value={upcomingEvents ?? 0} icon={<Calendar size={18} />} color="bg-amber-500/15" />
+        <StatsCard label="Upcoming Events"  value={upcomingEvents ?? 0} icon={<Calendar size={18} />} color="bg-orange-500/15" />
       </div>
 
       {/* Chart + recent bookings */}

@@ -9,15 +9,15 @@ interface Props {
 export default function ContactSection({ listing, hasMembership }: Props) {
   if (!hasMembership) {
     return (
-      <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-6 text-center">
+      <div className="bg-brand-accent/10 border border-brand-accent/30 rounded-2xl p-6 text-center">
         <p className="text-3xl mb-2">👑</p>
-        <h3 className="text-yellow-400 font-semibold text-base mb-2">Members only</h3>
+        <h3 className="text-brand-accent font-semibold text-base mb-2">Members only</h3>
         <p className="text-white/50 text-sm mb-5">
           Join membership to see contact details.
         </p>
         <Link
           href="/membership"
-          className="inline-block bg-yellow-500 text-black font-bold px-6 py-3 rounded-full text-sm hover:bg-yellow-400 transition-colors"
+          className="inline-block btn-primary px-6 py-3 text-sm"
         >
           Join Membership →
         </Link>

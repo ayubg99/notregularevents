@@ -66,7 +66,7 @@ export default function JobsAdminClient({ jobs }: Props) {
             onClick={() => setFilter(tab.value)}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
               filter === tab.value
-                ? 'bg-amber-500/20 text-amber-400 border border-amber-400/25'
+                ? 'bg-orange-500/20 text-orange-400 border border-orange-400/25'
                 : 'text-white/50 hover:text-white hover:bg-white/5 border border-transparent'
             }`}
           >
@@ -101,7 +101,7 @@ export default function JobsAdminClient({ jobs }: Props) {
               filtered.map(job => (
                 <tr key={job.id} className="border-b border-white/5 hover:bg-white/3 transition-colors">
                   <td className="px-4 py-3">
-                    <a href={`/jobs/${job.id}`} target="_blank" rel="noopener noreferrer" className="text-white font-medium hover:text-amber-400 transition-colors max-w-[180px] block truncate">
+                    <a href={`/jobs/${job.id}`} target="_blank" rel="noopener noreferrer" className="text-white font-medium hover:text-orange-400 transition-colors max-w-[180px] block truncate">
                       {job.title}
                     </a>
                   </td>
@@ -112,7 +112,7 @@ export default function JobsAdminClient({ jobs }: Props) {
                     <button
                       onClick={() => patch(job.id, { is_featured: !job.is_featured })}
                       disabled={isPending}
-                      className={`text-xs px-2 py-1 rounded-md font-medium transition-all ${job.is_featured ? 'bg-amber-500/20 text-amber-400' : 'bg-white/5 text-white/30 hover:bg-white/10'}`}
+                      className={`text-xs px-2 py-1 rounded-md font-medium transition-all ${job.is_featured ? 'bg-orange-500/20 text-orange-400' : 'bg-white/5 text-white/30 hover:bg-white/10'}`}
                       title="Toggle featured"
                     >
                       {job.is_featured ? '⭐ Yes' : '—'}
@@ -175,7 +175,7 @@ export default function JobsAdminClient({ jobs }: Props) {
       {/* Delete confirm dialog */}
       {confirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#1A1A2E] border border-white/10 rounded-2xl p-8 max-w-sm w-full mx-4">
+          <div className="bg-[#0D0D0D] border border-white/10 rounded-2xl p-8 max-w-sm w-full mx-4">
             <h3 className="text-white font-bold text-lg mb-2">Delete Job Listing?</h3>
             <p className="text-white/50 text-sm mb-6">This action cannot be undone.</p>
             <div className="flex gap-3">

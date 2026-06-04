@@ -117,14 +117,14 @@ export function ContactSection({ listing }: Props) {
 
   return (
     <div style={{
-      background:   'rgba(245,166,35,0.08)',
-      border:       '1px solid rgba(245,166,35,0.2)',
+      background:   'rgba(255,107,0,0.08)',
+      border:       '1px solid rgba(255,107,0,0.2)',
       borderRadius: '16px',
       padding:      '24px',
       textAlign:    'center',
     }}>
       <p style={{ fontSize: '32px', margin: '0 0 8px' }}>👑</p>
-      <h3 style={{ color: '#F5A623', margin: '0 0 8px', fontSize: '16px' }}>Members only</h3>
+      <h3 style={{ color: '#FF6B00', margin: '0 0 8px', fontSize: '16px' }}>Members only</h3>
       <p style={{ color: '#888', fontSize: '13px', margin: '0 0 16px', lineHeight: 1.5 }}>
         Join membership to contact sellers and access all marketplace listings
       </p>
@@ -132,14 +132,14 @@ export function ContactSection({ listing }: Props) {
         href="/membership"
         style={{
           display:        'block',
-          background:     'linear-gradient(135deg, #F5A623, #FF6B35)',
+          background:     'linear-gradient(135deg, #FF6B00, #E91E8C)',
           color:          '#1A1A0E',
           padding:        '13px',
           borderRadius:   '50px',
           textDecoration: 'none',
           fontWeight:     700,
           fontSize:       '14px',
-          boxShadow:      '0 4px 16px rgba(245,166,35,0.25)',
+          boxShadow:      '0 4px 16px rgba(255,107,0,0.25)',
         }}
       >
         Join Membership →

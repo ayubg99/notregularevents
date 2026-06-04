@@ -96,7 +96,7 @@ export default function ListingCard({ listing }: Props) {
             position:     'absolute',
             bottom:       '10px',
             left:         '10px',
-            background:   'rgba(245,166,35,0.9)',
+            background:   'rgba(255,107,0,0.9)',
             color:        '#1A1A0E',
             padding:      '3px 10px',
             borderRadius: '20px',
@@ -161,7 +161,7 @@ export default function ListingCard({ listing }: Props) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <p style={{
-              color:      listing.is_free ? '#2ECC71' : '#F5A623',
+              color:      listing.is_free ? '#2ECC71' : '#FF6B00',
               fontWeight: 700,
               fontSize:   '20px',
               margin:     0,

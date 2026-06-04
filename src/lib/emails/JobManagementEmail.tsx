@@ -32,7 +32,7 @@ export function JobManagementEmail({ jobTitle, company, viewUrl, manageUrl, edit
       <tr>
         <td align="center">
           <a href="${manageUrl}"
-             style="display:inline-block;background:#F5A623;color:#1A1209;font-weight:700;
+             style="display:inline-block;background:#FF6B00;color:#0D0D0D;font-weight:700;
                     font-size:15px;text-decoration:none;padding:14px 36px;border-radius:9999px;">
             Manage My Listing →
           </a>
@@ -43,7 +43,7 @@ export function JobManagementEmail({ jobTitle, company, viewUrl, manageUrl, edit
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
       <tr>
         <td align="center" style="padding-top:12px;">
-          <a href="${editUrl}" style="color:#F5A623;font-size:13px;text-decoration:none;margin-right:24px;">
+          <a href="${editUrl}" style="color:#FF6B00;font-size:13px;text-decoration:none;margin-right:24px;">
             ✏️ Edit listing
           </a>
           <a href="${viewUrl}" style="color:#B8A090;font-size:13px;text-decoration:none;">
@@ -70,6 +70,6 @@ export function JobManagementEmail({ jobTitle, company, viewUrl, manageUrl, edit
   return emailLayout(
     content,
     baseUrl,
-    `Erasmus Vibe Valencia — jobs for internationals<br />Questions? Email <a href="mailto:support@erasmusvibe.com" style="color:#F5A623;">support@erasmusvibe.com</a>`,
+    `Erasmus Vibe Valencia — jobs for internationals<br />Questions? Email <a href="mailto:support@erasmusvibe.com" style="color:#FF6B00;">support@erasmusvibe.com</a>`,
   )
 }

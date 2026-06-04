@@ -13,7 +13,7 @@ interface Props {
 const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
   active:   { bg: 'rgba(46,204,113,0.15)',  color: '#2ECC71' },
   sold:     { bg: 'rgba(136,136,136,0.15)', color: '#888'    },
-  reserved: { bg: 'rgba(245,166,35,0.15)',  color: '#F5A623' },
+  reserved: { bg: 'rgba(255,107,0,0.15)',  color: '#FF6B00' },
   inactive: { bg: 'rgba(255,68,68,0.15)',   color: '#FF4444' },
 }
 
@@ -84,7 +84,7 @@ export default function MarketplaceClient({ listings }: Props) {
                     {cat?.label}
                   </td>
                   {/* Price */}
-                  <td style={{ padding: '12px 16px', color: listing.is_free ? '#2ECC71' : '#F5A623', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                  <td style={{ padding: '12px 16px', color: listing.is_free ? '#2ECC71' : '#FF6B00', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap' }}>
                     {listing.is_free ? 'Free' : `€${listing.price}`}
                   </td>
                   {/* Seller */}

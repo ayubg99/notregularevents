@@ -13,7 +13,7 @@ interface Props {
 const STATUS_COLORS: Record<MarketplaceStatus, { bg: string; color: string }> = {
   active:   { bg: 'rgba(46,204,113,0.15)',  color: '#2ECC71' },
   sold:     { bg: 'rgba(136,136,136,0.15)', color: '#888'    },
-  reserved: { bg: 'rgba(245,166,35,0.15)',  color: '#F5A623' },
+  reserved: { bg: 'rgba(255,107,0,0.15)',  color: '#FF6B00' },
   inactive: { bg: 'rgba(255,68,68,0.15)',   color: '#FF4444' },
 }
 
@@ -116,7 +116,7 @@ export default function MarketplaceListings({ myItems }: Props) {
                       </p>
                       <p style={{ color: '#888', fontSize: '12px', margin: 0 }}>
                         {c?.emoji} {c?.label} •{' '}
-                        <span style={{ color: item.is_free ? '#2ECC71' : '#F5A623', fontWeight: 600 }}>
+                        <span style={{ color: item.is_free ? '#2ECC71' : '#FF6B00', fontWeight: 600 }}>
                           {item.is_free ? 'Free' : `€${item.price}`}
                         </span>
                       </p>
@@ -135,7 +135,7 @@ export default function MarketplaceListings({ myItems }: Props) {
                         </button>
                         <button
                           onClick={() => handleStatus(item.id, 'reserved')}
-                          style={{ padding: '6px 12px', background: 'transparent', border: '1px solid rgba(245,166,35,0.3)', borderRadius: '20px', color: '#F5A623', fontSize: '11px', cursor: 'pointer', fontWeight: 500 }}
+                          style={{ padding: '6px 12px', background: 'transparent', border: '1px solid rgba(255,107,0,0.3)', borderRadius: '20px', color: '#FF6B00', fontSize: '11px', cursor: 'pointer', fontWeight: 500 }}
                         >
                           Reserved
                         </button>

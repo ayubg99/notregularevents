@@ -30,7 +30,7 @@ interface NewTripProps {
 
 export function NewEventAnnouncementEmail(p: NewEventProps): string {
   const content = `
-    <p style="margin:0 0 4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#F5A623;">
+    <p style="margin:0 0 4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FF6B00;">
       New Event Just Dropped 🎉
     </p>
     <p style="margin:0 0 28px;font-size:15px;color:#B8A090;line-height:1.6;">
@@ -56,7 +56,7 @@ export function NewEventAnnouncementEmail(p: NewEventProps): string {
             🎟️ &nbsp;${p.isFree ? 'Free entry' : p.price ? `From €${p.price} &nbsp;·&nbsp; Members −10%` : ''}
           </p>
           <a href="${p.baseUrl}/events/${p.slug}"
-             style="display:inline-block;background:#F5A623;color:#1A1209;font-weight:700;
+             style="display:inline-block;background:#FF6B00;color:#0D0D0D;font-weight:700;
                     font-size:14px;text-decoration:none;padding:12px 28px;border-radius:9999px;">
             Book Now →
           </a>
@@ -78,7 +78,7 @@ export function NewTripAnnouncementEmail(p: NewTripProps): string {
     : fmt(p.startDate)
 
   const content = `
-    <p style="margin:0 0 4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FF6B35;">
+    <p style="margin:0 0 4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#E91E8C;">
       New Trip Just Added ✈️
     </p>
     <p style="margin:0 0 28px;font-size:15px;color:#B8A090;line-height:1.6;">
@@ -102,7 +102,7 @@ export function NewTripAnnouncementEmail(p: NewTripProps): string {
           <p style="margin:0 0 4px;font-size:14px;color:#B8A090;">📅 &nbsp;${dateRange}</p>
           ${p.priceStandard ? `<p style="margin:0 0 20px;font-size:14px;color:#B8A090;">💶 &nbsp;From €${p.priceStandard} &nbsp;·&nbsp; Members −10%</p>` : '<div style="height:20px;"></div>'}
           <a href="${p.baseUrl}/trips/${p.slug}"
-             style="display:inline-block;background:#FF6B35;color:#fff;font-weight:700;
+             style="display:inline-block;background:#E91E8C;color:#fff;font-weight:700;
                     font-size:14px;text-decoration:none;padding:12px 28px;border-radius:9999px;">
             View Trip →
           </a>
