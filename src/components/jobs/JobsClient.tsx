@@ -173,7 +173,6 @@ export default function JobsClient({ jobs }: Props) {
             color: '#888',
           }}
         >
-          <p style={{ fontSize: '40px', marginBottom: '12px' }}>🔍</p>
           <p style={{ fontSize: '18px', fontWeight: 600, color: '#fff', marginBottom: '8px' }}>
             No jobs found
           </p>
