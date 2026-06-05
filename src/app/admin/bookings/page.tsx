@@ -5,8 +5,9 @@ export default async function AdminBookingsPage() {
   const admin = getAdminClient()
 
   const [
-    { data: eventTickets, error: eventError },
-    { data: tripBookings, error: tripError },
+    { data: eventTickets },
+    { data: tripBookingsRaw },
+    { data: tripsRaw },
   ] = await Promise.all([
     admin
       .from('event_tickets')
@@ -14,12 +15,19 @@ export default async function AdminBookingsPage() {
       .order('created_at', { ascending: false }),
     admin
       .from('trip_bookings')
-      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, tier, amount_paid, quantity, qr_code, referral_code, selected_extras, promo_code_used, trips(title, start_date, destination)')
+      .select('id, trip_id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, tier, amount_paid, quantity, qr_code, referral_code, selected_extras, promo_code_used')
       .order('created_at', { ascending: false }),
+    admin
+      .from('trips')
+      .select('id, title, start_date, destination'),
   ])
 
-  console.log('Event tickets:', eventTickets?.length, eventError)
-  console.log('Trip bookings:', tripBookings?.length, tripError)
+  const tripMap = Object.fromEntries((tripsRaw ?? []).map(t => [t.id, t]))
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tripBookings = (tripBookingsRaw ?? []).map((b: any) => ({
+    ...b,
+    trips: tripMap[(b as any).trip_id] ?? null,
+  }))
 
   const allBookings = [
     ...(eventTickets ?? []).map(b => ({
