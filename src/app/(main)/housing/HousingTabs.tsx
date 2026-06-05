@@ -8,7 +8,7 @@ import type { PartnerRoomRow, HousingListingRow } from '@/types/database'
 
 const TABS = [
   { id: 'partner', label: '⭐ Verified Rooms',   description: 'Verified by Erasmus Life' },
-  { id: 'student', label: '👥 Members Listings', description: 'Posted by members'        },
+  { id: 'student', label: '👥 Student Listings', description: 'Posted by students'        },
 ] as const
 
 type TabId = typeof TABS[number]['id']
@@ -137,7 +137,7 @@ export default function HousingTabs({ partnerRooms, initialListings, hasMembersh
             <div className="flex items-center gap-4 bg-brand-accent/10 border border-brand-accent/30 rounded-2xl p-4 mb-6">
               <span className="text-2xl flex-shrink-0">👑</span>
               <div className="flex-1">
-                <p className="text-brand-accent font-semibold text-sm mb-0.5">Members see contact details</p>
+                <p className="text-brand-accent font-semibold text-sm mb-0.5">Students see contact details</p>
                 <p className="text-white/50 text-xs">
                   Join membership to see WhatsApp and email contacts.{' '}
                   <Link href="/membership" className="text-brand-accent hover:underline">

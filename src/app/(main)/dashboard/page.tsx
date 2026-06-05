@@ -170,7 +170,7 @@ export default async function DashboardPage() {
             {/* Member discounts */}
             {activeMembership && sponsors.length > 0 && (
               <div className="flex flex-col gap-3">
-                <h3 className="text-white font-bold text-sm">🎁 Your Member Discounts</h3>
+                <h3 className="text-white font-bold text-sm">🎁 Your Student Discounts</h3>
                 <div className="grid grid-cols-2 gap-3">
                   {sponsors.map(sponsor => (
                     <div

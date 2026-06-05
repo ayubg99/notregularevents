@@ -87,7 +87,7 @@ export default async function MarketplacePage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span style={{ fontSize: '20px' }}>👑</span>
               <p style={{ color: '#FF6B00', fontSize: '14px', fontWeight: 600, margin: 0 }}>
-                Members see seller contact details
+                Students see seller contact details
               </p>
             </div>
             <Link
