@@ -69,13 +69,14 @@ export async function POST() {
 
   for (const u of users) {
     const uid = userIds[u.email]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase.from('memberships').upsert({
       user_id:    uid,
       plan:       'vip',
       status:     'active',
       start_date: d(60),
       end_date:   future(300),
-    })
+    } as any)
   }
 
   // ── 4. Ambassador records ─────────────────────────────────────
