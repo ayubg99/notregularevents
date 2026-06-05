@@ -53,6 +53,9 @@ export async function POST() {
     },
   ]
 
+  // Delete existing seed employers so re-runs are idempotent
+  await supabase.from('employer_accounts').delete().in('email', employers.map(e => e.email))
+
   const { data: insertedEmployers, error: employersError } = await supabase
     .from('employer_accounts')
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
