@@ -5,25 +5,23 @@ export const dynamic = 'force-dynamic'
 
 const LOGOS: Record<string, string> = {
   'Basic-Fit':
-    'https://logo.clearbit.com/basic-fit.com',
-  'Valencia Bikes':
-    'https://logo.clearbit.com/valenciabikes.com',
-  'Impact Hub Valencia':
-    'https://logo.clearbit.com/impacthub.net',
-  'Espit Chupitos':
-    'https://logo.clearbit.com/espitchupitos.es',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Basic-Fit_logo.svg/400px-Basic-Fit_logo.svg.png',
   'FlixBus':
-    'https://logo.clearbit.com/flixbus.com',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Flixbus_logo.svg/400px-Flixbus_logo.svg.png',
   'Decathlon Valencia':
-    'https://logo.clearbit.com/decathlon.com',
-  'Papagayo Beach Club':
-    'https://logo.clearbit.com/papagayo.es',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Decathlon_logo.svg/400px-Decathlon_logo.svg.png',
+  'Impact Hub Valencia':
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Impact_Hub_logo.svg/400px-Impact_Hub_logo.svg.png',
   "Centre d'Idiomes UV":
-    'https://logo.clearbit.com/uv.es',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Universitat_de_Val%C3%A8ncia_logo.svg/400px-Universitat_de_Val%C3%A8ncia_logo.svg.png',
+  'Espit Chupitos':
+    'https://espitchupitos.es/wp-content/uploads/2022/01/logo-espit-chupitos-blanco.png',
+  'Valencia Bikes':
+    'https://www.valenciabikes.com/wp-content/uploads/2019/01/logo-valencia-bikes.png',
+  'Papagayo Beach Club':
+    'https://papagayo.es/wp-content/uploads/2020/01/logo-papagayo.png',
   'Biciclot':
-    'https://logo.clearbit.com/biciclot.net',
-  'Nomad Coliving Valencia':
-    'https://logo.clearbit.com/nomadcolivingvalencia.com',
+    'https://biciclot.net/wp-content/uploads/2019/03/logo-biciclot.png',
 }
 
 export async function POST() {
