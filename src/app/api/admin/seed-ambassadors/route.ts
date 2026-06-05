@@ -61,7 +61,8 @@ export async function POST() {
       full_name: p.full_name, nationality: p.nationality,
       university: p.university, bio: p.bio,
     } as any)
-    await supabase.from('users').upsert({ id: uid, full_name: p.full_name, role: 'ambassador' })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await supabase.from('users').upsert({ id: uid, full_name: p.full_name, role: 'ambassador' } as any)
   }
 
   // ── 3. Memberships ────────────────────────────────────────────
