@@ -24,7 +24,7 @@ export default function AmbassadorSection() {
                 Ambassador Program
               </p>
               <h2 className="font-heading text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
-                Share the Vibe.<br />
+                Share Erasmus Life.<br />
                 <span className="text-gradient">Earn Real Money.</span>
               </h2>
               <p className="text-white/55 text-lg leading-relaxed mb-8">

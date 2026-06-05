@@ -64,7 +64,7 @@ export default function NewsletterSection() {
                 Stay Updated
               </p>
               <h2 className="font-heading text-3xl md:text-4xl font-bold text-[var(--text-base)] mb-3">
-                Never Miss a Vibe
+                Never Miss a Thing
               </h2>
               <p className="text-[var(--text-muted)] mb-8 leading-relaxed">
                 Event drops, trip alerts and exclusive member offers — straight to your inbox. No spam, ever.
