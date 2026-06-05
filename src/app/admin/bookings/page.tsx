@@ -1,6 +1,8 @@
 import { getAdminClient } from '@/lib/supabase/admin'
 import BookingsClient from './BookingsClient'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminBookingsPage() {
   const admin = getAdminClient()
 

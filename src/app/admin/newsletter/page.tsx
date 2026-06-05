@@ -1,6 +1,8 @@
 import { getAdminClient } from '@/lib/supabase/admin'
 import NewsletterClient from './NewsletterClient'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Newsletter — Admin' }
 
 export default async function AdminNewsletterPage() {

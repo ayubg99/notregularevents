@@ -2,6 +2,8 @@ import { getAdminClient } from '@/lib/supabase/admin'
 import EmployersAdminClient from './EmployersAdminClient'
 import type { EmployerAccountRow } from '@/types/database'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminEmployersPage() {
   const admin = getAdminClient()
   const { data: employers } = await admin

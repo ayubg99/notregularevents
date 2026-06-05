@@ -1,6 +1,8 @@
 import { getAdminClient } from '@/lib/supabase/admin'
 import EventsManager from './EventsManager'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminEventsPage() {
   const admin = getAdminClient()
   const { data: events } = await admin

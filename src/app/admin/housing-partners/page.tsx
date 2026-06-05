@@ -4,6 +4,8 @@ import { getAdminClient } from '@/lib/supabase/admin'
 import PartnersClient from './PartnersClient'
 import type { HousingPartnerRow } from '@/types/database'
 
+export const dynamic = 'force-dynamic'
+
 type RawPartner = HousingPartnerRow & { partner_rooms: { count: number }[] | null }
 
 export default async function HousingPartnersPage() {

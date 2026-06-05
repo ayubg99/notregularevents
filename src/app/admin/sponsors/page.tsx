@@ -4,6 +4,8 @@ import { getAdminClient } from '@/lib/supabase/admin'
 import SponsorsClient from './SponsorsClient'
 import type { SponsorRow } from '@/types/database'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminSponsorsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

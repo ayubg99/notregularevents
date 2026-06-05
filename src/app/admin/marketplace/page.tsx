@@ -3,6 +3,8 @@ import { CATEGORIES } from '@/lib/marketplace'
 import MarketplaceClient from './MarketplaceClient'
 import type { MarketplaceListingRow } from '@/types/database'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminMarketplacePage() {
   const admin = getAdminClient()
   const { data: listingsRaw } = await admin

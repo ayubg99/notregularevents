@@ -1,6 +1,8 @@
 import { getAdminClient } from '@/lib/supabase/admin'
 import TripsManager from './TripsManager'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminTripsPage() {
   const admin = getAdminClient()
   const { data: trips } = await admin

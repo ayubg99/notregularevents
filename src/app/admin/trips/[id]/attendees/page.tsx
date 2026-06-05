@@ -2,6 +2,8 @@ import { getAdminClient } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import TripAttendeesClient from './TripAttendeesClient'
 
+export const dynamic = 'force-dynamic'
+
 export default async function TripAttendeesPage({
   params,
 }: {

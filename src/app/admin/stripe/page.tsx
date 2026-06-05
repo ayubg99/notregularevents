@@ -1,5 +1,7 @@
 import { stripe } from '@/lib/stripe'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Stripe Connect — Admin' }
 
 export default async function StripeStatusPage() {

@@ -1,6 +1,8 @@
 import { getAdminClient } from '@/lib/supabase/admin'
 import HousingClient from './HousingClient'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminHousingPage() {
   const admin = getAdminClient()
   const { data: listings } = await admin
