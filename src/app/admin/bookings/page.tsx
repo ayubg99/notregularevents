@@ -14,7 +14,7 @@ export default async function AdminBookingsPage() {
       .order('created_at', { ascending: false }),
     admin
       .from('trip_bookings')
-      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, tier, amount_paid, quantity, qr_code, group_booking_ref, is_group_booking, lead_name, lead_email, referral_code, selected_extras, promo_code_used, trips(title, start_date, destination)')
+      .select('id, booking_ref, status, created_at, guest_name, guest_email, guest_phone, stripe_payment_id, tier, amount_paid, quantity, qr_code, referral_code, selected_extras, promo_code_used, trips(title, start_date, destination)')
       .order('created_at', { ascending: false }),
   ])
 
@@ -65,12 +65,12 @@ export default async function AdminBookingsPage() {
       location: (b.trips as unknown as { destination: string } | null)?.destination ?? null,
       tier:              b.tier as string | null,
       quantity:          b.quantity ?? 1,
-      qr_code:           b.qr_code            ?? null,
-      group_booking_ref: b.group_booking_ref  ?? null,
-      is_group_booking:  b.is_group_booking   ?? false,
-      lead_name:         b.lead_name          ?? null,
-      lead_email:        b.lead_email         ?? null,
-      referral_code:     b.referral_code      ?? null,
+      qr_code:           b.qr_code          ?? null,
+      group_booking_ref: null,
+      is_group_booking:  false,
+      lead_name:         null,
+      lead_email:        null,
+      referral_code:     b.referral_code    ?? null,
       ticket_tier_name:  null as string | null,
       promo_code_used:   b.promo_code_used    ?? null,
       selected_extras:   b.selected_extras    ?? null,
