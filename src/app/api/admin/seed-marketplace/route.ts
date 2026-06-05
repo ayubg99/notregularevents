@@ -266,14 +266,113 @@ export async function POST() {
     },
   ]
 
+  const ticketItems = [
+    {
+      title: '2x Pacha Valencia tickets — Saturday night',
+      description: 'Selling 2 tickets for Pacha Valencia this Saturday. Bought them but can\'t go anymore — friends bailed. Face value €25 each, selling as a pair.',
+      category: 'tickets_events',
+      condition: 'new_with_tags',
+      price: 45,
+      is_free: false,
+      is_negotiable: true,
+      brand: null,
+      color: null,
+      event_date: new Date(Date.now() + 5 * 86400000).toISOString().slice(0, 10),
+      event_venue: 'Pacha Valencia, Calle Eugenia Viñes 152',
+      ticket_quantity: 2,
+      photos: ['https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=600&q=80'],
+      seller_name: 'Marco',
+      seller_nationality: '🇮🇹 Italian',
+      university: 'UV',
+      neighborhood: 'El Carmen',
+      contact_whatsapp: '+34 611 111 201',
+      contact_email: null,
+      location: 'Valencia',
+      status: 'active',
+      expires_at: future(5),
+    },
+    {
+      title: '1x Rototom Sunsplash festival pass',
+      description: 'One full 7-day festival pass for Rototom Sunsplash in Benicàssim. Can\'t attend due to flight change. Original price €180, selling below cost.',
+      category: 'tickets_events',
+      condition: 'new_with_tags',
+      price: 140,
+      is_free: false,
+      is_negotiable: true,
+      brand: null,
+      color: null,
+      event_date: new Date(Date.now() + 20 * 86400000).toISOString().slice(0, 10),
+      event_venue: 'Benicàssim, Castellón',
+      ticket_quantity: 1,
+      photos: ['https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600&q=80'],
+      seller_name: 'Hanna',
+      seller_nationality: '🇩🇪 German',
+      university: 'UPV',
+      neighborhood: 'Ruzafa',
+      contact_whatsapp: '+34 611 111 202',
+      contact_email: null,
+      location: 'Valencia',
+      status: 'active',
+      expires_at: future(18),
+    },
+    {
+      title: '3x Sala Republica techno night — Friday',
+      description: 'Three tickets for Friday\'s techno night at Sala Republica. Great lineup, already paid €15 each. Selling all 3 together.',
+      category: 'tickets_events',
+      condition: 'new_with_tags',
+      price: 40,
+      is_free: false,
+      is_negotiable: false,
+      brand: null,
+      color: null,
+      event_date: new Date(Date.now() + 3 * 86400000).toISOString().slice(0, 10),
+      event_venue: 'Sala Republica, Valencia',
+      ticket_quantity: 3,
+      photos: ['https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=600&q=80'],
+      seller_name: 'Tomasz',
+      seller_nationality: '🇵🇱 Polish',
+      university: 'CEU',
+      neighborhood: 'El Carmen',
+      contact_whatsapp: '+34 611 111 203',
+      contact_email: null,
+      location: 'Valencia',
+      status: 'active',
+      expires_at: future(3),
+    },
+    {
+      title: '2x Valencia CF vs Villarreal match tickets',
+      description: 'Two seats together, Tribuna Sur, row 12. Can\'t make it — work conflict. Face value €45 each.',
+      category: 'tickets_events',
+      condition: 'new_with_tags',
+      price: 80,
+      is_free: false,
+      is_negotiable: false,
+      brand: null,
+      color: null,
+      event_date: new Date(Date.now() + 10 * 86400000).toISOString().slice(0, 10),
+      event_venue: 'Estadio Mestalla, Valencia',
+      ticket_quantity: 2,
+      photos: ['https://images.unsplash.com/photo-1508098682722-e99c643e7f0b?w=600&q=80'],
+      seller_name: 'Carlos',
+      seller_nationality: '🇪🇸 Spanish',
+      university: 'UV',
+      neighborhood: 'Mestalla',
+      contact_whatsapp: '+34 611 111 204',
+      contact_email: null,
+      location: 'Valencia',
+      status: 'active',
+      expires_at: future(9),
+    },
+  ]
+
   // Make idempotent — remove existing seed listings by seller contact
-  const seedPhones = items.map(i => i.contact_whatsapp)
+  const seedPhones = [...items, ...ticketItems].map(i => i.contact_whatsapp)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (supabase as any).from('marketplace_listings').delete().in('contact_whatsapp', seedPhones)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any).from('marketplace_listings').insert(items)
+  const { error } = await (supabase as any).from('marketplace_listings').insert([...items, ...ticketItems])
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  return NextResponse.json({ ok: true, inserted: items.length })
+  return NextResponse.json({ ok: true, inserted: items.length + ticketItems.length })
 }
