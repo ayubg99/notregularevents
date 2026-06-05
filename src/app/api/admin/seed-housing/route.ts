@@ -168,7 +168,8 @@ export async function POST() {
     },
   ]
 
-  const { error: listingsError } = await supabase.from('housing_listings').insert(listings)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: listingsError } = await supabase.from('housing_listings').insert(listings as any)
   if (listingsError) return NextResponse.json({ error: 'listings: ' + listingsError.message }, { status: 500 })
 
   // ── 2. Housing partners ───────────────────────────────────────
