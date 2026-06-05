@@ -24,7 +24,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Event not found' }, { status: 404 })
   }
 
-  if (!event.is_free && !event.members_only_free) {
+  const tiers = Array.isArray(event.ticket_tiers) ? event.ticket_tiers : []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const hasFreeTier = tiers.some((t: any) => Number(t.price) === 0)
+
+  if (!event.is_free && !event.members_only_free && !hasFreeTier) {
     return NextResponse.json({ error: 'Event not found or not a free event' }, { status: 404 })
   }
 
