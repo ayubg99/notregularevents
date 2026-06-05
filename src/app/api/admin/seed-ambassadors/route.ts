@@ -55,11 +55,12 @@ export async function POST() {
 
   for (const p of profiles) {
     const uid = userIds[p.email]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase.from('profiles').upsert({
-      id: uid, user_id: uid,
+      user_id: uid,
       full_name: p.full_name, nationality: p.nationality,
       university: p.university, bio: p.bio,
-    })
+    } as any)
     await supabase.from('users').upsert({ id: uid, full_name: p.full_name, role: 'ambassador' })
   }
 
