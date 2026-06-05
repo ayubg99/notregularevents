@@ -1,6 +1,6 @@
 -- =============================================================
 -- Erasmus Life Valencia — Sample Data Seed
--- Run once in Supabase SQL Editor
+-- Run AFTER all migrations (001 through 20260601000003)
 -- =============================================================
 
 -- ── Events ────────────────────────────────────────────────────
@@ -14,7 +14,6 @@ INSERT INTO public.events (
   ticket_tiers
 ) VALUES
 
--- International Monday — Akuarela Beach
 (
   'International Monday — Akuarela Beach',
   'international-monday-akuarela',
@@ -35,7 +34,6 @@ INSERT INTO public.events (
   ]'::jsonb
 ),
 
--- Beer Pong Tournament — Beracay
 (
   'Beer Pong Tournament — Beracay Club',
   'beerpong-tuesday-beracay',
@@ -51,11 +49,10 @@ INSERT INTO public.events (
   '[
     {"id":"free-entry","name":"Free Entry","price":0,"description":"Free entrance — first come first served","seats":100,"members_only":false,"valid_until_time":"23:30","benefits":[],"min_group_size":null,"activates_after":null},
     {"id":"beer-pong-team","name":"Beer Pong Team","price":8,"description":"2-3 people per team. WIN A FREE TRIP!","seats":50,"members_only":false,"valid_until_time":null,"benefits":["Tournament entry","Chance to win free trip"],"min_group_size":2,"activates_after":null},
-    {"id":"elv-premium","name":"Members Price","price":6,"description":"Members price — Beer Pong team entry","seats":20,"members_only":true,"valid_until_time":null,"benefits":["Tournament entry","Member discount"],"min_group_size":2,"activates_after":null}
+    {"id":"members-price","name":"Members Price","price":6,"description":"Members price — Beer Pong team entry","seats":20,"members_only":true,"valid_until_time":null,"benefits":["Tournament entry","Member discount"],"min_group_size":2,"activates_after":null}
   ]'::jsonb
 ),
 
--- International Wednesday — MYA
 (
   'International Wednesday — MYA Club',
   'international-wednesday-mya',
@@ -71,11 +68,10 @@ INSERT INTO public.events (
   '[]'::jsonb
 ),
 
--- Red Party — Open Bar
 (
   'Red Party — Erasmus Open Bar',
   'red-party-open-bar',
-  'DRESS IN RED and get an extra free drink! Open bar from 23:30 to 03:30 at Caribbean Aragon. International music, crazy atmosphere.',
+  'DRESS IN RED and get an extra free drink! Open bar from 23:30 to 03:30. International music, crazy atmosphere.',
   'party',
   'Caribbeans Aragon, Valencia',
   NOW() + interval '9 days',
@@ -90,11 +86,10 @@ INSERT INTO public.events (
   ]'::jsonb
 ),
 
--- Bachata Workshop
 (
   'Bachata Workshop + International Night',
   'bachata-workshop-night',
-  'Learn Bachata from 22:00-23:00 with professional instructors, then party until 03:30! Perfect for beginners — no experience needed.',
+  'Learn Bachata from 22:00–23:00 with professional instructors, then party until 03:30! Perfect for beginners — no experience needed.',
   'cultural',
   'Magnifique Aragon, Valencia',
   NOW() + interval '4 days',
@@ -106,11 +101,10 @@ INSERT INTO public.events (
   '[]'::jsonb
 ),
 
--- Closing Night
 (
   'International Monday — Closing Night',
   'international-monday-closing',
-  'The LAST International Monday of the semester at Magnifique! Free shot until midnight. International music from 23:00 to 03:30. The biggest closing party of the year!',
+  'The LAST International Monday of the semester! Free shot until midnight. International music from 23:00 to 03:30. The biggest closing party of the year!',
   'party',
   'Magnifique Aragon, Polo y Peyrolon 37',
   NOW() + interval '13 days',
@@ -135,7 +129,6 @@ INSERT INTO public.trips (
   whats_included, meeting_points
 ) VALUES
 
--- Cala Moraig
 (
   'Cala Moraig — Hiking & Beach',
   'cala-moraig-hiking-beach',
@@ -153,7 +146,6 @@ INSERT INTO public.trips (
   ARRAY['Estación del Norte, Valencia — 8:00 AM']
 ),
 
--- Albufera Sunset Tour
 (
   'Albufera Sunset Tour',
   'albufera-sunset-tour',
@@ -171,7 +163,6 @@ INSERT INTO public.trips (
   ARRAY['Torres de Serranos, Valencia — 17:00']
 ),
 
--- Morocco 9 Days
 (
   'Morocco Adventure — 9 Days',
   'morocco-adventure-9-days',
@@ -189,7 +180,6 @@ INSERT INTO public.trips (
   ARRAY['Valencia Bus Station — 06:00 AM']
 ),
 
--- Ibiza Weekend
 (
   'Ibiza Weekend Getaway',
   'ibiza-weekend-getaway',
@@ -207,7 +197,6 @@ INSERT INTO public.trips (
   ARRAY['Valencia Port — 08:00 AM']
 ),
 
--- Montanejos
 (
   'Montanejos Natural Pools',
   'montanejos-natural-pools',
@@ -225,7 +214,6 @@ INSERT INTO public.trips (
   ARRAY['Estación del Norte, Valencia — 9:00 AM']
 ),
 
--- Tabarca Island
 (
   'Tabarca Island — Boat Day',
   'tabarca-island-boat-day',
@@ -243,7 +231,7 @@ INSERT INTO public.trips (
   ARRAY['Alicante Port — 09:30 AM']
 );
 
--- ── Verify ─────────────────────────────────────────────────────
+-- ── Verify ────────────────────────────────────────────────────
 
 SELECT title, status, date::date AS event_date
 FROM public.events
