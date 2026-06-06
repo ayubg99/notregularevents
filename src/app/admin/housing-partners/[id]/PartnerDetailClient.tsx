@@ -55,7 +55,6 @@ interface RoomFormState {
   room_type:               string
   monthly_rent:            string
   deposit_amount:          string
-  platform_fee:            string
   available_from:          string
   available_until:         string
   flatmates_count:         string
@@ -71,7 +70,7 @@ interface RoomFormState {
 
 const EMPTY_ROOM: RoomFormState = {
   title: '', neighborhood: '', room_type: 'private_room',
-  monthly_rent: '', deposit_amount: '', platform_fee: '50',
+  monthly_rent: '', deposit_amount: '',
   available_from: '', available_until: '',
   flatmates_count: '0', flatmates_nationalities: [],
   gender_preference: 'any', bills_included: false,
@@ -146,7 +145,6 @@ export default function PartnerDetailClient({
       room_type:               room.room_type,
       monthly_rent:            String(room.monthly_rent),
       deposit_amount:          String(room.deposit_amount),
-      platform_fee:            String(room.platform_fee),
       available_from:          room.available_from ?? '',
       available_until:         room.available_until ?? '',
       flatmates_count:         String(room.flatmates_count),
@@ -205,7 +203,7 @@ export default function PartnerDetailClient({
         room_type:               form.room_type as PartnerRoomInsert['room_type'],
         monthly_rent:            parseFloat(form.monthly_rent),
         deposit_amount:          parseFloat(form.deposit_amount),
-        platform_fee:            parseFloat(form.platform_fee) || 50,
+        platform_fee:            50,
         available_from:          form.available_from   || null,
         available_until:         form.available_until  || null,
         flatmates_count:         parseInt(form.flatmates_count) || 0,
@@ -399,10 +397,6 @@ export default function PartnerDetailClient({
                 <div>
                   <label className={labelClass}>Deposit (€) *</label>
                   <input required type="number" min="0" className={inputClass} placeholder="700" value={form.deposit_amount} onChange={e => set('deposit_amount', e.target.value)} />
-                </div>
-                <div>
-                  <label className={labelClass}>Platform fee (€)</label>
-                  <input type="number" min="0" className={inputClass} value={form.platform_fee} onChange={e => set('platform_fee', e.target.value)} />
                 </div>
               </div>
 
