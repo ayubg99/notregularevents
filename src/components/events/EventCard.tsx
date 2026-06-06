@@ -75,7 +75,7 @@ export default function EventCard({ event, className }: Props) {
   const formattedPrice = isFree ? 'Free' : `€${displayPrice.toFixed(2)}`
 
   return (
-    <div className={cn('group rounded-3xl overflow-hidden glass-card card-hover flex flex-col border border-white/8 hover:border-brand-primary/25', className)}>
+    <Link href={`/events/${event.slug}`} className={cn('group rounded-3xl overflow-hidden glass-card card-hover flex flex-col border border-white/8 hover:border-brand-primary/25', className)}>
       {/* Image / gradient fallback */}
       <div className="relative h-52 overflow-hidden flex-shrink-0">
         {event.image_url ? (
@@ -172,8 +172,7 @@ export default function EventCard({ event, className }: Props) {
 
         {/* CTA */}
         <div className="mt-auto pt-4">
-          <Link
-            href={`/events/${event.slug}`}
+          <span
             className={cn(
               'block w-full text-center py-2.5 rounded-full text-sm font-semibold transition-all duration-200',
               isSoldOut
@@ -182,9 +181,9 @@ export default function EventCard({ event, className }: Props) {
             )}
           >
             {isSoldOut ? 'Sold Out' : event.members_only_free ? 'Members Only' : isFree ? 'Register Free' : 'Book Now'}
-          </Link>
+          </span>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
