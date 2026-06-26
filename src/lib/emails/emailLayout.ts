@@ -8,7 +8,7 @@ export function emailLayout(content: string, baseUrl: string, footerNote?: strin
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
-<body style="margin:0;padding:0;background:#0D0D0D;font-family:Inter,Arial,sans-serif;color:#FFF8EE;">
+<body style="margin:0;padding:0;background:#0D0D0D;font-family:'Space Grotesk',Arial,sans-serif;color:#FFF8EE;">
 
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#FF6B00;">
     <tr>

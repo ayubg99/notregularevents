@@ -142,7 +142,7 @@ export default function EventCard({ event, className }: Props) {
       <div className="p-4 flex flex-col flex-1">
         {/* Date badge */}
         <div className="flex items-baseline gap-2 mb-2.5">
-          <span style={{ fontFamily: 'Anton, sans-serif', fontSize: 32, color: '#2D5BFF', lineHeight: 1 }}>
+          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 32, fontWeight: 700, color: '#2D5BFF', lineHeight: 1 }}>
             {dayNumber}
           </span>
           <span style={{ color: 'var(--text-secondary)', fontSize: 12, textTransform: 'uppercase', fontWeight: 700 }}>

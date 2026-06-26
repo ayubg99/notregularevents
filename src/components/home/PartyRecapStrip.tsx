@@ -34,7 +34,7 @@ export function PartyRecapStrip({
         }}
       >
         <h2 style={{
-          fontFamily:    'Anton, sans-serif',
+          fontFamily:    "'Space Grotesk', sans-serif",
           fontSize:      'clamp(28px, 4vw, 48px)',
           color:         '#fff',
           margin:        0,
@@ -45,7 +45,7 @@ export function PartyRecapStrip({
         </h2>
         <p style={{
           color:          '#6B6B6B',
-          fontFamily:     'Inter, sans-serif',
+          fontFamily:     "'Space Grotesk', sans-serif",
           fontWeight:     700,
           fontSize:       '12px',
           letterSpacing:  '0.08em',
@@ -121,7 +121,7 @@ export function PartyRecapStrip({
                 background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)',
               }}>
                 <p style={{
-                  fontFamily:    'Inter, sans-serif',
+                  fontFamily:    "'Space Grotesk', sans-serif",
                   fontWeight:    800,
                   fontSize:      '18px',
                   color:         '#fff',
@@ -132,7 +132,7 @@ export function PartyRecapStrip({
                 </p>
                 {item.overlay_subtitle && (
                   <p style={{
-                    fontFamily:    'Inter, sans-serif',
+                    fontFamily:    "'Space Grotesk', sans-serif",
                     fontWeight:    600,
                     fontSize:      '13px',
                     color:         '#F4D03F',
