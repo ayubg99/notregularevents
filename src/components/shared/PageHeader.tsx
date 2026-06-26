@@ -12,8 +12,9 @@ export function PageHeader({ tag, title }: { tag: string; title: string }) {
       }}
     >
       <h1 style={{
-        fontFamily:    "'JetBrains Mono', monospace",
-        fontSize:      'clamp(28px, 4.5vw, 56px)',
+        fontFamily:    "'Anton', sans-serif",
+        fontWeight:    400,
+        fontSize:      'clamp(32px, 5vw, 64px)',
         color:         '#fff',
         margin:        0,
         textTransform: 'uppercase',

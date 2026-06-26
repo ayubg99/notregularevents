@@ -34,8 +34,9 @@ export function PartyRecapStrip({
         }}
       >
         <h2 style={{
-          fontFamily:    "'JetBrains Mono', monospace",
-          fontSize:      'clamp(24px, 3.5vw, 42px)',
+          fontFamily:    "'Anton', sans-serif",
+          fontWeight:    400,
+          fontSize:      'clamp(28px, 4vw, 48px)',
           color:         '#fff',
           margin:        0,
           textTransform: 'uppercase',

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 /* ── Tailwind v4 Design Tokens (CSS-first config) ─────────────────── */
@@ -11,7 +11,7 @@
   --color-brand-success: #4CAF50;
 
   /* Font Families */
-  --font-display: 'JetBrains Mono', monospace;
+  --font-display: 'Anton', sans-serif;
   --font-heading: 'JetBrains Mono', monospace;
   --font-body:    'JetBrains Mono', monospace;
 
@@ -66,6 +66,7 @@
 
 /* ── Semantic CSS variables ────────────────────────────────────────── */
 :root {
+  --font-display:  'Anton', sans-serif;
   --font-primary:  'JetBrains Mono', monospace;
 
   --bg-base:       #0A0A0A;
@@ -117,12 +118,20 @@
 }
 
 /* ── Heading base styles ───────────────────────────────────────────── */
-h1, h2 {
-  font-family:     'JetBrains Mono', monospace;
-  font-weight:     800;
-  text-transform:  uppercase;
-  letter-spacing:  -0.02em;
-  line-height:     0.95;
+h1 {
+  font-family:    'Anton', sans-serif;
+  font-weight:    400;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height:    0.95;
+}
+
+h2 {
+  font-family:    'JetBrains Mono', monospace;
+  font-weight:    800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height:    0.95;
 }
 
 h3, .card-title {
@@ -137,13 +146,13 @@ body {
   letter-spacing:  -0.01em;
 }
 
-/* ── Display font utility ──────────────────────────────────────────── */
+/* ── Display font utility (Anton — hero/section titles only) ───────── */
 .font-display {
-  font-family:     'JetBrains Mono', monospace;
-  font-weight:     800;
-  text-transform:  uppercase;
-  letter-spacing:  -0.02em;
-  line-height:     0.95;
+  font-family:    'Anton', sans-serif;
+  font-weight:    400;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height:    0.95;
 }
 
 /* ── Paragraph and form elements ───────────────────────────────────── */

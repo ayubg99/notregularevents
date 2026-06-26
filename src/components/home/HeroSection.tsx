@@ -115,7 +115,7 @@ export default function HeroSection() {
 
         {/* Headline */}
         <motion.h1
-          className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white"
+          className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-white"
           initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
