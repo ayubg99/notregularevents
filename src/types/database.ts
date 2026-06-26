@@ -5,6 +5,7 @@ export type UserRole         = 'student' | 'admin' | 'ambassador'
 export type EventStatus      = 'draft' | 'published' | 'cancelled' | 'completed'
 export type EventCategory    = 'party' | 'cultural' | 'sport' | 'networking' | 'trip' | 'other'
   | 'language_exchange' | 'food_wine' | 'hiking' | 'yoga' | 'art' | 'international_dinner'
+  | 'club_night' | 'football_screening' | 'artist_night'
 export type TicketStatus     = 'active' | 'used' | 'cancelled' | 'refunded'
 export type TripStatus       = 'draft' | 'published' | 'cancelled' | 'completed'
 export type TripTier         = 'early_bird' | 'standard' | 'group'
@@ -78,6 +79,7 @@ export type EventRow = {
   updated_at:            string
   gallery_images:        string[] | null
   ticket_tiers:          EventTicketTier[] | null
+  city:                  string | null
 }
 
 export type EventTicketRow = {

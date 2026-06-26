@@ -7,16 +7,24 @@ import type { EventRow, EventCategory } from '@/types/database'
 import EventCard from '@/components/events/EventCard'
 import { TabSelector } from '@/components/shared/TabSelector'
 
+// ─── City tabs ──────────────────────────────────────────────────
+
+const CITIES = ['All', 'Madrid', 'Marbella', 'Valencia'] as const
+type CityFilter = typeof CITIES[number]
+
 // ─── Category tabs ──────────────────────────────────────────────
 
 const CATEGORIES: { value: EventCategory | 'all'; label: string }[] = [
-  { value: 'all',        label: 'All'        },
-  { value: 'party',      label: 'Party'      },
-  { value: 'cultural',   label: 'Cultural'   },
-  { value: 'sport',      label: 'Sport'      },
-  { value: 'networking', label: 'Networking' },
-  { value: 'trip',       label: 'Trip'       },
-  { value: 'other',      label: 'Other'      },
+  { value: 'all',               label: 'All'         },
+  { value: 'club_night',        label: 'Club Night'  },
+  { value: 'football_screening',label: 'Football'    },
+  { value: 'artist_night',      label: 'Artist Night'},
+  { value: 'party',             label: 'Party'       },
+  { value: 'cultural',          label: 'Cultural'    },
+  { value: 'sport',             label: 'Sport'       },
+  { value: 'networking',        label: 'Networking'  },
+  { value: 'trip',              label: 'Trip'        },
+  { value: 'other',             label: 'Other'       },
 ]
 
 // ─── Data fetching ──────────────────────────────────────────────
@@ -33,14 +41,13 @@ function Skeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="rounded-2xl overflow-hidden glass-card animate-pulse">
-          <div className="h-52 bg-white/5" />
-          <div className="p-5 flex flex-col gap-3">
+        <div key={i} className="overflow-hidden animate-pulse" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
+          <div className="h-[280px] bg-white/5" />
+          <div className="p-4 flex flex-col gap-3">
+            <div className="h-8 w-1/4 rounded bg-white/5" />
             <div className="h-5 w-3/4 rounded bg-white/5" />
             <div className="h-4 w-1/2 rounded bg-white/5" />
-            <div className="h-4 w-2/3 rounded bg-white/5" />
-            <div className="h-1.5 rounded-full bg-white/5 mt-1" />
-            <div className="h-10 rounded-full bg-white/5 mt-2" />
+            <div className="h-10 rounded bg-white/5 mt-2" />
           </div>
         </div>
       ))}
@@ -51,6 +58,7 @@ function Skeleton() {
 // ─── Main component ─────────────────────────────────────────────
 
 export default function EventsClient() {
+  const [activeCity,     setActiveCity]     = useState<CityFilter>('All')
   const [activeCategory, setActiveCategory] = useState<EventCategory | 'all'>('all')
   const [search, setSearch]                 = useState('')
 
@@ -60,8 +68,17 @@ export default function EventsClient() {
     staleTime: 60_000,
   })
 
+  // Derive which city tabs actually have data
+  const availableCities = useMemo(() => {
+    const inData = new Set(events.map(e => e.city).filter(Boolean))
+    return CITIES.filter(c => c === 'All' || inData.has(c))
+  }, [events])
+
   const filtered = useMemo(() => {
     let list = events
+    if (activeCity !== 'All') {
+      list = list.filter(e => e.city === activeCity)
+    }
     if (activeCategory !== 'all') {
       list = list.filter(e => e.category === activeCategory)
     }
@@ -74,21 +91,32 @@ export default function EventsClient() {
       )
     }
     return list
-  }, [events, activeCategory, search])
+  }, [events, activeCity, activeCategory, search])
 
   function clearFilters() {
     setSearch('')
     setActiveCategory('all')
+    setActiveCity('All')
   }
 
-  const hasFilters = search.trim() !== '' || activeCategory !== 'all'
+  const hasFilters = search.trim() !== '' || activeCategory !== 'all' || activeCity !== 'All'
 
   return (
     <div>
-      {/* ── Search + filter bar ── */}
-      <div className="mb-8 flex flex-col gap-4">
+      {/* ── Filter bar ── */}
+      <div className="mb-8 flex flex-col gap-3">
+
+        {/* City tabs — only shown when >1 city has events */}
+        {availableCities.length > 1 && (
+          <TabSelector
+            options={availableCities}
+            active={activeCity}
+            onChange={v => { setActiveCity(v as CityFilter); setActiveCategory('all') }}
+          />
+        )}
+
+        {/* Search + count row */}
         <div className="flex flex-col sm:flex-row gap-3">
-          {/* Search input */}
           <div className="relative flex-1 max-w-md">
             <Search
               size={15}
@@ -102,8 +130,6 @@ export default function EventsClient() {
               className="w-full pl-10 pr-4 py-3 rounded-full text-sm glass-card text-white placeholder:text-white/30 focus:outline-none focus:border-brand-primary/60 transition-all duration-200"
             />
           </div>
-
-          {/* Result count */}
           {!isLoading && !isError && (
             <div className="flex items-center gap-1.5 text-white/45 text-sm self-center">
               <SlidersHorizontal size={14} />

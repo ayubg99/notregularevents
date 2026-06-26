@@ -4,6 +4,8 @@ import type { EventCategory } from '@/types/database'
 
 const VALID_CATEGORIES = new Set<string>([
   'party', 'cultural', 'sport', 'networking', 'trip', 'other',
+  'language_exchange', 'food_wine', 'hiking', 'yoga', 'art', 'international_dinner',
+  'club_night', 'football_screening', 'artist_night',
 ])
 
 export async function GET(request: NextRequest) {
