@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 /* ── Tailwind v4 Design Tokens (CSS-first config) ─────────────────── */
@@ -11,9 +11,9 @@
   --color-brand-success: #4CAF50;
 
   /* Font Families */
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-heading: 'Space Grotesk', sans-serif;
-  --font-body:    'Space Grotesk', sans-serif;
+  --font-display: 'JetBrains Mono', monospace;
+  --font-heading: 'JetBrains Mono', monospace;
+  --font-body:    'JetBrains Mono', monospace;
 
   /* Animations */
   --animate-fade-in:  fadeIn  0.5s ease-in-out both;
@@ -66,6 +66,8 @@
 
 /* ── Semantic CSS variables ────────────────────────────────────────── */
 :root {
+  --font-primary:  'JetBrains Mono', monospace;
+
   --bg-base:       #0A0A0A;
   --bg-card:       #161616;
   --bg-subtle:     #131313;
@@ -116,30 +118,53 @@
 
 /* ── Heading base styles ───────────────────────────────────────────── */
 h1, h2 {
-  font-family:     'Space Grotesk', sans-serif;
-  font-weight:     700;
+  font-family:     'JetBrains Mono', monospace;
+  font-weight:     800;
   text-transform:  uppercase;
   letter-spacing:  -0.02em;
   line-height:     0.95;
 }
 
 h3, .card-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
 }
 
 /* ── Base body font ────────────────────────────────────────────────── */
 body {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family:     'JetBrains Mono', monospace;
+  font-weight:     400;
+  letter-spacing:  -0.01em;
 }
 
 /* ── Display font utility ──────────────────────────────────────────── */
 .font-display {
-  font-family:     'Space Grotesk', sans-serif;
-  font-weight:     700;
+  font-family:     'JetBrains Mono', monospace;
+  font-weight:     800;
   text-transform:  uppercase;
   letter-spacing:  -0.02em;
   line-height:     0.95;
+}
+
+/* ── Paragraph and form elements ───────────────────────────────────── */
+p, label, input, textarea {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* ── Nav, buttons ──────────────────────────────────────────────────── */
+nav a, button, .btn-primary, .btn-secondary {
+  font-family:     'JetBrains Mono', monospace;
+  font-weight:     600;
+  letter-spacing:  -0.01em;
+}
+
+/* ── Numbers, dates, prices ────────────────────────────────────────── */
+.price, .date-badge, .stat-number {
+  font-family:          'JetBrains Mono', monospace;
+  font-weight:          700;
+  font-feature-settings: 'tnum';
 }
 
 /* ── Base ──────────────────────────────────────────────────────────── */

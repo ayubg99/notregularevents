@@ -22,7 +22,7 @@ export function BookingConfirmationEmail({
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Booking Confirmed — Not Regular Events</title>
 </head>
-<body style="margin:0;padding:0;background:#0D0D0D;font-family:'Space Grotesk',Arial,sans-serif;color:#FFF8EE;">
+<body style="margin:0;padding:0;background:#0D0D0D;font-family:'JetBrains Mono',Arial,monospace;color:#FFF8EE;">
 
   <!-- Header -->
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#FF6B00;">

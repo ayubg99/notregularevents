@@ -12,8 +12,8 @@ export function PageHeader({ tag, title }: { tag: string; title: string }) {
       }}
     >
       <h1 style={{
-        fontFamily:    "'Space Grotesk', sans-serif",
-        fontSize:      'clamp(32px, 5vw, 64px)',
+        fontFamily:    "'JetBrains Mono', monospace",
+        fontSize:      'clamp(28px, 4.5vw, 56px)',
         color:         '#fff',
         margin:        0,
         textTransform: 'uppercase',
@@ -24,7 +24,7 @@ export function PageHeader({ tag, title }: { tag: string; title: string }) {
       </h1>
       <p style={{
         color:          'var(--text-muted)',
-        fontFamily:     "'Space Grotesk', sans-serif",
+        fontFamily:     "'JetBrains Mono', monospace",
         fontWeight:     700,
         fontSize:       '12px',
         letterSpacing:  '0.08em',
