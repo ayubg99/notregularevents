@@ -266,7 +266,7 @@ export default function Navbar() {
 
         {/* Decorative gradient orbs */}
         <div className="absolute top-1/4 -left-20 w-64 h-64 rounded-full bg-brand-primary/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-1/4 -right-20 w-64 h-64 rounded-full bg-brand-accent/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-1/4 -right-20 w-64 h-64 rounded-full bg-brand-primary/10 blur-3xl pointer-events-none" />
       </div>
     </>
   )

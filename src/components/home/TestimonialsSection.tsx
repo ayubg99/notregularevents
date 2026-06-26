@@ -85,7 +85,7 @@ export default function TestimonialsSection() {
           <p className="text-brand-primary text-sm font-semibold uppercase tracking-widest mb-2">
             What Our Community Says
           </p>
-          <h2 className="font-heading text-4xl md:text-5xl font-bold text-white">
+          <h2 className="font-display text-4xl md:text-5xl text-white">
             Real Experiences
           </h2>
         </div>
@@ -103,12 +103,12 @@ export default function TestimonialsSection() {
               animate={{ opacity: 1, x: 0,   scale: 1    }}
               exit={{    opacity: 0, x: -40, scale: 0.97 }}
               transition={{ duration: 0.35, ease: 'easeInOut' }}
-              className="glass-card glow-accent rounded-3xl p-8 md:p-12 text-center"
+              className="glass-card glow-primary rounded-3xl p-8 md:p-12 text-center"
             >
               {/* Stars */}
               <div className="flex justify-center gap-1 mb-6">
                 {Array.from({ length: testimonial.rating }).map((_, i) => (
-                  <Star key={i} size={20} className="text-amber-400 fill-amber-400" />
+                  <Star key={i} size={20} className="text-brand-primary fill-brand-primary" />
                 ))}
               </div>
 
@@ -119,7 +119,7 @@ export default function TestimonialsSection() {
 
               {/* Author */}
               <div className="flex items-center justify-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-primary to-[#1a3acc] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                   {testimonial.avatar}
                 </div>
                 <div className="text-left">

@@ -17,15 +17,15 @@ export default function CommunitySection() {
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
         {/* Eyebrow */}
-        <p className="text-brand-accent text-sm font-semibold uppercase tracking-widest mb-4">
+        <p className="text-brand-primary text-sm font-semibold uppercase tracking-widest mb-4">
           Join the Community
         </p>
 
         {/* Headline */}
-        <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+        <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-white mb-6">
           500+ Students.
           <br />
-          <span className="text-gradient">One Community.</span>
+          <span className="text-brand-primary">One Community.</span>
         </h2>
 
         <p className="text-white/60 text-lg max-w-xl mx-auto mb-12 leading-relaxed">
@@ -40,7 +40,7 @@ export default function CommunitySection() {
               key={label}
               className="flex items-center gap-2 px-4 py-2 glass rounded-full text-white/70 text-sm"
             >
-              <Icon size={14} className="text-brand-accent flex-shrink-0" />
+              <Icon size={14} className="text-brand-primary flex-shrink-0" />
               {label}
             </span>
           ))}

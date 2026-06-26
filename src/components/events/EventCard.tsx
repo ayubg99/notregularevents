@@ -75,7 +75,7 @@ export default function EventCard({ event, className }: Props) {
   const formattedPrice = isFree ? 'Free' : `€${displayPrice.toFixed(2)}`
 
   return (
-    <Link href={`/events/${event.slug}`} className={cn('group rounded-3xl overflow-hidden glass-card card-hover flex flex-col border border-white/8 hover:border-brand-primary/25', className)}>
+    <Link href={`/events/${event.slug}`} className={cn('group rounded-lg overflow-hidden glass-card card-hover flex flex-col border border-white/8 hover:border-brand-primary/25', className)}>
       {/* Image / gradient fallback */}
       <div className="relative h-52 overflow-hidden flex-shrink-0">
         {event.image_url ? (
@@ -103,19 +103,19 @@ export default function EventCard({ event, className }: Props) {
 
         {/* Price / Early Bird badge */}
         {event.members_only_free ? (
-          <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: 'rgba(255,107,0,0.2)', color: '#FF6B00', border: '1px solid rgba(255,107,0,0.4)' }}>
+          <span className="absolute top-3 right-3 px-3 py-1.5 rounded text-xs font-bold" style={{ background: 'rgba(45,91,255,0.2)', color: '#2D5BFF', border: '1px solid rgba(45,91,255,0.4)' }}>
             👑 Members Free
           </span>
         ) : isFree ? (
-          <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: 'rgba(46,204,113,0.2)', color: '#2ECC71', border: '1px solid rgba(46,204,113,0.4)' }}>
+          <span className="absolute top-3 right-3 px-3 py-1.5 rounded text-xs font-bold" style={{ background: 'rgba(46,204,113,0.2)', color: '#4CAF50', border: '1px solid rgba(46,204,113,0.4)' }}>
             🎉 FREE
           </span>
         ) : earlyBirdActive ? (
-          <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold" style={{ background: '#FF6B00', color: '#0D0D0D' }}>
+          <span className="absolute top-3 right-3 px-3 py-1.5 rounded text-xs font-bold" style={{ background: '#2D5BFF', color: '#FFFFFF' }}>
             🔥 Early Bird {formattedPrice}
           </span>
         ) : (
-          <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full bg-gradient-to-r from-brand-primary to-brand-primary-light text-white text-xs font-bold">
+          <span className="absolute top-3 right-3 px-3 py-1.5 rounded bg-brand-primary text-white text-xs font-bold">
             {formattedPrice}
           </span>
         )}
@@ -140,7 +140,7 @@ export default function EventCard({ event, className }: Props) {
           </span>
           {event.location && (
             <span className="flex items-center gap-2">
-              <MapPin size={13} className="flex-shrink-0 text-brand-accent" />
+              <MapPin size={13} className="flex-shrink-0 text-brand-primary" />
               <span className="line-clamp-1">{event.location}</span>
             </span>
           )}
@@ -174,7 +174,7 @@ export default function EventCard({ event, className }: Props) {
         <div className="mt-auto pt-4">
           <span
             className={cn(
-              'block w-full text-center py-2.5 rounded-full text-sm font-semibold transition-all duration-200',
+              'block w-full text-center py-2.5 rounded text-sm font-semibold transition-all duration-200',
               isSoldOut
                 ? 'bg-white/10 text-white/40 pointer-events-none'
                 : 'btn-primary',

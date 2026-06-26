@@ -34,12 +34,12 @@ export default function HeroSection() {
         )}
         {/* Layered gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/70 via-brand-dark/25 to-brand-dark/90" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(255,107,0,0.13),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(45,91,255,0.08),transparent)]" />
       </div>
 
       {/* ── Decorative blur orbs ─────────────────────────────── */}
       <div className="absolute top-1/4 left-1/6 w-[500px] h-[500px] rounded-full bg-brand-primary/10 blur-[120px] pointer-events-none z-10" />
-      <div className="absolute bottom-1/3 right-1/6 w-[400px] h-[400px] rounded-full bg-brand-accent/8 blur-[100px] pointer-events-none z-10" />
+      <div className="absolute bottom-1/3 right-1/6 w-[400px] h-[400px] rounded-full bg-brand-primary/6 blur-[100px] pointer-events-none z-10" />
 
       {/* ── Palm tree silhouettes (desktop only) ─────────────── */}
       <motion.div
@@ -49,13 +49,13 @@ export default function HeroSection() {
         style={{ transformOrigin: 'bottom center', opacity: 0.07 }}
       >
         <svg viewBox="0 0 100 200" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M54 200 C52 168 49 138 51 108 C53 88 59 70 62 54" stroke="#FF6B00" strokeWidth="7" strokeLinecap="round"/>
-          <path d="M62 54 C42 34 18 40 4 30" stroke="#FF6B00" strokeWidth="5" strokeLinecap="round"/>
-          <path d="M62 54 C84 34 100 38 112 28" stroke="#FF6B00" strokeWidth="5" strokeLinecap="round"/>
-          <path d="M62 54 C38 46 16 60 8 76" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
-          <path d="M62 54 C86 46 104 58 114 72" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
-          <path d="M62 54 C54 36 48 20 44 8" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
-          <path d="M62 54 C70 36 76 20 80 8" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M54 200 C52 168 49 138 51 108 C53 88 59 70 62 54" stroke="#2D5BFF" strokeWidth="7" strokeLinecap="round"/>
+          <path d="M62 54 C42 34 18 40 4 30" stroke="#2D5BFF" strokeWidth="5" strokeLinecap="round"/>
+          <path d="M62 54 C84 34 100 38 112 28" stroke="#2D5BFF" strokeWidth="5" strokeLinecap="round"/>
+          <path d="M62 54 C38 46 16 60 8 76" stroke="#2D5BFF" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M62 54 C86 46 104 58 114 72" stroke="#2D5BFF" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M62 54 C54 36 48 20 44 8" stroke="#2D5BFF" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M62 54 C70 36 76 20 80 8" stroke="#2D5BFF" strokeWidth="4" strokeLinecap="round"/>
         </svg>
       </motion.div>
 
@@ -66,13 +66,13 @@ export default function HeroSection() {
         style={{ transformOrigin: 'bottom center', opacity: 0.07 }}
       >
         <svg viewBox="0 0 100 200" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M44 200 C46 165 50 132 48 102 C46 82 40 64 38 48" stroke="#FF6B00" strokeWidth="7" strokeLinecap="round"/>
-          <path d="M38 48 C58 28 82 34 96 24" stroke="#FF6B00" strokeWidth="5" strokeLinecap="round"/>
-          <path d="M38 48 C16 28 0 32 -12 22" stroke="#FF6B00" strokeWidth="5" strokeLinecap="round"/>
-          <path d="M38 48 C62 40 84 54 92 70" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
-          <path d="M38 48 C14 40 -4 52 -14 66" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
-          <path d="M38 48 C46 30 52 14 56 2" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
-          <path d="M38 48 C30 30 24 14 20 2" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M44 200 C46 165 50 132 48 102 C46 82 40 64 38 48" stroke="#2D5BFF" strokeWidth="7" strokeLinecap="round"/>
+          <path d="M38 48 C58 28 82 34 96 24" stroke="#2D5BFF" strokeWidth="5" strokeLinecap="round"/>
+          <path d="M38 48 C16 28 0 32 -12 22" stroke="#2D5BFF" strokeWidth="5" strokeLinecap="round"/>
+          <path d="M38 48 C62 40 84 54 92 70" stroke="#2D5BFF" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M38 48 C14 40 -4 52 -14 66" stroke="#2D5BFF" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M38 48 C46 30 52 14 56 2" stroke="#2D5BFF" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M38 48 C30 30 24 14 20 2" stroke="#2D5BFF" strokeWidth="4" strokeLinecap="round"/>
         </svg>
       </motion.div>
 
@@ -115,13 +115,13 @@ export default function HeroSection() {
 
         {/* Headline */}
         <motion.h1
-          className="font-heading text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white leading-[0.9] tracking-tight"
+          className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-white"
           initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
           Your Erasmus{' '}
-          <span className="text-gradient">in Valencia</span>
+          <span className="text-brand-primary">in Valencia</span>
           <br />
           Starts Here
         </motion.h1>

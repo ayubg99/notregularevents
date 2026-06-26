@@ -40,7 +40,7 @@ export default async function FeaturedEvents() {
             <p className="text-brand-primary font-semibold text-sm uppercase tracking-widest mb-2">
               This Week in Valencia
             </p>
-            <h2 className="font-heading text-4xl md:text-5xl font-bold text-[var(--text-base)]">
+            <h2 className="font-display text-4xl md:text-5xl text-[var(--text-base)]">
               Upcoming Events
             </h2>
           </div>

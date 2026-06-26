@@ -54,15 +54,8 @@ export default function RootLayout({
       className={`${inter.variable} h-full scroll-smooth dark`}
     >
       <head>
-        {/* Barlow — primary heading font */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Clash Display — fallback heading font; self-host via /public/fonts for production */}
-        <link rel="preconnect" href="https://api.fontshare.com" />
-        <link
-          href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap"
-          rel="stylesheet"
-        />
       </head>
       <body className="min-h-full flex flex-col font-body antialiased">
         <Providers>

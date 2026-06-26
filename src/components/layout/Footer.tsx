@@ -32,21 +32,21 @@ const SOCIALS = [
     icon:    Camera,
     label:   'Instagram',
     handle:  '@erasmuslifevalencia',
-    color:   'hover:text-pink-400',
+    color:   'hover:text-brand-primary',
   },
   {
     href:    '#whatsapp',
     icon:    MessageCircle,
     label:   'WhatsApp',
     handle:  'Community Chat',
-    color:   'hover:text-green-400',
+    color:   'hover:text-brand-primary',
   },
   {
     href:    '#tiktok',
     icon:    Music2,
     label:   'TikTok',
     handle:  '@erasmuslifevalencia',
-    color:   'hover:text-brand-accent',
+    color:   'hover:text-brand-primary',
   },
 ]
 
@@ -142,7 +142,7 @@ export default function Footer() {
       </div>
 
       {/* ── Bottom bar ───────────────────────────────────────────── */}
-      <div className="border-t border-white/5">
+      <div className="border-t border-[rgba(255,255,255,0.08)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-white/25 text-xs">
             © {new Date().getFullYear()} Erasmus Life Valencia. All rights reserved.

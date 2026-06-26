@@ -19,17 +19,17 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          primary: '#FF6B00',
-          accent:  '#E91E8C',
-          dark:    '#0D0D0D',
+          primary: '#2D5BFF',
+          accent:  '#F4D03F',
+          dark:    '#0A0A0A',
           light:   '#FFFFFF',
-          purple:  '#8B1A6B',
-          success: '#2ECC71',
+          success: '#4CAF50',
         },
       },
       fontFamily: {
-        heading: ['"Barlow"', '"Clash Display"', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        body:    ['Inter',   'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['"Anton"', 'sans-serif'],
+        heading: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        body:    ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       keyframes: {
         fadeIn: {
@@ -51,15 +51,15 @@ const config: Config = {
         'float':    'float 3s ease-in-out infinite',
       },
       backgroundImage: {
-        'gradient-brand':   'linear-gradient(135deg, #FF6B00 0%, #E91E8C 100%)',
-        'gradient-dark':    'linear-gradient(135deg, #0D0D0D 0%, #1A0A14 100%)',
-        'gradient-vibrant': 'linear-gradient(135deg, #FF6B00 0%, #E91E8C 100%)',
+        'gradient-brand':   'linear-gradient(135deg, #2D5BFF 0%, #5B7FFF 100%)',
+        'gradient-dark':    'linear-gradient(135deg, #0A0A0A 0%, #161616 100%)',
+        'gradient-vibrant': 'linear-gradient(135deg, #2D5BFF 0%, #5B7FFF 100%)',
       },
       boxShadow: {
-        'brand-sm':   '0 2px 12px rgba(255, 107, 0, 0.25)',
-        'brand-md':   '0 4px 24px rgba(255, 107, 0, 0.35)',
-        'brand-lg':   '0 8px 40px rgba(255, 107, 0, 0.45)',
-        'glow-brand': '0 0 20px rgba(139, 26, 107, 0.40)',
+        'brand-sm':   '0 2px 12px rgba(45, 91, 255, 0.25)',
+        'brand-md':   '0 4px 24px rgba(45, 91, 255, 0.35)',
+        'brand-lg':   '0 8px 40px rgba(45, 91, 255, 0.45)',
+        'glow-brand': '0 0 20px rgba(45, 91, 255, 0.40)',
       },
     },
   },

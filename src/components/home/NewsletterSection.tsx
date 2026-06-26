@@ -63,7 +63,7 @@ export default function NewsletterSection() {
               <p className="text-brand-primary text-sm font-semibold uppercase tracking-widest mb-2">
                 Stay Updated
               </p>
-              <h2 className="font-heading text-3xl md:text-4xl font-bold text-[var(--text-base)] mb-3">
+              <h2 className="font-display text-3xl md:text-4xl text-[var(--text-base)] mb-3">
                 Never Miss a Thing
               </h2>
               <p className="text-[var(--text-muted)] mb-8 leading-relaxed">
@@ -99,7 +99,7 @@ export default function NewsletterSection() {
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="flex items-center justify-center gap-2 px-6 py-3.5 bg-brand-primary hover:brightness-110 active:brightness-90 text-white font-semibold text-sm rounded-full shadow-brand-sm hover:shadow-brand-md transition-all duration-200 disabled:opacity-70 flex-shrink-0"
+                  className="flex items-center justify-center gap-2 px-6 py-3.5 bg-brand-primary hover:brightness-110 active:brightness-90 text-white font-semibold text-sm rounded shadow-brand-sm hover:shadow-brand-md transition-all duration-200 disabled:opacity-70 flex-shrink-0"
                 >
                   {isPending ? (
                     <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
