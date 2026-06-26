@@ -583,6 +583,12 @@ export interface Database {
         Update:        MarketplaceListingUpdate
         Relationships: never[]
       }
+      party_recap_media: {
+        Row:           PartyRecapMediaRow
+        Insert:        PartyRecapMediaInsert
+        Update:        PartyRecapMediaUpdate
+        Relationships: never[]
+      }
     }
     Views:          { [_ in never]: never }
     Functions: {
@@ -940,3 +946,25 @@ export type MarketplaceListingInsert = Omit<MarketplaceListingRow, 'id' | 'views
   expires_at?: string
 }
 export type MarketplaceListingUpdate = Partial<Omit<MarketplaceListingRow, 'id' | 'created_at' | 'updated_at'>>
+
+// ─── Party Recap Media ────────────────────────────────────────
+
+export type PartyRecapMediaRow = {
+  id:               string
+  video_url:        string
+  thumbnail_url:    string | null
+  overlay_title:    string | null
+  overlay_subtitle: string | null
+  sort_order:       number
+  city:             string
+  is_active:        boolean
+  created_at:       string
+}
+
+export type PartyRecapMediaInsert = Omit<PartyRecapMediaRow, 'id' | 'created_at'> & {
+  sort_order?: number
+  city?:       string
+  is_active?:  boolean
+}
+
+export type PartyRecapMediaUpdate = Partial<Omit<PartyRecapMediaRow, 'id' | 'created_at'>>

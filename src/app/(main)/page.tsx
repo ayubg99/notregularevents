@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 }
 import HeroSection from '@/components/home/HeroSection'
 import FeaturedEvents from '@/components/home/FeaturedEvents'
+import PartyRecapSection from '@/components/home/PartyRecapSection'
 import CommunitySection from '@/components/home/CommunitySection'
 import StatsSection from '@/components/home/StatsSection'
 import TestimonialsSection from '@/components/home/TestimonialsSection'
@@ -65,19 +66,24 @@ export default function HomePage() {
         <FeaturedEvents />
       </Suspense>
 
-      {/* 4. Ambassador program — earn by sharing */}
+      {/* 4. Party recap — horizontal video strip */}
+      <Suspense fallback={null}>
+        <PartyRecapSection />
+      </Suspense>
+
+      {/* 5. Ambassador program — earn by sharing */}
       <AmbassadorSection />
 
-      {/* 5. Testimonials — auto-advance carousel */}
+      {/* 6. Testimonials — auto-advance carousel */}
       <TestimonialsSection />
 
-      {/* 6. Community — WhatsApp + Instagram CTAs */}
+      {/* 7. Community — WhatsApp + Instagram CTAs */}
       <CommunitySection />
 
-      {/* 7. Sponsors — logo strip, renders nothing if no active sponsors */}
+      {/* 8. Sponsors — logo strip, renders nothing if no active sponsors */}
       <SponsorsSection />
 
-      {/* 8. Newsletter — server action + animated success */}
+      {/* 9. Newsletter — server action + animated success */}
       <NewsletterSection />
     </>
   )

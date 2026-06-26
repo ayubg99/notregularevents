@@ -11,6 +11,7 @@ import type {
   HousingPartnerInsert, HousingPartnerUpdate, HousingPartnerStatus,
   PartnerRoomInsert, PartnerRoomUpdate, PartnerRoomStatus,
   RoomContactStatus, SponsorInsert, SponsorUpdate,
+  PartyRecapMediaInsert, PartyRecapMediaUpdate,
 } from '@/types/database'
 
 type Subscriber = { email: string; unsubscribe_token: string }
@@ -497,5 +498,46 @@ export async function deleteMarketplaceListing(id: string): Promise<{ success: b
   if (error) return { success: false, error: error.message }
 
   revalidatePath('/admin/marketplace')
+  return { success: true }
+}
+
+// ── Party Recap Media ──────────────────────────────────────────
+
+export async function createRecapMedia(data: PartyRecapMediaInsert): Promise<{ success: boolean; id?: string; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { data: row, error } = await admin.from('party_recap_media').insert(data).select('id').single()
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/recap-media')
+  revalidatePath('/')
+  return { success: true, id: row?.id }
+}
+
+export async function updateRecapMedia(id: string, data: PartyRecapMediaUpdate): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { error } = await admin.from('party_recap_media').update(data).eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/recap-media')
+  revalidatePath('/')
+  return { success: true }
+}
+
+export async function deleteRecapMedia(id: string): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  const admin = getAdminClient()
+  const { error } = await admin.from('party_recap_media').delete().eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/recap-media')
+  revalidatePath('/')
   return { success: true }
 }
