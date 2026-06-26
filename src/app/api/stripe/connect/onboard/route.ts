@@ -12,7 +12,7 @@ export async function GET(req: Request) {
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL ??
     process.env.NEXT_PUBLIC_APP_URL ??
-    'https://erasmuslifevalencia.com'
+    'https://notregularevents.com'
 
   const account = await stripe.accounts.create({
     type: 'express',
@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     },
     business_type: 'company',
     business_profile: {
-      name:                'Erasmus Life Valencia',
+      name:                'Not Regular Events',
       url:                 baseUrl,
       product_description: 'Student events, trips and activities for international students in Valencia',
     },

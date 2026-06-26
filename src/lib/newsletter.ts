@@ -11,14 +11,14 @@ export interface DigestResult {
 
 export async function runWeeklyDigest(): Promise<DigestResult> {
   const admin   = getAdminClient()
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
-  const from    = process.env.RESEND_FROM_EMAIL   ?? 'bookings@erasmuslifevalencia.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'
+  const from    = process.env.RESEND_FROM_EMAIL   ?? 'notregularevents@gmail.com'
 
   const now      = new Date()
   const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
 
   const weekLabel = `${now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}–${nextWeek.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`
-  const subject   = `🎉 This week at Erasmus Life — ${now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`
+  const subject   = `🎉 This week at Not Regular Events —${now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`
 
   const [eventsRes, subsRes] = await Promise.all([
     admin.from('events')

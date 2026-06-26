@@ -247,8 +247,8 @@ function TicketCard({ ticket }: { ticket: PdfTicket }) {
 
       {/* Footer */}
       <View style={styles.cardFooter}>
-        <Text style={styles.footerText}>Erasmus Life Valencia</Text>
-        <Text style={styles.footerText}>@erasmuslifevalencia</Text>
+        <Text style={styles.footerText}>Not Regular Events</Text>
+        <Text style={styles.footerText}>@notregularevents</Text>
       </View>
     </View>
   )
@@ -261,7 +261,7 @@ interface Props {
 
 export default function TicketDocument({ tickets, docTitle }: Props) {
   return (
-    <Document title={docTitle ?? 'Tickets'} author="Erasmus Life Admin">
+    <Document title={docTitle ?? 'Tickets'} author="Not Regular Events Admin">
       <Page size="A4" style={styles.page}>
         {docTitle && <Text style={styles.heading}>{docTitle}</Text>}
         <View style={styles.grid}>

@@ -24,7 +24,12 @@
       "Bash(git commit *)",
       "Bash(supabase db *)",
       "Bash(git push *)",
-      "Bash(Read /tmp/claude-1000/-home-ayubxx-erasmus-vibe/8b316b5c-4dd0-4078-8cf6-be9813693e0f/tasks/b64dyz0bo.output)"
+      "Bash(Read /tmp/claude-1000/-home-ayubxx-erasmus-vibe/8b316b5c-4dd0-4078-8cf6-be9813693e0f/tasks/b64dyz0bo.output)",
+      "Bash(git -C /home/ayubxx/notregularevents/erasmuslife diff HEAD -- scripts/seed-events.ts)",
+      "Bash(git -C /home/ayubxx/notregularevents/erasmuslife log --oneline -3 -- scripts/seed-events.ts)",
+      "Bash(git -C /home/ayubxx/notregularevents/erasmuslife stash)",
+      "Bash(git -C /home/ayubxx/notregularevents/erasmuslife stash pop)",
+      "Bash(git *)"
     ]
   }
 }

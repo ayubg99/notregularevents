@@ -6,8 +6,8 @@ import { PageHeader } from '@/components/shared/PageHeader'
 import type { PartnerRoomRow } from '@/types/database'
 
 export const metadata: Metadata = {
-  title: 'Housing Board | Erasmus Life',
-  description: 'Find rooms and roommates in Valencia with fellow Erasmus students.',
+  title: 'Housing | Not Regular Events',
+  description: 'Find rooms and flatmates in Madrid. Connect with other students and find your space.',
 }
 
 export default async function HousingPage() {
@@ -45,7 +45,7 @@ export default async function HousingPage() {
 
   return (
     <main className="min-h-screen pt-20 pb-28">
-      <PageHeader tag="Alojamiento" title="Find Your Space" />
+      <PageHeader tag="Housing" title="Find Your Space" />
 
       <div className="container-marketing mt-10">
         {/* WhatsApp community card */}
@@ -59,7 +59,7 @@ export default async function HousingPage() {
             WhatsApp Group
           </p>
           <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 16, maxWidth: 600 }}>
-            Haven&apos;t found a room yet? Join this group — we share available rooms and connect you with other students looking together.
+            Haven&apos;t found a room in Madrid yet? Join this group! Here we share flat listings, available rooms and connect with other students looking together.
           </p>
           {/* TODO: replace '#' with actual WhatsApp group URL */}
           <a

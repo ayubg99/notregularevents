@@ -132,7 +132,7 @@ export default function MemberCardClient({ membership, displayName, nationality,
             <div className="flex items-center gap-2">
               <span style={{ fontSize: 18 }}>🌴</span>
               <span style={{ color: '#1A1A0E', fontSize: 14, fontWeight: 800, letterSpacing: '0.07em' }}>
-                ERASMUS LIFE
+                NOT REGULAR EVENTS
               </span>
             </div>
             <Image src="/nre-logo.jpeg" alt="Not Regular Events" width={40} height={40} className="rounded-full flex-shrink-0" />

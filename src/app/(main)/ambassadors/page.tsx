@@ -2,18 +2,18 @@ import ApplicationForm from './ApplicationForm'
 import { PageHeader } from '@/components/shared/PageHeader'
 
 export const metadata = {
-  title:       'Ambassadors — Erasmus Life',
-  description: 'Become an Erasmus Life ambassador. Earn 5% commission on every booking, unlock milestone rewards, and get exclusive access in Valencia.',
+  title:       'Promoters — Not Regular Events',
+  description: 'Want to be a promoter for Not Regular Events? Join our team in Madrid. Earn commission, get exclusive access and grow with us.',
   openGraph: {
-    title:       'Become an Ambassador — Erasmus Life Valencia',
-    description: 'Earn 5% commission on every booking, unlock milestone rewards, and get exclusive access in Valencia.',
+    title:       'Want To Be A Promoter? — Not Regular Events',
+    description: 'Join our promoter team in Madrid. Earn commission and help grow the most exclusive nightlife community in the city.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'Ambassadors — Erasmus Life',
-    description: 'Earn commissions, get free trips, and help internationals in Valencia.',
+    title:       'Promoters — Not Regular Events',
+    description: 'Join our promoter team in Madrid. Earn commissions and exclusive access.',
   },
 }
 
@@ -31,7 +31,7 @@ const BENEFITS = [
   {
     emoji: '🌟',
     title: 'Exclusive Access',
-    desc:  'Ambassador-only events and a private community of Erasmus Life reps.',
+    desc:  'Ambassador-only events and a private community of Not Regular Events promoters.',
   },
 ]
 
@@ -56,7 +56,7 @@ const STEPS = [
 export default function AmbassadorsPage() {
   return (
     <div className="min-h-screen bg-brand-dark pt-20">
-      <PageHeader tag="Work With Us" title="Become a Promoter" />
+      <PageHeader tag="// Work With Us" title="Want To Be A Promoter?" />
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden pt-32 pb-20 px-4">
@@ -69,10 +69,10 @@ export default function AmbassadorsPage() {
             Ambassadors
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-gradient mb-5 leading-tight">
-            Become an Erasmus Life Ambassador
+            Want To Be A Promoter?
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto">
-            Earn while you explore. Share the vibe, build your network, and get rewarded for doing what you already do.
+            Passionate about Madrid&apos;s nightlife and want to be part of our team? We&apos;re looking for energetic people with good connections and the drive to help grow the most exclusive community in the city.
           </p>
         </div>
       </section>
@@ -86,6 +86,7 @@ export default function AmbassadorsPage() {
               <div>
                 <p className="font-heading font-bold text-white text-base mb-1.5">{b.title}</p>
                 <p className="text-white/45 text-sm leading-relaxed">{b.desc}</p>
+
               </div>
             </div>
           ))}
@@ -121,7 +122,7 @@ export default function AmbassadorsPage() {
       <section className="max-w-2xl mx-auto px-4 pb-24">
         <div className="text-center mb-8">
           <h2 className="font-heading text-3xl font-bold text-white mb-2">Ready to Join?</h2>
-          <p className="text-white/45 text-sm">We&apos;re looking for motivated internationals who love Valencia and want to share it.</p>
+          <p className="text-white/45 text-sm">Ready to be part of something not regular? Send us your info and we&apos;ll be in touch.</p>
         </div>
         <ApplicationForm />
       </section>

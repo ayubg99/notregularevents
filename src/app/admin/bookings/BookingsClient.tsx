@@ -526,7 +526,7 @@ export default function BookingsClient({ bookings }: Props) {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => downloadCSV(buildCSV(filtered), 'erasmus-vibe-bookings.csv')}
+            onClick={() => downloadCSV(buildCSV(filtered), 'nre-bookings.csv')}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-sm font-medium transition-all"
           >
             <Download size={14} />

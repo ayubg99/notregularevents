@@ -38,7 +38,7 @@ export default async function FeaturedEvents() {
         <div className="flex items-end justify-between mb-10">
           <div>
             <p className="text-brand-primary font-semibold text-sm uppercase tracking-widest mb-2">
-              This Week in Valencia
+              Madrid // 2026
             </p>
             <h2 className="font-display text-4xl md:text-5xl text-[var(--text-base)]">
               Upcoming Events
@@ -48,15 +48,15 @@ export default async function FeaturedEvents() {
             href="/events"
             className="hidden sm:flex items-center gap-2 text-brand-primary font-medium text-sm hover:gap-3 transition-all duration-200"
           >
-            View all <ArrowRight size={16} />
+            See More Events <ArrowRight size={16} />
           </Link>
         </div>
 
         {/* Cards or empty state */}
         {events.length === 0 ? (
           <EmptyState
-            title="No upcoming events yet"
-            message="Something exciting is always in the works — check back soon."
+            title="No events live right now"
+            message="No events live right now — new dates dropping soon."
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -69,7 +69,7 @@ export default async function FeaturedEvents() {
         {/* Mobile view-all */}
         <div className="mt-8 text-center sm:hidden">
           <Link href="/events" className="inline-flex items-center gap-2 text-brand-primary font-medium text-sm">
-            View all events <ArrowRight size={16} />
+            See More Events → <ArrowRight size={16} />
           </Link>
         </div>
 

@@ -2,18 +2,18 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
 export const metadata: Metadata = {
-  title:       'Erasmus Life Valencia | Events, Housing & Community for Internationals',
-  description: 'Your international community in Valencia, Spain. Events, housing and connections for expats, students, digital nomads and young professionals.',
+  title:       'Not Regular Events | Guestlist Parties & Club Nights in Madrid',
+  description: 'Not your regular events. Guestlist parties, club nights and the best nightlife experiences in Madrid. Join the community.',
   openGraph: {
-    title:       'Erasmus Life Valencia | Events, Housing & Community',
-    description: 'Your international community in Valencia, Spain. Events, housing and connections for expats, students and professionals.',
+    title:       'Not Regular Events | Guestlist Parties & Club Nights in Madrid',
+    description: 'Not your regular events. Guestlist parties, club nights and the best nightlife experiences in Madrid.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'Erasmus Life Valencia',
-    description: 'Your international community in Valencia — events, housing and connections for expats and students.',
+    title:       'Not Regular Events — Madrid',
+    description: 'Not your regular events. Guestlist parties, club nights and the best nightlife in Madrid.',
   },
 }
 import HeroSection from '@/components/home/HeroSection'

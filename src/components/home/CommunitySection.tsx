@@ -1,4 +1,4 @@
-import { MessageCircle, Camera, Users, Zap } from 'lucide-react'
+import { MessageCircle, Users, Zap } from 'lucide-react'
 
 const FEATURE_PILLS = [
   { icon: Users,         label: '50+ Nationalities'    },
@@ -23,14 +23,15 @@ export default function CommunitySection() {
 
         {/* Headline */}
         <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-white mb-6">
-          500+ Students.
+          Not Regular Events
           <br />
-          <span className="text-brand-primary">One Community.</span>
+          <span className="text-brand-primary">Is A Community.</span>
         </h2>
 
         <p className="text-white/60 text-lg max-w-xl mx-auto mb-12 leading-relaxed">
-          Join Valencia&apos;s official Erasmus community.
-          Students from over 50 countries — connect, explore and belong.
+          We&apos;re looking to create a space where you feel at home, meet new people and
+          experience Madrid as a community. Far from the unconventional, close to the
+          music and the real rhythm of the city.
         </p>
 
         {/* Feature pills */}
@@ -56,16 +57,16 @@ export default function CommunitySection() {
             style={{ backgroundColor: '#25D366' }}
           >
             <MessageCircle size={20} />
-            Join WhatsApp Group
+            Student Community
           </a>
           <a
-            href="https://instagram.com/erasmuslifevalencia"
+            href="https://chat.whatsapp.com/your-party-group-link"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 px-8 py-4 glass border border-white/20 hover:bg-white/10 text-white font-semibold rounded-full transition-all duration-200 w-full sm:w-auto"
           >
-            <Camera size={20} />
-            Follow on Instagram
+            <MessageCircle size={20} />
+            Party Group
           </a>
         </div>
 

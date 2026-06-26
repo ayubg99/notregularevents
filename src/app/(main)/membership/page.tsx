@@ -7,18 +7,18 @@ import type { MembershipPlan, MembershipRow, SponsorRow } from '@/types/database
 import { CheckCircle, ShieldCheck, Zap } from 'lucide-react'
 
 export const metadata = {
-  title:       'Membership — Erasmus Life Valencia',
-  description: 'The Erasmus Life Premium Card. Discounts, exclusive events, housing contacts and the full Valencia Erasmus experience.',
+  title:       'Membership — Not Regular Events',
+  description: 'The Not Regular Events membership. Discounts, exclusive events and the best nightlife experiences in Madrid.',
   openGraph: {
-    title:       'Membership — Erasmus Life Valencia',
-    description: 'Get more from your Erasmus semester. Discounts, exclusive events, housing contacts and the full Valencia experience.',
+    title:       'Membership — Not Regular Events',
+    description: 'Get more from every night out in Madrid. Discounts, exclusive events and the full Not Regular Events experience.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'Membership — Erasmus Life Valencia',
-    description: 'The Erasmus Life Premium Card — discounts, exclusive events and the full Valencia Erasmus experience.',
+    title:       'Membership — Not Regular Events',
+    description: 'The Not Regular Events membership — discounts, exclusive events and the best nightlife in Madrid.',
   },
 }
 
@@ -40,8 +40,8 @@ const BENEFITS = [
   },
   {
     icon:  '💬',
-    title: 'Private Erasmus WhatsApp Groups',
-    desc:  'Curated groups for Erasmus students in Valencia.',
+    title: 'Private Community WhatsApp Groups',
+    desc:  'Curated groups for Not Regular Events members in Madrid.',
   },
   {
     icon:  '🏠',
@@ -50,7 +50,7 @@ const BENEFITS = [
   },
   {
     icon:  '🎁',
-    title: 'Partner Discounts in Valencia',
+    title: 'Partner Discounts in Madrid',
     desc:  'Exclusive deals with our partner businesses.',
   },
 ]
@@ -58,7 +58,7 @@ const BENEFITS = [
 const TRUST = [
   { icon: <Zap size={16} />,         label: 'Instant activation' },
   { icon: <CheckCircle size={16} />, label: 'Cancel anytime'     },
-  { icon: <ShieldCheck size={16} />, label: 'Erasmus students worldwide' },
+  { icon: <ShieldCheck size={16} />, label: 'Students & night owls' },
 ]
 
 const PLAN_LABELS: Record<MembershipPlan, string> = {
@@ -110,10 +110,10 @@ export default async function MembershipPage() {
             Membership
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-gradient mb-5 leading-tight">
-            The Erasmus Life<br />Premium Card
+            Not Regular Events<br />Membership
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto">
-            Get more from your Erasmus semester. Discounts, exclusive events, housing contacts and the full Valencia experience.
+            Get more from every night out in Madrid. Discounts, exclusive events and the full Not Regular Events experience.
           </p>
         </div>
       </section>

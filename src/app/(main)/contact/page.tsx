@@ -2,18 +2,18 @@ import { Mail, MessageCircle, ExternalLink } from 'lucide-react'
 import ContactForm from './ContactForm'
 
 export const metadata = {
-  title:       'Contact — Erasmus Life',
-  description: "Get in touch with the Erasmus Life team. We're always happy to hear from you.",
+  title:       'Contact — Not Regular Events',
+  description: "Get in touch with the Not Regular Events team. We&apos;re always happy to hear from you.",
   openGraph: {
-    title:       'Contact — Erasmus Life Valencia',
-    description: "Get in touch with the Erasmus Life team.",
+    title:       'Contact — Not Regular Events Valencia',
+    description: "Get in touch with the Not Regular Events team.",
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'Contact — Erasmus Life',
-    description: "Get in touch with the Erasmus Life team.",
+    title:       'Contact — Not Regular Events',
+    description: "Get in touch with the Not Regular Events team.",
   },
 }
 
@@ -21,24 +21,24 @@ const CONTACT_LINKS = [
   {
     icon:  <MessageCircle size={20} />,
     label: 'WhatsApp',
-    value: '+34 600 000 000',
-    href:  'https://wa.me/34600000000',
+    value: '+34 672 587 453',
+    href:  'https://wa.me/34672587453',
     color: 'text-green-400',
     bg:    'bg-green-500/10 border-green-500/20',
   },
   {
     icon:  <Mail size={20} />,
     label: 'Email',
-    value: 'info@erasmuslifevalencia.com',
-    href:  'mailto:info@erasmuslifevalencia.com',
+    value: 'notregularevents@gmail.com',
+    href:  'mailto:notregularevents@gmail.com',
     color: 'text-brand-primary',
     bg:    'bg-brand-primary/10 border-brand-primary/20',
   },
   {
     icon:  <ExternalLink size={20} />,
     label: 'Instagram',
-    value: '@erasmuslifevalencia',
-    href:  'https://instagram.com/erasmuslifevalencia',
+    value: '@notregularevents',
+    href:  'https://instagram.com/notregularevents',
     color: 'text-pink-400',
     bg:    'bg-pink-500/10 border-pink-500/20',
   },
@@ -103,7 +103,7 @@ export default function ContactPage() {
             </div>
 
             <p className="text-white/30 text-xs text-center">
-              Based in Valencia, Spain 🇪🇸 · Typically reply within 24h
+              Based in Madrid, Spain 🇪🇸 · Typically reply within 24h
             </p>
 
           </div>

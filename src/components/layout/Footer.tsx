@@ -28,10 +28,10 @@ const FOOTER_LINKS = {
 
 const SOCIALS = [
   {
-    href:    'https://instagram.com/erasmuslifevalencia',
+    href:    'https://instagram.com/notregularevents',
     icon:    Camera,
     label:   'Instagram',
-    handle:  '@erasmuslifevalencia',
+    handle:  '@notregularevents',
     color:   'hover:text-brand-primary',
   },
   {
@@ -45,7 +45,7 @@ const SOCIALS = [
     href:    '#tiktok',
     icon:    Music2,
     label:   'TikTok',
-    handle:  '@erasmuslifevalencia',
+    handle:  '@notregularevents',
     color:   'hover:text-brand-primary',
   },
 ]
@@ -71,24 +71,24 @@ export default function Footer() {
                   className="h-14 w-auto"
                 />
               </Link>
-              <span className="text-white/30 text-sm font-bold">/ Valencia</span>
+              <span className="text-white/30 text-sm font-bold">/ Madrid</span>
             </div>
 
             {/* Tagline */}
             <p className="text-white/60 text-sm leading-relaxed max-w-xs">
-              The official Erasmus community in Valencia since 1994. Events, trips, and everything students need for an unforgettable semester.
+              Not your regular events. Guestlist parties, club nights and the best nightlife experiences in Madrid.
             </p>
 
             {/* Location */}
             <div className="flex items-center gap-2 text-white/40 text-sm">
               <MapPin size={14} className="flex-shrink-0" />
-              <span>Valencia, Spain 🇪🇸</span>
+              <span>Madrid, Spain 🇪🇸</span>
             </div>
 
             {/* Contact */}
             <div className="flex flex-col gap-1 text-xs" style={{ color: 'var(--text-muted)' }}>
-              <span>+34 XXX XXX XXX</span>
-              <span>hello@notregularevents.com</span>
+              <span>+34 672 587 453</span>
+              <span>notregularevents@gmail.com</span>
             </div>
 
             {/* Socials */}
@@ -154,10 +154,10 @@ export default function Footer() {
       <div className="border-t border-[rgba(255,255,255,0.08)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-white/25 text-xs">
-            © {new Date().getFullYear()} Erasmus Life Valencia. All rights reserved.
+            © 2026 Not Regular Events. Madrid.
           </p>
           <p className="text-white/20 text-xs">
-            Made for Erasmus students in Valencia
+            Not your regular events.
           </p>
         </div>
       </div>

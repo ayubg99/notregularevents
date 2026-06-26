@@ -7,8 +7,8 @@ import QRCode from 'qrcode'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata = {
-  title:       'My Dashboard — Erasmus Life Valencia',
-  description: 'Manage your bookings, membership, and Erasmus Life profile.',
+  title:       'My Dashboard — Not Regular Events',
+  description: 'Manage your bookings, membership, and Not Regular Events profile.',
 }
 import ProfileForm from './ProfileForm'
 import BookingTabs from './BookingTabs'
@@ -78,7 +78,7 @@ export default async function DashboardPage() {
 
   const memberQrUrl = activeMembership
     ? await QRCode.toDataURL(
-        `ERASMUSLIFE-${user.id.slice(0, 8).toUpperCase()}`,
+        `NOTREGULAR-${user.id.slice(0, 8).toUpperCase()}`,
         { width: 120, margin: 1 },
       )
     : null
@@ -230,7 +230,7 @@ export default async function DashboardPage() {
                     </span>
                   </div>
                   <p className="text-white/55 text-xs leading-relaxed">
-                    Earn 5% commission sharing Erasmus Life with friends. Free tickets, cash bonuses and more.
+                    Earn 5% commission sharing Not Regular Events with friends. Free tickets, cash bonuses and more.
                   </p>
                   <p className="text-brand-primary text-xs font-bold mt-2 group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
                     Apply now <span>→</span>

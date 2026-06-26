@@ -2,18 +2,18 @@ import type { Metadata } from 'next'
 import { MessageCircle, Briefcase, Home, Languages } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title:       'Erasmus Community Valencia | Erasmus Life',
-  description: 'Join the official Erasmus community in Valencia. Connect with students from 50+ countries, find flatmates, join WhatsApp groups and discover events.',
+  title:       'Community | Not Regular Events Madrid',
+  description: 'Join the Not Regular Events community in Madrid. Connect with students and night owls, find flatmates, join WhatsApp groups and discover events.',
   openGraph: {
-    title:       'Erasmus Community Valencia | Erasmus Life',
-    description: 'Connect with Erasmus students in Valencia. WhatsApp groups, flatmate finder, language exchange and weekly events.',
+    title:       'Community | Not Regular Events Madrid',
+    description: 'Connect with the Not Regular Events community in Madrid. WhatsApp groups, flatmate finder and weekly events.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'Erasmus Community Valencia | Erasmus Life',
-    description: 'Connect with Erasmus students in Valencia. Events, WhatsApp groups, language exchange and more.',
+    title:       'Community | Not Regular Events Madrid',
+    description: 'Connect with Not Regular Events community in Madrid. Events, WhatsApp groups, parties and more.',
   },
 }
 
@@ -69,12 +69,12 @@ export default function CommunityPage() {
             Community
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-white mb-5 leading-tight">
-            The Erasmus Community<br />
-            <span className="text-gradient">in Valencia</span>
+            The Not Regular Events<br />
+            <span className="text-gradient">Community</span>
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto leading-relaxed">
-            50+ nationalities. Weekly events. Lifelong friendships.
-            This is your Erasmus community in Valencia.
+            Students and night owls. Weekly events. Lifelong friendships.
+            This is the Not Regular Events community in Madrid.
           </p>
         </div>
       </section>
@@ -90,7 +90,7 @@ export default function CommunityPage() {
               WhatsApp Groups by Interest
             </h2>
             <p className="text-white/50 text-sm max-w-md mx-auto">
-              Join the group that fits you. All groups are moderated and Valencia-based.
+              Join the group that fits you. All groups are moderated and Madrid-based.
             </p>
           </div>
 
@@ -127,7 +127,7 @@ export default function CommunityPage() {
             More Ways to Connect
           </h2>
           <p className="text-white/50 text-sm max-w-md mx-auto">
-            We&apos;re building more tools specifically for Erasmus students in Valencia.
+            We&apos;re building more tools specifically for the Madrid community.
           </p>
         </div>
 
@@ -135,17 +135,17 @@ export default function CommunityPage() {
           <ComingSoonCard
             icon={Languages}
             title="Language Exchange"
-            desc="Find a language partner — practice Spanish, English, French, German, Italian and more with locals and internationals."
+            desc="Find a language partner — practice Spanish, English, French, German, Italian and more with locals and international students."
           />
           <ComingSoonCard
             icon={Home}
             title="Housing & Flatmates"
-            desc="Find rooms, post your spare room, or find flatmates who match your vibe. Valencia-only listings."
+            desc="Find rooms, post your spare room, or find flatmates who match your vibe. Madrid-only listings."
           />
           <ComingSoonCard
             icon={Briefcase}
             title="Job Board"
-            desc="Job listings, internships and part-time opportunities for Erasmus students in Valencia. English-friendly employers."
+            desc="Job listings, internships and part-time opportunities for students in Madrid. English-friendly employers."
           />
         </div>
       </section>

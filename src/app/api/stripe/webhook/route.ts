@@ -315,7 +315,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     const bookingRef = meta.booking_ref
     const roomId     = meta.room_id
     const partnerId  = meta.partner_id
-    const baseUrl    = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+    const baseUrl    = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'
     const deadline   = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString()
 
     // 1. Save booking as PENDING
@@ -630,7 +630,7 @@ export async function POST(request: NextRequest) {
               transfer_percent: String(Math.round(platformFeeMembership * 100)),
             },
           })
-          console.log('✅ Membership split transferred:', transferAmount / 100, 'EUR → Erasmus Life')
+          console.log('✅ Membership split transferred:', transferAmount / 100, 'EUR → Not Regular Events')
         } catch (err) {
           console.error('❌ Membership transfer failed:', err)
         }

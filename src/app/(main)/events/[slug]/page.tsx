@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = event.description?.slice(0, 155) ?? `Join us for ${event.title} in Valencia`
 
   return {
-    title:       `${event.title} | Erasmus Life Valencia`,
+    title:       `${event.title} | Not Regular Events`,
     description,
     openGraph: {
       title:       event.title,

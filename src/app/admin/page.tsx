@@ -67,7 +67,7 @@ export default async function AdminPage() {
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="font-heading text-2xl font-bold text-white mb-1">Overview</h1>
-        <p className="text-white/40 text-sm">Welcome to the Erasmus Life admin dashboard.</p>
+        <p className="text-white/40 text-sm">Welcome to the Not Regular Events admin dashboard.</p>
       </div>
 
       {/* Stats */}

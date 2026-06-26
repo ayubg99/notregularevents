@@ -118,7 +118,7 @@ export default function BookingConfirmation({
               Save 10% on every future booking
             </p>
             <p className="text-white/40 text-xs mt-0.5">
-              Join Erasmus Life for €9.99/month →
+              Join Not Regular Events for €9.99/month →
             </p>
           </div>
         </Link>

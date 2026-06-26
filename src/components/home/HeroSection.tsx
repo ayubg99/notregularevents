@@ -109,7 +109,7 @@ export default function HeroSection() {
         >
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-white/20 text-white/80 text-sm font-medium mb-8">
             <span className="w-2 h-2 rounded-full bg-brand-success animate-pulse flex-shrink-0" />
-            The Official Erasmus Community in Valencia
+            Madrid / 2026
           </span>
         </motion.div>
 
@@ -120,10 +120,9 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          Your Erasmus{' '}
-          <span className="text-brand-primary">in Valencia</span>
+          Not Regular Events
           <br />
-          Starts Here
+          <span className="text-brand-primary">Is In Town</span>
         </motion.h1>
 
         {/* Subheadline */}
@@ -133,8 +132,10 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.25, ease: 'easeOut' }}
         >
-          The official platform for Erasmus students in Valencia.
-          Events, trips, parties and everything you need for the best semester of your life.
+          Not Regular Events was born from our own experience as students in Madrid.
+          We know what it means to arrive in a new city, want to meet people and enjoy it without
+          overspending. That&apos;s why we create accessible, authentic events designed to connect people.
+          More than parties, we create experiences and new friendships.
         </motion.p>
 
         {/* CTA buttons */}
@@ -148,14 +149,14 @@ export default function HeroSection() {
             href="/events"
             className="flex items-center gap-2 px-8 py-4 btn-primary text-base w-full sm:w-auto justify-center"
           >
-            Explore Events
+            See Upcoming Events
             <ChevronRight size={18} strokeWidth={2.5} />
           </Link>
           <Link
-            href="/membership"
+            href="/community"
             className="flex items-center gap-2 px-8 py-4 btn-secondary text-base w-full sm:w-auto justify-center"
           >
-            Join Membership
+            Join Community
             <ChevronRight size={18} strokeWidth={2.5} />
           </Link>
         </motion.div>

@@ -53,7 +53,7 @@ export function PartyRecapStrip({
           whiteSpace:     'nowrap',
           margin:         0,
         }}>
-          Live from {city}
+          {'// Live From '}{city}
         </p>
       </div>
 

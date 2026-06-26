@@ -31,5 +31,5 @@ async function getRecapVideos() {
 
 export default async function PartyRecapSection() {
   const videos = await getRecapVideos()
-  return <PartyRecapStrip videos={videos} city="Valencia" />
+  return <PartyRecapStrip videos={videos} city="Madrid" />
 }

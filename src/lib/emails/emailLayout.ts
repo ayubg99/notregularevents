@@ -1,6 +1,6 @@
 export function emailLayout(content: string, baseUrl: string, footerNote?: string): string {
   const footer = footerNote ??
-    `Erasmus Life Valencia — your international community<br />Questions? Reply to this email or visit <a href="${baseUrl}" style="color:#FF6B00;">${baseUrl.replace('https://','')}</a>`
+    `Not Regular Events • Madrid<br />Questions? Reply to this email or visit <a href="${baseUrl}" style="color:#FF6B00;">${baseUrl.replace('https://','')}</a>`
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -13,7 +13,7 @@ export function emailLayout(content: string, baseUrl: string, footerNote?: strin
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#FF6B00;">
     <tr>
       <td align="center" style="padding:28px 24px;">
-        <img src="${baseUrl}/logo.png" alt="Erasmus Life" height="52" style="display:block;" />
+        <img src="${baseUrl}/logo.png" alt="Not Regular Events" height="52" style="display:block;" />
       </td>
     </tr>
   </table>

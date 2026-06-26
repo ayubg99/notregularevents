@@ -7,7 +7,7 @@ import HousingBoard from './HousingBoard'
 import type { PartnerRoomRow, HousingListingRow } from '@/types/database'
 
 const TABS = [
-  { id: 'partner', label: '⭐ Verified Rooms',   description: 'Verified by Erasmus Life' },
+  { id: 'partner', label: '⭐ Verified Rooms',   description: 'Verified by Not Regular Events' },
   { id: 'student', label: '👥 Student Listings', description: 'Posted by students'        },
 ] as const
 

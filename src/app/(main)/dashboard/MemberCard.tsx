@@ -64,7 +64,7 @@ export default function MemberCard({ membership, displayName, nationality, unive
   const [copied, setCopied] = useState(false)
 
   function handleCopy() {
-    navigator.clipboard.writeText('ERASMUSLIFE').then(() => {
+    navigator.clipboard.writeText('NOTREGULAR').then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
@@ -86,9 +86,9 @@ export default function MemberCard({ membership, displayName, nationality, unive
         {/* Header row */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-1.5">
-            <span style={{ fontSize: 16 }}>🌴</span>
+            <span style={{ fontSize: 16 }}>⚡</span>
             <span style={{ color: dark, fontSize: 13, fontWeight: 800, letterSpacing: '0.05em' }}>
-              ERASMUS LIFE
+              NOT REGULAR MEMBER
             </span>
           </div>
           <Image src="/nre-logo.jpeg" alt="Not Regular Events" width={36} height={36} className="rounded-full flex-shrink-0" />
@@ -151,7 +151,7 @@ export default function MemberCard({ membership, displayName, nationality, unive
               Member Code
             </p>
             <p style={{ color: dark, fontSize: 15, fontWeight: 700, margin: 0, fontFamily: 'monospace', letterSpacing: '0.1em' }}>
-              ERASMUSLIFE
+              NOTREGULAR
             </p>
           </div>
           <button

@@ -1,16 +1,16 @@
 export const metadata = {
-  title:       'About — Erasmus Life Valencia',
-  description: 'Since 1994, the official Erasmus community in Valencia. Thousands of students, hundreds of events, and one unforgettable semester.',
+  title:       'About — Not Regular Events',
+  description: 'Not your regular events. Guestlist parties, club nights and the best nightlife experiences in Madrid.',
   openGraph: {
-    title:       'About — Erasmus Life Valencia',
-    description: 'Since 1994, the official Erasmus community in Valencia. Thousands of students, hundreds of events, and one unforgettable semester.',
+    title:       'About — Not Regular Events',
+    description: 'Not your regular events. Guestlist parties, club nights and the best nightlife experiences in Madrid.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'About — Erasmus Life Valencia',
-    description: 'Since 1994, the official Erasmus community in Valencia.',
+    title:       'About — Not Regular Events',
+    description: 'Not Regular Events — the best nightlife community in Madrid.',
   },
 }
 
@@ -45,10 +45,10 @@ export default function AboutPage() {
             Our Story
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-gradient mb-5 leading-tight">
-            About Erasmus Life Valencia
+            About Not Regular Events
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto">
-            Since 1994, the official Erasmus community in Valencia.
+            Not your regular events. Born in Madrid, built for the community.
           </p>
         </div>
 
@@ -65,20 +65,18 @@ export default function AboutPage() {
       <section className="max-w-2xl mx-auto px-4 pb-20">
         <div className="flex flex-col gap-6 text-white/65 text-base leading-relaxed">
           <p>
-            Erasmus Life Valencia was founded in 1994 with a single mission: to make every Erasmus student&apos;s
-            semester in Valencia unforgettable. What started as a small welcome team for incoming international
-            students grew into the official Erasmus community trusted by thousands of students each year.
+            Not Regular Events was born from our own experience as students in Madrid. We know what it means
+            to arrive in a new city, want to meet people and enjoy it without overspending.
           </p>
           <p>
-            Over three decades, we&apos;ve organised thousands of events, trips, and experiences for Erasmus students
-            from every corner of Europe and beyond. From rooftop parties in the old town to weekend trips to Ibiza,
-            Lisbon and Barcelona — we&apos;ve been there, every semester, for every student.
+            That&apos;s why we create accessible, authentic events designed to connect people. More than parties,
+            we create experiences and new friendships — from Latin nights to reggaeton, urban and electronic,
+            through music and shared experience.
           </p>
           <p>
-            Today, Erasmus Life Valencia is the go-to platform for Erasmus students in Valencia. 5,000+ students.
-            50+ nationalities. Events every week of the semester. Housing support, job listings, a marketplace,
-            and a community that feels like a second family. If you&apos;re coming to Valencia for your Erasmus,
-            you&apos;re already home.
+            We create a community of students and night owls who understand that leisure isn&apos;t consumption,
+            it&apos;s connection. With guestlists, invitations and accessible events, we bring cultures and styles
+            together in Madrid.
           </p>
         </div>
       </section>
@@ -87,7 +85,7 @@ export default function AboutPage() {
       <section className="max-w-2xl mx-auto px-4 pb-20">
         <blockquote className="border-l-4 border-brand-primary pl-6">
           <p className="font-heading text-2xl sm:text-3xl font-bold italic text-white leading-snug">
-            &ldquo;To give every Erasmus student in Valencia the best semester of their life — one experience at a time.&rdquo;
+            &ldquo;We&apos;re looking to create a space where you feel at home, meet new people and experience Madrid as a community.&rdquo;
           </p>
         </blockquote>
       </section>

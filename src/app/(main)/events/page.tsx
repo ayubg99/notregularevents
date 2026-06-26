@@ -3,25 +3,25 @@ import EventsClient from '@/components/events/EventsClient'
 import { PageHeader } from '@/components/shared/PageHeader'
 
 export const metadata: Metadata = {
-  title:       'Events | Erasmus Life Valencia',
-  description: 'Browse and book events for internationals in Valencia. Parties, networking, language exchange, food tours, hiking, yoga and more.',
+  title:       'Events | Not Regular Events Madrid',
+  description: 'Browse and book events in Madrid. Guestlist parties, club nights, artist nights and the best nightlife experiences.',
   openGraph: {
-    title:       'Events | Erasmus Life Valencia',
-    description: 'Browse and book events for internationals in Valencia — parties, networking, cultural nights and more.',
+    title:       'Events | Not Regular Events Madrid',
+    description: 'Browse and book events in Madrid — guestlist parties, club nights, artist nights and more.',
     images:      [{ url: '/og-default.png', width: 1200, height: 630 }],
     type:        'website',
   },
   twitter: {
     card:        'summary_large_image',
-    title:       'Events | Erasmus Life Valencia',
-    description: 'Browse and book events for internationals in Valencia — parties, networking, cultural nights and more.',
+    title:       'Events | Not Regular Events Madrid',
+    description: 'Browse and book events in Madrid — guestlist parties, club nights, artist nights and more.',
   },
 }
 
 export default function EventsPage() {
   return (
     <main className="min-h-screen bg-brand-dark pt-20 pb-24">
-      <PageHeader tag="Valencia // 2026" title="Upcoming Events" />
+      <PageHeader tag="Madrid // 2026" title="Upcoming Events" />
       <div className="container-marketing mt-10">
         <EventsClient />
       </div>

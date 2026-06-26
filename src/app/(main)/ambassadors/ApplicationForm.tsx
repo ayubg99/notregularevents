@@ -112,7 +112,7 @@ export default function ApplicationForm() {
           <textarea
             value={whyJoin}
             onChange={e => setWhyJoin(e.target.value)}
-            placeholder="Tell us about yourself, your network, and why you'd make a great Erasmus Life ambassador…"
+            placeholder="Tell us about yourself, your network, and why you'd make a great Not Regular Events promoter…"
             required
             minLength={50}
             rows={5}

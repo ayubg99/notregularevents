@@ -56,7 +56,7 @@ export function WeeklyDigestEmail({ events, baseUrl, unsubscribeUrl, weekLabel }
       What's on this week 🎉
     </p>
     <p style="margin:0 0 32px;font-size:15px;color:#B8A090;line-height:1.6;">
-      ${weekLabel} — here's everything happening in Valencia.
+      ${weekLabel} — here's everything happening in Madrid.
     </p>
 
     ${events.length ? `
@@ -80,6 +80,6 @@ export function WeeklyDigestEmail({ events, baseUrl, unsubscribeUrl, weekLabel }
   return emailLayout(
     content,
     baseUrl,
-    `Erasmus Life Valencia — your international community<br /><a href="${unsubscribeUrl}" style="color:#B8A090;font-size:11px;">Unsubscribe from newsletter</a>`,
+    `Not Regular Events • Madrid<br /><a href="${unsubscribeUrl}" style="color:#B8A090;font-size:11px;">Unsubscribe from newsletter</a>`,
   )
 }

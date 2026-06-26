@@ -15,8 +15,8 @@ interface BookingConfirmationParams {
 }
 
 export async function sendBookingConfirmation(params: BookingConfirmationParams) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
-  const from    = process.env.RESEND_FROM_EMAIL   ?? 'info@erasmuslifevalencia.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'
+  const from    = process.env.RESEND_FROM_EMAIL   ?? 'notregularevents@gmail.com'
 
   const { qrCode, ...templateParams } = params
   const html = BookingConfirmationEmail({ ...templateParams, baseUrl })
@@ -61,8 +61,8 @@ interface BookingPendingEmailParams {
 }
 
 export async function sendBookingPendingEmail(params: BookingPendingEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'notregularevents@gmail.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'
 
   const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
@@ -183,8 +183,8 @@ interface PartnerConfirmationRequestParams {
 }
 
 export async function sendPartnerConfirmationRequest(params: PartnerConfirmationRequestParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'notregularevents@gmail.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'
 
   const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
@@ -294,7 +294,7 @@ export async function sendPartnerConfirmationRequest(params: PartnerConfirmation
   const html = emailLayout(
     content,
     baseUrl,
-    `Need help? Contact us at <a href="mailto:info@erasmuslifevalencia.com" style="color:#FF6B00;">info@erasmuslifevalencia.com</a> · Powered by Erasmus Life`,
+    `Need help? Contact us at <a href="mailto:notregularevents@gmail.com" style="color:#FF6B00;">notregularevents@gmail.com</a> · Not Regular Events • Madrid`,
   )
 
   try {
@@ -320,8 +320,8 @@ interface BookingRefundEmailParams {
 }
 
 export async function sendBookingRefundEmail(params: BookingRefundEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'notregularevents@gmail.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'
 
   const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
@@ -414,11 +414,11 @@ interface RoomContactEmailParams {
 }
 
 export async function sendRoomContactEmail(params: RoomContactEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'notregularevents@gmail.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'
   const waNumber  = params.partnerWhatsapp.replace(/[^0-9]/g, '')
   const waMessage = encodeURIComponent(
-    `Hi ${params.partnerContactName || params.partnerName}! I'm ${params.guestName} and I found your room "${params.roomTitle}" on Erasmus Life. I'm interested in moving in on ${params.moveInDate}. Is it still available?`,
+    `Hi ${params.partnerContactName || params.partnerName}! I'm ${params.guestName} and I found your room "${params.roomTitle}" on Not Regular Events. I'm interested in moving in on ${params.moveInDate}. Is it still available?`,
   )
   const waLink = waNumber ? `https://wa.me/${waNumber}?text=${waMessage}` : ''
 
@@ -494,7 +494,7 @@ export async function sendRoomContactEmail(params: RoomContactEmailParams) {
       <tr>
         <td style="padding:16px 20px;">
           <p style="margin:0;font-size:13px;color:#B8A090;line-height:1.6;">
-            ℹ️ <strong style="color:#FFF8EE;">Please note:</strong> Monthly rent and deposit are paid <strong style="color:#FFF8EE;">directly to the landlord</strong>, not through Erasmus Life. The €50 booking fee covers our platform service only.
+            ℹ️ <strong style="color:#FFF8EE;">Please note:</strong> Monthly rent and deposit are paid <strong style="color:#FFF8EE;">directly to the landlord</strong>, not through Not Regular Events. The €50 booking fee covers our Not Regular Events platform service only.
           </p>
         </td>
       </tr>
@@ -535,15 +535,15 @@ interface PartnerNotificationEmailParams {
 }
 
 export async function sendPartnerNotificationEmail(params: PartnerNotificationEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'notregularevents@gmail.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'
 
   const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
       Hi ${params.partnerName},
     </p>
     <p style="margin:0 0 32px;font-size:15px;color:#B8A090;line-height:1.6;">
-      A student has purchased your contact details via Erasmus Life and will be reaching out soon.
+      A student has purchased your contact details via Not Regular Events and will be reaching out soon.
     </p>
 
     <table width="100%" cellpadding="0" cellspacing="0"
@@ -608,7 +608,7 @@ export async function sendPartnerNotificationEmail(params: PartnerNotificationEm
   const html = emailLayout(
     content,
     baseUrl,
-    `Powered by Erasmus Life · <a href="https://instagram.com/erasmuslifevalencia" style="color:#FF6B00;">@erasmuslifevalencia</a>`,
+    `Not Regular Events • Madrid · <a href="https://instagram.com/notregularevents" style="color:#FF6B00;">@notregularevents</a>`,
   )
 
   try {
@@ -635,8 +635,8 @@ interface GroupBookingEmailParams {
 }
 
 export async function sendGroupBookingConfirmation(params: GroupBookingEmailParams) {
-  const from     = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
-  const baseUrl  = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from     = process.env.RESEND_FROM_EMAIL ?? 'notregularevents@gmail.com'
+  const baseUrl  = process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'
   const n        = params.tickets.length
   const scanCopy = 'Each QR code is unique and can only be scanned once at the door.'
 
@@ -723,15 +723,15 @@ interface MembershipWelcomeParams {
 }
 
 export async function sendMembershipWelcomeEmail(params: MembershipWelcomeParams) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
-  const from    = process.env.RESEND_FROM_EMAIL   ?? 'info@erasmuslifevalencia.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'
+  const from    = process.env.RESEND_FROM_EMAIL   ?? 'notregularevents@gmail.com'
   const html    = MembershipWelcomeEmail({ ...params, baseUrl })
 
   try {
     const { error } = await getResend().emails.send({
       from,
       to:      params.to,
-      subject: '🌴 Welcome to Erasmus Life Membership!',
+      subject: '⚡ Welcome to Not Regular Events Membership!',
       html,
     })
     if (error) console.error('[email membership] send failed:', error)
@@ -751,15 +751,15 @@ interface AmbassadorApprovalEmailParams {
 }
 
 export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'notregularevents@gmail.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'
 
   const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
       Hey ${params.name.split(' ')[0]} 🌟
     </p>
     <p style="margin:0 0 32px;font-size:15px;color:#B8A090;line-height:1.6;">
-      Congratulations! Your application has been approved — you're now an official Erasmus Life Ambassador in Valencia.
+      Congratulations! Your application has been approved — you're now an official Not Regular Events Promoter in Madrid.
     </p>
 
     <table width="100%" cellpadding="0" cellspacing="0"
@@ -768,7 +768,7 @@ export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmai
         <td align="center" style="padding:28px 24px;">
           <p style="font-size:40px;margin:0 0 12px;">🌟</p>
           <p style="margin:0 0 6px;font-size:22px;font-weight:700;color:#FF6B00;">You're an Ambassador!</p>
-          <p style="margin:0;font-size:14px;color:#B8A090;">Welcome to the Erasmus Life Ambassador Program</p>
+          <p style="margin:0;font-size:14px;color:#B8A090;">Welcome to the Not Regular Events Promoter Program</p>
         </td>
       </tr>
     </table>
@@ -806,7 +806,7 @@ export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmai
           <p style="margin:0 0 16px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">
             How It Works
           </p>
-          <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">🔗 &nbsp;Share your referral link with friends interested in Erasmus Valencia</p>
+          <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">🔗 &nbsp;Share your referral link with friends interested in Not Regular Events</p>
           <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">💸 &nbsp;Earn <strong style="color:#FF6B00;">${params.commissionRate}% commission</strong> when they book an event</p>
           <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">📊 &nbsp;Track your earnings and referrals in your dashboard</p>
           <p style="margin:0;font-size:14px;color:#FFF8EE;">🎁 &nbsp;Hit milestones for bonus rewards — free tickets, membership upgrades, cash bonuses</p>
@@ -833,7 +833,7 @@ export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmai
     const { error } = await getResend().emails.send({
       from,
       to:      params.to,
-      subject: "🌟 You're an Erasmus Life Ambassador!",
+      subject: "🌟 You're a Not Regular Events Promoter!",
       html,
     })
     if (error) console.error('[email ambassador approval] send failed:', error)
@@ -851,8 +851,8 @@ interface AmbassadorCommissionEmailParams {
 }
 
 export async function sendAmbassadorCommissionEmail(params: AmbassadorCommissionEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const from    = process.env.RESEND_FROM_EMAIL ?? 'notregularevents@gmail.com'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'
 
   const content = `
     <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">

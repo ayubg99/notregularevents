@@ -24,11 +24,11 @@ export default function AmbassadorSection() {
                 Ambassador Program
               </p>
               <h2 className="font-display text-4xl md:text-5xl text-white mb-4">
-                Share Erasmus Life.<br />
+                Share Not Regular Events.<br />
                 <span className="text-brand-primary">Earn Real Money.</span>
               </h2>
               <p className="text-white/55 text-lg leading-relaxed mb-8">
-                Love Erasmus Life? Tell your friends and earn 5% commission on every trip or event they book — plus exclusive rewards the more you grow.
+                Love Not Regular Events? Tell your friends and earn 5% commission on every event they book — plus exclusive rewards the more you grow.
               </p>
 
               <div className="flex flex-col gap-4 mb-10">
@@ -62,7 +62,7 @@ export default function AmbassadorSection() {
                 {/* Mock referral link card */}
                 <div className="rounded-2xl p-4" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(45,91,255,0.2)' }}>
                   <p className="text-brand-primary text-xs font-bold uppercase tracking-widest mb-2">Your Referral Link</p>
-                  <p className="text-brand-primary/70 text-xs font-mono break-all">erasmuslifevalencia.com?ref=<span className="text-brand-primary font-bold">SOFIA1234</span></p>
+                  <p className="text-brand-primary/70 text-xs font-mono break-all">notregularevents.com?ref=<span className="text-brand-primary font-bold">SOFIA1234</span></p>
                   <p className="text-white/30 text-xs mt-2">Share anywhere and earn automatically</p>
                 </div>
 

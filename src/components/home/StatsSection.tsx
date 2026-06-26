@@ -17,7 +17,7 @@ const STATS: StatItem[] = [
   { end: 5000, suffix: '+', label: 'Students',      desc: 'Across 50+ nationalities',      icon: Users    },
   { end: 50,   suffix: '+', label: 'Nationalities', desc: 'All in one community',           icon: Globe    },
   { end: 6,    suffix: '',  label: 'Events/Week',   desc: 'Parties, culture & more',        icon: Calendar },
-  { end: 1994, suffix: '',  label: 'Est.',          desc: 'The official Erasmus community', icon: MapPin   },
+  { end: 1994, suffix: '',  label: 'Est.',          desc: 'Not your regular events', icon: MapPin   },
 ]
 
 function StatCard({ item }: { item: StatItem }) {

@@ -57,7 +57,7 @@ export default function RoomBookingSidebar({ room }: { room: PartnerRoomRow }) {
         {/* Trust badges */}
         <div className="space-y-1.5">
           <p className="text-white/50 text-xs flex items-center gap-2">
-            <span className="text-green-400">✅</span> Verified by Erasmus Life
+            <span className="text-green-400">✅</span> Verified by Not Regular Events
           </p>
           <p className="text-white/50 text-xs flex items-center gap-2">
             <span className="text-green-400">✅</span> Full refund if not confirmed

@@ -302,7 +302,7 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
 
             {/* Subtitle */}
             <p style={{ color: '#888', fontSize: '14px', margin: '0 0 32px', lineHeight: 1.6 }}>
-              Create a free account to get started with exclusive Erasmus Life benefits
+              Create a free account to get started with exclusive Not Regular Events benefits
             </p>
 
             {/* CTA buttons */}

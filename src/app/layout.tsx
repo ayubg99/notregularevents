@@ -10,20 +10,20 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'),
   title: {
-    default:  'Erasmus Life Valencia',
-    template: '%s | Erasmus Life Valencia',
+    default:  'Not Regular Events — Madrid',
+    template: '%s | Not Regular Events',
   },
   description:
-    'The official platform for Erasmus students in Valencia. Book events, trips, find housing and join the community. Since 1994.',
+    'Not your regular events. Guestlist parties, club nights and the best nightlife experiences in Madrid. Join the community.',
   keywords: [
-    'Erasmus Valencia', 'Erasmus Life', 'Erasmus students Valencia',
-    'events Valencia students', 'trips Valencia', 'Erasmus community',
-    'Erasmus Valencia parties', 'student housing Valencia',
-    'Erasmus Valencia 2025', 'international students Valencia',
+    'Not Regular Events Madrid', 'nightlife Madrid', 'club nights Madrid',
+    'guestlist Madrid', 'student parties Madrid',
+    'events Madrid students', 'Madrid nightlife community',
+    'party Madrid', 'international students Madrid',
   ],
-  authors:  [{ name: 'Erasmus Life Valencia' }],
+  authors:  [{ name: 'Not Regular Events' }],
   icons: {
     icon:     '/nre-logo.jpeg',
     shortcut: '/nre-logo.jpeg',
@@ -32,15 +32,15 @@ export const metadata: Metadata = {
   openGraph: {
     type:        'website',
     locale:      'en_US',
-    siteName:    'Erasmus Life Valencia',
-    title:       'Erasmus Life Valencia',
-    description: 'The official platform for Erasmus students in Valencia. Book events, trips, find housing and join the community.',
+    siteName:    'Not Regular Events',
+    title:       'Not Regular Events — Madrid',
+    description: 'Not your regular events. Guestlist parties, club nights and the best nightlife experiences in Madrid. Join the community.',
     images:      [{ url: '/nre-logo.jpeg' }],
   },
   twitter: {
     card:        'summary',
-    title:       'Erasmus Life Valencia',
-    description: 'The official platform for Erasmus students in Valencia. Events, trips, parties and more. Since 1994.',
+    title:       'Not Regular Events — Madrid',
+    description: 'Not your regular events. Guestlist parties, club nights and the best nightlife in Madrid.',
     images:      ['/nre-logo.jpeg'],
   },
 }

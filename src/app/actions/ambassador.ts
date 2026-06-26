@@ -62,7 +62,7 @@ export async function approveAmbassadorApplication(
   }
 
   const referralCode = generateReferralCode(name)
-  const baseUrl      = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const baseUrl      = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'
   const referralLink = `${baseUrl}?ref=${referralCode}`
 
   // Create ambassador record

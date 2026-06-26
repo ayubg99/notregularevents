@@ -20,7 +20,7 @@ export function BookingConfirmationEmail({
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Booking Confirmed — Erasmus Life</title>
+<title>Booking Confirmed — Not Regular Events</title>
 </head>
 <body style="margin:0;padding:0;background:#0D0D0D;font-family:Inter,Arial,sans-serif;color:#FFF8EE;">
 
@@ -28,7 +28,7 @@ export function BookingConfirmationEmail({
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#FF6B00;">
     <tr>
       <td align="center" style="padding:28px 24px;">
-        <img src="${baseUrl}/logo.png" alt="Erasmus Life" height="52" style="display:block;" />
+        <img src="${baseUrl}/logo.png" alt="Not Regular Events" height="52" style="display:block;" />
       </td>
     </tr>
   </table>
@@ -130,7 +130,7 @@ export function BookingConfirmationEmail({
     <tr>
       <td style="padding:32px 24px;border-top:1px solid rgba(255,248,238,0.06);margin-top:32px;">
         <p style="margin:0;font-size:12px;color:#B8A090;text-align:center;line-height:1.7;">
-          Erasmus Life Valencia — your international community<br />
+          Not Regular Events • Madrid<br />
           Questions? Reply to this email or visit <a href="${baseUrl}" style="color:#FF6B00;">${baseUrl.replace('https://','')}</a>
         </p>
       </td>
