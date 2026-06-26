@@ -20,7 +20,6 @@ import HeroSection from '@/components/home/HeroSection'
 import FeaturedEvents from '@/components/home/FeaturedEvents'
 import PartyRecapSection from '@/components/home/PartyRecapSection'
 import CommunitySection from '@/components/home/CommunitySection'
-import StatsSection from '@/components/home/StatsSection'
 import TestimonialsSection from '@/components/home/TestimonialsSection'
 import NewsletterSection from '@/components/home/NewsletterSection'
 import SponsorsSection from '@/components/home/SponsorsSection'
@@ -58,10 +57,7 @@ export default function HomePage() {
       {/* 1. Hero — full viewport, video bg */}
       <HeroSection />
 
-      {/* 2. Stats — count-up on scroll */}
-      <StatsSection />
-
-      {/* 3. Events — streams from Supabase */}
+      {/* 2. Events — streams from Supabase */}
       <Suspense fallback={<EventsSkeleton />}>
         <FeaturedEvents />
       </Suspense>
