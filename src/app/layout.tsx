@@ -25,9 +25,9 @@ export const metadata: Metadata = {
   ],
   authors:  [{ name: 'Erasmus Life Valencia' }],
   icons: {
-    icon:     '/logo.png',
-    shortcut: '/logo.png',
-    apple:    '/logo.png',
+    icon:     '/nre-logo.jpeg',
+    shortcut: '/nre-logo.jpeg',
+    apple:    '/nre-logo.jpeg',
   },
   openGraph: {
     type:        'website',
@@ -35,13 +35,13 @@ export const metadata: Metadata = {
     siteName:    'Erasmus Life Valencia',
     title:       'Erasmus Life Valencia',
     description: 'The official platform for Erasmus students in Valencia. Book events, trips, find housing and join the community.',
-    images:      [{ url: '/logo.png' }],
+    images:      [{ url: '/nre-logo.jpeg' }],
   },
   twitter: {
     card:        'summary',
     title:       'Erasmus Life Valencia',
     description: 'The official platform for Erasmus students in Valencia. Events, trips, parties and more. Since 1994.',
-    images:      ['/logo.png'],
+    images:      ['/nre-logo.jpeg'],
   },
 }
 

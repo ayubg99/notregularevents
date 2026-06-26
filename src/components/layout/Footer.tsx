@@ -64,8 +64,8 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <Link href="/">
                 <Image
-                  src="/logo.png"
-                  alt="Erasmus Life"
+                  src="/nre-logo.jpeg"
+                  alt="Not Regular Events"
                   width={200}
                   height={52}
                   className="h-14 w-auto"

@@ -39,8 +39,8 @@ export default function AdminSidebar() {
       {/* Logo */}
       <div className="px-5 py-4 border-b border-white/10 flex items-center gap-2">
         <Image
-          src="/logo.png"
-          alt="Erasmus Life"
+          src="/nre-logo.jpeg"
+          alt="Not Regular Events"
           width={120}
           height={36}
           className="h-9 w-auto object-contain"

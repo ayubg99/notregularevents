@@ -91,7 +91,7 @@ export default function MemberCard({ membership, displayName, nationality, unive
               ERASMUS LIFE
             </span>
           </div>
-          <Image src="/logo.png" alt="Erasmus Life" width={36} height={36} className="rounded-full flex-shrink-0" />
+          <Image src="/nre-logo.jpeg" alt="Not Regular Events" width={36} height={36} className="rounded-full flex-shrink-0" />
         </div>
 
         {/* Divider */}

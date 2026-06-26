@@ -82,8 +82,8 @@ export default function Navbar() {
             {/* Logo */}
             <Link href="/" className="flex-shrink-0">
               <Image
-                src="/logo.png"
-                alt="Erasmus Life"
+                src="/nre-logo.jpeg"
+                alt="Not Regular Events"
                 width={180}
                 height={48}
                 className="h-12 w-auto"
