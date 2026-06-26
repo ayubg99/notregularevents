@@ -145,6 +145,7 @@ export async function duplicateEvent(eventId: string): Promise<{ success: boolea
       early_bird_seats:    orig.early_bird_seats,
       group_min_size:      orig.group_min_size,
       capacity:            orig.capacity,
+      city:                orig.city,
       status:              'draft',
       created_by:          auth.userId,
     })

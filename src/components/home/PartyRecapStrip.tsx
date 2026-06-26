@@ -24,14 +24,15 @@ export function PartyRecapStrip({
   return (
     <section style={{ background: '#0A0A0A', padding: '60px 0 80px' }}>
       {/* Header row */}
-      <div style={{
-        display:        'flex',
-        justifyContent: 'space-between',
-        alignItems:     'flex-end',
-        maxWidth:       '1400px',
-        margin:         '0 auto 24px',
-        padding:        '0 24px',
-      }}>
+      <div
+        className="container-marketing"
+        style={{
+          display:        'flex',
+          justifyContent: 'space-between',
+          alignItems:     'flex-end',
+          marginBottom:   '24px',
+        }}
+      >
         <h2 style={{
           fontFamily:    'Anton, sans-serif',
           fontSize:      'clamp(28px, 4vw, 48px)',

@@ -47,7 +47,7 @@ export default async function HousingPage() {
     <main className="min-h-screen pt-20 pb-28">
       <PageHeader tag="Alojamiento" title="Find Your Space" />
 
-      <div className="max-w-6xl mx-auto px-4 mt-10">
+      <div className="container-marketing mt-10">
         {/* WhatsApp community card */}
         <div style={{
           background:    'var(--bg-card)',

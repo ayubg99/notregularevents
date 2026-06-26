@@ -18,6 +18,9 @@ const GRADIENTS: Record<EventCategory, string> = {
   yoga:                 'from-purple-400 to-pink-400',
   art:                  'from-fuchsia-500 to-violet-400',
   international_dinner: 'from-teal-500 to-cyan-400',
+  club_night:           'from-violet-600 to-purple-500',
+  football_screening:   'from-green-600 to-lime-500',
+  artist_night:         'from-pink-500 to-rose-400',
 }
 
 const BADGE_COLORS: Record<EventCategory, string> = {
@@ -33,6 +36,9 @@ const BADGE_COLORS: Record<EventCategory, string> = {
   yoga:                 'bg-pink-500/20    text-pink-300    border-pink-500/30',
   art:                  'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30',
   international_dinner: 'bg-teal-500/20    text-teal-300    border-teal-500/30',
+  club_night:           'bg-violet-600/20  text-violet-300  border-violet-600/30',
+  football_screening:   'bg-green-600/20   text-green-300   border-green-600/30',
+  artist_night:         'bg-pink-500/20    text-pink-300    border-pink-500/30',
 }
 
 const LABELS: Record<EventCategory, string> = {
@@ -48,6 +54,9 @@ const LABELS: Record<EventCategory, string> = {
   yoga:                 'Yoga & Wellness',
   art:                  'Art & Culture',
   international_dinner: 'International Dinner',
+  club_night:           'Club Night',
+  football_screening:   'Football Screening',
+  artist_night:         'Artist Night',
 }
 
 interface EventCardProps {

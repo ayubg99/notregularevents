@@ -21,6 +21,7 @@ const events: EventInsert[] = [
     capacity:    150,
     tickets_sold: 0,
     status:      'published',
+    city:        'Valencia',
     created_by:  null,
   },
   {
@@ -35,6 +36,7 @@ const events: EventInsert[] = [
     capacity:    150,
     tickets_sold: 0,
     status:      'published',
+    city:        'Valencia',
     created_by:  null,
   },
 
@@ -51,6 +53,7 @@ const events: EventInsert[] = [
     capacity:    80,
     tickets_sold: 0,
     status:      'published',
+    city:        'Valencia',
     created_by:  null,
   },
   {
@@ -65,6 +68,7 @@ const events: EventInsert[] = [
     capacity:    60,
     tickets_sold: 0,
     status:      'published',
+    city:        'Valencia',
     created_by:  null,
   },
 
@@ -81,6 +85,7 @@ const events: EventInsert[] = [
     capacity:    50,
     tickets_sold: 0,
     status:      'published',
+    city:        'Valencia',
     created_by:  null,
   },
 
@@ -97,6 +102,7 @@ const events: EventInsert[] = [
     capacity:    100,
     tickets_sold: 0,
     status:      'published',
+    city:        'Valencia',
     created_by:  null,
   },
 ]

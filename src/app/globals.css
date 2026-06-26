@@ -81,6 +81,37 @@
   --text-primary:  #FFFFFF;
   --text-secondary:#9A9A9A;
   --border-subtle: rgba(255, 255, 255, 0.08);
+
+  /* Spacing system */
+  --gutter-marketing:     24px;
+  --max-width-marketing:  1400px;
+  --gutter-clean-mobile:  24px;
+  --gutter-clean-desktop: 48px;
+  --max-width-clean:      1200px;
+}
+
+/* ── Container classes ─────────────────────────────────────────────── */
+.container-marketing {
+  width:         100%;
+  max-width:     var(--max-width-marketing);
+  margin:        0 auto;
+  padding-left:  var(--gutter-marketing);
+  padding-right: var(--gutter-marketing);
+}
+
+.container-clean {
+  width:         100%;
+  max-width:     var(--max-width-clean);
+  margin:        0 auto;
+  padding-left:  var(--gutter-clean-mobile);
+  padding-right: var(--gutter-clean-mobile);
+}
+
+@media (min-width: 768px) {
+  .container-clean {
+    padding-left:  var(--gutter-clean-desktop);
+    padding-right: var(--gutter-clean-desktop);
+  }
 }
 
 /* ── Heading base styles ───────────────────────────────────────────── */

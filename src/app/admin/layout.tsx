@@ -22,7 +22,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div className="flex h-screen bg-brand-dark overflow-hidden">
       <AdminSidebar />
       <main className="flex-1 overflow-y-auto ml-60 bg-brand-dark">
-        <div className="p-8 min-h-full">
+        <div className="container-clean py-8 min-h-full">
           {children}
         </div>
       </main>

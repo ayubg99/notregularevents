@@ -42,7 +42,7 @@ function LoginForm() {
   }
 
   return (
-    <main className="min-h-screen bg-brand-dark flex items-center justify-center px-4 py-20">
+    <main className="container-clean min-h-screen bg-brand-dark flex items-center justify-center py-20">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">

@@ -31,7 +31,7 @@ import AmbassadorSection from '@/components/home/AmbassadorSection'
 function EventsSkeleton() {
   return (
     <section className="py-20 bg-[var(--bg-base)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-marketing">
         <div className="h-8 w-48 rounded-lg bg-[var(--bg-subtle)] animate-pulse mb-10" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 3 }).map((_, i) => (

@@ -32,7 +32,7 @@ export default async function FeaturedEvents() {
 
   return (
     <section className="py-20 bg-[var(--bg-base)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-marketing">
 
         {/* Section header */}
         <div className="flex items-end justify-between mb-10">

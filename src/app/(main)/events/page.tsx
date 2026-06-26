@@ -22,7 +22,7 @@ export default function EventsPage() {
   return (
     <main className="min-h-screen bg-brand-dark pt-20 pb-24">
       <PageHeader tag="Valencia // 2026" title="Upcoming Events" />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+      <div className="container-marketing mt-10">
         <EventsClient />
       </div>
     </main>

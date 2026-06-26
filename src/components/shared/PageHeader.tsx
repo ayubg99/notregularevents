@@ -1,14 +1,16 @@
 export function PageHeader({ tag, title }: { tag: string; title: string }) {
   return (
-    <div style={{
-      display:        'flex',
-      justifyContent: 'space-between',
-      alignItems:     'flex-end',
-      padding:        '40px 24px 24px',
-      maxWidth:       '1400px',
-      margin:         '0 auto',
-      borderBottom:   '1px solid var(--border-subtle)',
-    }}>
+    <div
+      className="container-marketing"
+      style={{
+        display:        'flex',
+        justifyContent: 'space-between',
+        alignItems:     'flex-end',
+        paddingTop:     '40px',
+        paddingBottom:  '24px',
+        borderBottom:   '1px solid var(--border-subtle)',
+      }}
+    >
       <h1 style={{
         fontFamily:    'Anton, sans-serif',
         fontSize:      'clamp(32px, 5vw, 64px)',

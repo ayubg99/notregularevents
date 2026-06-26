@@ -168,6 +168,7 @@ export default function EventsManager({ initialEvents }: Props) {
         early_bird_seats:    parseInt(form.early_bird_seats) || 20,
         group_min_size:      eventPricing !== 'paid' ? null : (groupEnabled ? (parseInt(form.group_min_size) || 4) : null),
         capacity:            parseInt(form.capacity) || 100,
+        city:                'Valencia',
         status:              form.status,
         gallery_images:      galleryImages.length ? galleryImages : null,
         ticket_tiers:        ticketTiers.filter(t => t.name.trim()).length ? ticketTiers.filter(t => t.name.trim()) : null,
