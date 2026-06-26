@@ -31,60 +31,32 @@ export async function GET() {
 
   const [
     { count: totalEventTickets },
-    { count: totalTripBookings },
     { count: activeMembers },
     { count: upcomingEvents },
     { data: recentTickets },
-    { data: recentTripBookings },
   ] = await Promise.all([
     admin.from('event_tickets').select('*', { count: 'exact', head: true }),
-    admin.from('trip_bookings').select('*', { count: 'exact', head: true }),
     admin.from('memberships').select('*', { count: 'exact', head: true }).eq('status', 'active'),
     admin.from('events').select('*', { count: 'exact', head: true }).eq('status', 'published').gt('date', now),
     admin.from('event_tickets').select('created_at').gte('created_at', thirtyDaysAgo),
-    admin.from('trip_bookings').select('created_at').gte('created_at', thirtyDaysAgo),
   ])
 
   // Approximate revenue this month from event prices
-  const [
-    { data: monthTickets },
-    { data: monthTripBookings },
-  ] = await Promise.all([
-    admin.from('event_tickets')
-      .select('events(price)')
-      .gte('created_at', startOfMonth)
-      .not('status', 'eq', 'refunded'),
-    admin.from('trip_bookings')
-      .select('tier, trips(price_standard, price_early_bird, price_vip, price_group)')
-      .gte('created_at', startOfMonth)
-      .not('status', 'eq', 'refunded'),
-  ])
+  const { data: monthTickets } = await admin.from('event_tickets')
+    .select('events(price)')
+    .gte('created_at', startOfMonth)
+    .not('status', 'eq', 'refunded')
 
   const eventRevenue = (monthTickets ?? []).reduce((sum, t) => {
     const ev = t.events as unknown as { price: number } | null
     return sum + (ev?.price ?? 0)
   }, 0)
 
-  const tripRevenue = (monthTripBookings ?? []).reduce((sum, b) => {
-    const trip = b.trips as unknown as { price_standard: number; price_early_bird: number | null; price_vip: number | null; price_group: number | null } | null
-    if (!trip) return sum
-    const prices: Record<string, number | null> = {
-      standard: trip.price_standard,
-      early_bird: trip.price_early_bird,
-      vip: trip.price_vip,
-      group: trip.price_group,
-    }
-    return sum + (prices[b.tier] ?? trip.price_standard)
-  }, 0)
-
-  const allActivity = [...(recentTickets ?? []), ...(recentTripBookings ?? [])]
-
   return NextResponse.json({
     totalEventTickets:  totalEventTickets  ?? 0,
-    totalTripBookings:  totalTripBookings  ?? 0,
     activeMembers:      activeMembers      ?? 0,
     upcomingEvents:     upcomingEvents     ?? 0,
-    revenueThisMonth:   Math.round((eventRevenue + tripRevenue) * 100) / 100,
-    activityLast30Days: groupByDate(allActivity),
+    revenueThisMonth:   Math.round(eventRevenue * 100) / 100,
+    activityLast30Days: groupByDate(recentTickets ?? []),
   })
 }

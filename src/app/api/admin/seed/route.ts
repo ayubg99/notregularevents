@@ -10,11 +10,6 @@ export async function POST() {
 
   const now = new Date()
   const d = (days: number) => new Date(now.getTime() + days * 86400000).toISOString()
-  const date = (days: number) => {
-    const d2 = new Date(now)
-    d2.setDate(d2.getDate() + days)
-    return d2.toISOString().split('T')[0]
-  }
 
   const events = [
     {
@@ -119,107 +114,8 @@ export async function POST() {
   const { error: eventsError } = await supabase.from('events').insert(events as any)
   if (eventsError) return NextResponse.json({ error: 'events: ' + eventsError.message }, { status: 500 })
 
-  // ── Trips ────────────────────────────────────────────────────
-
-  const trips = [
-    {
-      title: 'Cala Moraig — Hiking & Beach',
-      slug: 'cala-moraig-hiking-beach',
-      description: 'One of the most stunning hidden beaches in Spain! Hike through dramatic cliffs, swim in crystal clear water and explore sea caves. Perfect day trip for nature lovers.',
-      destination: 'Cala Moraig, Alicante',
-      start_date: date(7), end_date: date(7),
-      capacity: 40, seats_sold: 18,
-      price_standard: 25, price_early_bird: 18,
-      early_bird_deadline: d(5), early_bird_seats: 20, early_bird_seats_sold: 18,
-      price_group: null, group_min_size: null,
-      image_url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
-      status: 'published' as const,
-      whats_included: ['Transport from Valencia', 'Guide', 'Swimming stop'],
-      meeting_points: ['Estación del Norte, Valencia — 8:00 AM'],
-    },
-    {
-      title: 'Albufera Sunset Tour',
-      slug: 'albufera-sunset-tour',
-      description: 'Discover the magical Albufera natural park just 30 minutes from Valencia. Boat ride on the lake, watch the most beautiful sunset in the region, traditional paella dinner included.',
-      destination: 'Albufera Natural Park, Valencia',
-      start_date: date(5), end_date: date(5),
-      capacity: 35, seats_sold: 22,
-      price_standard: 35, price_early_bird: 25,
-      early_bird_deadline: d(3), early_bird_seats: 15, early_bird_seats_sold: 15,
-      price_group: 30, group_min_size: 4,
-      image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
-      status: 'published' as const,
-      whats_included: ['Transport', 'Boat ride', 'Sunset paella dinner', 'Guide'],
-      meeting_points: ['Torres de Serranos, Valencia — 17:00'],
-    },
-    {
-      title: 'Morocco Adventure — 9 Days',
-      slug: 'morocco-adventure-9-days',
-      description: 'The most epic trip of your Erasmus! 9 days through Morocco — Marrakech, Sahara Desert, Fes, Chefchaouen and more. Everything included. Limited spots — sells out every time!',
-      destination: 'Morocco',
-      start_date: date(21), end_date: date(30),
-      capacity: 50, seats_sold: 31,
-      price_standard: 299, price_early_bird: 249,
-      early_bird_deadline: d(10), early_bird_seats: 20, early_bird_seats_sold: 20,
-      price_group: 279, group_min_size: 4,
-      image_url: 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=800',
-      status: 'published' as const,
-      whats_included: ['Transport', 'All accommodation', 'Breakfast daily', 'Sahara camel ride', 'Professional guide', 'All activities'],
-      meeting_points: ['Valencia Bus Station — 06:00 AM'],
-    },
-    {
-      title: 'Ibiza Weekend Getaway',
-      slug: 'ibiza-weekend-getaway',
-      description: 'The ultimate Erasmus weekend! 3 days in Ibiza — best clubs, crystal beaches, boat parties and non-stop good vibes. Ferry + accommodation included.',
-      destination: 'Ibiza, Spain',
-      start_date: date(14), end_date: date(16),
-      capacity: 60, seats_sold: 44,
-      price_standard: 159, price_early_bird: 129,
-      early_bird_deadline: d(7), early_bird_seats: 25, early_bird_seats_sold: 25,
-      price_group: 145, group_min_size: 4,
-      image_url: 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800',
-      status: 'published' as const,
-      whats_included: ['Ferry Valencia–Ibiza', '2 nights accommodation', 'Welcome drink', 'Beach day'],
-      meeting_points: ['Valencia Port — 08:00 AM'],
-    },
-    {
-      title: 'Montanejos Natural Pools',
-      slug: 'montanejos-natural-pools',
-      description: 'Hidden gem 1 hour from Valencia! Natural thermal pools, cliff jumping, river trekking and swimming in paradise. One of the best day trips from Valencia.',
-      destination: 'Montanejos, Castellón',
-      start_date: date(8), end_date: date(8),
-      capacity: 45, seats_sold: 12,
-      price_standard: 22, price_early_bird: 16,
-      early_bird_deadline: d(6), early_bird_seats: 20, early_bird_seats_sold: 12,
-      price_group: null, group_min_size: null,
-      image_url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
-      status: 'published' as const,
-      whats_included: ['Transport from Valencia', 'Guide', 'Free time at pools'],
-      meeting_points: ['Estación del Norte, Valencia — 9:00 AM'],
-    },
-    {
-      title: 'Tabarca Island — Boat Day',
-      slug: 'tabarca-island-boat-day',
-      description: "Spain's only inhabited island! Crystal clear Mediterranean water, incredible snorkeling, fresh seafood lunch and a full day on the boat.",
-      destination: 'Tabarca Island, Alicante',
-      start_date: date(11), end_date: date(11),
-      capacity: 40, seats_sold: 27,
-      price_standard: 45, price_early_bird: 35,
-      early_bird_deadline: d(8), early_bird_seats: 15, early_bird_seats_sold: 15,
-      price_group: 40, group_min_size: 4,
-      image_url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
-      status: 'published' as const,
-      whats_included: ['Boat from Alicante', 'Snorkel equipment', 'Seafood lunch', 'Guide'],
-      meeting_points: ['Alicante Port — 09:30 AM'],
-    },
-  ]
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: tripsError } = await supabase.from('trips').insert(trips as any)
-  if (tripsError) return NextResponse.json({ error: 'trips: ' + tripsError.message }, { status: 500 })
-
   return NextResponse.json({
     ok: true,
-    inserted: { events: events.length, trips: trips.length },
+    inserted: { events: events.length },
   })
 }

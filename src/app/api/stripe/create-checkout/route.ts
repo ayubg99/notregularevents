@@ -5,37 +5,24 @@ import { stripe } from '@/lib/stripe'
 import { generateQR } from '@/lib/qr'
 import { nanoid } from 'nanoid'
 import { sendBookingConfirmation } from '@/lib/email'
-import type { MembershipPlan, TripTier } from '@/types/database'
+import type { MembershipPlan } from '@/types/database'
 import { tierDefaults } from '@/types/database'
 
-type CheckoutType = 'event' | 'trip' | 'membership' | 'job_listing' | 'employer_subscription' | 'job_upgrade'
+type CheckoutType = 'event' | 'membership'
 
 interface Body {
-  type:        CheckoutType
-  itemId:      string
-  tier?:       TripTier
-  quantity?:   number
-  groupSize?:  number
-  promoCode?:  string
-  guestName?:  string
-  guestEmail?: string
-  guestPhone?: string
-  attendees?:  { name: string; email: string }[]
-  referralCode?: string
-  ambassadorId?: string
-  // event ticket tiers
+  type:           CheckoutType
+  itemId:         string
+  tier?:          string
+  quantity?:      number
+  promoCode?:     string
+  guestName?:     string
+  guestEmail?:    string
+  guestPhone?:    string
+  attendees?:     { name: string; email: string }[]
+  referralCode?:  string
+  ambassadorId?:  string
   ticketTierIdx?: number
-  // trip extras
-  selectedExtras?: { id: string; name: string; price: number; description: string }[]
-  // job listing specific
-  basePlan?:   'standard' | 'featured' | 'employer_plan'
-  withUrgent?: boolean
-  // job upgrade specific
-  upgradeType?: 'featured' | 'subscription'
-  employerId?:  string
-  jobId?:       string
-  isFeatured?:  boolean
-  isUrgent?:    boolean
 }
 
 function applyDiscount(price: number, type: 'percentage' | 'fixed', value: number): number {
@@ -54,11 +41,10 @@ function getBaseUrl(): string {
   return 'http://localhost:3000'
 }
 
-const MEMBERSHIP_PRICES: Record<MembershipPlan, string | undefined> = {
-  basic:    process.env.STRIPE_PRICE_BASIC,
-  premium:  process.env.STRIPE_PRICE_PREMIUM,
-  vip:      process.env.STRIPE_PRICE_VIP,
-  employer: undefined, // employer plan uses inline price_data via employer_subscription type
+const MEMBERSHIP_PRICES: Partial<Record<MembershipPlan, string | undefined>> = {
+  basic:   process.env.STRIPE_PRICE_BASIC,
+  premium: process.env.STRIPE_PRICE_PREMIUM,
+  vip:     process.env.STRIPE_PRICE_VIP,
 }
 
 export async function POST(request: NextRequest) {
@@ -86,7 +72,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
   const { data: { user } } = await supabase.auth.getUser()
 
   const body: Body = await request.json()
-  const { type, itemId, tier, quantity = 1, groupSize, promoCode, guestName, guestEmail, guestPhone, attendees, referralCode, ambassadorId: clientAmbassadorId, ticketTierIdx, selectedExtras } = body
+  const { type, itemId, tier, quantity = 1, promoCode, guestName, guestEmail, guestPhone, attendees, referralCode, ambassadorId: clientAmbassadorId, ticketTierIdx } = body
 
   // Resolve ambassadorId server-side from referral code — client state can be stale
   let ambassadorId = clientAmbassadorId ?? ''
@@ -151,7 +137,7 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
 
     if (promo) {
       const appliesTo = promo.applies_to ?? 'both'
-      const validFor  = appliesTo === 'both' || (type === 'event' && appliesTo === 'events') || (type === 'trip' && appliesTo === 'trips')
+      const validFor  = appliesTo === 'both' || (type === 'event' && appliesTo === 'events')
       if (validFor) {
         promoCodeId   = promo.id
         discountType  = promo.discount_type
@@ -302,14 +288,13 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       }
       if (toEmail) {
         await sendBookingConfirmation({
-          to:         toEmail,
-          name:       toName,
+          to:       toEmail,
+          name:     toName,
           bookingRef,
           qrCode,
-          title:      event.title,
-          type:       'event',
-          date:       event.date ?? undefined,
-          location:   event.location ?? undefined,
+          title:    event.title,
+          date:     event.date ?? undefined,
+          location: event.location ?? undefined,
         })
       }
       return NextResponse.json({ url: `${baseUrl}/booking/success?ref=${bookingRef}` })
@@ -362,178 +347,6 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
         ticket_tier_name:       customTier?.name ?? '',
         application_fee_amount: eventAppFeeAmount.toString(),
         destination_account:    erasmusVibeAccountId,
-        ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
-      },
-    })
-
-    return NextResponse.json({ url: session.url })
-  }
-
-  // ── Trip checkout ────────────────────────────────────────────
-  if (type === 'trip') {
-    const tripTier = tier ?? 'standard'
-
-    const { data: trip } = await supabase
-      .from('trips')
-      .select('id, title, price_early_bird, price_standard, price_vip, price_group, early_bird_deadline, early_bird_seats, early_bird_seats_sold, capacity, seats_sold, slug, image_url, start_date, destination, whatsapp_group_url')
-      .eq('id', itemId)
-      .eq('status', 'published')
-      .single()
-
-    if (!trip) {
-      return NextResponse.json({ error: 'Trip not found or no longer available.' }, { status: 404 })
-    }
-
-    const seatsLeft = trip.capacity - trip.seats_sold
-    if (seatsLeft < 1) {
-      return NextResponse.json({ error: 'Sorry, this trip is fully booked.' }, { status: 409 })
-    }
-
-    if (tripTier === 'early_bird') {
-      const ebValid =
-        trip.price_early_bird != null &&
-        trip.early_bird_deadline != null &&
-        new Date(trip.early_bird_deadline) > new Date() &&
-        (trip.early_bird_seats == null ||
-          (trip.early_bird_seats - (trip.early_bird_seats_sold ?? 0)) > 0)
-      if (!ebValid) {
-        return NextResponse.json(
-          { error: 'Early bird is no longer available. Please select standard price.' },
-          { status: 400 },
-        )
-      }
-    }
-
-    const tierPrices: Record<TripTier, number> = {
-      early_bird: trip.price_early_bird ?? trip.price_standard,
-      standard:   trip.price_standard,
-      group:      trip.price_group      ?? trip.price_standard,
-    }
-    const basePrice = tierPrices[tripTier]
-    let unitPrice = discountType
-      ? applyDiscount(basePrice, discountType, discountValue)
-      : basePrice
-    if (memberDiscount) {
-      unitPrice = applyDiscount(unitPrice, 'percentage', 10)
-    }
-
-    const tripGroupSize0 = tier === 'group' ? (groupSize ?? 1) : 1
-    const extrasTotal = (selectedExtras ?? []).reduce((s, e) => s + e.price, 0) * tripGroupSize0
-
-    const cancelUrl = `${baseUrl}/trips/${trip.slug}`
-    const toEmail = guestEmail ?? user?.email
-    const toName  = guestName  ?? user?.user_metadata?.full_name ?? 'there'
-
-    // Free path (base price + all extras = 0)
-    if (unitPrice === 0 && extrasTotal === 0) {
-      const bookingRef = nanoid(8).toUpperCase()
-      const qrCode = await generateQR(bookingRef)
-      const freeBookingRow = {
-        trip_id:           trip.id,
-        user_id:           user?.id ?? null,
-        tier:              tripTier,
-        booking_ref:       bookingRef,
-        qr_code:           qrCode,
-        stripe_payment_id: null as null,
-        guest_name:        guestName  ?? null,
-        guest_email:       guestEmail ?? null,
-        guest_phone:       guestPhone ?? null,
-        status:            'confirmed' as const,
-        deposit_paid:      true,
-        selected_extras:   selectedExtras?.length ? selectedExtras : null,
-      }
-      const { error } = await supabase.from('trip_bookings').insert(freeBookingRow)
-      if (error) {
-        console.error('[create-checkout free trip]', error.message)
-        return NextResponse.json({ error: 'Failed to create your booking.' }, { status: 500 })
-      }
-      if (user?.id) {
-        await supabase.from('notifications').insert({
-          user_id: user.id,
-          type:    'booking_confirmed',
-          message: `Your booking for ${trip.title} is confirmed. Ref: ${bookingRef}`,
-          read:    false,
-        })
-      }
-      if (toEmail) {
-        await sendBookingConfirmation({
-          to:           toEmail,
-          name:         toName,
-          bookingRef,
-          qrCode,
-          title:        trip.title,
-          type:         'trip',
-          date:         trip.start_date ?? undefined,
-          location:     trip.destination ?? undefined,
-          whatsappUrl:  trip.whatsapp_group_url ?? undefined,
-        })
-      }
-      return NextResponse.json({ url: `${baseUrl}/booking/success?ref=${bookingRef}` })
-    }
-
-    const tripGroupSize  = tripTier === 'group' ? (groupSize ?? 1) : 1
-    const extrasItems    = (selectedExtras ?? []).filter(e => e.price > 0)
-
-    const tripErasmusVibeAccountId = process.env.ERASMUS_VIBE_STRIPE_ACCOUNT_ID
-    if (!tripErasmusVibeAccountId) {
-      console.error('[create-checkout] ERASMUS_VIBE_STRIPE_ACCOUNT_ID not set')
-      return NextResponse.json({ error: 'Payment configuration error' }, { status: 500 })
-    }
-    const platformFeeTrips = parseInt(process.env.PLATFORM_FEE_TRIPS || '20') / 100
-    const tripGrossAmount = Math.round(unitPrice * tripGroupSize * 100)
-      + extrasItems.reduce((s, e) => s + Math.round(e.price * 100) * tripGroupSize, 0)
-    const tripStripeFeeEst = Math.round(tripGrossAmount * 0.02) + 25
-    const tripAppFeeAmount = Math.round((tripGrossAmount - tripStripeFeeEst) * platformFeeTrips)
-
-    const session = await stripe.checkout.sessions.create({
-      mode:           'payment',
-      customer_email: toEmail ?? undefined,
-      line_items: [
-        {
-          quantity: tripGroupSize,
-          price_data: {
-            currency:     'eur',
-            unit_amount:  Math.round(unitPrice * 100),
-            product_data: {
-              name:   `${trip.title} — ${tripTier.replace('_', ' ')}`,
-              images: trip.image_url ? [trip.image_url] : [],
-            },
-          },
-        },
-        ...extrasItems.map(e => ({
-          quantity: tripGroupSize,
-          price_data: {
-            currency:     'eur' as const,
-            unit_amount:  Math.round(e.price * 100),
-            product_data: { name: e.name },
-          },
-        })),
-      ],
-      payment_intent_data: {
-        application_fee_amount: tripAppFeeAmount,
-        transfer_data:          { destination: tripErasmusVibeAccountId },
-      },
-      success_url: `${baseUrl}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:  cancelUrl,
-      metadata: {
-        type:                   'trip',
-        item_id:                trip.id,
-        user_id:                user?.id        ?? '',
-        tier:                   tripTier,
-        quantity:               String(tripGroupSize),
-        guest_name:             guestName       ?? '',
-        guest_email:            guestEmail      ?? '',
-        guest_phone:            guestPhone      ?? '',
-        trip_title:             trip.title,
-        trip_date:              trip.start_date ?? '',
-        destination:            trip.destination ?? '',
-        whatsapp_group_url:     trip.whatsapp_group_url ?? '',
-        attendees:              JSON.stringify(attendees ?? []),
-        referral_code:          referralCode    ?? '',
-        ambassador_id:          ambassadorId    ?? '',
-        selected_extras_json:   JSON.stringify(selectedExtras ?? []),
-        application_fee_amount: tripAppFeeAmount.toString(),
-        destination_account:    tripErasmusVibeAccountId,
         ...(promoCodeId ? { promo_code_id: promoCodeId } : {}),
       },
     })
@@ -603,171 +416,6 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
     })
 
     return NextResponse.json({ url: session.url })
-  }
-
-  // ── Job listing checkout ─────────────────────────────────────
-  if (type === 'job_listing') {
-    const isFeatured = body.basePlan === 'featured'
-    const isUrgent   = body.withUrgent ?? false
-    const amount     = (isFeatured ? 2900 : 0) + (isUrgent ? 900 : 0)
-
-    if (amount === 0) {
-      return NextResponse.json({ error: 'No paid option selected.' }, { status: 400 })
-    }
-
-    const productName = isFeatured && isUrgent
-      ? 'Featured + Urgent Job Listing'
-      : isFeatured
-        ? 'Featured Job Listing'
-        : 'Urgent Job Badge'
-
-    const session = await stripe.checkout.sessions.create({
-      mode:           'payment',
-      customer_email: user?.email ?? undefined,
-      line_items: [{
-        price_data: {
-          currency:     'eur',
-          unit_amount:  amount,
-          product_data: { name: productName },
-        },
-        quantity: 1,
-      }],
-      success_url: `${baseUrl}/jobs/${itemId}?payment=success`,
-      cancel_url:  `${baseUrl}/jobs/post`,
-      metadata: {
-        type:        'job_listing',
-        item_id:     itemId,
-        user_id:     user?.id   ?? '',
-        is_featured: String(isFeatured),
-        is_urgent:   String(isUrgent),
-      },
-    })
-
-    return NextResponse.json({ url: session.url })
-  }
-
-  // ── Employer subscription checkout ───────────────────────────
-  if (type === 'employer_subscription') {
-    const isUrgent = body.withUrgent ?? false
-
-    const session = await stripe.checkout.sessions.create({
-      mode:           'subscription',
-      customer_email: user?.email ?? undefined,
-      line_items: [{
-        price_data: {
-          currency:     'eur',
-          unit_amount:  4900,
-          product_data: { name: 'Employer Plan — Erasmus Life Jobs' },
-          recurring:    { interval: 'month' },
-        },
-        quantity: 1,
-      }],
-      subscription_data: {
-        metadata: {
-          type:      'employer_subscription',
-          job_id:    itemId,
-          user_id:   user?.id ?? '',
-          is_urgent: String(isUrgent),
-        },
-      },
-      success_url: `${baseUrl}/jobs/${itemId}?payment=success`,
-      cancel_url:  `${baseUrl}/jobs/post`,
-      metadata: {
-        type:      'employer_subscription',
-        item_id:   itemId,
-        user_id:   user?.id ?? '',
-        is_urgent: String(isUrgent),
-      },
-    })
-
-    return NextResponse.json({ url: session.url })
-  }
-
-  // ── Job upgrade checkout ─────────────────────────────────────
-  if (type === 'job_upgrade') {
-    const upgradeType = body.upgradeType
-    const employerId  = body.employerId ?? itemId
-    const jobId       = body.jobId
-
-    if (!upgradeType) {
-      return NextResponse.json({ error: 'upgradeType is required.' }, { status: 400 })
-    }
-
-    if (upgradeType === 'featured') {
-      if (!jobId) return NextResponse.json({ error: 'jobId required for featured upgrade.' }, { status: 400 })
-
-      const isFeat      = body.isFeatured ?? true
-      const isUrg       = body.isUrgent   ?? false
-      const featuredAmt = isFeat ? 2900 : 0
-      const urgentAmt   = isUrg  ? 900  : 0
-      const amount      = featuredAmt + urgentAmt
-
-      const productName = isFeat && isUrg
-        ? 'Featured + Urgent Job Listing — 60 days'
-        : isFeat
-          ? 'Featured Job Listing — 60 days'
-          : 'Urgent Job Badge'
-
-      const session = await stripe.checkout.sessions.create({
-        mode:           'payment',
-        customer_email: user?.email ?? undefined,
-        line_items: [{
-          price_data: {
-            currency:     'eur',
-            unit_amount:  amount,
-            product_data: { name: productName },
-          },
-          quantity: 1,
-        }],
-        success_url: `${baseUrl}/employer/dashboard?upgraded=true`,
-        cancel_url:  `${baseUrl}/employer/upgrade`,
-        metadata: {
-          type:         'job_upgrade',
-          upgrade_type: 'featured',
-          employer_id:  employerId,
-          item_id:      jobId,
-          is_featured:  String(isFeat),
-          is_urgent:    String(isUrg),
-          user_id:      user?.id ?? '',
-        },
-      })
-      return NextResponse.json({ url: session.url })
-    }
-
-    if (upgradeType === 'subscription') {
-      const session = await stripe.checkout.sessions.create({
-        mode:           'subscription',
-        customer_email: user?.email ?? undefined,
-        line_items: [{
-          price_data: {
-            currency:     'eur',
-            unit_amount:  4900,
-            product_data: { name: 'Employer Plan — Erasmus Life Jobs' },
-            recurring:    { interval: 'month' },
-          },
-          quantity: 1,
-        }],
-        subscription_data: {
-          metadata: {
-            type:         'job_upgrade',
-            upgrade_type: 'subscription',
-            employer_id:  employerId,
-            item_id:      employerId,   // fallback for webhook itemId guard
-            user_id:      user?.id ?? '',
-          },
-        },
-        success_url: `${baseUrl}/employer/dashboard?upgraded=true`,
-        cancel_url:  `${baseUrl}/employer/upgrade`,
-        metadata: {
-          type:         'job_upgrade',
-          upgrade_type: 'subscription',
-          employer_id:  employerId,
-          item_id:      employerId,   // fallback for webhook itemId guard
-          user_id:      user?.id ?? '',
-        },
-      })
-      return NextResponse.json({ url: session.url })
-    }
   }
 
   return NextResponse.json({ error: 'Invalid checkout type.' }, { status: 400 })

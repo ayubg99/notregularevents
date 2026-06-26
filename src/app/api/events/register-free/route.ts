@@ -103,7 +103,6 @@ export async function POST(req: Request) {
         bookingRef,
         qrCode:   qrCodeDataUrl,
         title:    event.title,
-        type:     'event',
         date:     event.date     ?? undefined,
         location: event.location ?? undefined,
         isFree:   true,

@@ -1,79 +1,7 @@
 import { getResend } from '@/lib/resend'
 import { BookingConfirmationEmail } from '@/lib/emails/BookingConfirmationEmail'
 import { MembershipWelcomeEmail } from '@/lib/emails/MembershipWelcomeEmail'
-import { JobManagementEmail } from '@/lib/emails/JobManagementEmail'
 import { emailLayout } from '@/lib/emails/emailLayout'
-
-interface RefundEmailParams {
-  email:     string
-  name:      string
-  tripTitle: string
-  amount:    number
-  reason:    string
-}
-
-export async function sendRefundEmail({ email, name, tripTitle, amount, reason }: RefundEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
-
-  const content = `
-    <p style="margin:0 0 8px;font-size:18px;font-weight:600;color:#FFF8EE;">
-      Hi ${name},
-    </p>
-    <p style="margin:0 0 32px;font-size:15px;color:#B8A090;line-height:1.6;">
-      We're sorry for the inconvenience.
-    </p>
-
-    <table width="100%" cellpadding="0" cellspacing="0"
-           style="background:#221608;border:1px solid rgba(255,68,68,0.2);border-radius:16px;margin-bottom:24px;">
-      <tr>
-        <td align="center" style="padding:28px 24px;">
-          <p style="font-size:32px;margin:0 0 8px;">💸</p>
-          <p style="margin:0 0 4px;font-size:20px;font-weight:700;color:#FF4444;">Refund Processed</p>
-          <p style="margin:0;font-size:14px;color:#B8A090;">${tripTitle}</p>
-        </td>
-      </tr>
-    </table>
-
-    <table width="100%" cellpadding="0" cellspacing="0"
-           style="background:#221608;border:1px solid rgba(255,248,238,0.09);border-radius:16px;margin-bottom:24px;">
-      <tr>
-        <td style="padding:24px;">
-          <p style="margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">
-            Refund Details
-          </p>
-          <p style="margin:0 0 4px;font-size:28px;font-weight:700;color:#2ECC71;">
-            €${amount.toFixed(2)} refunded
-          </p>
-          <p style="margin:0;font-size:13px;color:#B8A090;">
-            ⏱ Typically appears within 5–10 business days depending on your bank.
-          </p>
-        </td>
-      </tr>
-    </table>
-
-    <p style="margin:0 0 12px;font-size:15px;color:#FFF8EE;line-height:1.6;">
-      Unfortunately <strong>${tripTitle}</strong> has been cancelled. ${reason}
-    </p>
-    <p style="margin:0 0 32px;font-size:15px;color:#B8A090;line-height:1.6;">
-      We hope to see you on the next trip! 🌍
-    </p>
-  `
-
-  const html = emailLayout(content, baseUrl)
-
-  try {
-    const { error } = await getResend().emails.send({
-      from,
-      to:      email,
-      subject: `Refund processed — ${tripTitle}`,
-      html,
-    })
-    if (error) console.error('[email refund] send failed:', error)
-  } catch (err) {
-    console.error('[email refund] unexpected error:', err)
-  }
-}
 
 interface BookingConfirmationParams {
   to:           string
@@ -81,10 +9,8 @@ interface BookingConfirmationParams {
   bookingRef:   string
   qrCode:       string
   title:        string
-  type:         'event' | 'trip'
   date?:        string
   location?:    string
-  whatsappUrl?: string
   isFree?:      boolean
 }
 
@@ -706,17 +632,13 @@ interface GroupBookingEmailParams {
   eventLocation?: string
   tickets:        { name: string; bookingRef: string; qrCode: string }[]
   isFree?:        boolean
-  type?:          'event' | 'trip'
 }
 
 export async function sendGroupBookingConfirmation(params: GroupBookingEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
-  const isTrip  = params.type === 'trip'
-  const n       = params.tickets.length
-  const scanCopy = isTrip
-    ? 'Each person should show their own QR code at the pickup point.'
-    : 'Each QR code is unique and can only be scanned once at the door.'
+  const from     = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
+  const baseUrl  = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
+  const n        = params.tickets.length
+  const scanCopy = 'Each QR code is unique and can only be scanned once at the door.'
 
   const dateStr = params.eventDate
     ? new Date(params.eventDate).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
@@ -728,7 +650,7 @@ export async function sendGroupBookingConfirmation(params: GroupBookingEmailPara
       <tr>
         <td align="center" style="padding:24px;">
           <p style="margin:0 0 16px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#FF6B00;font-weight:700;">
-            ${isTrip ? '✈️ Traveller' : 'Ticket'} ${i + 1}${i === 0 ? ' — You' : ''}: ${t.name}
+            Ticket ${i + 1}${i === 0 ? ' — You' : ''}: ${t.name}
           </p>
           <img src="cid:qr-${i}" width="160" height="160" alt="QR Code"
                style="border-radius:12px;display:block;margin:0 auto;background:#fff;padding:8px;" />
@@ -743,7 +665,7 @@ export async function sendGroupBookingConfirmation(params: GroupBookingEmailPara
       Hey ${params.leadName} 👋
     </p>
     <p style="margin:0 0 32px;font-size:15px;color:#B8A090;line-height:1.6;">
-      Here are all ${n} ${isTrip ? `trip spot${n > 1 ? 's' : ''}` : `ticket${n > 1 ? 's' : ''}`} for your group. ${scanCopy}
+      Here are all ${n} ticket${n > 1 ? 's' : ''} for your group. ${scanCopy}
     </p>
 
     <table width="100%" cellpadding="0" cellspacing="0"
@@ -758,7 +680,7 @@ export async function sendGroupBookingConfirmation(params: GroupBookingEmailPara
     </table>
 
     <p style="margin:0 0 16px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">
-      ${isTrip ? 'Your Travellers' : 'Your Group Tickets'}
+      Your Group Tickets
     </p>
 
     ${ticketsHtml}
@@ -781,11 +703,9 @@ export async function sendGroupBookingConfirmation(params: GroupBookingEmailPara
     const { error } = await getResend().emails.send({
       from,
       to:      params.to,
-      subject: isTrip
-        ? `✈️ ${n} trip spot${n > 1 ? 's' : ''} — ${params.eventTitle}`
-        : params.isFree
-          ? `🎉 ${n} free ticket${n > 1 ? 's' : ''} — ${params.eventTitle}`
-          : `🎟️ ${n} ticket${n > 1 ? 's' : ''} — ${params.eventTitle}`,
+      subject: params.isFree
+        ? `🎉 ${n} free ticket${n > 1 ? 's' : ''} — ${params.eventTitle}`
+        : `🎟️ ${n} ticket${n > 1 ? 's' : ''} — ${params.eventTitle}`,
       html,
       attachments,
     })
@@ -817,33 +737,6 @@ export async function sendMembershipWelcomeEmail(params: MembershipWelcomeParams
     if (error) console.error('[email membership] send failed:', error)
   } catch (err) {
     console.error('[email membership] unexpected error:', err)
-  }
-}
-
-interface JobManagementEmailParams {
-  to:        string
-  jobTitle:  string
-  company:   string
-  viewUrl:   string
-  manageUrl: string
-  editUrl:   string
-}
-
-export async function sendJobManagementEmail(params: JobManagementEmailParams) {
-  const from    = process.env.RESEND_FROM_EMAIL ?? 'info@erasmuslifevalencia.com'
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://erasmuslifevalencia.com'
-  const html    = JobManagementEmail({ ...params, baseUrl })
-
-  try {
-    const { error } = await getResend().emails.send({
-      from,
-      to:      params.to,
-      subject: `Manage your job listing — ${params.jobTitle}`,
-      html,
-    })
-    if (error) console.error('[email job management] send failed:', error)
-  } catch (err) {
-    console.error('[email job management] unexpected error:', err)
   }
 }
 
@@ -914,7 +807,7 @@ export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmai
             How It Works
           </p>
           <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">🔗 &nbsp;Share your referral link with friends interested in Erasmus Valencia</p>
-          <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">💸 &nbsp;Earn <strong style="color:#FF6B00;">${params.commissionRate}% commission</strong> when they book an event or trip</p>
+          <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">💸 &nbsp;Earn <strong style="color:#FF6B00;">${params.commissionRate}% commission</strong> when they book an event</p>
           <p style="margin:0 0 10px;font-size:14px;color:#FFF8EE;">📊 &nbsp;Track your earnings and referrals in your dashboard</p>
           <p style="margin:0;font-size:14px;color:#FFF8EE;">🎁 &nbsp;Hit milestones for bonus rewards — free tickets, membership upgrades, cash bonuses</p>
         </td>

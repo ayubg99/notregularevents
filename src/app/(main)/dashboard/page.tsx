@@ -13,18 +13,12 @@ export const metadata = {
 import ProfileForm from './ProfileForm'
 import BookingTabs from './BookingTabs'
 import HousingListings from './HousingListings'
-import JobListings from './JobListings'
 import MemberCard from './MemberCard'
 import AmbassadorDashboard from './AmbassadorDashboard'
-import type { EventTicketRow, TripBookingRow, ProfileRow, MembershipRow, UserRow, HousingListingRow, JobListingRow, SponsorRow, AmbassadorRow, AmbassadorCommissionRow, AmbassadorRewardRow, MarketplaceListingRow } from '@/types/database'
-import MarketplaceListings from './MarketplaceListings'
+import type { EventTicketRow, ProfileRow, MembershipRow, UserRow, HousingListingRow, SponsorRow, AmbassadorRow, AmbassadorCommissionRow, AmbassadorRewardRow } from '@/types/database'
 
 type EventTicketWithEvent = EventTicketRow & {
   events: { id: string; title: string; date: string; location: string | null; slug: string } | null
-}
-
-type TripBookingWithTrip = TripBookingRow & {
-  trips: { id: string; title: string; start_date: string; destination: string; slug: string; whatsapp_group_url: string | null } | null
 }
 
 function getInitials(name: string | null | undefined): string {
@@ -44,10 +38,7 @@ export default async function DashboardPage() {
     { data: profile },
     { data: membership },
     { data: eventTicketsRaw },
-    { data: tripBookingsRaw },
     { data: myListingsRaw },
-    { data: myJobsRaw },
-    { data: myMarketplaceRaw },
     { data: sponsorsRaw },
     { data: ambassadorRaw },
   ] = await Promise.all([
@@ -55,10 +46,7 @@ export default async function DashboardPage() {
     supabase.from('profiles').select('*').eq('user_id', user.id).single(),
     supabase.from('memberships').select('*').eq('user_id', user.id).eq('status', 'active').maybeSingle(),
     supabase.from('event_tickets').select('*, events(id, title, date, location, slug)').eq('user_id', user.id).order('created_at', { ascending: false }),
-    supabase.from('trip_bookings').select('*, trips(id, title, start_date, destination, slug, whatsapp_group_url)').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('housing_listings').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
-    supabase.from('job_listings').select('*').eq('posted_by_user_id', user.id).order('created_at', { ascending: false }),
-    supabase.from('marketplace_listings').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('sponsors').select('*').eq('status', 'active').eq('members_only', true).order('display_order', { ascending: true }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (supabase as any).from('ambassadors').select('*').eq('user_id', user.id).eq('status', 'active').maybeSingle(),
@@ -83,10 +71,7 @@ export default async function DashboardPage() {
   const avatarUrl   = (userRow as Pick<UserRow, 'full_name' | 'avatar_url'> | null)?.avatar_url
 
   const eventTickets = (eventTicketsRaw ?? []) as unknown as EventTicketWithEvent[]
-  const tripBookings = (tripBookingsRaw ?? []) as unknown as TripBookingWithTrip[]
   const myListings   = (myListingsRaw ?? []) as HousingListingRow[]
-  const myJobs            = (myJobsRaw        ?? []) as JobListingRow[]
-  const myMarketplaceItems = (myMarketplaceRaw ?? []) as MarketplaceListingRow[]
   const sponsors     = (sponsorsRaw  ?? []) as SponsorRow[]
   const activeMembership = membership as MembershipRow | null
   const profileData  = profile as ProfileRow | null
@@ -126,11 +111,8 @@ export default async function DashboardPage() {
           <div className="lg:col-span-2 flex flex-col gap-6">
             <BookingTabs
               eventTickets={eventTickets}
-              tripBookings={tripBookings}
             />
             <HousingListings myListings={myListings} />
-            <JobListings myJobs={myJobs} />
-            <MarketplaceListings myItems={myMarketplaceItems} />
             {ambassador && (
               <div className="glass-card rounded-2xl p-6">
                 <AmbassadorDashboard

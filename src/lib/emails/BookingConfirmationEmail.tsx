@@ -1,17 +1,15 @@
 interface Props {
-  name:         string
-  bookingRef:   string
-  title:        string
-  type:         'event' | 'trip'
-  date?:        string
-  location?:    string
-  whatsappUrl?: string
-  baseUrl:      string
-  isFree?:      boolean
+  name:      string
+  bookingRef: string
+  title:     string
+  date?:     string
+  location?: string
+  baseUrl:   string
+  isFree?:   boolean
 }
 
 export function BookingConfirmationEmail({
-  name, bookingRef, title, type, date, location, whatsappUrl, baseUrl, isFree,
+  name, bookingRef, title, date, location, baseUrl, isFree,
 }: Props): string {
   const formattedDate = date
     ? new Date(date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
@@ -45,7 +43,7 @@ export function BookingConfirmationEmail({
           Hey ${name} 👋
         </p>
         <p style="margin:0 0 ${isFree ? '16' : '32'}px;font-size:15px;color:#B8A090;line-height:1.6;">
-          ${isFree ? "You're registered! See you there 🎉" : `Your ${type === 'trip' ? 'trip' : 'event'} booking is confirmed. See you there!`}
+          ${isFree ? "You're registered! See you there 🎉" : 'Your event booking is confirmed. See you there!'}
         </p>
         ${isFree ? '<p style="margin:0 0 32px;font-size:20px;font-weight:700;color:#2ECC71;">FREE EVENT ✓</p>' : ''}
 
@@ -79,13 +77,13 @@ export function BookingConfirmationEmail({
           </tr>
         </table>
 
-        <!-- Event/trip details -->
+        <!-- Event details -->
         <table width="100%" cellpadding="0" cellspacing="0"
                style="background:#221608;border:1px solid rgba(255,248,238,0.09);border-radius:16px;margin-bottom:32px;">
           <tr>
             <td style="padding:24px;">
               <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#B8A090;">
-                ${type === 'trip' ? 'Trip' : 'Event'}
+                Event
               </p>
               <p style="margin:0 0 16px;font-size:18px;font-weight:700;color:#FFF8EE;">${title}</p>
 
@@ -113,16 +111,6 @@ export function BookingConfirmationEmail({
               </a>
             </td>
           </tr>
-          ${whatsappUrl ? `
-          <tr>
-            <td align="center" style="padding-bottom:12px;">
-              <a href="${whatsappUrl}"
-                 style="display:inline-block;background:#25D366;color:#fff;font-weight:700;
-                        font-size:14px;text-decoration:none;padding:14px 32px;border-radius:9999px;">
-                💬 &nbsp;Join WhatsApp Group
-              </a>
-            </td>
-          </tr>` : ''}
           <tr>
             <td align="center">
               <a href="${baseUrl}/auth/register"

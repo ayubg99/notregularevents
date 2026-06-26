@@ -55,11 +55,11 @@ export async function POST() {
 
   for (const p of profiles) {
     const uid = userIds[p.email]
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase.from('profiles').upsert({
       user_id: uid,
       full_name: p.full_name, nationality: p.nationality,
       university: p.university, bio: p.bio,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase.from('users').upsert({ id: uid, full_name: p.full_name, role: 'ambassador' } as any)
@@ -69,13 +69,13 @@ export async function POST() {
 
   for (const u of users) {
     const uid = userIds[u.email]
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase.from('memberships').upsert({
       user_id:    uid,
       plan:       'vip',
       status:     'active',
       start_date: d(60),
       end_date:   future(300),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
   }
 
@@ -102,7 +102,6 @@ export async function POST() {
     // Delete existing to avoid duplicate referral_code
     await supabase.from('ambassadors').delete().eq('user_id', uid)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await supabase.from('ambassadors').insert({
       user_id:          uid,
       referral_code:    a.referral_code,
@@ -112,6 +111,7 @@ export async function POST() {
       pending_earnings: a.pending_earnings,
       paid_earnings:    a.paid_earnings,
       status:           'active',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any).select('id').single()
 
     if (error) return NextResponse.json({ error: `ambassador ${a.email}: ${error.message}` }, { status: 500 })

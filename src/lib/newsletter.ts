@@ -1,7 +1,7 @@
 import { getAdminClient } from '@/lib/supabase/admin'
 import { getResend } from '@/lib/resend'
 import { WeeklyDigestEmail } from '@/lib/emails/WeeklyDigestEmail'
-import type { DigestEvent, DigestTrip } from '@/lib/emails/WeeklyDigestEmail'
+import type { DigestEvent } from '@/lib/emails/WeeklyDigestEmail'
 
 export interface DigestResult {
   sent:    number
@@ -20,30 +20,23 @@ export async function runWeeklyDigest(): Promise<DigestResult> {
   const weekLabel = `${now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}–${nextWeek.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`
   const subject   = `🎉 This week at Erasmus Life — ${now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`
 
-  const [eventsRes, tripsRes, subsRes] = await Promise.all([
+  const [eventsRes, subsRes] = await Promise.all([
     admin.from('events')
       .select('title, slug, date, location, price, is_free, image_url')
       .eq('status', 'published')
       .gte('date', now.toISOString())
       .lte('date', nextWeek.toISOString())
       .order('date', { ascending: true }),
-    admin.from('trips')
-      .select('title, slug, start_date, end_date, destination, price_standard, image_url')
-      .eq('status', 'published')
-      .gte('start_date', now.toISOString())
-      .lte('start_date', nextWeek.toISOString())
-      .order('start_date', { ascending: true }),
     // newsletter_emails is not in generated types yet — cast needed
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (admin as any).from('newsletter_emails').select('email, unsubscribe_token'),
   ])
 
   const events      = (eventsRes.data ?? []) as DigestEvent[]
-  const trips       = (tripsRes.data  ?? []) as DigestTrip[]
   const subscribers = (subsRes.data   ?? []) as { email: string; unsubscribe_token: string }[]
 
-  if (!events.length && !trips.length) {
-    return { sent: 0, skipped: true, reason: 'No published events or trips this week' }
+  if (!events.length) {
+    return { sent: 0, skipped: true, reason: 'No published events this week' }
   }
   if (!subscribers.length) {
     return { sent: 0, skipped: false, reason: 'No subscribers yet' }
@@ -60,7 +53,6 @@ export async function runWeeklyDigest(): Promise<DigestResult> {
       subject,
       html: WeeklyDigestEmail({
         events,
-        trips,
         baseUrl,
         unsubscribeUrl: `${baseUrl}/api/newsletter/unsubscribe?token=${sub.unsubscribe_token}`,
         weekLabel,

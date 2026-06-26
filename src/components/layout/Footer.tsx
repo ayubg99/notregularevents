@@ -7,13 +7,9 @@ import FooterNewsletter from './FooterNewsletter'
 const FOOTER_LINKS = {
   Explore: [
     { href: '/events',     label: 'Events'      },
-    { href: '/trips',      label: 'Trips'        },
-    { href: '/marketplace',       label: 'Marketplace'       },
-    { href: '/jobs',              label: 'Jobs'              },
-    { href: '/employer/register', label: 'Post a Job'        },
-    { href: '/employer/login',    label: 'Employer Login'    },
-    { href: '/community',  label: 'Community'    },
-    { href: '/membership', label: 'Membership'   },
+    { href: '/housing',    label: 'Housing'     },
+    { href: '/community',  label: 'Community'   },
+    { href: '/membership', label: 'Membership'  },
     { href: '/ambassadors', label: 'Ambassadors' },
   ],
   Community: [

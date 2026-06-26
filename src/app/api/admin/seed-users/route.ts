@@ -100,13 +100,13 @@ export async function POST() {
     if (!uid) continue
     const endDate = new Date()
     endDate.setMonth(endDate.getMonth() + m.months)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase.from('memberships').upsert({
       user_id:    uid,
       plan:       m.plan,
       status:     'active',
       start_date: new Date(Date.now() - 30 * 86400000).toISOString(),
       end_date:   endDate.toISOString(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any, { onConflict: 'user_id' })
   }
 
@@ -126,6 +126,7 @@ export async function POST() {
       booking_ref: randomRef(),
       status:      'active',
       amount_paid: b.amount_paid,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
   }
 
@@ -147,6 +148,7 @@ export async function POST() {
       status:      'confirmed',
       deposit_paid: true,
       amount_paid: b.amount_paid,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
   }
 

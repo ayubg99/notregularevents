@@ -9,7 +9,6 @@ export async function POST() {
   const now = new Date()
   const date = new Date(now.getTime() + 3 * 86400000).toISOString()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await supabase.from('events').insert({
     title:            'Espit Chupitos Night',
     slug:             'espit-chupitos-night',
@@ -44,6 +43,7 @@ export async function POST() {
         benefits: ['5 shots of your choice'], min_group_size: null, activates_after: null,
       },
     ],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

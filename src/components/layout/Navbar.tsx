@@ -10,14 +10,11 @@ import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
 
 const NAV_HREFS = [
-  { href: '/events',     key: 'events'     },
-  { href: '/trips',      key: 'trips'      },
-  { href: '/community',  key: 'community'  },
-  { href: '/housing',    key: 'housing'    },
-  { href: '/jobs',         key: 'jobs'         },
-  { href: '/marketplace',  key: 'marketplace'  },
-  { href: '/membership',   key: 'membership'   },
-  { href: '/about',      key: 'about'      },
+  { href: '/events',    key: 'events'    },
+  { href: '/housing',   key: 'housing'   },
+  { href: '/community', key: 'community' },
+  { href: '/membership', key: 'membership' },
+  { href: '/about',     key: 'about'     },
 ] as const
 
 function getInitials(name: string | null | undefined, email: string | null | undefined): string {
@@ -118,11 +115,11 @@ export default function Navbar() {
               {authUser ? (
                 <div className="hidden md:flex items-center gap-2">
                   <Link
-                    href={authUser.user_metadata?.role === 'employer' ? '/employer/dashboard' : '/dashboard'}
+                    href="/dashboard"
                     className="flex items-center gap-1.5 px-3 py-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 text-sm font-medium transition-all duration-200"
                   >
                     <LayoutDashboard size={15} />
-                    {authUser.user_metadata?.role === 'employer' ? 'My Listings' : t('dashboard')}
+                    {t('dashboard')}
                   </Link>
                   <Link
                     href="/member-card"
@@ -222,12 +219,12 @@ export default function Navbar() {
           {authUser ? (
             <div className="flex flex-col items-center gap-4">
               <Link
-                href={authUser.user_metadata?.role === 'employer' ? '/employer/dashboard' : '/dashboard'}
+                href="/dashboard"
                 onClick={closeMenu}
                 className="flex items-center gap-2 px-8 py-3 bg-white/10 text-white font-semibold text-base rounded-full active:brightness-90 transition-all"
               >
                 <LayoutDashboard size={20} />
-                {authUser.user_metadata?.role === 'employer' ? 'My Listings' : t('dashboard')}
+                {t('dashboard')}
               </Link>
               <Link
                 href="/member-card"

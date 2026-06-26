@@ -3,18 +3,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Calendar, MapPin, Users, Ticket, Tag, LogOut, ArrowLeft, BarChart2, QrCode, Home, Building2, Star, Briefcase, Mail, ShoppingBag, CreditCard } from 'lucide-react'
+import { LayoutDashboard, Calendar, Users, Ticket, Tag, LogOut, ArrowLeft, BarChart2, QrCode, Home, Building2, Star, Mail, CreditCard } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 const NAV = [
   { href: '/admin',             label: 'Overview',    icon: <LayoutDashboard size={16} /> },
   { href: '/admin/events',      label: 'Events',      icon: <Calendar size={16} />        },
-  { href: '/admin/trips',       label: 'Trips',       icon: <MapPin size={16} />          },
-  { href: '/admin/housing',          label: 'Housing',  icon: <Home size={16} />      },
+  { href: '/admin/housing',          label: 'Housing',       icon: <Home size={16} />      },
   { href: '/admin/housing-partners', label: 'Partner Rooms', icon: <Building2 size={16} /> },
-  { href: '/admin/jobs',         label: 'Jobs',        icon: <Briefcase size={16} />      },
-  { href: '/admin/marketplace',  label: 'Marketplace', icon: <ShoppingBag size={16} />    },
-  { href: '/admin/employers',    label: 'Employers',   icon: <Building2 size={16} />      },
   { href: '/admin/ambassadors', label: 'Ambassadors', icon: <Star size={16} />            },
   { href: '/admin/sponsors',    label: 'Sponsors',    icon: <Star size={16} />            },
   { href: '/admin/users',       label: 'Students',    icon: <Users size={16} />           },

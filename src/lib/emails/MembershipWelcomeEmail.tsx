@@ -6,10 +6,10 @@ interface Props {
 }
 
 const PLAN_INFO = {
-  basic:    { label: 'Monthly',       price: '€9.99/mo',  duration: '30 days'  },
-  premium:  { label: 'Semester',      price: '≈€4.17/mo', duration: '6 months' },
-  vip:      { label: 'Annual',        price: '≈€3.33/mo', duration: '1 year'   },
-  employer: { label: 'Employer Plan', price: '€49/mo',    duration: '1 month'  },
+  basic:    { label: 'Monthly',  price: '€9.99/mo',  duration: '30 days'  },
+  premium:  { label: 'Semester', price: '≈€4.17/mo', duration: '6 months' },
+  vip:      { label: 'Annual',   price: '≈€3.33/mo', duration: '1 year'   },
+  employer: { label: 'Partner',  price: '€49/mo',    duration: '1 month'  },
 }
 
 export function MembershipWelcomeEmail({ name, plan, endDate, baseUrl }: Props): string {

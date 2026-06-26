@@ -28,6 +28,7 @@ export default async function AdminBookingsPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tripBookings = (tripBookingsRaw ?? []).map((b: any) => ({
     ...b,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     trips: tripMap[(b as any).trip_id] ?? null,
   }))
 

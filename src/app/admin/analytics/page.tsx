@@ -1,4 +1,4 @@
-import { BarChart2, Ticket, TrendingUp, DollarSign, Calendar, MapPin, Users } from 'lucide-react'
+import { BarChart2, Ticket, TrendingUp, DollarSign, Calendar, Users } from 'lucide-react'
 import { getAdminClient } from '@/lib/supabase/admin'
 import StatsCard from '@/components/admin/StatsCard'
 import RevenueChart, { type MonthData } from '@/components/admin/RevenueChart'
@@ -31,14 +31,6 @@ type EventTicketRow = {
   events: { title: string; category: string } | null
 }
 
-type TripBookingRow = {
-  amount_paid: number | null
-  tier: string
-  created_at: string
-  status: string
-  trips: { title: string; destination: string } | null
-}
-
 type MembershipRow = {
   plan: string
   status: string
@@ -51,7 +43,6 @@ export default async function AnalyticsPage() {
 
   const [
     { data: rawEventBookings },
-    { data: rawTripBookings },
     { data: rawMemberships },
   ] = await Promise.all([
     admin
@@ -60,33 +51,21 @@ export default async function AnalyticsPage() {
       .in('status', ['active', 'used'])
       .order('created_at', { ascending: true }),
     admin
-      .from('trip_bookings')
-      .select('amount_paid, tier, created_at, status, trips(title, destination)')
-      .eq('status', 'confirmed')
-      .order('created_at', { ascending: true }),
-    admin
       .from('memberships')
       .select('plan, status, created_at, start_date')
       .eq('status', 'active'),
   ])
 
   const eb = (rawEventBookings as unknown as EventTicketRow[] | null) ?? []
-  const tb = (rawTripBookings as unknown as TripBookingRow[] | null) ?? []
   const mb = (rawMemberships as unknown as MembershipRow[] | null) ?? []
 
   // ── Combined revenue entries ──
-  type RevenueEntry = { amount: number; type: 'Event' | 'Trip' | 'Membership'; title: string; created_at: string }
+  type RevenueEntry = { amount: number; type: 'Event' | 'Membership'; title: string; created_at: string }
   const allRevenue: RevenueEntry[] = [
     ...eb.map(b => ({
       amount: b.amount_paid ?? 0,
       type: 'Event' as const,
       title: b.events?.title ?? 'Unknown event',
-      created_at: b.created_at,
-    })),
-    ...tb.map(b => ({
-      amount: b.amount_paid ?? 0,
-      type: 'Trip' as const,
-      title: b.trips?.title ?? 'Unknown trip',
       created_at: b.created_at,
     })),
     ...mb.map(m => ({
@@ -112,11 +91,10 @@ export default async function AnalyticsPage() {
     ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue * 100).toFixed(1)
     : thisMonthRevenue > 0 ? '100' : '0'
 
-  const eventRevenue = eb.reduce((s, b) => s + (b.amount_paid ?? 0), 0)
-  const tripRevenue  = tb.reduce((s, b) => s + (b.amount_paid ?? 0), 0)
+  const eventRevenue      = eb.reduce((s, b) => s + (b.amount_paid ?? 0), 0)
   const membershipRevenue = mb.reduce((s, m) => s + getMembershipPrice(m.plan), 0)
 
-  const totalBookings = eb.length + tb.length
+  const totalBookings = eb.length
   const avgOrderValue = totalBookings > 0 ? (totalRevenue / totalBookings) : 0
 
   // ── Monthly chart data (last 6 months) ──
@@ -128,7 +106,6 @@ export default async function AnalyticsPage() {
     return {
       month: label,
       events:      eb.filter(b => sameMonth(b.created_at, y, m)).reduce((s, b) => s + (b.amount_paid ?? 0), 0),
-      trips:       tb.filter(b => sameMonth(b.created_at, y, m)).reduce((s, b) => s + (b.amount_paid ?? 0), 0),
       memberships: mb.filter(mem => sameMonth(mem.created_at, y, m)).reduce((s, mem) => s + getMembershipPrice(mem.plan), 0),
     }
   })
@@ -145,18 +122,6 @@ export default async function AnalyticsPage() {
     .sort((a, b) => b[1].revenue - a[1].revenue)
     .slice(0, 5)
 
-  // ── Top trips ──
-  const tripMap: Record<string, { bookings: number; revenue: number; destination: string }> = {}
-  for (const b of tb) {
-    const key = b.trips?.title ?? 'Unknown'
-    if (!tripMap[key]) tripMap[key] = { bookings: 0, revenue: 0, destination: b.trips?.destination ?? '' }
-    tripMap[key].bookings++
-    tripMap[key].revenue += b.amount_paid ?? 0
-  }
-  const topTrips = Object.entries(tripMap)
-    .sort((a, b) => b[1].revenue - a[1].revenue)
-    .slice(0, 5)
-
   // ── Membership breakdown ──
   const mCount = { basic: 0, premium: 0, vip: 0 }
   for (const m of mb) {
@@ -170,7 +135,6 @@ export default async function AnalyticsPage() {
 
   const badgeColor = (type: string) => {
     if (type === 'Event') return 'bg-brand-primary/20 text-brand-primary'
-    if (type === 'Trip')  return 'bg-teal-500/20 text-teal-400'
     return 'bg-orange-500/20 text-orange-400'
   }
 
@@ -179,7 +143,7 @@ export default async function AnalyticsPage() {
       {/* Header */}
       <div>
         <h1 className="font-heading text-2xl font-bold text-white mb-1">Revenue Analytics</h1>
-        <p className="text-white/40 text-sm">Financial overview across events, trips and memberships.</p>
+        <p className="text-white/40 text-sm">Financial overview across events and memberships.</p>
       </div>
 
       {/* A — Top stats */}
@@ -212,11 +176,10 @@ export default async function AnalyticsPage() {
       </div>
 
       {/* B — Revenue by type */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[
-          { label: 'Events', revenue: eventRevenue, sub: `${eb.length} bookings`, icon: <Calendar size={16} />, color: 'text-brand-primary' },
-          { label: 'Trips',  revenue: tripRevenue,  sub: `${tb.length} bookings`, icon: <MapPin size={16} />,   color: 'text-teal-400'     },
-          { label: 'Memberships', revenue: membershipRevenue, sub: `${mb.length} active`, icon: <Users size={16} />, color: 'text-orange-400' },
+          { label: 'Events',      revenue: eventRevenue,      sub: `${eb.length} bookings`, icon: <Calendar size={16} />, color: 'text-brand-primary' },
+          { label: 'Memberships', revenue: membershipRevenue, sub: `${mb.length} active`,   icon: <Users size={16} />,    color: 'text-orange-400'   },
         ].map(({ label, revenue, sub, icon, color }) => (
           <div key={label} className="glass-card rounded-2xl p-6 flex items-start gap-4">
             <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
@@ -234,76 +197,40 @@ export default async function AnalyticsPage() {
       {/* C — Monthly chart */}
       <RevenueChart data={monthlyData} />
 
-      {/* D + E — Top performers */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* Top events */}
-        <div className="glass-card rounded-2xl p-6">
-          <h3 className="font-heading font-bold text-white text-base mb-4 flex items-center gap-2">
-            <Calendar size={15} className="text-brand-primary" />
-            Top Events
-          </h3>
-          {topEvents.length === 0 ? (
-            <p className="text-white/30 text-sm text-center py-6">No event revenue yet</p>
-          ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-white/30 text-xs uppercase tracking-wider">
-                  <th className="text-left pb-3 font-medium">Event</th>
-                  <th className="text-right pb-3 font-medium">Bookings</th>
-                  <th className="text-right pb-3 font-medium">Revenue</th>
+      {/* D — Top events */}
+      <div className="glass-card rounded-2xl p-6">
+        <h3 className="font-heading font-bold text-white text-base mb-4 flex items-center gap-2">
+          <Calendar size={15} className="text-brand-primary" />
+          Top Events
+        </h3>
+        {topEvents.length === 0 ? (
+          <p className="text-white/30 text-sm text-center py-6">No event revenue yet</p>
+        ) : (
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-white/30 text-xs uppercase tracking-wider">
+                <th className="text-left pb-3 font-medium">Event</th>
+                <th className="text-right pb-3 font-medium">Bookings</th>
+                <th className="text-right pb-3 font-medium">Revenue</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {topEvents.map(([title, data]) => (
+                <tr key={title}>
+                  <td className="py-2.5 pr-3">
+                    <p className="text-white font-medium text-xs truncate max-w-[160px]">{title}</p>
+                    {data.category && <p className="text-white/30 text-xs capitalize">{data.category}</p>}
+                  </td>
+                  <td className="py-2.5 text-right text-white/60 text-xs">{data.bookings}</td>
+                  <td className="py-2.5 text-right text-white font-semibold text-xs">€{fmt(data.revenue)}</td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {topEvents.map(([title, data]) => (
-                  <tr key={title}>
-                    <td className="py-2.5 pr-3">
-                      <p className="text-white font-medium text-xs truncate max-w-[160px]">{title}</p>
-                      {data.category && <p className="text-white/30 text-xs capitalize">{data.category}</p>}
-                    </td>
-                    <td className="py-2.5 text-right text-white/60 text-xs">{data.bookings}</td>
-                    <td className="py-2.5 text-right text-white font-semibold text-xs">€{fmt(data.revenue)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-
-        {/* Top trips */}
-        <div className="glass-card rounded-2xl p-6">
-          <h3 className="font-heading font-bold text-white text-base mb-4 flex items-center gap-2">
-            <MapPin size={15} className="text-teal-400" />
-            Top Trips
-          </h3>
-          {topTrips.length === 0 ? (
-            <p className="text-white/30 text-sm text-center py-6">No trip revenue yet</p>
-          ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-white/30 text-xs uppercase tracking-wider">
-                  <th className="text-left pb-3 font-medium">Trip</th>
-                  <th className="text-right pb-3 font-medium">Bookings</th>
-                  <th className="text-right pb-3 font-medium">Revenue</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {topTrips.map(([title, data]) => (
-                  <tr key={title}>
-                    <td className="py-2.5 pr-3">
-                      <p className="text-white font-medium text-xs truncate max-w-[160px]">{title}</p>
-                      {data.destination && <p className="text-white/30 text-xs">{data.destination}</p>}
-                    </td>
-                    <td className="py-2.5 text-right text-white/60 text-xs">{data.bookings}</td>
-                    <td className="py-2.5 text-right text-white font-semibold text-xs">€{fmt(data.revenue)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
-      {/* F — Membership breakdown */}
+      {/* E — Membership breakdown */}
       <div className="glass-card rounded-2xl p-6">
         <h3 className="font-heading font-bold text-white text-base mb-4 flex items-center gap-2">
           <Users size={15} className="text-orange-400" />
@@ -327,7 +254,7 @@ export default async function AnalyticsPage() {
         </div>
       </div>
 
-      {/* G — Recent transactions */}
+      {/* F — Recent transactions */}
       <div className="glass-card rounded-2xl p-6">
         <h3 className="font-heading font-bold text-white text-base mb-4 flex items-center gap-2">
           <TrendingUp size={15} className="text-brand-primary" />

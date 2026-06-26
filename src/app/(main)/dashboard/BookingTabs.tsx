@@ -2,24 +2,15 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Calendar, MapPin, Download, ExternalLink, X } from 'lucide-react'
-import type { EventTicketRow, TripBookingRow } from '@/types/database'
+import { Calendar, MapPin, Download, X } from 'lucide-react'
+import type { EventTicketRow } from '@/types/database'
 
 type EventTicketWithEvent = EventTicketRow & {
   events: { id: string; title: string; date: string; location: string | null; slug: string } | null
 }
 
-type TripBookingWithTrip = TripBookingRow & {
-  trips: { id: string; title: string; start_date: string; destination: string; slug: string; whatsapp_group_url: string | null } | null
-}
-
-type SelectedBooking =
-  | { kind: 'event'; data: EventTicketWithEvent }
-  | { kind: 'trip';  data: TripBookingWithTrip  }
-
 interface Props {
   eventTickets: EventTicketWithEvent[]
-  tripBookings: TripBookingWithTrip[]
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -60,29 +51,17 @@ function DetailRow({ label, value, bold }: { label: string; value: string; bold?
   )
 }
 
-export default function BookingTabs({ eventTickets, tripBookings }: Props) {
+export default function BookingTabs({ eventTickets }: Props) {
   const [tab, setTab] = useState<'upcoming' | 'past'>('upcoming')
   const [now] = useState(() => Date.now())
-  const [selectedBooking, setSelectedBooking] = useState<SelectedBooking | null>(null)
+  const [selectedTicket, setSelectedTicket] = useState<EventTicketWithEvent | null>(null)
 
-  const upcomingEvents = eventTickets.filter(t =>
+  const upcoming = eventTickets.filter(t =>
     isUpcoming(t.events?.date, now) && t.status !== 'cancelled' && t.status !== 'refunded'
   )
-  const pastEvents = eventTickets.filter(t =>
+  const past = eventTickets.filter(t =>
     !isUpcoming(t.events?.date, now) || t.status === 'cancelled' || t.status === 'refunded'
   )
-
-  const upcomingTrips = tripBookings.filter(t =>
-    isUpcoming(t.trips?.start_date, now) && t.status !== 'cancelled' && t.status !== 'refunded'
-  )
-  const pastTrips = tripBookings.filter(t =>
-    !isUpcoming(t.trips?.start_date, now) || t.status === 'cancelled' || t.status === 'refunded'
-  )
-
-  const upcoming = [...upcomingEvents.map(t => ({ kind: 'event' as const, data: t })),
-                    ...upcomingTrips.map(t => ({ kind: 'trip' as const, data: t }))]
-  const past     = [...pastEvents.map(t => ({ kind: 'event' as const, data: t })),
-                    ...pastTrips.map(t => ({ kind: 'trip' as const, data: t }))]
 
   const items = tab === 'upcoming' ? upcoming : past
 
@@ -120,30 +99,26 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            {items.map(({ kind, data }) => {
-              const isEvent = kind === 'event'
-              const ticket  = data as EventTicketWithEvent
-              const booking = data as TripBookingWithTrip
-
-              const title    = isEvent ? ticket.events?.title    : booking.trips?.title
-              const dateStr  = isEvent ? ticket.events?.date     : booking.trips?.start_date
-              const location = isEvent ? ticket.events?.location : booking.trips?.destination
-              const slug     = isEvent ? ticket.events?.slug     : booking.trips?.slug
-              const href     = slug ? `/${isEvent ? 'events' : 'trips'}/${slug}` : '#'
-              const ref      = data.booking_ref
-              const qr       = data.qr_code
-              const status   = data.status
+            {items.map(ticket => {
+              const title    = ticket.events?.title
+              const dateStr  = ticket.events?.date
+              const location = ticket.events?.location
+              const slug     = ticket.events?.slug
+              const href     = slug ? `/events/${slug}` : '#'
+              const ref      = ticket.booking_ref
+              const qr       = ticket.qr_code
+              const status   = ticket.status
 
               return (
                 <div
-                  key={data.id}
-                  onClick={() => setSelectedBooking({ kind, data } as SelectedBooking)}
+                  key={ticket.id}
+                  onClick={() => setSelectedTicket(ticket)}
                   className="flex items-start justify-between gap-4 rounded-xl border border-white/10 bg-white/5 p-4 cursor-pointer hover:border-brand-primary/40 hover:bg-brand-primary/5 transition-all duration-150"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       <span className="text-xs font-semibold uppercase tracking-wider text-white/30">
-                        {isEvent ? 'Event' : 'Trip'}
+                        Event
                       </span>
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${STATUS_COLORS[status] ?? STATUS_COLORS.active}`}>
                         {status}
@@ -187,17 +162,6 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
                         QR
                       </button>
                     )}
-                    {!isEvent && booking.trips?.whatsapp_group_url && (
-                      <a
-                        href={booking.trips.whatsapp_group_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/15 hover:bg-green-500/25 text-green-400 text-xs transition-colors"
-                      >
-                        <ExternalLink size={12} />
-                        Group
-                      </a>
-                    )}
                   </div>
                 </div>
               )
@@ -206,26 +170,21 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
         )}
       </div>
 
-      {/* Booking detail modal */}
-      {selectedBooking && (() => {
-        const { kind, data } = selectedBooking
-        const isEvent = kind === 'event'
-        const ticket  = data as EventTicketWithEvent
-        const booking = data as TripBookingWithTrip
-
-        const title    = isEvent ? ticket.events?.title     : booking.trips?.title
-        const dateStr  = isEvent ? ticket.events?.date      : booking.trips?.start_date
-        const location = isEvent ? ticket.events?.location  : booking.trips?.destination
-        const tier     = isEvent ? null                     : booking.tier
-        const qr       = data.qr_code
-        const ref      = data.booking_ref
-        const status   = data.status
-        const amount   = data.amount_paid
-        const bookedAt = data.created_at
+      {/* Ticket detail modal */}
+      {selectedTicket && (() => {
+        const ticket  = selectedTicket
+        const title    = ticket.events?.title
+        const dateStr  = ticket.events?.date
+        const location = ticket.events?.location
+        const qr       = ticket.qr_code
+        const ref      = ticket.booking_ref
+        const status   = ticket.status
+        const amount   = ticket.amount_paid
+        const bookedAt = ticket.created_at
 
         return (
           <div
-            onClick={() => setSelectedBooking(null)}
+            onClick={() => setSelectedTicket(null)}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
           >
             <div
@@ -235,7 +194,7 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
               <div className="flex items-center justify-between p-6 border-b border-white/10">
                 <h2 className="font-heading font-bold text-white text-lg">Booking Details</h2>
                 <button
-                  onClick={() => setSelectedBooking(null)}
+                  onClick={() => setSelectedTicket(null)}
                   className="text-white/40 hover:text-white transition-colors"
                 >
                   <X size={20} />
@@ -245,6 +204,7 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
               <div className="p-6 flex flex-col gap-5">
                 <div className="flex flex-col items-center gap-3 p-5 rounded-xl bg-white/5 border border-white/10">
                   {qr ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={qr} alt="QR Code" width={180} height={180} className="rounded-lg" />
                   ) : (
                     <div className="w-44 h-44 rounded-lg bg-white/10 flex items-center justify-center">
@@ -255,7 +215,7 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  <DetailRow label={isEvent ? 'Event' : 'Trip'} value={title ?? 'Unknown'} bold />
+                  <DetailRow label="Event" value={title ?? 'Unknown'} bold />
                   {dateStr && (
                     <DetailRow
                       label="Date"
@@ -265,14 +225,6 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
                     />
                   )}
                   {location && <DetailRow label="Location" value={location} />}
-                  {tier && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-white/50 text-sm">Tier</span>
-                      <span className="bg-brand-primary/20 text-brand-primary px-2.5 py-0.5 rounded-full text-xs font-bold capitalize">
-                        {tier.replace('_', ' ')}
-                      </span>
-                    </div>
-                  )}
                   <div className="flex items-center justify-between">
                     <span className="text-white/50 text-sm">Amount paid</span>
                     <span className="text-green-400 font-semibold text-sm">
@@ -301,7 +253,7 @@ export default function BookingTabs({ eventTickets, tripBookings }: Props) {
                     </button>
                   )}
                   <button
-                    onClick={() => setSelectedBooking(null)}
+                    onClick={() => setSelectedTicket(null)}
                     className="w-full py-3 rounded-xl border border-white/15 text-white/60 hover:text-white hover:border-white/30 text-sm font-medium transition-all"
                   >
                     Close

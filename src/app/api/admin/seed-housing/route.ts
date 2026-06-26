@@ -195,9 +195,9 @@ export async function POST() {
     },
   ]
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: insertedPartners, error: partnersError } = await supabase
     .from('housing_partners')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .insert(partners as any)
     .select('id, name')
   if (partnersError) return NextResponse.json({ error: 'partners: ' + partnersError.message }, { status: 500 })
@@ -315,12 +315,12 @@ export async function POST() {
   for (const { partner_name, ...room } of rooms) {
     const partnerId = partnerMap[partner_name]
     if (!partnerId) continue
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await supabase.from('partner_rooms').insert({
       ...room,
       partner_id: partnerId,
       photos: [],
       status: 'available' as const,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
     if (error) return NextResponse.json({ error: `room "${room.title}": ${error.message}` }, { status: 500 })
   }
