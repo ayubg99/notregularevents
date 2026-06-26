@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
 import { getPublicClient } from '@/lib/supabase/public'
 import type { EventRow } from '@/types/database'
-import EventCard from './EventCard'
+import EventCard from '@/components/events/EventCard'
+import { EventsSectionHeader } from '@/components/events/EventsSectionHeader'
 
 async function getPublishedEvents(): Promise<EventRow[]> {
   try {
@@ -13,7 +13,7 @@ async function getPublishedEvents(): Promise<EventRow[]> {
       .eq('status', 'published')
       .gte('date', new Date().toISOString())
       .order('date', { ascending: true })
-      .limit(6)
+      .limit(4)
 
     if (error) {
       console.error('[FeaturedEvents]', error.message)
@@ -21,7 +21,6 @@ async function getPublishedEvents(): Promise<EventRow[]> {
     }
     return data ?? []
   } catch (err) {
-    // Catches missing env vars, network errors, or cookie context issues
     console.error('[FeaturedEvents] unexpected:', err)
     return []
   }
@@ -31,58 +30,58 @@ export default async function FeaturedEvents() {
   const events = await getPublishedEvents()
 
   return (
-    <section className="py-20 bg-[var(--bg-base)]">
-      <div className="container-marketing">
+    <section style={{ background: 'var(--bg-base)' }}>
+      <EventsSectionHeader title="Upcoming Events" tag="Madrid // 2026" />
 
-        {/* Section header */}
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <p className="text-brand-primary font-semibold text-sm uppercase tracking-widest mb-2">
-              Madrid // 2026
+      {events.length === 0 ? (
+        <div className="container-marketing" style={{ paddingBottom: '40px' }}>
+          <div style={{
+            textAlign:    'center',
+            padding:      '64px 0',
+            border:       '1px solid var(--border-clr)',
+            background:   'var(--bg-card)',
+            borderRadius: '16px',
+          }}>
+            <p style={{ color: 'var(--text-base)', fontSize: '18px', fontWeight: 500, margin: 0 }}>
+              No events live right now
             </p>
-            <h2 className="font-display text-4xl md:text-5xl text-[var(--text-base)]">
-              Upcoming Events
-            </h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '8px' }}>
+              New dates dropping soon.
+            </p>
           </div>
-          <Link
-            href="/events"
-            className="hidden sm:flex items-center gap-2 text-brand-primary font-medium text-sm hover:gap-3 transition-all duration-200"
-          >
-            See More Events <ArrowRight size={16} />
-          </Link>
         </div>
-
-        {/* Cards or empty state */}
-        {events.length === 0 ? (
-          <EmptyState
-            title="No events live right now"
-            message="No events live right now — new dates dropping soon."
-          />
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event) => (
+      ) : (
+        <>
+          <div
+            className="container-marketing grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+            style={{ gap: '16px' }}
+          >
+            {events.map(event => (
               <EventCard key={event.id} event={event} />
             ))}
           </div>
-        )}
 
-        {/* Mobile view-all */}
-        <div className="mt-8 text-center sm:hidden">
-          <Link href="/events" className="inline-flex items-center gap-2 text-brand-primary font-medium text-sm">
-            See More Events → <ArrowRight size={16} />
-          </Link>
-        </div>
-
-      </div>
+          <div className="container-marketing" style={{ marginTop: '24px', paddingBottom: '40px' }}>
+            <Link
+              href="/events"
+              style={{
+                display:        'inline-block',
+                background:     'var(--accent-blue)',
+                color:          '#fff',
+                padding:        '12px 24px',
+                fontFamily:     "'JetBrains Mono', monospace",
+                fontWeight:     700,
+                fontSize:       '13px',
+                textTransform:  'uppercase',
+                textDecoration: 'none',
+                borderRadius:   '4px',
+              }}
+            >
+              See More Events →
+            </Link>
+          </div>
+        </>
+      )}
     </section>
-  )
-}
-
-function EmptyState({ title, message }: { title: string; message: string }) {
-  return (
-    <div className="text-center py-16 rounded-2xl border border-[var(--border-clr)] bg-[var(--bg-card)]">
-      <p className="text-[var(--text-base)] text-lg font-medium">{title}</p>
-      <p className="text-[var(--text-muted)] text-sm mt-2">{message}</p>
-    </div>
   )
 }

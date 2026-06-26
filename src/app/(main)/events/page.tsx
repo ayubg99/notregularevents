@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import EventsClient from '@/components/events/EventsClient'
-import { PageHeader } from '@/components/shared/PageHeader'
 
 export const metadata: Metadata = {
   title:       'Events | Not Regular Events Madrid',
@@ -21,10 +20,7 @@ export const metadata: Metadata = {
 export default function EventsPage() {
   return (
     <main className="min-h-screen bg-brand-dark pt-20 pb-24">
-      <PageHeader tag="Madrid // 2026" title="Upcoming Events" />
-      <div className="container-marketing mt-10">
-        <EventsClient />
-      </div>
+      <EventsClient />
     </main>
   )
 }

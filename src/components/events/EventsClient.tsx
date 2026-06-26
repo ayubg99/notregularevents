@@ -6,6 +6,7 @@ import { Search, SlidersHorizontal } from 'lucide-react'
 import type { EventRow, EventCategory } from '@/types/database'
 import EventCard from '@/components/events/EventCard'
 import { TabSelector } from '@/components/shared/TabSelector'
+import { EventsSectionHeader } from '@/components/events/EventsSectionHeader'
 
 // ─── City tabs ──────────────────────────────────────────────────
 
@@ -39,10 +40,10 @@ async function fetchEvents(): Promise<EventRow[]> {
 
 function Skeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {Array.from({ length: 6 }).map((_, i) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: '16px' }}>
+      {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="overflow-hidden animate-pulse" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-          <div className="h-[280px] bg-white/5" />
+          <div className="bg-white/5" style={{ height: '300px' }} />
           <div className="p-4 flex flex-col gap-3">
             <div className="h-8 w-1/4 rounded bg-white/5" />
             <div className="h-5 w-3/4 rounded bg-white/5" />
@@ -99,85 +100,97 @@ export default function EventsClient() {
     setActiveCity('All')
   }
 
+  // Clicking the active city deselects it (back to All)
+  function handleCityChange(city: string) {
+    if (activeCity === city) {
+      setActiveCity('All')
+    } else {
+      setActiveCity(city as CityFilter)
+      setActiveCategory('all')
+    }
+  }
+
   const hasFilters = search.trim() !== '' || activeCategory !== 'all' || activeCity !== 'All'
+
+  const cityTabs = availableCities.filter(c => c !== 'All')
 
   return (
     <div>
-      {/* ── Filter bar ── */}
-      <div className="mb-8 flex flex-col gap-3">
+      {/* Section header — city tabs shown when events span multiple cities */}
+      <EventsSectionHeader
+        title="Upcoming Events"
+        tag="Madrid // 2026"
+        showTabs={cityTabs.length > 1}
+        cities={cityTabs}
+        activeCity={activeCity === 'All' ? undefined : activeCity}
+        onCityChange={handleCityChange}
+      />
 
-        {/* City tabs — only shown when >1 city has events */}
-        {availableCities.length > 1 && (
-          <TabSelector
-            options={availableCities}
-            active={activeCity}
-            onChange={v => { setActiveCity(v as CityFilter); setActiveCategory('all') }}
-          />
-        )}
-
-        {/* Search + count row */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1 max-w-md">
-            <Search
-              size={15}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search events by name or location…"
-              className="w-full pl-10 pr-4 py-3 rounded-full text-sm glass-card text-white placeholder:text-white/30 focus:outline-none focus:border-brand-primary/60 transition-all duration-200"
-            />
-          </div>
-          {!isLoading && !isError && (
-            <div className="flex items-center gap-1.5 text-white/45 text-sm self-center">
-              <SlidersHorizontal size={14} />
-              <span>{filtered.length} event{filtered.length !== 1 ? 's' : ''}</span>
+      <div className="container-marketing" style={{ paddingBottom: '48px' }}>
+        {/* Filter bar — search + category (city handled in header) */}
+        <div className="mb-8 flex flex-col gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1 max-w-md">
+              <Search
+                size={15}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"
+              />
+              <input
+                type="text"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Search events by name or location…"
+                className="w-full pl-10 pr-4 py-3 rounded-full text-sm glass-card text-white placeholder:text-white/30 focus:outline-none focus:border-brand-primary/60 transition-all duration-200"
+              />
             </div>
-          )}
+            {!isLoading && !isError && (
+              <div className="flex items-center gap-1.5 text-white/45 text-sm self-center">
+                <SlidersHorizontal size={14} />
+                <span>{filtered.length} event{filtered.length !== 1 ? 's' : ''}</span>
+              </div>
+            )}
+          </div>
+
+          <TabSelector
+            options={CATEGORIES.map(c => c.label)}
+            active={CATEGORIES.find(c => c.value === activeCategory)?.label ?? 'All'}
+            onChange={label => setActiveCategory(CATEGORIES.find(c => c.label === label)?.value ?? 'all')}
+          />
         </div>
 
-        {/* Category tabs */}
-        <TabSelector
-          options={CATEGORIES.map(c => c.label)}
-          active={CATEGORIES.find(c => c.value === activeCategory)?.label ?? 'All'}
-          onChange={label => setActiveCategory(CATEGORIES.find(c => c.label === label)?.value ?? 'all')}
-        />
+        {/* Grid */}
+        {isLoading ? (
+          <Skeleton />
+        ) : isError ? (
+          <div className="text-center py-20 rounded-2xl glass-card">
+            <p className="text-[var(--text-base)] text-lg font-medium">Failed to load events</p>
+            <p className="text-[var(--text-muted)] text-sm mt-2">Please refresh the page and try again.</p>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 rounded-2xl glass-card">
+            <p className="text-[var(--text-base)] text-lg font-medium">No events found</p>
+            <p className="text-[var(--text-muted)] text-sm mt-2">
+              {hasFilters
+                ? 'No events match your current filters.'
+                : 'Check back soon — events are being planned!'}
+            </p>
+            {hasFilters && (
+              <button
+                onClick={clearFilters}
+                className="mt-4 px-5 py-2 btn-primary text-sm font-semibold transition-all"
+              >
+                Clear filters
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: '16px' }}>
+            {filtered.map(event => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        )}
       </div>
-
-      {/* ── Grid ── */}
-      {isLoading ? (
-        <Skeleton />
-      ) : isError ? (
-        <div className="text-center py-20 rounded-2xl glass-card">
-          <p className="text-[var(--text-base)] text-lg font-medium">Failed to load events</p>
-          <p className="text-[var(--text-muted)] text-sm mt-2">Please refresh the page and try again.</p>
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="text-center py-20 rounded-2xl glass-card">
-          <p className="text-[var(--text-base)] text-lg font-medium">No events found</p>
-          <p className="text-[var(--text-muted)] text-sm mt-2">
-            {hasFilters
-              ? 'No events match your current filters.'
-              : 'Check back soon — events are being planned!'}
-          </p>
-          {hasFilters && (
-            <button
-              onClick={clearFilters}
-              className="mt-4 px-5 py-2 btn-primary text-sm font-semibold transition-all"
-            >
-              Clear filters
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map(event => (
-            <EventCard key={event.id} event={event} />
-          ))}
-        </div>
-      )}
     </div>
   )
 }
