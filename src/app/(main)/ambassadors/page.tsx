@@ -1,4 +1,5 @@
 import ApplicationForm from './ApplicationForm'
+import { PageHeader } from '@/components/shared/PageHeader'
 
 export const metadata = {
   title:       'Ambassadors — Erasmus Life',
@@ -54,7 +55,8 @@ const STEPS = [
 
 export default function AmbassadorsPage() {
   return (
-    <div className="min-h-screen bg-brand-dark">
+    <div className="min-h-screen bg-brand-dark pt-20">
+      <PageHeader tag="Work With Us" title="Become a Promoter" />
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden pt-32 pb-20 px-4">

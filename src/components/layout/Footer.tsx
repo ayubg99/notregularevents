@@ -60,16 +60,19 @@ export default function Footer() {
 
           {/* Brand column */}
           <div className="lg:col-span-2 flex flex-col gap-6">
-            {/* Logo */}
-            <Link href="/" className="w-fit">
-              <Image
-                src="/logo.png"
-                alt="Erasmus Life"
-                width={200}
-                height={52}
-                className="h-14 w-auto"
-              />
-            </Link>
+            {/* Logo + city tag */}
+            <div className="flex items-center gap-3">
+              <Link href="/">
+                <Image
+                  src="/logo.png"
+                  alt="Erasmus Life"
+                  width={200}
+                  height={52}
+                  className="h-14 w-auto"
+                />
+              </Link>
+              <span className="text-white/30 text-sm font-bold">/ Valencia</span>
+            </div>
 
             {/* Tagline */}
             <p className="text-white/60 text-sm leading-relaxed max-w-xs">
@@ -80,6 +83,12 @@ export default function Footer() {
             <div className="flex items-center gap-2 text-white/40 text-sm">
               <MapPin size={14} className="flex-shrink-0" />
               <span>Valencia, Spain 🇪🇸</span>
+            </div>
+
+            {/* Contact */}
+            <div className="flex flex-col gap-1 text-xs" style={{ color: 'var(--text-muted)' }}>
+              <span>+34 XXX XXX XXX</span>
+              <span>hello@notregularevents.com</span>
             </div>
 
             {/* Socials */}

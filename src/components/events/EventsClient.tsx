@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Search, SlidersHorizontal } from 'lucide-react'
 import type { EventRow, EventCategory } from '@/types/database'
 import EventCard from '@/components/events/EventCard'
-import { cn } from '@/lib/utils/cn'
+import { TabSelector } from '@/components/shared/TabSelector'
 
 // ─── Category tabs ──────────────────────────────────────────────
 
@@ -112,23 +112,12 @@ export default function EventsClient() {
           )}
         </div>
 
-        {/* Category pills */}
-        <div className="flex gap-2.5 overflow-x-auto scrollbar-hide pb-1">
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat.value}
-              onClick={() => setActiveCategory(cat.value)}
-              className={cn(
-                'px-5 py-2.5 rounded-full text-sm whitespace-nowrap flex-shrink-0 transition-all duration-200',
-                activeCategory === cat.value
-                  ? 'btn-primary font-semibold'
-                  : 'glass-card border border-white/10 text-white/55 hover:text-white hover:border-white/25 font-medium',
-              )}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
+        {/* Category tabs */}
+        <TabSelector
+          options={CATEGORIES.map(c => c.label)}
+          active={CATEGORIES.find(c => c.value === activeCategory)?.label ?? 'All'}
+          onChange={label => setActiveCategory(CATEGORIES.find(c => c.label === label)?.value ?? 'all')}
+        />
       </div>
 
       {/* ── Grid ── */}
@@ -150,7 +139,7 @@ export default function EventsClient() {
           {hasFilters && (
             <button
               onClick={clearFilters}
-              className="mt-4 px-5 py-2 rounded-full bg-brand-primary text-white text-sm font-semibold hover:brightness-110 transition-all"
+              className="mt-4 px-5 py-2 btn-primary text-sm font-semibold transition-all"
             >
               Clear filters
             </button>

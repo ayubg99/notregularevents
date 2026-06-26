@@ -135,18 +135,7 @@ export default function ListingCard({ listing }: Props) {
           )}
 
           {/* View Details — visual indicator */}
-          <div
-            style={{
-              display: 'block',
-              padding: '10px',
-              background: '#FF6B00',
-              color: '#0D0D0D',
-              borderRadius: '50px',
-              fontWeight: 700,
-              fontSize: '14px',
-              textAlign: 'center',
-            }}
-          >
+          <div className="btn-primary block py-2.5 text-sm font-bold text-center rounded">
             See Details
           </div>
         </div>

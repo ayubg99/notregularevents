@@ -36,7 +36,7 @@ function StarRow({
             className={cn(
               'transition-colors',
               (hovered || value) >= i
-                ? 'text-amber-400 fill-amber-400'
+                ? 'text-brand-primary fill-brand-primary'
                 : 'text-white/20 fill-transparent',
             )}
           />

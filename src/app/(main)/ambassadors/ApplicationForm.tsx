@@ -126,7 +126,8 @@ export default function ApplicationForm() {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full py-3.5 rounded-xl bg-brand-primary hover:brightness-110 active:brightness-90 text-white font-semibold text-sm transition-all duration-200 disabled:opacity-70 flex items-center justify-center gap-2"
+          className="w-full py-3.5 rounded font-bold text-sm transition-all duration-200 disabled:opacity-70 flex items-center justify-center gap-2"
+          style={{ background: '#F4D03F', color: '#0A0A0A' }}
         >
           {isPending
             ? <><Loader2 size={15} className="animate-spin" /> Submitting…</>

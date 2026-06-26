@@ -66,12 +66,21 @@
 
 /* ── Semantic CSS variables ────────────────────────────────────────── */
 :root {
-  --bg-base:    #0A0A0A;
-  --bg-card:    #161616;
-  --bg-subtle:  #131313;
-  --text-base:  #FFFFFF;
-  --text-muted: #9A9A9A;
-  --border-clr: rgba(255, 255, 255, 0.08);
+  --bg-base:       #0A0A0A;
+  --bg-card:       #161616;
+  --bg-subtle:     #131313;
+  --text-base:     #FFFFFF;
+  --text-muted:    #9A9A9A;
+  --border-clr:    rgba(255, 255, 255, 0.08);
+
+  /* NRE spec aliases */
+  --bg-primary:    #0A0A0A;
+  --bg-secondary:  #131313;
+  --accent-blue:   #2D5BFF;
+  --accent-yellow: #F4D03F;
+  --text-primary:  #FFFFFF;
+  --text-secondary:#9A9A9A;
+  --border-subtle: rgba(255, 255, 255, 0.08);
 }
 
 /* ── Heading base styles ───────────────────────────────────────────── */

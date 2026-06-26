@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Calendar, MapPin, Users } from 'lucide-react'
 import type { EventRow, EventCategory } from '@/types/database'
 import { cn } from '@/lib/utils/cn'
 
@@ -56,28 +55,31 @@ interface Props {
 }
 
 export default function EventCard({ event, className }: Props) {
-  const spotsLeft    = event.capacity - event.tickets_sold
-  const isSoldOut    = spotsLeft <= 0
-  const fillPct      = Math.round((event.tickets_sold / event.capacity) * 100)
-  const isAlmostGone = !isSoldOut && spotsLeft <= Math.max(1, Math.ceil(event.capacity * 0.1))
+  const spotsLeft = event.capacity - event.tickets_sold
+  const isSoldOut = spotsLeft <= 0
   const now = new Date()
   const earlyBirdActive =
     !!event.price_early_bird &&
     event.price_early_bird > 0 &&
     !!event.early_bird_deadline &&
     new Date(event.early_bird_deadline) > now
-  const displayPrice   = earlyBirdActive ? event.price_early_bird! : event.price
-  const isFree         = event.is_free || displayPrice === 0
+  const displayPrice = earlyBirdActive ? event.price_early_bird! : event.price
+  const isFree       = event.is_free || displayPrice === 0
 
-  const formattedDate  = new Date(event.date).toLocaleDateString('en-GB', {
-    weekday: 'short', day: 'numeric', month: 'short',
-  })
+  const eventDate     = new Date(event.date)
+  const dayNumber     = eventDate.getDate()
+  const monthYear     = eventDate.toLocaleDateString('en', { month: 'short', year: 'numeric' })
   const formattedPrice = isFree ? 'Free' : `€${displayPrice.toFixed(2)}`
 
+  const hasVipTier = (event.ticket_tiers ?? []).some(t => /vip|table/i.test(t.name))
+
   return (
-    <Link href={`/events/${event.slug}`} className={cn('group rounded-lg overflow-hidden glass-card card-hover flex flex-col border border-white/8 hover:border-brand-primary/25', className)}>
+    <div
+      className={cn('flex flex-col overflow-hidden', className)}
+      style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}
+    >
       {/* Image / gradient fallback */}
-      <div className="relative h-52 overflow-hidden flex-shrink-0">
+      <Link href={`/events/${event.slug}`} className="relative block h-[280px] overflow-hidden flex-shrink-0 group">
         {event.image_url ? (
           <Image
             src={event.image_url}
@@ -90,8 +92,8 @@ export default function EventCard({ event, className }: Props) {
           <div className={cn('absolute inset-0 bg-gradient-to-br', GRADIENTS[event.category])} />
         )}
 
-        {/* Gradient overlay — deepens on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:from-black/90 group-hover:via-black/35 transition-all duration-300" />
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
         {/* Category badge */}
         <span className={cn(
@@ -101,7 +103,7 @@ export default function EventCard({ event, className }: Props) {
           {LABELS[event.category]}
         </span>
 
-        {/* Price / Early Bird badge */}
+        {/* Price / Early Bird / Members badge */}
         {event.members_only_free ? (
           <span className="absolute top-3 right-3 px-3 py-1.5 rounded text-xs font-bold" style={{ background: 'rgba(45,91,255,0.2)', color: '#2D5BFF', border: '1px solid rgba(45,91,255,0.4)' }}>
             👑 Members Free
@@ -115,75 +117,61 @@ export default function EventCard({ event, className }: Props) {
             🔥 Early Bird {formattedPrice}
           </span>
         ) : (
-          <span className="absolute top-3 right-3 px-3 py-1.5 rounded bg-brand-primary text-white text-xs font-bold">
+          <span className="absolute top-3 right-3 px-3 py-1.5 rounded text-xs font-bold" style={{ background: 'rgba(255,255,255,0.12)', color: '#fff' }}>
             {formattedPrice}
           </span>
         )}
 
         {isSoldOut && (
-          <div className="absolute inset-0 bg-brand-dark/75 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/75 flex items-center justify-center">
             <span className="text-white font-bold text-lg tracking-widest uppercase">Sold Out</span>
           </div>
         )}
-      </div>
+      </Link>
 
       {/* Body */}
-      <div className="p-5 flex flex-col flex-1">
-        <h3 className="font-heading text-lg font-semibold text-white line-clamp-2 group-hover:text-brand-primary transition-colors duration-200">
+      <div className="p-4 flex flex-col flex-1">
+        {/* Date badge */}
+        <div className="flex items-baseline gap-2 mb-2.5">
+          <span style={{ fontFamily: 'Anton, sans-serif', fontSize: 32, color: '#2D5BFF', lineHeight: 1 }}>
+            {dayNumber}
+          </span>
+          <span style={{ color: 'var(--text-secondary)', fontSize: 12, textTransform: 'uppercase', fontWeight: 700 }}>
+            {monthYear}
+          </span>
+        </div>
+
+        <h3 className="font-sans font-bold text-base text-white leading-snug mb-1.5">
           {event.title}
         </h3>
 
-        <div className="mt-3 flex flex-col gap-1.5 text-white/55 text-sm">
-          <span className="flex items-center gap-2">
-            <Calendar size={13} className="flex-shrink-0 text-brand-primary" />
-            {formattedDate}
-          </span>
-          {event.location && (
-            <span className="flex items-center gap-2">
-              <MapPin size={13} className="flex-shrink-0 text-brand-primary" />
-              <span className="line-clamp-1">{event.location}</span>
-            </span>
-          )}
-          <span className="flex items-center gap-2">
-            <Users size={13} className="flex-shrink-0" />
-            {isSoldOut
-              ? 'Sold out'
-              : isAlmostGone
-              ? `Only ${spotsLeft} spot${spotsLeft === 1 ? '' : 's'} left!`
-              : `${spotsLeft} spot${spotsLeft === 1 ? '' : 's'} remaining`}
-          </span>
-        </div>
-
-        {/* Capacity progress bar */}
-        {!isSoldOut && (
-          <div className="mt-4">
-            <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
-              <div
-                className={cn(
-                  'h-full rounded-full transition-all duration-700',
-                  isAlmostGone ? 'bg-red-500' : fillPct > 60 ? 'bg-orange-400' : 'bg-brand-success',
-                )}
-                style={{ width: `${fillPct}%` }}
-              />
-            </div>
-            <p className="mt-1 text-[10px] text-white/40">{fillPct}% filled</p>
-          </div>
+        {event.location && (
+          <p style={{ color: 'var(--text-muted)', fontSize: 12, margin: '0 0 16px' }}>
+            {event.location}
+          </p>
         )}
 
-        {/* CTA */}
-        <div className="mt-auto pt-4">
-          <span
-            className={cn(
-              'block w-full text-center py-2.5 rounded text-sm font-semibold transition-all duration-200',
-              isSoldOut
-                ? 'bg-white/10 text-white/40 pointer-events-none'
-                : 'btn-primary',
-            )}
+        {/* Dual action CTAs */}
+        <div className="flex flex-col gap-1.5 mt-auto pt-4">
+          <Link
+            href={`/events/${event.slug}`}
+            className="block text-center text-white text-xs font-bold uppercase py-2.5 transition-colors hover:bg-white/5"
+            style={{ border: '1px solid var(--border-subtle)' }}
           >
-            {isSoldOut ? 'Sold Out' : event.members_only_free ? 'Members Only' : isFree ? 'Register Free' : 'Book Now'}
-          </span>
+            {isSoldOut ? 'Sold Out' : 'Tickets Available'}
+          </Link>
+
+          {!isSoldOut && hasVipTier && (
+            <Link
+              href={`/events/${event.slug}#vip`}
+              className="block text-center text-xs font-bold uppercase py-1.5 transition-colors hover:text-white"
+              style={{ color: 'var(--text-muted)' }}
+            >
+              Reserve VIP Table →
+            </Link>
+          )}
         </div>
       </div>
-    </Link>
+    </div>
   )
 }

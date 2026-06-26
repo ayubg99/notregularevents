@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
 import HousingTabs from './HousingTabs'
+import { PageHeader } from '@/components/shared/PageHeader'
 import type { PartnerRoomRow } from '@/types/database'
 
 export const metadata: Metadata = {
@@ -43,17 +44,30 @@ export default async function HousingPage() {
     .order('created_at', { ascending: false }) as unknown as { data: PartnerRoomRow[] | null }
 
   return (
-    <main className="min-h-screen pt-24 pb-28 px-4">
-      <div className="max-w-6xl mx-auto">
+    <main className="min-h-screen pt-20 pb-28">
+      <PageHeader tag="Alojamiento" title="Find Your Space" />
 
-        {/* Hero */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Find Your Room in Valencia
-          </h1>
-          <p className="text-white/60 text-lg max-w-xl mx-auto">
-            Rooms posted by Erasmus students and verified partner landlords. Find your home before you arrive.
+      <div className="max-w-6xl mx-auto px-4 mt-10">
+        {/* WhatsApp community card */}
+        <div style={{
+          background:    'var(--bg-card)',
+          border:        '1px solid var(--border-subtle)',
+          padding:       '32px',
+          marginBottom:  '40px',
+        }}>
+          <p style={{ color: 'var(--accent-blue)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>
+            WhatsApp Group
           </p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 16, maxWidth: 600 }}>
+            Haven&apos;t found a room yet? Join this group — we share available rooms and connect you with other students looking together.
+          </p>
+          {/* TODO: replace '#' with actual WhatsApp group URL */}
+          <a
+            href="#"
+            style={{ display: 'inline-block', background: 'var(--accent-blue)', color: '#fff', padding: '12px 24px', fontWeight: 700, fontSize: 13, textDecoration: 'none', borderRadius: 4 }}
+          >
+            Join WhatsApp Group →
+          </a>
         </div>
 
         <HousingTabs
