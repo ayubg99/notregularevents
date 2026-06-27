@@ -614,6 +614,12 @@ export interface Database {
         Update:        PartyRecapMediaUpdate
         Relationships: never[]
       }
+      platform_settings: {
+        Row:    { id: string; key: string; value: string | null; updated_at: string }
+        Insert: { id?: string; key: string; value?: string | null; updated_at?: string }
+        Update: { key?: string; value?: string | null; updated_at?: string }
+        Relationships: never[]
+      }
     }
     Views:          { [_ in never]: never }
     Functions: {

@@ -1,29 +1,51 @@
-import { stripe } from '@/lib/stripe'
+'use client'
+import { useState, useEffect } from 'react'
 
-export const dynamic = 'force-dynamic'
+interface StripeStatus {
+  connected: boolean
+  accountId?: string
+  chargesEnabled?: boolean
+  payoutsEnabled?: boolean
+  detailsSubmitted?: boolean
+  status?: 'active' | 'pending'
+  error?: string
+}
 
-export const metadata = { title: 'Stripe Connect — Admin' }
+export default function StripeConnectPage() {
+  const [status, setStatus] = useState<StripeStatus | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [connecting, setConnecting] = useState(false)
 
-export default async function StripeStatusPage() {
-  const accountId = process.env.ERASMUS_VIBE_STRIPE_ACCOUNT_ID
+  useEffect(() => {
+    void (async () => {
+      setLoading(true)
+      const res = await fetch('/api/admin/stripe-connect/status')
+      const data = await res.json()
+      setStatus(data)
+      setLoading(false)
+    })()
+  }, [])
 
-  let accountStatus: {
-    id:             string
-    chargesEnabled: boolean
-    payoutsEnabled: boolean
-  } | null = null
-
-  if (accountId) {
+  const handleConnect = async () => {
+    setConnecting(true)
     try {
-      const account = await stripe.accounts.retrieve(accountId)
-      accountStatus = {
-        id:             account.id,
-        chargesEnabled: account.charges_enabled,
-        payoutsEnabled: account.payouts_enabled,
+      const res = await fetch('/api/admin/stripe-connect', { method: 'POST' })
+      const data = await res.json()
+      if (data.onboardingUrl) {
+        window.location.href = data.onboardingUrl
       }
     } catch (err) {
-      console.error('Could not fetch Stripe account:', err)
+      console.error(err)
+      setConnecting(false)
     }
+  }
+
+  if (loading) {
+    return (
+      <div style={{ padding: '32px' }}>
+        <p style={{ color: '#888' }}>Loading Stripe status...</p>
+      </div>
+    )
   }
 
   return (
@@ -32,63 +54,99 @@ export default async function StripeStatusPage() {
         Stripe Connect Status
       </h1>
 
-      {!accountId ? (
+      {!status?.connected ? (
         <div style={{
-          background:   'rgba(255,68,68,0.1)',
-          border:       '1px solid rgba(255,68,68,0.3)',
-          borderRadius: '12px',
-          padding:      '20px',
+          background: 'rgba(45,91,255,0.08)',
+          border: '1px solid rgba(45,91,255,0.25)',
+          borderRadius: '8px',
+          padding: '32px',
+          textAlign: 'center',
         }}>
-          <p style={{ color: '#FF4444', margin: 0 }}>
-            ❌ ERASMUS_VIBE_STRIPE_ACCOUNT_ID not set in environment variables.
+          <p style={{ fontSize: '40px', margin: '0 0 12px' }}>💳</p>
+          <h2 style={{ color: '#6B7FFF', margin: '0 0 8px', fontSize: '18px' }}>
+            Stripe not connected yet
+          </h2>
+          <p style={{ color: '#888', margin: '0 0 24px', fontSize: '14px' }}>
+            Connect a Stripe account to start receiving payouts from events.
           </p>
-          <p style={{ color: '#888', fontSize: '13px', margin: '8px 0 0' }}>
-            Visit /api/stripe/connect/onboard?secret=ADMIN_SECRET to set up the connected account.
-          </p>
+          <button
+            onClick={handleConnect}
+            disabled={connecting}
+            style={{
+              padding: '14px 32px',
+              background: '#6B7FFF',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              fontWeight: 700,
+              fontSize: '15px',
+              cursor: connecting ? 'wait' : 'pointer',
+            }}
+          >
+            {connecting ? 'Redirecting to Stripe...' : 'Connect Stripe Account →'}
+          </button>
         </div>
-      ) : accountStatus ? (
+      ) : (
         <div style={{
-          background:   'rgba(255,255,255,0.03)',
-          border:       '1px solid rgba(255,255,255,0.08)',
-          borderRadius: '16px',
-          padding:      '24px',
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: '8px',
+          padding: '24px',
         }}>
-          {/* Status indicator */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
             <div style={{
-              width:        '12px',
-              height:       '12px',
+              width: '12px',
+              height: '12px',
               borderRadius: '50%',
-              background:   accountStatus.chargesEnabled ? '#2ECC71' : '#FF4444',
+              background: status.status === 'active' ? '#2ECC71' : '#FFB300',
             }} />
             <p style={{ color: '#fff', fontWeight: 600, margin: 0, fontSize: '16px' }}>
-              Not Regular Events — {accountStatus.chargesEnabled ? 'Active' : 'Pending Setup'}
+              Not Regular Events —{' '}
+              {status.status === 'active' ? 'Active ✅' : 'Pending Setup ⏳'}
             </p>
           </div>
 
-          {/* Connection details */}
           {[
-            { label: 'Account ID',      value: accountStatus.id                             },
-            { label: 'Charges enabled', value: accountStatus.chargesEnabled ? 'Yes' : 'No' },
-            { label: 'Payouts enabled', value: accountStatus.payoutsEnabled ? 'Yes' : 'No' },
+            { label: 'Account ID',        value: status.accountId ?? '—' },
+            { label: 'Charges enabled',   value: status.chargesEnabled   ? '✅ Yes' : '❌ No' },
+            { label: 'Payouts enabled',   value: status.payoutsEnabled   ? '✅ Yes' : '❌ No' },
+            { label: 'Details submitted', value: status.detailsSubmitted ? '✅ Yes' : '❌ No' },
           ].map(item => (
             <div
               key={item.label}
               style={{
-                display:        'flex',
+                display: 'flex',
                 justifyContent: 'space-between',
-                padding:        '10px 0',
-                borderBottom:   '1px solid rgba(255,255,255,0.05)',
+                padding: '10px 0',
+                borderBottom: '1px solid rgba(255,255,255,0.05)',
               }}
             >
               <span style={{ color: '#888', fontSize: '14px' }}>{item.label}</span>
-              <span style={{ color: '#fff', fontSize: '14px', fontFamily: 'monospace' }}>{item.value}</span>
+              <span style={{ color: '#fff', fontSize: '14px', fontFamily: 'monospace' }}>
+                {item.value}
+              </span>
             </div>
           ))}
 
+          {status.status !== 'active' && (
+            <button
+              onClick={handleConnect}
+              disabled={connecting}
+              style={{
+                marginTop: '20px',
+                padding: '12px 24px',
+                background: 'rgba(45,91,255,0.1)',
+                border: '1px solid #6B7FFF',
+                color: '#6B7FFF',
+                borderRadius: '4px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              {connecting ? 'Redirecting...' : 'Finish Setup →'}
+            </button>
+          )}
         </div>
-      ) : (
-        <p style={{ color: '#FF4444' }}>Could not fetch account details — check server logs.</p>
       )}
     </div>
   )

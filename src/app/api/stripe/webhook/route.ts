@@ -609,7 +609,13 @@ export async function POST(request: NextRequest) {
         // Only process invoices from a subscription (v22 API: subscription info is in invoice.parent)
         if (invoice.parent?.type !== 'subscription_details') break
 
-        const erasmusVibeAccountId = process.env.ERASMUS_VIBE_STRIPE_ACCOUNT_ID
+        const invoiceAdmin = getAdminClient()
+        const { data: accountSetting } = await invoiceAdmin
+          .from('platform_settings')
+          .select('value')
+          .eq('key', 'nre_stripe_account_id')
+          .single()
+        const erasmusVibeAccountId = accountSetting?.value ?? null
         if (!erasmusVibeAccountId) break
 
         const platformFeeMembership = parseInt(process.env.PLATFORM_FEE_MEMBERSHIP || '50') / 100
@@ -634,6 +640,27 @@ export async function POST(request: NextRequest) {
         } catch (err) {
           console.error('❌ Membership transfer failed:', err)
         }
+        break
+      }
+
+      case 'account.updated': {
+        const account = event.data.object as Stripe.Account
+        const isActive =
+          account.details_submitted &&
+          account.charges_enabled &&
+          account.payouts_enabled
+
+        const acctAdmin = getAdminClient()
+        await acctAdmin
+          .from('platform_settings')
+          .upsert(
+            {
+              key: 'nre_stripe_account_status',
+              value: isActive ? 'active' : 'pending',
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: 'key' },
+          )
         break
       }
 

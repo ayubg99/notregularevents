@@ -300,10 +300,16 @@ async function handleCheckout(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ url: `${baseUrl}/booking/success?ref=${bookingRef}` })
     }
 
-    const erasmusVibeAccountId = process.env.ERASMUS_VIBE_STRIPE_ACCOUNT_ID
+    const adminClient = getAdminClient()
+    const { data: accountSetting } = await adminClient
+      .from('platform_settings')
+      .select('value')
+      .eq('key', 'nre_stripe_account_id')
+      .single()
+    const erasmusVibeAccountId = accountSetting?.value ?? null
     if (!erasmusVibeAccountId) {
-      console.error('[create-checkout] ERASMUS_VIBE_STRIPE_ACCOUNT_ID not set')
-      return NextResponse.json({ error: 'Payment configuration error' }, { status: 500 })
+      console.error('[create-checkout] nre_stripe_account_id not set in platform_settings')
+      return NextResponse.json({ error: 'Payments not configured yet' }, { status: 500 })
     }
     const platformFeeEvents = parseInt(process.env.PLATFORM_FEE_EVENTS || '20') / 100
     const eventGrossAmount = Math.round(unitPrice * quantity * 100)
