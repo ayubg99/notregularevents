@@ -3,76 +3,91 @@ import { getAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 
-const ROOM_PHOTO_SETS = [
+// Photo sets matched to listing types — the seed-housing route already
+// embeds photos; this route re-applies them if photos were cleared.
+
+const LISTING_PHOTO_SETS = [
+  // Sunny private room — Malasaña
   [
     'https://images.unsplash.com/photo-1598928636135-d146006ff4be?w=800&q=80',
     'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
-    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
+    'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80',
   ],
+  // Modern studio — Chueca
   [
-    'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80',
-    'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=800&q=80',
+    'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&q=80',
+    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
+    'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80',
+  ],
+  // Room with balcony — La Latina
+  [
+    'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
+    'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80',
     'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
   ],
+  // Cosy room — Lavapiés
+  [
+    'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80',
+    'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80',
+    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
+  ],
+  // Student room — Moncloa
+  [
+    'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800&q=80',
+    'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&q=80',
+    'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
+  ],
+  // Bright room — Chamberí
   [
     'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80',
     'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&q=80',
-    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
-  ],
-  [
-    'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800&q=80',
     'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80',
-    'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
   ],
+  // Looking for room — no photos
+  [],
+  // Looking for flatmate — La Latina
   [
-    'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80',
     'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=800&q=80',
-    'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&q=80',
-  ],
-  [
     'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
-    'https://images.unsplash.com/photo-1598928636135-d146006ff4be?w=800&q=80',
-    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
-  ],
-  [
-    'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&q=80',
-    'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80',
-    'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
   ],
 ]
 
 const PARTNER_ROOM_PHOTO_SETS = [
+  // Premium Studio — Salamanca
   [
     'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&q=80',
-    'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&q=80',
-    'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
     'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
-  ],
-  [
-    'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80',
-    'https://images.unsplash.com/photo-1598928636135-d146006ff4be?w=800&q=80',
-    'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80',
-  ],
-  [
-    'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800&q=80',
     'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80',
     'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
   ],
+  // Modern room — Malasaña
   [
-    'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80',
-    'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=800&q=80',
-    'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&q=80',
-    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
-  ],
-  [
-    'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
     'https://images.unsplash.com/photo-1598928636135-d146006ff4be?w=800&q=80',
-    'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
+    'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&q=80',
+    'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80',
   ],
+  // Cosy room — La Latina
+  [
+    'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80',
+    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
+    'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=800&q=80',
+  ],
+  // Affordable room — Lavapiés
+  [
+    'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800&q=80',
+    'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
+    'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80',
+  ],
+  // Bright room — Retiro
   [
     'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&q=80',
-    'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&q=80',
-    'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80',
+    'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80',
+    'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
+  ],
+  // Erasmus flat — Moncloa
+  [
+    'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80',
+    'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&q=80',
     'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
   ],
 ]
@@ -91,7 +106,7 @@ export async function POST() {
   if (fetchListingsErr) return NextResponse.json({ error: fetchListingsErr.message }, { status: 500 })
 
   for (let i = 0; i < (listings ?? []).length; i++) {
-    const photos = ROOM_PHOTO_SETS[i % ROOM_PHOTO_SETS.length]
+    const photos = LISTING_PHOTO_SETS[i % LISTING_PHOTO_SETS.length]
     const { error } = await supabase
       .from('housing_listings')
       .update({ photos })
@@ -120,8 +135,8 @@ export async function POST() {
   // ── 3. Partner logos ──────────────────────────────────────────
 
   const PARTNER_LOGOS: Record<string, string> = {
-    'Erasmus Rooms Valencia':   'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&q=80',
-    'Valencia Student Housing': 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400&q=80',
+    'Madrid Student Rooms':   'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&q=80',
+    'Erasmus Housing Madrid': 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400&q=80',
   }
 
   for (const [name, logo_url] of Object.entries(PARTNER_LOGOS)) {
