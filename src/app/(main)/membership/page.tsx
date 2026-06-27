@@ -30,8 +30,8 @@ const BENEFITS = [
   },
   {
     icon:  '⚡',
-    title: 'Priority Trip Booking',
-    desc:  'Get early access before popular trips sell out.',
+    title: 'Priority Access Before Public Release',
+    desc:  'Get access to drops before anyone else.',
   },
   {
     icon:  '🎉',
