@@ -25,8 +25,8 @@ export const metadata = {
 const BENEFITS = [
   {
     icon:  '🎟️',
-    title: '10% Off All Events & Trips',
-    desc:  'Save on every event ticket and trip booking.',
+    title: '10% Off All Events',
+    desc:  'Save on every event ticket.',
   },
   {
     icon:  '⚡',
