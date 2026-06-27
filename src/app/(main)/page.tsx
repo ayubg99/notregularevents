@@ -1,5 +1,14 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
+import { getPublicClient } from '@/lib/supabase/public'
+import { Hero } from '@/components/home/Hero'
+import FeaturedEvents from '@/components/home/FeaturedEvents'
+import PartyRecapSection from '@/components/home/PartyRecapSection'
+import CommunitySection from '@/components/home/CommunitySection'
+import TestimonialsSection from '@/components/home/TestimonialsSection'
+import NewsletterSection from '@/components/home/NewsletterSection'
+import SponsorsSection from '@/components/home/SponsorsSection'
+import AmbassadorSection from '@/components/home/AmbassadorSection'
 
 export const metadata: Metadata = {
   title:       'Not Regular Events | Guestlist Parties & Club Nights in Madrid',
@@ -16,14 +25,6 @@ export const metadata: Metadata = {
     description: 'Not your regular events. Guestlist parties, club nights and the best nightlife in Madrid.',
   },
 }
-import HeroSection from '@/components/home/HeroSection'
-import FeaturedEvents from '@/components/home/FeaturedEvents'
-import PartyRecapSection from '@/components/home/PartyRecapSection'
-import CommunitySection from '@/components/home/CommunitySection'
-import TestimonialsSection from '@/components/home/TestimonialsSection'
-import NewsletterSection from '@/components/home/NewsletterSection'
-import SponsorsSection from '@/components/home/SponsorsSection'
-import AmbassadorSection from '@/components/home/AmbassadorSection'
 
 // ─── Skeleton fallbacks shown while Supabase data loads ────────
 
@@ -51,35 +52,45 @@ function EventsSkeleton() {
 
 // ─── Page ──────────────────────────────────────────────────────
 
-export default function HomePage() {
+export default async function HomePage() {
+  const supabase = getPublicClient()
+  const { data: nextEvent } = await supabase
+    .from('events')
+    .select('*')
+    .eq('status', 'published')
+    .gte('date', new Date().toISOString())
+    .order('date', { ascending: true })
+    .limit(1)
+    .maybeSingle()
+
   return (
     <>
-      {/* 1. Hero — full viewport, video bg */}
-      <HeroSection />
+      {/* 1. Hero — video background + live "Next Up" event block */}
+      <Hero nextEvent={nextEvent} city="Madrid" />
 
       {/* 2. Events — streams from Supabase */}
       <Suspense fallback={<EventsSkeleton />}>
         <FeaturedEvents />
       </Suspense>
 
-      {/* 4. Party recap — horizontal video strip */}
+      {/* 3. Party recap — horizontal video strip */}
       <Suspense fallback={null}>
         <PartyRecapSection />
       </Suspense>
 
-      {/* 5. Ambassador program — earn by sharing */}
+      {/* 4. Ambassador program — earn by sharing */}
       <AmbassadorSection />
 
-      {/* 6. Testimonials — auto-advance carousel */}
+      {/* 5. Testimonials — auto-advance carousel */}
       <TestimonialsSection />
 
-      {/* 7. Community — WhatsApp + Instagram CTAs */}
+      {/* 6. Community — WhatsApp + Instagram CTAs */}
       <CommunitySection />
 
-      {/* 8. Sponsors — logo strip, renders nothing if no active sponsors */}
+      {/* 7. Sponsors — logo strip, renders nothing if no active sponsors */}
       <SponsorsSection />
 
-      {/* 9. Newsletter — server action + animated success */}
+      {/* 8. Newsletter — server action + animated success */}
       <NewsletterSection />
     </>
   )
