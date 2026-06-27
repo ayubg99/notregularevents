@@ -24,7 +24,7 @@ export function EventsSectionHeader({
         marginBottom: showTabs ? '20px' : 0,
       }}>
         <h2 style={{
-          fontFamily: 'Anton, sans-serif',
+          fontFamily: 'var(--font-anton), Anton, sans-serif',
           fontSize: 'clamp(36px, 6vw, 64px)',
           color: '#fff',
           margin: 0,
@@ -35,7 +35,7 @@ export function EventsSectionHeader({
         </h2>
         <p style={{
           color: 'var(--text-muted)',
-          fontFamily: "'JetBrains Mono', monospace",
+          fontFamily: 'var(--font-jetbrains), monospace',
           fontWeight: 600,
           fontSize: '12px',
           letterSpacing: '0.05em',
@@ -58,7 +58,7 @@ export function EventsSectionHeader({
                 border: activeCity === city ? 'none' : '1px solid var(--border-subtle)',
                 color: activeCity === city ? '#fff' : 'var(--text-secondary)',
                 padding: '8px 20px',
-                fontFamily: "'JetBrains Mono', monospace",
+                fontFamily: 'var(--font-jetbrains), monospace',
                 fontSize: '13px',
                 fontWeight: 700,
                 textTransform: 'uppercase',

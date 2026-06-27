@@ -1,6 +1,21 @@
 import type { Metadata } from 'next'
+import { Anton, JetBrains_Mono } from 'next/font/google'
 import Providers from './providers'
 import './globals.css'
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets:  ['latin'],
+  weight:   ['400', '500', '600', '700', '800'],
+  variable: '--font-jetbrains',
+  display:  'swap',
+})
+
+const anton = Anton({
+  subsets:  ['latin'],
+  weight:   '400',
+  variable: '--font-anton',
+  display:  'swap',
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://notregularevents.com'),
@@ -44,12 +59,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="h-full scroll-smooth dark"
+      className={`h-full scroll-smooth dark ${jetbrainsMono.variable} ${anton.variable}`}
     >
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
       <body className="min-h-full flex flex-col font-body antialiased">
         <Providers>
           {children}

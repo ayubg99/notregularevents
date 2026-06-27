@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 /* ── Tailwind v4 Design Tokens (CSS-first config) ─────────────────── */
@@ -66,8 +65,8 @@
 
 /* ── Semantic CSS variables ────────────────────────────────────────── */
 :root {
-  --font-display:  'Anton', sans-serif;
-  --font-primary:  'JetBrains Mono', monospace;
+  --font-display:  var(--font-anton), 'Anton', sans-serif;
+  --font-primary:  var(--font-jetbrains), 'JetBrains Mono', monospace;
 
   --bg-base:       #0A0A0A;
   --bg-card:       #161616;
@@ -119,7 +118,7 @@
 
 /* ── Heading base styles ───────────────────────────────────────────── */
 h1 {
-  font-family:    'Anton', sans-serif;
+  font-family:    var(--font-anton), 'Anton', sans-serif;
   font-weight:    400;
   text-transform: uppercase;
   letter-spacing: -0.01em;
@@ -127,7 +126,7 @@ h1 {
 }
 
 h2 {
-  font-family:    'JetBrains Mono', monospace;
+  font-family:    var(--font-jetbrains), 'JetBrains Mono', monospace;
   font-weight:    800;
   text-transform: uppercase;
   letter-spacing: -0.02em;
@@ -135,20 +134,20 @@ h2 {
 }
 
 h3, .card-title {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-jetbrains), 'JetBrains Mono', monospace;
   font-weight: 700;
 }
 
 /* ── Base body font ────────────────────────────────────────────────── */
 body {
-  font-family:     'JetBrains Mono', monospace;
+  font-family:     var(--font-jetbrains), 'JetBrains Mono', monospace;
   font-weight:     400;
   letter-spacing:  -0.01em;
 }
 
 /* ── Display font utility (Anton — hero/section titles only) ───────── */
 .font-display {
-  font-family:    'Anton', sans-serif;
+  font-family:    var(--font-anton), 'Anton', sans-serif;
   font-weight:    400;
   text-transform: uppercase;
   letter-spacing: -0.01em;
@@ -157,21 +156,21 @@ body {
 
 /* ── Paragraph and form elements ───────────────────────────────────── */
 p, label, input, textarea {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-jetbrains), 'JetBrains Mono', monospace;
   font-weight: 400;
   line-height: 1.6;
 }
 
 /* ── Nav, buttons ──────────────────────────────────────────────────── */
 nav a, button, .btn-primary, .btn-secondary {
-  font-family:     'JetBrains Mono', monospace;
+  font-family:     var(--font-jetbrains), 'JetBrains Mono', monospace;
   font-weight:     600;
   letter-spacing:  -0.01em;
 }
 
 /* ── Numbers, dates, prices ────────────────────────────────────────── */
 .price, .date-badge, .stat-number {
-  font-family:          'JetBrains Mono', monospace;
+  font-family:          var(--font-jetbrains), 'JetBrains Mono', monospace;
   font-weight:          700;
   font-feature-settings: 'tnum';
 }
@@ -328,3 +327,12 @@ body {
 ::-webkit-scrollbar-track        { background: transparent; }
 ::-webkit-scrollbar-thumb        { background: #2D5BFF; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover  { background: #1a3acc; }
+
+/* ── Link color reset — prevent browser default blue/visited purple ── */
+a         { color: inherit; }
+a:visited { color: inherit; }
+
+/* ── Event card title link hover state ─────────────────────────────── */
+.event-title-link         { color: #fff; text-decoration: none; }
+.event-title-link:visited { color: #fff; }
+.event-title-link:hover   { color: var(--accent-blue); }
