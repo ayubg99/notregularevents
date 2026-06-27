@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 export default function EventsPage() {
   return (
-    <main className="min-h-screen bg-brand-dark pt-20 pb-24">
+    <main className="min-h-screen bg-brand-dark pt-32 md:pt-20 pb-24">
       <EventsClient />
     </main>
   )

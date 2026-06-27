@@ -65,7 +65,7 @@ export default async function AboutPage() {
     <div className="min-h-screen bg-brand-dark">
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden pt-32 pb-20 px-4">
+      <section className="relative overflow-hidden pt-44 md:pt-32 pb-20 px-4">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(255,107,0,0.12),transparent)] pointer-events-none" />
         <div className="absolute top-1/3 -left-40 w-[500px] h-[500px] rounded-full bg-brand-primary/12 blur-[120px] pointer-events-none" />
         <div className="absolute bottom-0 -right-40 w-[400px] h-[400px] rounded-full bg-brand-accent/8 blur-[100px] pointer-events-none" />

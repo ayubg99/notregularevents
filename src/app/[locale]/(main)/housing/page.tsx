@@ -44,7 +44,7 @@ export default async function HousingPage() {
     .order('created_at', { ascending: false }) as unknown as { data: PartnerRoomRow[] | null }
 
   return (
-    <main className="min-h-screen pt-20 pb-28">
+    <main className="min-h-screen pt-32 md:pt-20 pb-28">
       <PageHeader tag={t('pageTag')} title={t('pageTitle')} />
 
       <div className="container-marketing mt-10">
