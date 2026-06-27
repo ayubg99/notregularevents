@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { X } from 'lucide-react'
 import type { PartnerRoomRow } from '@/types/database'
 
@@ -25,13 +26,6 @@ const NATIONALITIES = [
   'Zambian','Zimbabwean',
 ]
 
-const DURATION_OPTIONS = [
-  { value: 1,   label: '1 month' },
-  { value: 3,   label: '3 months' },
-  { value: 6,   label: 'Semester (~6 months)' },
-  { value: 12,  label: 'Year' },
-]
-
 interface Props {
   room: PartnerRoomRow
   open: boolean
@@ -39,6 +33,7 @@ interface Props {
 }
 
 export default function BookRoomModal({ room, open, onClose }: Props) {
+  const t = useTranslations('housing')
   const [form, setForm] = useState({
     guestName:    '',
     guestEmail:   '',
@@ -54,6 +49,13 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
 
   if (!open) return null
 
+  const DURATION_OPTIONS = [
+    { value: 1,   label: t('duration1Month')  },
+    { value: 3,   label: t('duration3Months') },
+    { value: 6,   label: t('durationSemester') },
+    { value: 12,  label: t('durationYear')    },
+  ]
+
   function set(field: string, value: string | number) {
     setForm(f => ({ ...f, [field]: value }))
   }
@@ -63,7 +65,7 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
     setError('')
 
     if (!form.guestName || !form.guestEmail || !form.guestPhone || !form.nationality || !form.university || !form.moveInDate) {
-      setError('Please fill in all required fields.')
+      setError(t('errorRequiredFields'))
       return
     }
 
@@ -108,7 +110,7 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-white font-bold text-lg">Reserve This Room</h2>
+            <h2 className="text-white font-bold text-lg">{t('reserveThisRoom')}</h2>
             <p className="text-white/50 text-sm">{room.title}</p>
           </div>
           <button onClick={onClose} className="text-white/40 hover:text-white transition-colors">
@@ -119,7 +121,7 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Full name *</label>
+              <label className={labelClass}>{t('labelFullNameRequired')}</label>
               <input
                 className={inputClass}
                 placeholder="Your full name"
@@ -128,7 +130,7 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
               />
             </div>
             <div>
-              <label className={labelClass}>Email *</label>
+              <label className={labelClass}>{t('labelEmailRequired')}</label>
               <input
                 type="email"
                 className={inputClass}
@@ -141,7 +143,7 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>WhatsApp number *</label>
+              <label className={labelClass}>{t('labelWhatsapp')}</label>
               <input
                 className={inputClass}
                 placeholder="+34 600 000 000"
@@ -150,13 +152,13 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
               />
             </div>
             <div>
-              <label className={labelClass}>Nationality *</label>
+              <label className={labelClass}>{t('labelNationalityRequired')}</label>
               <select
                 className={inputClass}
                 value={form.nationality}
                 onChange={e => set('nationality', e.target.value)}
               >
-                <option value="">Select nationality</option>
+                <option value="">{t('selectNationalityPlaceholder')}</option>
                 {NATIONALITIES.map(n => (
                   <option key={n} value={n}>{n}</option>
                 ))}
@@ -165,7 +167,7 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
           </div>
 
           <div>
-            <label className={labelClass}>University *</label>
+            <label className={labelClass}>{t('labelUniversity')}</label>
             <input
               className={inputClass}
               placeholder="e.g. Universitat de València"
@@ -175,7 +177,7 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
           </div>
 
           <div>
-            <label className={labelClass}>Move-in date *</label>
+            <label className={labelClass}>{t('labelMoveIn')}</label>
             <input
               type="date"
               className={inputClass}
@@ -185,7 +187,7 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
           </div>
 
           <div>
-            <label className={labelClass}>Duration *</label>
+            <label className={labelClass}>{t('labelDuration')}</label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {DURATION_OPTIONS.map(opt => (
                 <button
@@ -205,7 +207,7 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
           </div>
 
           <div>
-            <label className={labelClass}>Message to landlord (optional)</label>
+            <label className={labelClass}>{t('labelMessage')}</label>
             <textarea
               className={`${inputClass} resize-none`}
               rows={3}
@@ -217,14 +219,13 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
 
           {/* Payment summary */}
           <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-2">
-            <p className="text-white/70 text-sm font-medium">You pay now</p>
+            <p className="text-white/70 text-sm font-medium">{t('youPayNow')}</p>
             <div className="flex justify-between text-sm">
-              <span className="text-white/50">Platform fee</span>
+              <span className="text-white/50">{t('platformFee')}</span>
               <span className="text-white font-bold">€{room.platform_fee}</span>
             </div>
             <p className="text-white/40 text-xs border-t border-white/10 pt-2">
-              Rent €{room.monthly_rent}/month and deposit €{room.deposit_amount} are paid
-              directly to the landlord after your viewing.
+              {t('rentDepositNote', { rent: room.monthly_rent, deposit: room.deposit_amount })}
             </p>
           </div>
 
@@ -237,7 +238,7 @@ export default function BookRoomModal({ room, open, onClose }: Props) {
             disabled={loading}
             className="btn-primary w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-50"
           >
-            {loading ? 'Redirecting to payment…' : `Pay €${room.platform_fee} & Reserve Room →`}
+            {loading ? t('redirectingPayment') : t('payAndReserve', { fee: room.platform_fee })}
           </button>
         </form>
       </div>

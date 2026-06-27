@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import type { HousingListingRow } from '@/types/database'
 
@@ -6,20 +7,22 @@ interface Props {
   hasMembership: boolean
 }
 
-export default function ContactSection({ listing, hasMembership }: Props) {
+export default async function ContactSection({ listing, hasMembership }: Props) {
+  const t = await getTranslations('housing')
+
   if (!hasMembership) {
     return (
       <div className="bg-brand-accent/10 border border-brand-accent/30 rounded-2xl p-6 text-center">
         <p className="text-3xl mb-2">👑</p>
-        <h3 className="text-brand-accent font-semibold text-base mb-2">Members only</h3>
+        <h3 className="text-brand-accent font-semibold text-base mb-2">{t('membersOnly')}</h3>
         <p className="text-white/50 text-sm mb-5">
-          Join membership to see contact details.
+          {t('joinToSeeContacts')}
         </p>
         <Link
           href="/membership"
           className="inline-block btn-primary px-6 py-3 text-sm"
         >
-          Join Membership →
+          {t('joinMembership')}
         </Link>
       </div>
     )
@@ -27,7 +30,7 @@ export default function ContactSection({ listing, hasMembership }: Props) {
 
   return (
     <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-6 space-y-3">
-      <h3 className="text-green-400 font-semibold text-base">📞 Contact Details</h3>
+      <h3 className="text-green-400 font-semibold text-base">{t('contactDetails')}</h3>
       {listing.contact_whatsapp && (
         <a
           href={`https://wa.me/${listing.contact_whatsapp.replace(/\D/g, '')}`}

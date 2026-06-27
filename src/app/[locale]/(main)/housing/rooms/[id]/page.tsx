@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
+import { getLocale } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { getAdminClient } from '@/lib/supabase/admin'
 import PhotoGallery from '@/components/housing/PhotoGallery'
@@ -6,34 +8,6 @@ import RoomBookingSidebar from '@/components/housing/RoomBookingSidebar'
 import type { PartnerRoomRow } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
-
-const ROOM_TYPE_LABELS: Record<string, string> = {
-  private_room:   'Private Room',
-  shared_room:    'Shared Room',
-  studio:         'Studio',
-  full_apartment: 'Full Apartment',
-}
-
-const GENDER_LABELS: Record<string, string> = {
-  male:   'Male only',
-  female: 'Female only',
-  mixed:  'Mixed',
-  any:    'Any gender',
-}
-
-const AMENITY_DISPLAY: Record<string, string> = {
-  wifi:             '📶 WiFi',
-  ac:               '❄️ Air conditioning',
-  washing_machine:  '🧺 Washing machine',
-  balcony:          '🌿 Balcony',
-  bills_included:   '💡 Bills included',
-  furnished:        '🪑 Furnished',
-  private_bathroom: '🚿 Private bathroom',
-  near_university:  '🏫 Near university',
-  parking:          '🅿️ Parking',
-  elevator:         '🛗 Elevator',
-  heating:          '🔥 Heating',
-}
 
 const NATIONALITY_FLAGS: Record<string, string> = {
   Spanish: '🇪🇸', Italian: '🇮🇹', French: '🇫🇷', German: '🇩🇪', Portuguese: '🇵🇹',
@@ -45,7 +19,39 @@ const NATIONALITY_FLAGS: Record<string, string> = {
 }
 
 export default async function RoomDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+  const { id }   = await params
+  const t        = await getTranslations('housing')
+  const locale   = await getLocale()
+  const dateLocale = locale === 'es' ? 'es-ES' : 'en-GB'
+
+  const ROOM_TYPE_LABELS: Record<string, string> = {
+    private_room:   t('privateRoom'),
+    shared_room:    t('sharedRoom'),
+    studio:         t('studio'),
+    full_apartment: t('fullApartment'),
+  }
+
+  const GENDER_LABELS: Record<string, string> = {
+    male:   t('maleOnly'),
+    female: t('femaleOnly'),
+    mixed:  t('mixed'),
+    any:    t('anyGender'),
+  }
+
+  const AMENITY_DISPLAY: Record<string, string> = {
+    wifi:             `📶 WiFi`,
+    ac:               `❄️ ${locale === 'es' ? 'Aire acondicionado' : 'Air conditioning'}`,
+    washing_machine:  `🧺 ${locale === 'es' ? 'Lavadora' : 'Washing machine'}`,
+    balcony:          `🌿 ${locale === 'es' ? 'Balcón' : 'Balcony'}`,
+    bills_included:   `💡 ${t('billsIncluded')}`,
+    furnished:        `🪑 ${locale === 'es' ? 'Amueblado' : 'Furnished'}`,
+    private_bathroom: `🚿 ${locale === 'es' ? 'Baño privado' : 'Private bathroom'}`,
+    near_university:  `🏫 ${locale === 'es' ? 'Cerca de la universidad' : 'Near university'}`,
+    parking:          `🅿️ Parking`,
+    elevator:         `🛗 ${locale === 'es' ? 'Ascensor' : 'Elevator'}`,
+    heating:          `🔥 ${locale === 'es' ? 'Calefacción' : 'Heating'}`,
+  }
+
   const adminClient = getAdminClient()
 
   const { data: room } = await adminClient
@@ -56,7 +62,6 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
 
   if (!room) notFound()
 
-  // Fire-and-forget view increment
   void (getAdminClient() as ReturnType<typeof getAdminClient>)
     .from('partner_rooms')
     .update({ views: room.views + 1 })
@@ -68,7 +73,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
 
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-white/40 mb-6">
-          <Link href="/housing" className="hover:text-white transition-colors">Housing</Link>
+          <Link href="/housing" className="hover:text-white transition-colors">{t('pageTag')}</Link>
           <span>/</span>
           <span className="text-white/60">{room.title}</span>
         </div>
@@ -85,14 +90,14 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
             <div className="mb-6">
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 <span className="bg-orange-400 text-brand-dark text-xs font-bold px-2.5 py-1 rounded-full">
-                  ⭐ VERIFIED PARTNER
+                  {t('verifiedPartner')}
                 </span>
                 <span className="text-xs text-white/50 bg-white/5 border border-white/10 px-2.5 py-1 rounded-full">
                   {ROOM_TYPE_LABELS[room.room_type] ?? room.room_type}
                 </span>
                 {room.bills_included && (
                   <span className="text-xs text-green-400 bg-green-400/10 border border-green-400/20 px-2.5 py-1 rounded-full">
-                    Bills included
+                    {t('billsIncluded')}
                   </span>
                 )}
               </div>
@@ -107,35 +112,37 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
             <div className="glass-card rounded-2xl p-5 mb-6 grid grid-cols-2 md:grid-cols-3 gap-4">
               {room.available_from && (
                 <div>
-                  <p className="text-white/40 text-xs mb-1">Available from</p>
+                  <p className="text-white/40 text-xs mb-1">{t('availableFrom')}</p>
                   <p className="text-white text-sm font-medium">
-                    {new Date(room.available_from).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {new Date(room.available_from).toLocaleDateString(dateLocale, { day: 'numeric', month: 'short', year: 'numeric' })}
                   </p>
                 </div>
               )}
               {room.available_until && (
                 <div>
-                  <p className="text-white/40 text-xs mb-1">Available until</p>
+                  <p className="text-white/40 text-xs mb-1">{t('availableUntil')}</p>
                   <p className="text-white text-sm font-medium">
-                    {new Date(room.available_until).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {new Date(room.available_until).toLocaleDateString(dateLocale, { day: 'numeric', month: 'short', year: 'numeric' })}
                   </p>
                 </div>
               )}
               <div>
-                <p className="text-white/40 text-xs mb-1">Gender preference</p>
+                <p className="text-white/40 text-xs mb-1">{t('genderPreference')}</p>
                 <p className="text-white text-sm font-medium">
                   {GENDER_LABELS[room.gender_preference] ?? room.gender_preference}
                 </p>
               </div>
               {room.flatmates_count > 0 && (
                 <div>
-                  <p className="text-white/40 text-xs mb-1">Flatmates</p>
-                  <p className="text-white text-sm font-medium">{room.flatmates_count} roommate{room.flatmates_count !== 1 ? 's' : ''}</p>
+                  <p className="text-white/40 text-xs mb-1">{t('flatmates')}</p>
+                  <p className="text-white text-sm font-medium">
+                    {room.flatmates_count} {room.flatmates_count !== 1 ? t('roommatesPlural') : t('roommateOne')}
+                  </p>
                 </div>
               )}
               {room.flatmates_nationalities.length > 0 && (
                 <div className="col-span-2">
-                  <p className="text-white/40 text-xs mb-1">Flatmate nationalities</p>
+                  <p className="text-white/40 text-xs mb-1">{t('flatmateNationalities')}</p>
                   <p className="text-sm">
                     {room.flatmates_nationalities.map(n => (
                       <span key={n} className="mr-1" title={n}>
@@ -150,7 +157,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
             {/* Amenities */}
             {room.amenities.length > 0 && (
               <div className="glass-card rounded-2xl p-5 mb-6">
-                <h2 className="text-white font-semibold mb-4">Amenities</h2>
+                <h2 className="text-white font-semibold mb-4">{t('amenities')}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {room.amenities.map(a => (
                     <div key={a} className="flex items-center gap-2 text-white/70 text-sm">
@@ -164,21 +171,21 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
             {/* Description */}
             {room.description && (
               <div className="glass-card rounded-2xl p-5 mb-6">
-                <h2 className="text-white font-semibold mb-3">About this room</h2>
+                <h2 className="text-white font-semibold mb-3">{t('aboutThisRoom')}</h2>
                 <p className="text-white/60 text-sm leading-relaxed whitespace-pre-wrap">{room.description}</p>
               </div>
             )}
 
             {/* What happens next */}
             <div className="glass-card rounded-2xl p-5">
-              <h2 className="text-white font-semibold mb-4">What happens next?</h2>
+              <h2 className="text-white font-semibold mb-4">{t('whatHappensNext')}</h2>
               <ol className="space-y-3">
-                {[
-                  ['Pay €50 reservation fee', 'Secure payment via Stripe — fully refundable'],
-                  ['Landlord confirms within 48 hours', 'You\'ll receive their contact details by email once confirmed'],
-                  ['Schedule a viewing', 'Arrange a time that works for you both'],
-                  ['Pay rent + deposit to landlord', 'Agreed directly between you and the landlord'],
-                ].map(([step, desc], i) => (
+                {([
+                  [t('partnerStep1'), t('partnerStep1Desc')],
+                  [t('partnerStep2'), t('partnerStep2Desc')],
+                  [t('partnerStep3'), t('partnerStep3Desc')],
+                  [t('partnerStep4'), t('partnerStep4Desc')],
+                ] as [string, string][]).map(([step, desc], i) => (
                   <li key={i} className="flex gap-4">
                     <span className="w-7 h-7 rounded-full bg-brand-primary/20 text-brand-primary text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
                       {i + 1}
