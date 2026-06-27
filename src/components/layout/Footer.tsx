@@ -1,5 +1,5 @@
+import Image from 'next/image'
 import { Camera, MessageCircle, Music2, MapPin } from 'lucide-react'
-import { Logo } from '@/components/shared/Logo'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 
@@ -52,7 +52,7 @@ export default function Footer() {
           <div className="lg:col-span-2 flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <Link href="/">
-                <Logo size="small" />
+                <Image src="/nre-logo.png" alt="Not Regular Events" width={200} height={52} className="h-14 w-auto" />
               </Link>
               <span className="text-white/30 text-sm font-bold">/ Madrid</span>
             </div>

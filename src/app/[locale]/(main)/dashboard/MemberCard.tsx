@@ -92,7 +92,7 @@ export default function MemberCard({ membership, displayName, nationality, unive
               NOT REGULAR MEMBER
             </span>
           </div>
-          <Image src="/nre-logo.jpeg" alt="Not Regular Events" width={36} height={36} className="rounded-full flex-shrink-0" />
+          <Image src="/nre-logo.png" alt="Not Regular Events" width={36} height={36} className="rounded-full flex-shrink-0" />
         </div>
 
         {/* Divider */}

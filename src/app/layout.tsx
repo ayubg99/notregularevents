@@ -34,22 +34,22 @@ export const metadata: Metadata = {
   ],
   authors:  [{ name: 'Not Regular Events' }],
   icons: {
-    icon:     '/nre-logo.jpeg',
-    shortcut: '/nre-logo.jpeg',
-    apple:    '/nre-logo.jpeg',
+    icon:     '/nre-logo.png',
+    shortcut: '/nre-logo.png',
+    apple:    '/nre-logo.png',
   },
   openGraph: {
     type:        'website',
     siteName:    'Not Regular Events',
     title:       'Not Regular Events — Madrid',
     description: 'Not your regular events. Guestlist parties, club nights and the best nightlife experiences in Madrid. Join the community.',
-    images:      [{ url: '/nre-logo.jpeg' }],
+    images:      [{ url: '/nre-logo.png' }],
   },
   twitter: {
     card:        'summary',
     title:       'Not Regular Events — Madrid',
     description: 'Not your regular events. Guestlist parties, club nights and the best nightlife in Madrid.',
-    images:      ['/nre-logo.jpeg'],
+    images:      ['/nre-logo.png'],
   },
 }
 

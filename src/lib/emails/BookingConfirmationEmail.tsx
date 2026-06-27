@@ -28,7 +28,7 @@ export function BookingConfirmationEmail({
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#FF6B00;">
     <tr>
       <td align="center" style="padding:28px 24px;">
-        <img src="${baseUrl}/logo.png" alt="Not Regular Events" height="52" style="display:block;" />
+        <img src="${baseUrl}/nre-logo.png" alt="Not Regular Events" height="52" style="display:block;" />
       </td>
     </tr>
   </table>

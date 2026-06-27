@@ -6,7 +6,6 @@ import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Loader2, Mail, Lock, User, Globe, GraduationCap } from 'lucide-react'
-import { Logo } from '@/components/shared/Logo'
 import { NATIONALITIES } from '@/lib/constants/nationalities'
 import { saveRegistrationProfile } from '@/app/actions/profile'
 
@@ -63,7 +62,8 @@ function RegisterForm() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center justify-center mb-6">
-            <Logo size="large" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/nre-logo.png" alt="Not Regular Events" className="h-12 w-auto" />
           </Link>
           <h1 className="font-heading text-3xl font-bold text-white mb-2">{t('joinTitle')}</h1>
           <p className="text-white/50 text-sm">{t('registerSubtitle')}</p>

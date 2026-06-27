@@ -135,7 +135,7 @@ export default function MemberCardClient({ membership, displayName, nationality,
                 NOT REGULAR EVENTS
               </span>
             </div>
-            <Image src="/nre-logo.jpeg" alt="Not Regular Events" width={40} height={40} className="rounded-full flex-shrink-0" />
+            <Image src="/nre-logo.png" alt="Not Regular Events" width={40} height={40} className="rounded-full flex-shrink-0" />
           </div>
 
           <hr style={{ border: 'none', borderTop: '1px solid rgba(0,0,0,0.15)', marginBottom: 20 }} />

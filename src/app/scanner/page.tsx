@@ -112,7 +112,7 @@ export default function ScannerPage() {
       <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center p-5">
         <div className="w-full max-w-sm bg-white/5 rounded-2xl p-10 text-center">
           <Image
-            src="/nre-logo.jpeg"
+            src="/nre-logo.png"
             alt="Not Regular Events"
             width={64}
             height={64}

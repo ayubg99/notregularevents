@@ -41,7 +41,7 @@ export default function AdminSidebar() {
       {/* Logo */}
       <div className="px-5 py-4 border-b border-white/10 flex items-center gap-2">
         <Image
-          src="/nre-logo.jpeg"
+          src="/nre-logo.png"
           alt="Not Regular Events"
           width={120}
           height={36}
