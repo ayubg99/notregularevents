@@ -29,7 +29,7 @@ const PLANS: PlanDef[] = [
     perMonth: '€9.99/mo',
     perks:    [
       'Free entry to exclusive member events',
-      '10% off all events',
+      '10% off every event ticket',
       'Free housing contact reveals',
       'Member card & dashboard access',
       'Weekly newsletter with exclusive deals',
