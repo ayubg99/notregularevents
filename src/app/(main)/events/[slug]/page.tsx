@@ -3,12 +3,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Calendar, MapPin, Users, ArrowLeft, ExternalLink } from 'lucide-react'
-import { getEventBySlug, getEventReviews } from '@/lib/supabase/queries'
+import { getEventBySlug } from '@/lib/supabase/queries'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
 import CountdownTimer from '@/components/events/CountdownTimer'
 import TicketSelector from '@/components/events/TicketSelector'
-import ReviewsSection from '@/components/events/ReviewsSection'
 import ShareButtons from '@/components/events/ShareButtons'
 import GalleryStrip from '@/components/shared/GalleryStrip'
 
@@ -66,10 +65,7 @@ export default async function EventDetailPage({ params }: Props) {
   const event = await getEventBySlug(slug)
   if (!event) notFound()
 
-  const [reviews, supabase] = await Promise.all([
-    getEventReviews(event.id),
-    createClient(),
-  ])
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   // Fetch per-tier sold counts and user membership in parallel
@@ -167,7 +163,7 @@ export default async function EventDetailPage({ params }: Props) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 items-start">
 
-          {/* ── LEFT: details + description + reviews ── */}
+          {/* ── LEFT: details + description ── */}
           <div className="flex flex-col gap-10">
 
             {/* Meta row */}
@@ -216,19 +212,6 @@ export default async function EventDetailPage({ params }: Props) {
               </div>
             )}
 
-            {/* Share (visible on mobile above reviews, on desktop moved inline) */}
-            <div className="lg:hidden">
-              <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Share</p>
-              <ShareButtons title={event.title} slug={event.slug} />
-            </div>
-
-            {/* Reviews */}
-            <ReviewsSection
-              targetId={event.id}
-              targetType="event"
-              initialReviews={reviews}
-              isAuthenticated={!!user}
-            />
           </div>
 
           {/* ── RIGHT: sticky sidebar ── */}
@@ -275,8 +258,8 @@ export default async function EventDetailPage({ params }: Props) {
               </div>
             ) : null}
 
-            {/* Share (desktop sidebar) */}
-            <div className="hidden lg:block glass-card rounded-2xl p-4">
+            {/* Share */}
+            <div className="glass-card rounded-2xl p-4">
               <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Share this event</p>
               <ShareButtons title={event.title} slug={event.slug} />
             </div>
