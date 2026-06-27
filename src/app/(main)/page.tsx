@@ -9,6 +9,7 @@ import TestimonialsSection from '@/components/home/TestimonialsSection'
 import NewsletterSection from '@/components/home/NewsletterSection'
 import SponsorsSection from '@/components/home/SponsorsSection'
 import AmbassadorSection from '@/components/home/AmbassadorSection'
+import { HousingBanner } from '@/components/home/HousingBanner'
 
 export const metadata: Metadata = {
   title:       'Not Regular Events | Guestlist Parties & Club Nights in Madrid',
@@ -90,7 +91,10 @@ export default async function HomePage() {
       {/* 7. Sponsors — logo strip, renders nothing if no active sponsors */}
       <SponsorsSection />
 
-      {/* 8. Newsletter — server action + animated success */}
+      {/* 8. Housing teaser — compact banner linking to /housing */}
+      <HousingBanner />
+
+      {/* 9. Newsletter — server action + animated success */}
       <NewsletterSection />
     </>
   )

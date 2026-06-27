@@ -48,8 +48,8 @@ export default function AmbassadorSection() {
 
               <Link
                 href="/ambassadors"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded font-bold text-base text-[#0A0A0A] self-start hover:brightness-110 transition-all"
-                style={{ background: '#F4D03F' }}
+                className="inline-flex items-center gap-2 px-8 py-4 rounded font-bold text-base text-white self-start hover:brightness-110 transition-all"
+                style={{ background: 'var(--accent-blue)' }}
               >
                 Apply to be an Ambassador →
               </Link>
