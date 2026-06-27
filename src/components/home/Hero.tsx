@@ -13,7 +13,7 @@ export function Hero({
 
   return (
     <section
-      className="pt-28 md:pt-0"
+      className=""
       style={{
         position:      'relative',
         minHeight:     '92vh',
@@ -49,7 +49,7 @@ export function Hero({
         }}
       />
 
-      <div className="container-marketing" style={{ paddingBottom: '60px' }}>
+      <div className="container-marketing pt-24 md:pt-0" style={{ paddingBottom: '60px' }}>
         <p
           style={{
             fontFamily:    'var(--font-jetbrains), monospace',
