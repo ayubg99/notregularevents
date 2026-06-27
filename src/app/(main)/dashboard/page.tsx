@@ -222,7 +222,7 @@ export default async function DashboardPage() {
                 <div className="relative flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <p className="text-white font-bold text-sm group-hover:text-brand-primary transition-colors">
-                      Become an Ambassador
+                      Become a Promoter
                     </p>
                     <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
                       style={{ background: 'rgba(233,30,140,0.2)', color: '#E91E8C', border: '1px solid rgba(233,30,140,0.3)' }}>

@@ -9,7 +9,7 @@ const FOOTER_LINKS = {
     { href: '/housing',    label: 'Housing'     },
     { href: '/community',  label: 'Community'   },
     { href: '/membership', label: 'Membership'  },
-    { href: '/ambassadors', label: 'Ambassadors' },
+    { href: '/ambassadors', label: 'Promoters' },
   ],
   Community: [
     { href: '/about',    label: 'About Us'  },

@@ -61,7 +61,7 @@ const PLANS: PlanDef[] = [
     perks:    [
       'Everything in Semester',
       'Free guest pass (1× per year)',
-      'Ambassador program eligibility',
+      'Promoter program eligibility',
       'Exclusive yearly member events',
     ],
     featured: false,

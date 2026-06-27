@@ -4,7 +4,7 @@ import { TrendingUp, Gift, Users } from 'lucide-react'
 const PERKS = [
   { icon: TrendingUp, label: '5% commission',    desc: 'On every booking made with your code'   },
   { icon: Gift,       label: 'Milestone rewards', desc: 'Free tickets, upgrades & cash bonuses'  },
-  { icon: Users,      label: 'Exclusive access',  desc: 'Ambassador-only events and community'   },
+  { icon: Users,      label: 'Exclusive access',  desc: 'Promoter-only events and community'   },
 ]
 
 export default function AmbassadorSection() {
@@ -21,7 +21,7 @@ export default function AmbassadorSection() {
             {/* Left — copy */}
             <div className="p-8 md:p-12 flex flex-col justify-center">
               <p className="text-brand-primary text-sm font-bold uppercase tracking-widest mb-4">
-                Ambassador Program
+                Promoter Program
               </p>
               <h2 className="font-display text-4xl md:text-5xl text-white mb-4">
                 Share Not Regular Events.<br />
@@ -51,7 +51,7 @@ export default function AmbassadorSection() {
                 className="inline-flex items-center gap-2 px-8 py-4 rounded font-bold text-base text-white self-start hover:brightness-110 transition-all"
                 style={{ background: 'var(--accent-blue)' }}
               >
-                Apply to be an Ambassador →
+                Apply to be a Promoter →
               </Link>
             </div>
 

@@ -139,7 +139,7 @@ export default function BookingConfirmation({
             Loved it? Earn by sharing 🌟
           </p>
           <p className="text-white/40 text-xs mt-0.5">
-            Become an ambassador — earn 5% on every referral →
+            Become a promoter — earn 5% on every referral →
           </p>
         </div>
       </Link>

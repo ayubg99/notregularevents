@@ -56,7 +56,7 @@ export default function AmbassadorDashboard({ ambassador, commissions, rewards }
           🌟
         </div>
         <div>
-          <h2 className="font-heading text-xl font-bold text-white">Ambassador Dashboard</h2>
+          <h2 className="font-heading text-xl font-bold text-white">Promoter Dashboard</h2>
           <p className="text-white/40 text-xs">Referral code: <span className="text-brand-accent font-mono font-bold">{ambassador.referral_code}</span></p>
         </div>
       </div>

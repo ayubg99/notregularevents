@@ -767,7 +767,7 @@ export async function sendAmbassadorApprovalEmail(params: AmbassadorApprovalEmai
       <tr>
         <td align="center" style="padding:28px 24px;">
           <p style="font-size:40px;margin:0 0 12px;">🌟</p>
-          <p style="margin:0 0 6px;font-size:22px;font-weight:700;color:#FF6B00;">You're an Ambassador!</p>
+          <p style="margin:0 0 6px;font-size:22px;font-weight:700;color:#FF6B00;">You're a Promoter!</p>
           <p style="margin:0;font-size:14px;color:#B8A090;">Welcome to the Not Regular Events Promoter Program</p>
         </td>
       </tr>

@@ -31,7 +31,7 @@ const BENEFITS = [
   {
     emoji: '🌟',
     title: 'Exclusive Access',
-    desc:  'Ambassador-only events and a private community of Not Regular Events promoters.',
+    desc:  'Promoter-only events and a private community of Not Regular Events promoters.',
   },
 ]
 
@@ -66,7 +66,7 @@ export default function AmbassadorsPage() {
 
         <div className="relative max-w-3xl mx-auto text-center">
           <span className="inline-block text-brand-accent text-xs font-bold tracking-widest uppercase mb-4">
-            Ambassadors
+            Promoters
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-gradient mb-5 leading-tight">
             Want To Be A Promoter?
