@@ -8,8 +8,7 @@ export function HousingBanner() {
         style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}
       >
         <div className="flex items-center gap-3.5 min-w-0">
-          <span className="text-[22px] flex-shrink-0">🏠</span>
-          <p className="font-mono text-sm font-semibold text-white sm:truncate">
+<p className="font-mono text-sm font-semibold text-white sm:truncate">
             Looking for a room in Madrid?{' '}
             <span className="font-normal" style={{ color: 'var(--text-secondary)' }}>
               Browse verified rooms and student listings.
