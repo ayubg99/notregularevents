@@ -46,7 +46,7 @@ const BENEFITS = [
   {
     icon:  '🏠',
     title: 'Housing Contact Details',
-    desc:  'See landlord contacts directly — no middleman.',
+    desc:  'See student contacts directly — no middleman.',
   },
   {
     icon:  '🎁',
