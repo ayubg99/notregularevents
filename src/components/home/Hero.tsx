@@ -35,7 +35,7 @@ export function Hero({
           zIndex:     -2,
         }}
       >
-        <source src="/party-1.mp4" type="video/mp4" />
+        <source src="/party-2.mp4" type="video/mp4" />
       </video>
 
       {/* Dark gradient overlay — lighter at top (navbar stays readable), near-opaque at bottom where text sits */}

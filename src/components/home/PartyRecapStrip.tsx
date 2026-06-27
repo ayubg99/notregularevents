@@ -58,13 +58,15 @@ export function PartyRecapStrip({
         </p>
       </div>
 
-      {/* Horizontal scroll strip */}
+      {/* Horizontal scroll strip — centered to match header above */}
       <div style={{
         display:       'flex',
         gap:           '4px',
         overflowX:     'auto',
         scrollbarWidth: 'none',
         padding:       '0 24px',
+        maxWidth:      'var(--max-width-marketing)',
+        margin:        '0 auto',
       }}>
         {videos.map((item, index) => (
           <div
