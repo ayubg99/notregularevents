@@ -82,7 +82,23 @@
   },
   "reviews": {
     "label": "LO QUE DICE NUESTRA COMUNIDAD",
-    "sectionTitle": "Experiencias Reales"
+    "sectionTitle": "Experiencias Reales",
+    "formTitle": "Deja Tu Reseña",
+    "formSubtitle": "Cuéntanos cómo fue tu experiencia.",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo electrónico",
+    "selectNationality": "Selecciona tu nacionalidad",
+    "ratingLabel": "VALORACIÓN",
+    "reviewPlaceholder": "Tu reseña...",
+    "submitButton": "Enviar Reseña",
+    "submitting": "Enviando...",
+    "writeReview": "Escribir una Reseña",
+    "noReviewsYet": "Aún no hay reseñas — ¡sé el primero!",
+    "errorRequired": "Por favor completa todos los campos.",
+    "errorRating": "Por favor selecciona una valoración.",
+    "errorTooShort": "La reseña debe tener al menos 10 caracteres.",
+    "errorGeneric": "Algo salió mal. Inténtalo de nuevo."
   },
   "community": {
     "label": "COMUNIDAD",

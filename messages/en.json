@@ -82,7 +82,23 @@
   },
   "reviews": {
     "label": "WHAT OUR COMMUNITY SAYS",
-    "sectionTitle": "Real Experiences"
+    "sectionTitle": "Real Experiences",
+    "formTitle": "Leave Your Review",
+    "formSubtitle": "Tell us how your experience was.",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email address",
+    "selectNationality": "Select your nationality",
+    "ratingLabel": "RATING",
+    "reviewPlaceholder": "Your review...",
+    "submitButton": "Submit Review",
+    "submitting": "Submitting...",
+    "writeReview": "Write a Review",
+    "noReviewsYet": "No reviews yet — be the first!",
+    "errorRequired": "Please fill in all fields.",
+    "errorRating": "Please select a rating.",
+    "errorTooShort": "Review must be at least 10 characters.",
+    "errorGeneric": "Something went wrong. Please try again."
   },
   "community": {
     "label": "COMMUNITY",

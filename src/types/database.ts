@@ -238,6 +238,19 @@ export type ReviewRow = {
   updated_at:  string
 }
 
+export type TestimonialRow = {
+  id:          string
+  user_id:     string | null
+  first_name:  string
+  last_name:   string
+  email:       string
+  nationality: string
+  rating:      number
+  review_text: string
+  is_visible:  boolean
+  created_at:  string
+}
+
 export type AmbassadorRow = {
   id:               string
   user_id:          string
@@ -369,6 +382,10 @@ export type MembershipInsert = Omit<MembershipRow, 'id' | 'created_at' | 'update
 export type PromoCodeInsert = Omit<PromoCodeRow, 'id' | 'created_at' | 'updated_at'>
 
 export type ReviewInsert = Omit<ReviewRow, 'id' | 'created_at' | 'updated_at'>
+
+export type TestimonialInsert = Omit<TestimonialRow, 'id' | 'created_at' | 'is_visible'> & {
+  is_visible?: boolean
+}
 
 export type AmbassadorInsert = Omit<AmbassadorRow, 'id' | 'total_referrals' | 'total_earnings' | 'pending_earnings' | 'paid_earnings' | 'created_at' | 'updated_at'> & {
   total_referrals?:  number
@@ -505,6 +522,12 @@ export interface Database {
         Row:           ReviewRow
         Insert:        ReviewInsert
         Update:        ReviewUpdate
+        Relationships: never[]
+      }
+      testimonials: {
+        Row:           TestimonialRow
+        Insert:        TestimonialInsert
+        Update:        Partial<Omit<TestimonialRow, 'id' | 'created_at'>>
         Relationships: never[]
       }
       ambassadors: {

@@ -5,7 +5,7 @@ import { Hero } from '@/components/home/Hero'
 import FeaturedEvents from '@/components/home/FeaturedEvents'
 import PartyRecapSection from '@/components/home/PartyRecapSection'
 import CommunitySection from '@/components/home/CommunitySection'
-import TestimonialsSection from '@/components/home/TestimonialsSection'
+import ReviewsSection from '@/components/reviews/ReviewsSection'
 import NewsletterSection from '@/components/home/NewsletterSection'
 import SponsorsSection from '@/components/home/SponsorsSection'
 import AmbassadorSection from '@/components/home/AmbassadorSection'
@@ -82,8 +82,8 @@ export default async function HomePage() {
       {/* 4. Ambassador program — earn by sharing */}
       <AmbassadorSection />
 
-      {/* 5. Testimonials — auto-advance carousel */}
-      <TestimonialsSection />
+      {/* 5. Reviews — live carousel + submission form */}
+      <ReviewsSection />
 
       {/* 6. Community — WhatsApp + Instagram CTAs */}
       <CommunitySection />
