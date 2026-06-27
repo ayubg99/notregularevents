@@ -13,7 +13,7 @@ export function Hero({
 
   return (
     <section
-      className="pt-20 md:pt-0"
+      className="pt-28 md:pt-0"
       style={{
         position:      'relative',
         minHeight:     '92vh',
