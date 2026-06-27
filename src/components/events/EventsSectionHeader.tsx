@@ -25,6 +25,7 @@ export function EventsSectionHeader({
       }}>
         <h2 style={{
           fontFamily: 'var(--font-anton), Anton, sans-serif',
+          fontWeight: 400,
           fontSize: 'clamp(36px, 6vw, 64px)',
           color: '#fff',
           margin: 0,

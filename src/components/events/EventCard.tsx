@@ -96,8 +96,13 @@ export default function EventCard({ event, className }: Props) {
           </span>
         </div>
 
-        {/* Title — 2 lines max, hover turns accent-blue via CSS class */}
-        <Link href={`/events/${event.slug}`} className="event-title-link">
+        {/* Title — 2 lines max */}
+        <Link
+          href={`/events/${event.slug}`}
+          style={{ textDecoration: 'none', color: '#fff' }}
+          onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent-blue)' }}
+          onMouseLeave={e => { e.currentTarget.style.color = '#fff' }}
+        >
           <h3
             className="line-clamp-2"
             style={{
