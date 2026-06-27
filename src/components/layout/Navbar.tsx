@@ -78,7 +78,7 @@ export default function Navbar() {
 
             {/* Logo */}
             <Link href="/" className="flex-shrink-0">
-              <Logo showIcon size="default" />
+              <Logo size="default" />
             </Link>
 
             {/* Desktop links */}
