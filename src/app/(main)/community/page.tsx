@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { MessageCircle, Briefcase, Home, Languages } from 'lucide-react'
+import { MessageCircle } from 'lucide-react'
 
 export const metadata: Metadata = {
   title:       'Community | Not Regular Events Madrid',
@@ -28,30 +28,6 @@ const WHATSAPP_GROUPS = [
   { emoji: '🏠', label: 'Housing & Flatmates',  desc: 'Find rooms, flatmates and housing tips'      },
 ]
 
-// ─── Coming soon card ───────────────────────────────────────────
-
-function ComingSoonCard({
-  icon: Icon,
-  title,
-  desc,
-}: {
-  icon: React.ElementType
-  title: string
-  desc: string
-}) {
-  return (
-    <div className="glass-card rounded-2xl p-8 flex flex-col items-center text-center gap-4">
-      <div className="w-14 h-14 rounded-full bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center">
-        <Icon size={24} className="text-brand-primary" />
-      </div>
-      <div>
-        <h3 className="font-heading text-lg font-bold text-white mb-1">{title}</h3>
-        <p className="text-white/50 text-sm leading-relaxed">{desc}</p>
-      </div>
-    </div>
-  )
-}
-
 // ─── Page ───────────────────────────────────────────────────────
 
 export default function CommunityPage() {
@@ -65,7 +41,7 @@ export default function CommunityPage() {
         <div className="absolute bottom-0 -right-40 w-[400px] h-[400px] rounded-full bg-brand-primary/10 blur-[100px] pointer-events-none" />
 
         <div className="relative max-w-3xl mx-auto text-center">
-          <span className="inline-block text-brand-accent text-xs font-bold tracking-widest uppercase mb-4">
+          <span className="inline-block text-[var(--accent-blue)] text-xs font-bold tracking-widest uppercase mb-4">
             Community
           </span>
           <h1 className="font-heading text-5xl sm:text-6xl font-bold text-white mb-5 leading-tight">
@@ -83,7 +59,7 @@ export default function CommunityPage() {
       <section className="bg-gradient-dark py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10">
-            <p className="text-brand-accent text-sm font-semibold uppercase tracking-widest mb-2">
+            <p className="text-[var(--accent-blue)] text-sm font-semibold uppercase tracking-widest mb-2">
               Stay Connected
             </p>
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-white mb-3">
@@ -105,7 +81,7 @@ export default function CommunityPage() {
               >
                 <span className="text-3xl flex-shrink-0 mt-0.5">{emoji}</span>
                 <div>
-                  <p className="font-heading font-bold text-white text-sm group-hover:text-brand-accent transition-colors duration-200">
+                  <p className="font-heading font-bold text-white text-sm group-hover:text-[var(--accent-blue)] transition-colors duration-200">
                     {label}
                   </p>
                   <p className="text-white/40 text-xs mt-1 leading-relaxed">{desc}</p>
@@ -114,39 +90,6 @@ export default function CommunityPage() {
               </a>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ── Community Boards (Coming Soon) ── */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center mb-10">
-          <p className="text-brand-primary text-sm font-semibold uppercase tracking-widest mb-2">
-            Community Boards
-          </p>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-white mb-3">
-            More Ways to Connect
-          </h2>
-          <p className="text-white/50 text-sm max-w-md mx-auto">
-            We&apos;re building more tools specifically for the Madrid community.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <ComingSoonCard
-            icon={Languages}
-            title="Language Exchange"
-            desc="Find a language partner — practice Spanish, English, French, German, Italian and more with locals and international students."
-          />
-          <ComingSoonCard
-            icon={Home}
-            title="Housing & Flatmates"
-            desc="Find rooms, post your spare room, or find flatmates who match your vibe. Madrid-only listings."
-          />
-          <ComingSoonCard
-            icon={Briefcase}
-            title="Job Board"
-            desc="Job listings, internships and part-time opportunities for students in Madrid. English-friendly employers."
-          />
         </div>
       </section>
 
