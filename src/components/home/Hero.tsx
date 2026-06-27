@@ -51,7 +51,7 @@ export function Hero({
         }}
       />
 
-      <div className="container-marketing pt-24 md:pt-0" style={{ paddingBottom: '60px' }}>
+      <div className="container-marketing pt-40 md:pt-0" style={{ paddingBottom: '60px' }}>
         <p
           style={{
             fontFamily:    'var(--font-jetbrains), monospace',
