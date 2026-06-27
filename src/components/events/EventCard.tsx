@@ -89,22 +89,23 @@ export default function EventCard({ event, className }: Props) {
           </span>
         </div>
 
-        {/* Title — 2 lines max */}
+        {/* Title — 2 lines max, Anton distorted at card scale */}
         <Link
           href={`/events/${event.slug}`}
-          style={{ textDecoration: 'none', color: '#fff' }}
+          style={{ textDecoration: 'none', color: '#fff', transition: 'color 0.2s' }}
           onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent-blue)' }}
           onMouseLeave={e => { e.currentTarget.style.color = '#fff' }}
         >
           <h3
-            className="line-clamp-2"
+            className="card-title-distorted"
             style={{
-              fontFamily: 'var(--font-jetbrains), monospace',
-              fontWeight: 700,
-              fontSize:   '15px',
-              color:      'inherit',
-              margin:     '0 0 8px',
-              lineHeight: 1.3,
+              fontSize:          '17px',
+              color:             'inherit',
+              margin:            '0 0 8px',
+              display:           '-webkit-box',
+              WebkitLineClamp:   2,
+              WebkitBoxOrient:   'vertical',
+              overflow:          'hidden',
             }}
           >
             {event.title}
@@ -143,6 +144,15 @@ export default function EventCard({ event, className }: Props) {
             textTransform:  'uppercase',
             textDecoration: 'none',
             marginBottom:   '4px',
+            transition:     'border-color 0.2s, color 0.2s',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = 'var(--accent-blue)'
+            e.currentTarget.style.color       = 'var(--accent-blue)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = 'var(--border-subtle)'
+            e.currentTarget.style.color       = '#fff'
           }}
         >
           {isSoldOut ? 'Sold Out' : isFree ? 'Register Free' : 'Tickets Available'}
@@ -162,7 +172,10 @@ export default function EventCard({ event, className }: Props) {
               fontWeight:     600,
               textTransform:  'uppercase',
               textDecoration: 'none',
+              transition:     'color 0.2s',
             }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent-blue)' }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)' }}
           >
             Reserve Tables →
           </Link>

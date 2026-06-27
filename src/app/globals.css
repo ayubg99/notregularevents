@@ -355,6 +355,18 @@ a:visited { color: inherit; }
   display:        inline-block;
 }
 
+/* ── Card title — lighter Anton distortion for small 2-line text ───── */
+.card-title-distorted {
+  font-family:    var(--font-anton), 'Anton', sans-serif;
+  font-weight:    400;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height:    1.15;
+  transform:      scaleX(1.04) skewX(-0.5deg);
+  transform-origin: left center;
+  display:        inline-block;
+}
+
 /* ── Event poster card — fixed uniform dimensions for carousel ──────── */
 .event-poster-card {
   width:          260px;
