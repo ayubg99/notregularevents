@@ -234,7 +234,7 @@ export default function Navbar() {
                   className="flex items-center gap-2 px-8 py-3 bg-white/10 text-white font-semibold text-base rounded-full active:brightness-90 transition-all"
                 >
                   <CreditCard size={20} />
-                  Member Card
+                  {t('memberCard')}
                 </Link>
                 <button
                   onClick={() => { closeMenu(); handleSignOut() }}
