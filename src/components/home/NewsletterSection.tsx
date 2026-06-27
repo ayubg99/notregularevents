@@ -47,7 +47,7 @@ export default function NewsletterSection() {
                 You&apos;re in! 🎉
               </h3>
               <p className="text-[var(--text-muted)] max-w-sm">
-                Thanks for subscribing. You&apos;ll be the first to know about upcoming events and trips.
+                Thanks for subscribing. You&apos;ll be the first to know about upcoming events and party announcements.
               </p>
             </motion.div>
 
@@ -67,7 +67,7 @@ export default function NewsletterSection() {
                 Never Miss a Thing
               </h2>
               <p className="text-[var(--text-muted)] mb-8 leading-relaxed">
-                Event drops, trip alerts and exclusive member offers — straight to your inbox. No spam, ever.
+                Event drops, party announcements and exclusive member offers — straight to your inbox. No spam, ever.
               </p>
 
               <form

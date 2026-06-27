@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Camera, MessageCircle, Music2, MapPin } from 'lucide-react'
-import FooterNewsletter from './FooterNewsletter'
 // lucide-react v1+ dropped brand icons; Camera ≈ Instagram, MessageCircle ≈ WhatsApp, Music2 ≈ TikTok
 
 const FOOTER_LINKS = {
@@ -133,21 +132,6 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* ── Newsletter ─────────────────────────────────────────── */}
-        <div className="mt-14 pt-10 border-t border-white/10">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div>
-              <h3 className="font-heading font-semibold text-lg text-white">
-                Stay in the loop
-              </h3>
-              <p className="text-white/50 text-sm mt-1">
-                Get event drops, trip alerts & exclusive offers — no spam, ever.
-              </p>
-            </div>
-
-            <FooterNewsletter />
-          </div>
-        </div>
       </div>
 
       {/* ── Bottom bar ───────────────────────────────────────────── */}
