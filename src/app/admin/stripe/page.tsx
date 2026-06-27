@@ -67,7 +67,6 @@ export default function StripeConnectPage() {
           padding: '32px',
           textAlign: 'center',
         }}>
-          <p style={{ fontSize: '40px', margin: '0 0 12px' }}>💳</p>
           <h2 style={{ color: '#6B7FFF', margin: '0 0 8px', fontSize: '18px' }}>
             Stripe not connected yet
           </h2>
@@ -112,15 +111,15 @@ export default function StripeConnectPage() {
             }} />
             <p style={{ color: '#fff', fontWeight: 600, margin: 0, fontSize: '16px' }}>
               Not Regular Events —{' '}
-              {status.status === 'active' ? 'Active ✅' : 'Pending Setup ⏳'}
+              {status.status === 'active' ? 'Active' : 'Pending Setup'}
             </p>
           </div>
 
           {[
             { label: 'Account ID',        value: status.accountId ?? '—' },
-            { label: 'Charges enabled',   value: status.chargesEnabled   ? '✅ Yes' : '❌ No' },
-            { label: 'Payouts enabled',   value: status.payoutsEnabled   ? '✅ Yes' : '❌ No' },
-            { label: 'Details submitted', value: status.detailsSubmitted ? '✅ Yes' : '❌ No' },
+            { label: 'Charges enabled',   value: status.chargesEnabled   ? 'Yes' : 'No' },
+            { label: 'Payouts enabled',   value: status.payoutsEnabled   ? 'Yes' : 'No' },
+            { label: 'Details submitted', value: status.detailsSubmitted ? 'Yes' : 'No' },
           ].map(item => (
             <div
               key={item.label}
