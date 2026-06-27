@@ -1,5 +1,4 @@
 import ApplicationForm from './ApplicationForm'
-import { PageHeader } from '@/components/shared/PageHeader'
 
 export const metadata = {
   title:       'Promoters — Not Regular Events',
@@ -21,7 +20,7 @@ const BENEFITS = [
   {
     emoji: '💰',
     title: '5% Commission',
-    desc:  'Earn 5% on every booking made with your referral code — trips, events, and more.',
+    desc:  'Earn 5% on every booking made with your referral code — events, memberships, and more.',
   },
   {
     emoji: '🎁',
@@ -56,7 +55,6 @@ const STEPS = [
 export default function AmbassadorsPage() {
   return (
     <div className="min-h-screen bg-brand-dark pt-20">
-      <PageHeader tag="// Work With Us" title="Want To Be A Promoter?" />
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden pt-32 pb-20 px-4">
