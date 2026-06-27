@@ -30,7 +30,7 @@ const PLANS: PlanDef[] = [
     perks:    [
       'Free entry to exclusive member events',
       '10% off all events & trips',
-      'Free housing & marketplace contact reveals',
+      'Free housing contact reveals',
       'Member card & dashboard access',
       'Weekly newsletter with exclusive deals',
     ],
