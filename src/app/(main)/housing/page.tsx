@@ -55,7 +55,7 @@ export default async function HousingPage() {
           marginBottom: '40px',
         }}>
           <p style={{ color: 'var(--text-secondary)', fontSize: 14, maxWidth: 600 }}>
-            Haven&apos;t found a room in Madrid yet? Join this group! Here we share flat listings, available rooms and connect with other students looking together.
+            Haven&apos;t found a room in Madrid yet? Here we share flat listings, available rooms and connect with other students looking together.
           </p>
         </div>
 
