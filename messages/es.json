@@ -64,7 +64,7 @@
     "tag": "// En Directo Desde Madrid"
   },
   "ambassador": {
-    "label": "PROGRAMA DE EMBAJADORES",
+    "label": "PROGRAMA DE PROMOTORES",
     "titleLine1": "Comparte Not Regular Events.",
     "titleLine2": "Gana Dinero Real.",
     "description": "¿Te encanta Not Regular Events? Cuéntaselo a tus amigos y gana un 5% de comisión en cada evento que reserven — además de recompensas exclusivas cuanto más creces.",
@@ -73,14 +73,14 @@
     "milestones": "Recompensas por hitos",
     "milestonesDesc": "Entradas gratis, mejoras y bonos en efectivo",
     "exclusiveAccess": "Acceso exclusivo",
-    "exclusiveAccessDesc": "Eventos y comunidad solo para embajadores",
+    "exclusiveAccessDesc": "Eventos y comunidad solo para promotores",
     "yourLink": "TU ENLACE DE REFERIDO",
     "shareAnywhere": "Compártelo donde quieras y gana automáticamente",
     "referrals": "Referidos",
     "earned": "Ganado",
     "pending": "Pendiente",
     "next": "Próximo",
-    "applyButton": "Solicitar ser Embajador"
+    "applyButton": "Solicitar ser Promotor"
   },
   "reviews": {
     "label": "LO QUE DICE NUESTRA COMUNIDAD",
@@ -146,7 +146,7 @@
     "ourTeam": "Nuestro Equipo",
     "reviews": "Reseñas",
     "blog": "Blog",
-    "ambassadors": "Embajadores",
+    "ambassadors": "Promotores",
     "privacyPolicy": "Política de Privacidad",
     "termsOfService": "Términos de Servicio",
     "cookiePolicy": "Política de Cookies",

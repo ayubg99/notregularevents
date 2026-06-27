@@ -64,7 +64,7 @@
     "tag": "// Live From Madrid"
   },
   "ambassador": {
-    "label": "AMBASSADOR PROGRAM",
+    "label": "PROMOTER PROGRAM",
     "titleLine1": "Share Not Regular Events.",
     "titleLine2": "Earn Real Money.",
     "description": "Love Not Regular Events? Tell your friends and earn 5% commission on every event they book — plus exclusive rewards the more you grow.",
@@ -73,14 +73,14 @@
     "milestones": "Milestone rewards",
     "milestonesDesc": "Free tickets, upgrades & cash bonuses",
     "exclusiveAccess": "Exclusive access",
-    "exclusiveAccessDesc": "Ambassador-only events and community",
+    "exclusiveAccessDesc": "Promoter-only events and community",
     "yourLink": "YOUR REFERRAL LINK",
     "shareAnywhere": "Share anywhere and earn automatically",
     "referrals": "Referrals",
     "earned": "Earned",
     "pending": "Pending",
     "next": "Next",
-    "applyButton": "Apply to be an Ambassador"
+    "applyButton": "Apply to be a Promoter"
   },
   "reviews": {
     "label": "WHAT OUR COMMUNITY SAYS",
@@ -146,7 +146,7 @@
     "ourTeam": "Our Team",
     "reviews": "Reviews",
     "blog": "Blog",
-    "ambassadors": "Ambassadors",
+    "ambassadors": "Promoters",
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",
     "cookiePolicy": "Cookie Policy",
@@ -338,7 +338,7 @@
     "labelUniversity": "University",
     "labelInstagram": "Instagram handle",
     "optional": "(optional)",
-    "labelWhyJoin": "Why do you want to become an ambassador?",
+    "labelWhyJoin": "Why do you want to become a promoter?",
     "whyJoinPlaceholder": "Tell us about yourself, your network, and why you'd make a great Not Regular Events promoter…",
     "charCount": "{count} / 50 min characters",
     "submitting": "Submitting…",

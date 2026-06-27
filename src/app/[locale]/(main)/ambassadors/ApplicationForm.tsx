@@ -107,7 +107,7 @@ export default function ApplicationForm() {
 
         <div>
           <label className="text-white/50 text-xs mb-1.5 block">
-            Why do you want to become an ambassador?
+            Why do you want to become a promoter?
           </label>
           <textarea
             value={whyJoin}

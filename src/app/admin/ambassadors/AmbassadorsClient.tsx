@@ -336,7 +336,7 @@ export default function AmbassadorsClient({ applications, ambassadors, tab }: Pr
             <div className="rounded-xl p-12 text-center"
               style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
             >
-              <p className="text-white/40 text-sm font-medium">No active ambassadors yet</p>
+              <p className="text-white/40 text-sm font-medium">No active promoters yet</p>
               <p className="text-white/20 text-xs mt-1">Approve applications from the Applications tab</p>
             </div>
           ) : (
@@ -362,7 +362,7 @@ export default function AmbassadorsClient({ applications, ambassadors, tab }: Pr
             </div>
             <div className="text-right">
               <p className="text-white/50 text-sm font-medium">
-                {owedAmbs.length} ambassador{owedAmbs.length !== 1 ? 's' : ''} owed
+                {owedAmbs.length} promoter{owedAmbs.length !== 1 ? 's' : ''} owed
               </p>
               <p className="text-white/25 text-xs mt-1">Use Active tab to mark individual payments</p>
             </div>
@@ -372,7 +372,7 @@ export default function AmbassadorsClient({ applications, ambassadors, tab }: Pr
             <div className="rounded-xl p-12 text-center"
               style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
             >
-              <p className="text-white/40 text-sm font-medium">All ambassadors paid up</p>
+              <p className="text-white/40 text-sm font-medium">All promoters paid up</p>
             </div>
           ) : (
             <div className="flex flex-col gap-2">

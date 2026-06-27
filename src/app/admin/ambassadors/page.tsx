@@ -45,9 +45,9 @@ export default async function AdminAmbassadorsPage({ searchParams }: PageProps) 
     <>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-white">Ambassadors</h1>
+          <h1 className="font-heading text-2xl font-bold text-white">Promoters</h1>
           <p className="text-white/40 text-sm mt-0.5">
-            {pendingCount} pending application{pendingCount !== 1 ? 's' : ''} · {ambassadors.length} active ambassador{ambassadors.length !== 1 ? 's' : ''}
+            {pendingCount} pending application{pendingCount !== 1 ? 's' : ''} · {ambassadors.length} active promoter{ambassadors.length !== 1 ? 's' : ''}
           </p>
         </div>
       </div>
