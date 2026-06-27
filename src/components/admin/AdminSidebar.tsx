@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Calendar, Users, Ticket, Tag, LogOut, ArrowLeft, BarChart2, QrCode, Home, Building2, Star, Mail, CreditCard, Film } from 'lucide-react'
+import { LayoutDashboard, Calendar, Users, Ticket, Tag, LogOut, ArrowLeft, BarChart2, QrCode, Home, Building2, Star, Mail, CreditCard, Film, MessageSquare, Globe } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 const NAV = [
@@ -14,6 +14,8 @@ const NAV = [
   { href: '/admin/ambassadors', label: 'Promoters', icon: <Star size={16} />            },
   { href: '/admin/sponsors',    label: 'Sponsors',    icon: <Star size={16} />            },
   { href: '/admin/recap-media', label: 'Party Recap', icon: <Film size={16} />            },
+  { href: '/admin/reviews',     label: 'Reviews',     icon: <MessageSquare size={16} />   },
+  { href: '/admin/content',     label: 'Web Content', icon: <Globe size={16} />           },
   { href: '/admin/users',       label: 'Students',    icon: <Users size={16} />           },
   { href: '/admin/bookings',    label: 'Bookings',    icon: <Ticket size={16} />          },
   { href: '/admin/promo-codes', label: 'Promo Codes',    icon: <Tag size={16} />        },

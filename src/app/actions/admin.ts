@@ -542,3 +542,46 @@ export async function deleteRecapMedia(id: string): Promise<{ success: boolean; 
   revalidatePath('/')
   return { success: true }
 }
+
+// ── Testimonials / Reviews ────────────────────────────────────
+
+export async function setTestimonialVisible(id: string, visible: boolean): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (getAdminClient() as any).from('testimonials').update({ is_visible: visible }).eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/reviews')
+  return { success: true }
+}
+
+export async function deleteTestimonial(id: string): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (getAdminClient() as any).from('testimonials').delete().eq('id', id)
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/admin/reviews')
+  return { success: true }
+}
+
+// ── Site Settings ─────────────────────────────────────────────
+
+export async function saveSiteSetting(key: string, value: unknown): Promise<{ success: boolean; error?: string }> {
+  const auth = await verifyAdmin()
+  if (!auth.ok) return { success: false, error: auth.error }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (getAdminClient() as any)
+    .from('site_settings')
+    .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' })
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/')
+  revalidatePath('/admin/content')
+  return { success: true }
+}
