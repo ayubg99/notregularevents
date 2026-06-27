@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import { Menu, X, ChevronRight, LogOut, LayoutDashboard, CreditCard } from 'lucide-react'
+import { Logo } from '@/components/shared/Logo'
 import type { User } from '@supabase/supabase-js'
 import { useTranslations } from 'next-intl'
 import { Link, useRouter, usePathname } from '@/i18n/navigation'
@@ -78,14 +78,7 @@ export default function Navbar() {
 
             {/* Logo */}
             <Link href="/" className="flex-shrink-0">
-              <Image
-                src="/nre-logo.jpeg"
-                alt="Not Regular Events"
-                width={180}
-                height={48}
-                className="h-12 w-auto"
-                priority
-              />
+              <Logo showIcon size="default" />
             </Link>
 
             {/* Desktop links */}
