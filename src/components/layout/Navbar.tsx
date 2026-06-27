@@ -81,9 +81,9 @@ export default function Navbar() {
               <Image
                 src="/nre-logo.png"
                 alt="Not Regular Events"
-                width={180}
-                height={48}
-                className="h-12 w-auto"
+                width={240}
+                height={64}
+                className="h-16 w-auto"
                 priority
               />
             </Link>
