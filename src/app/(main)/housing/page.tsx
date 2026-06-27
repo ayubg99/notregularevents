@@ -48,6 +48,17 @@ export default async function HousingPage() {
       <PageHeader tag="Housing" title="Find Your Space" />
 
       <div className="container-marketing mt-10">
+        <div style={{
+          background:   'var(--bg-card)',
+          border:       '1px solid var(--border-subtle)',
+          padding:      '32px',
+          marginBottom: '40px',
+        }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 14, maxWidth: 600 }}>
+            Haven&apos;t found a room in Madrid yet? Join this group! Here we share flat listings, available rooms and connect with other students looking together.
+          </p>
+        </div>
+
         <HousingTabs
           partnerRooms={partnerRooms ?? []}
           initialListings={initialListings ?? []}
