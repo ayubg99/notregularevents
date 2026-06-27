@@ -13,7 +13,6 @@ import type { EventRow, EventInsert, EventCategory, EventStatus, EventTicketTier
 import { tierDefaults } from '@/types/database'
 
 const CATEGORIES: EventCategory[] = ['party', 'cultural', 'sport', 'networking', 'trip', 'other']
-const CITIES = ['Madrid', 'Marbella', 'Valencia']
 const STATUS_COLORS: Record<string, string> = {
   published: 'bg-green-500/15 text-green-400',
   draft:     'bg-white/10 text-white/40',
@@ -67,6 +66,7 @@ const defaultForm = (): FormState => ({
 interface Props { initialEvents: EventRow[] }
 
 export default function EventsManager({ initialEvents }: Props) {
+  const existingCities = [...new Set(initialEvents.map(e => e.city).filter(Boolean))] as string[]
   const router = useRouter()
   const [modal,   setModal]   = useState<'create' | 'edit' | null>(null)
   const [editing, setEditing] = useState<EventRow | null>(null)
@@ -392,12 +392,19 @@ export default function EventsManager({ initialEvents }: Props) {
                   </div>
                   <div>
                     <label className={labelClass}>City</label>
-                    <div className="relative">
-                      <select value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} className={`${inputClass} appearance-none pr-8 [&>option]:bg-brand-dark`}>
-                        {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                      <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
-                    </div>
+                    <input
+                      type="text"
+                      list="city-suggestions"
+                      value={form.city}
+                      onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
+                      className={inputClass}
+                      placeholder="e.g. Madrid"
+                    />
+                    <datalist id="city-suggestions">
+                      {['Madrid', 'Marbella', 'Valencia', ...existingCities]
+                        .filter((c, i, arr) => arr.indexOf(c) === i)
+                        .map(c => <option key={c} value={c} />)}
+                    </datalist>
                   </div>
                 </div>
               </Section>
