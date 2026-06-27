@@ -8,7 +8,8 @@
     "dashboard": "Dashboard",
     "joinNow": "Join Now",
     "signOut": "Sign Out",
-    "memberCard": "Member Card"
+    "memberCard": "Member Card",
+    "login": "Login"
   },
   "hero": {
     "tag": "Madrid / 2026",

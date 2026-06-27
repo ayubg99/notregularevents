@@ -48,7 +48,7 @@ export default async function HousingPage() {
       <PageHeader tag={t('pageTag')} title={t('pageTitle')} />
 
       <div className="container-marketing mt-10">
-        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', padding: '32px', marginBottom: '40px' }}>
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', padding: '32px', marginTop: '24px', marginBottom: '40px' }}>
           <p style={{ color: 'var(--text-secondary)', fontSize: 14, maxWidth: 600 }}>
             {t('noRoomDesc')}
           </p>
