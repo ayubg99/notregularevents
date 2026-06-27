@@ -152,15 +152,8 @@ export default async function EventDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* ── Gallery strip ── */}
-      {(event.gallery_images?.length ?? 0) > 0 && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-          <GalleryStrip images={event.gallery_images!} />
-        </div>
-      )}
-
       {/* ── Content grid ── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 items-start">
 
           {/* ── LEFT: details + description ── */}
@@ -197,7 +190,7 @@ export default async function EventDetailPage({ params }: Props) {
             {/* Countdown — only for upcoming events */}
             {!isPast && (
               <div>
-                <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Starts in</p>
+                <p className="font-mono font-bold text-[13px] uppercase tracking-[0.05em] text-white mb-3">Starts in</p>
                 <CountdownTimer targetDate={event.date} />
               </div>
             )}
@@ -205,10 +198,17 @@ export default async function EventDetailPage({ params }: Props) {
             {/* Description */}
             {event.description && (
               <div>
-                <h2 className="font-heading text-xl font-bold text-white mb-4">About this event</h2>
+                <h2 className="font-mono font-bold text-[13px] uppercase tracking-[0.05em] text-white mb-4">About this event</h2>
                 <div className="text-white/70 leading-relaxed whitespace-pre-wrap text-sm md:text-base">
                   {event.description}
                 </div>
+              </div>
+            )}
+
+            {/* Gallery — fills left column; shown here instead of above the grid */}
+            {(event.gallery_images?.length ?? 0) > 0 && (
+              <div>
+                <GalleryStrip images={event.gallery_images!} />
               </div>
             )}
 
@@ -242,7 +242,7 @@ export default async function EventDetailPage({ params }: Props) {
             {!event.tickets_sold || spotsLeft > 0 ? (
               <div className="glass-card rounded-2xl p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-white/50 text-xs uppercase tracking-wide">Availability</span>
+                  <span className="font-mono font-bold text-[13px] uppercase tracking-[0.05em] text-white">Availability</span>
                   <span className="text-white/70 text-xs">
                     {event.tickets_sold} / {event.capacity} tickets sold
                   </span>
@@ -260,7 +260,7 @@ export default async function EventDetailPage({ params }: Props) {
 
             {/* Share */}
             <div className="glass-card rounded-2xl p-4">
-              <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Share this event</p>
+              <p className="font-mono font-bold text-[13px] uppercase tracking-[0.05em] text-white mb-3">Share this event</p>
               <ShareButtons title={event.title} slug={event.slug} />
             </div>
 

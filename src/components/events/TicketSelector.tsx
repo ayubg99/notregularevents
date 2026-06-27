@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { Lock } from 'lucide-react'
 import BookingModal from '@/components/booking/BookingModal'
 import type { EventTicketTier } from '@/types/database'
@@ -100,7 +101,7 @@ export default function TicketSelector({
       <>
         <div className="glass-card rounded-2xl p-6 flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-heading text-lg font-bold text-white">Get Tickets</h2>
+            <h2 className="font-mono font-bold text-[13px] uppercase tracking-[0.05em] text-white">Get Tickets</h2>
             <span className="text-white/40 text-xs">{spotsLeft} spot{spotsLeft === 1 ? '' : 's'} left</span>
           </div>
 
@@ -188,6 +189,15 @@ export default function TicketSelector({
               )
             })}
           </div>
+
+          {visibleTiers.some(e => e.isLocked) && (
+            <p className="text-xs text-white/40">
+              Members save on select tiers.{' '}
+              <Link href="/membership" className="text-brand-primary hover:underline">
+                Upgrade to Membership →
+              </Link>
+            </p>
+          )}
 
           <button
             onClick={() => setModalOpen(true)}
