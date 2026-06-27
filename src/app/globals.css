@@ -342,3 +342,37 @@ a:visited { color: inherit; }
 .event-title-link         { color: #fff; text-decoration: none; }
 .event-title-link:visited { color: #fff; }
 .event-title-link:hover   { color: var(--accent-blue); }
+
+/* ── Section title — Anton with horizontal stretch/distort ─────────── */
+.section-title-distorted {
+  font-family:    var(--font-anton), 'Anton', sans-serif;
+  font-weight:    400;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height:    0.9;
+  transform:      scaleX(1.08) skewX(-1deg);
+  transform-origin: left center;
+  display:        inline-block;
+}
+
+/* ── Event poster card — fixed uniform dimensions for carousel ──────── */
+.event-poster-card {
+  width:          260px;
+  flex-shrink:    0;
+  background:     var(--bg-card);
+  border:         1px solid var(--border-subtle);
+  overflow:       hidden;
+  display:        flex;
+  flex-direction: column;
+}
+.event-poster-card .poster-image {
+  height:     340px;
+  flex-shrink: 0;
+}
+@media (min-width: 640px) {
+  .event-poster-card        { width: 320px; }
+  .event-poster-card .poster-image { height: 420px; }
+}
+
+/* ── Carousel scrollbar hide ────────────────────────────────────────── */
+.events-carousel::-webkit-scrollbar { display: none; }

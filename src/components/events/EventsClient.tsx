@@ -4,9 +4,9 @@ import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Search, SlidersHorizontal } from 'lucide-react'
 import type { EventRow, EventCategory } from '@/types/database'
-import EventCard from '@/components/events/EventCard'
 import { TabSelector } from '@/components/shared/TabSelector'
 import { EventsSectionHeader } from '@/components/events/EventsSectionHeader'
+import { EventsCarousel } from '@/components/events/EventsCarousel'
 
 // ─── City tabs ──────────────────────────────────────────────────
 
@@ -40,10 +40,14 @@ async function fetchEvents(): Promise<EventRow[]> {
 
 function Skeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: '16px' }}>
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="overflow-hidden animate-pulse" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-          <div className="bg-white/5" style={{ height: '300px' }} />
+    <div style={{ display: 'flex', gap: '16px', overflowX: 'hidden' }}>
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div
+          key={i}
+          className="event-poster-card animate-pulse"
+          style={{ flexShrink: 0 }}
+        >
+          <div className="poster-image bg-white/5" />
           <div className="p-4 flex flex-col gap-3">
             <div className="h-8 w-1/4 rounded bg-white/5" />
             <div className="h-5 w-3/4 rounded bg-white/5" />
@@ -184,11 +188,7 @@ export default function EventsClient() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: '16px' }}>
-            {filtered.map(event => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
+          <EventsCarousel events={filtered} />
         )}
       </div>
     </div>

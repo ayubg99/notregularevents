@@ -23,15 +23,14 @@ export function EventsSectionHeader({
         alignItems: 'flex-end',
         marginBottom: showTabs ? '20px' : 0,
       }}>
-        <h2 style={{
-          fontFamily: 'var(--font-anton), Anton, sans-serif',
-          fontWeight: 400,
-          fontSize: 'clamp(36px, 6vw, 64px)',
-          color: '#fff',
-          margin: 0,
-          textTransform: 'uppercase',
-          lineHeight: 0.9,
-        }}>
+        <h2
+          className="section-title-distorted"
+          style={{
+            fontSize: 'clamp(36px, 6vw, 64px)',
+            color:    '#fff',
+            margin:   0,
+          }}
+        >
           {title}
         </h2>
         <p style={{

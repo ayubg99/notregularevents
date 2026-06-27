@@ -27,27 +27,18 @@ export default function EventCard({ event, className }: Props) {
   const hasVipTier = (event.ticket_tiers ?? []).some(t => /vip|table/i.test(t.name))
 
   return (
-    <div
-      className={className}
-      style={{
-        background:    'var(--bg-card)',
-        border:        '1px solid var(--border-subtle)',
-        overflow:      'hidden',
-        display:       'flex',
-        flexDirection: 'column',
-      }}
-    >
-      {/* Poster image — CSS background handles missing/broken URLs silently */}
+    <div className={`event-poster-card${className ? ` ${className}` : ''}`}>
+      {/* Poster — CSS background-image fills exact box regardless of source aspect ratio */}
       <Link href={`/events/${event.slug}`} style={{ display: 'block', flexShrink: 0 }}>
         <div
+          className="poster-image"
           style={{
-            height:              '300px',
-            backgroundImage:     event.image_url
+            backgroundImage:    event.image_url
               ? `url(${event.image_url})`
               : 'linear-gradient(135deg, #161616, #0A0A0A)',
-            backgroundSize:      'cover',
-            backgroundPosition:  'center',
-            position:            'relative',
+            backgroundSize:     'cover',
+            backgroundPosition: 'center',
+            position:           'relative',
           }}
         >
           {isSoldOut && (
@@ -120,7 +111,7 @@ export default function EventCard({ event, className }: Props) {
           </h3>
         </Link>
 
-        {/* Venue line */}
+        {/* Venue */}
         {event.location && (
           <p style={{
             fontFamily:    'var(--font-jetbrains), monospace',
@@ -133,7 +124,7 @@ export default function EventCard({ event, className }: Props) {
           </p>
         )}
 
-        {/* Pushes buttons to bottom so all cards in a row align */}
+        {/* Pushes buttons to bottom */}
         <div style={{ flex: 1 }} />
 
         {/* Primary CTA */}
