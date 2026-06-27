@@ -1,20 +1,20 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter, usePathname } from 'next/navigation'
 import { Menu, X, ChevronRight, LogOut, LayoutDashboard, CreditCard } from 'lucide-react'
 import type { User } from '@supabase/supabase-js'
 import { useTranslations } from 'next-intl'
+import { Link, useRouter, usePathname } from '@/i18n/navigation'
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher'
 import { createClient } from '@/lib/supabase/client'
 
 const NAV_HREFS = [
-  { href: '/events',    key: 'events'    },
-  { href: '/housing',   key: 'housing'   },
-  { href: '/community', key: 'community' },
+  { href: '/events',     key: 'events'     },
+  { href: '/housing',    key: 'housing'    },
+  { href: '/community',  key: 'community'  },
   { href: '/membership', key: 'membership' },
-  { href: '/about',     key: 'about'     },
+  { href: '/about',      key: 'about'      },
 ] as const
 
 function getInitials(name: string | null | undefined, email: string | null | undefined): string {
@@ -59,10 +59,7 @@ export default function Navbar() {
     return () => { document.body.style.overflow = '' }
   }, [isMenuOpen])
 
-  const openMenu = () => {
-    setMenuKey(k => k + 1)
-    setIsMenuOpen(true)
-  }
+  const openMenu  = () => { setMenuKey(k => k + 1); setIsMenuOpen(true) }
   const closeMenu = () => setIsMenuOpen(false)
 
   return (
@@ -111,6 +108,11 @@ export default function Navbar() {
             {/* Right-side controls */}
             <div className="flex items-center gap-2">
 
+              {/* Language switcher */}
+              <div className="hidden md:flex">
+                <LanguageSwitcher />
+              </div>
+
               {/* Auth controls — desktop */}
               {authUser ? (
                 <div className="hidden md:flex items-center gap-2">
@@ -146,12 +148,12 @@ export default function Navbar() {
                 </div>
               ) : (
                 <div className="hidden md:flex items-center gap-3">
-                  <a
+                  <Link
                     href="/auth/login"
                     className="text-white/60 hover:text-white text-sm font-medium transition-colors duration-200"
                   >
-                    Login
-                  </a>
+                    {t('login')}
+                  </Link>
                   <Link
                     href="/auth/register"
                     className="inline-flex items-center gap-1.5 px-5 py-2.5 btn-primary text-sm"
@@ -188,81 +190,82 @@ export default function Navbar() {
         `}
       >
         <div className="flex flex-col items-center gap-2 my-auto w-full">
-        {/* Nav links with CSS stagger */}
-        <nav className="flex flex-col items-center gap-3 py-8">
-          {NAV_HREFS.map((link, i) => (
-            <div
-              key={`${menuKey}-${link.href}`}
-              style={isMenuOpen ? {
-                animation: `menuItemIn 0.3s ease-out ${0.05 + i * 0.07}s both`,
-              } : undefined}
-            >
-              <Link
-                href={link.href}
-                onClick={closeMenu}
-                className="font-heading text-2xl font-bold text-white hover:text-brand-primary transition-colors duration-200"
+          {/* Nav links with CSS stagger */}
+          <nav className="flex flex-col items-center gap-3 py-8">
+            {NAV_HREFS.map((link, i) => (
+              <div
+                key={`${menuKey}-${link.href}`}
+                style={isMenuOpen ? {
+                  animation: `menuItemIn 0.3s ease-out ${0.05 + i * 0.07}s both`,
+                } : undefined}
               >
-                {t(link.key)}
-              </Link>
-            </div>
-          ))}
-        </nav>
+                <Link
+                  href={link.href}
+                  onClick={closeMenu}
+                  className="font-heading text-2xl font-bold text-white hover:text-brand-primary transition-colors duration-200"
+                >
+                  {t(link.key)}
+                </Link>
+              </div>
+            ))}
+          </nav>
 
-        {/* CTA + theme toggle */}
-        <div
-          key={`${menuKey}-cta`}
-          className="flex flex-col items-center gap-4 mb-8"
-          style={isMenuOpen ? {
-            animation: `menuItemIn 0.3s ease-out ${0.05 + NAV_HREFS.length * 0.07}s both`,
-          } : undefined}
-        >
-          {authUser ? (
-            <div className="flex flex-col items-center gap-4">
-              <Link
-                href="/dashboard"
-                onClick={closeMenu}
-                className="flex items-center gap-2 px-8 py-3 bg-white/10 text-white font-semibold text-base rounded-full active:brightness-90 transition-all"
-              >
-                <LayoutDashboard size={20} />
-                {t('dashboard')}
-              </Link>
-              <Link
-                href="/member-card"
-                onClick={closeMenu}
-                className="flex items-center gap-2 px-8 py-3 bg-white/10 text-white font-semibold text-base rounded-full active:brightness-90 transition-all"
-              >
-                <CreditCard size={20} />
-                Member Card
-              </Link>
-              <button
-                onClick={() => { closeMenu(); handleSignOut() }}
-                className="flex items-center gap-2 text-white/50 hover:text-white/80 transition-colors text-sm"
-              >
-                <LogOut size={16} />
-                <span>{t('signOut')}</span>
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center gap-4">
-              <Link
-                href="/auth/register"
-                onClick={closeMenu}
-                className="flex items-center gap-2 px-8 py-3 btn-primary text-base"
-              >
-                {t('joinNow')}
-                <ChevronRight size={18} strokeWidth={2.5} />
-              </Link>
-              <a
-                href="/auth/login"
-                onClick={closeMenu}
-                className="text-white/60 hover:text-white text-sm font-medium transition-colors duration-200"
-              >
-                Login
-              </a>
-            </div>
-          )}
+          {/* CTA + language */}
+          <div
+            key={`${menuKey}-cta`}
+            className="flex flex-col items-center gap-4 mb-8"
+            style={isMenuOpen ? {
+              animation: `menuItemIn 0.3s ease-out ${0.05 + NAV_HREFS.length * 0.07}s both`,
+            } : undefined}
+          >
+            {authUser ? (
+              <div className="flex flex-col items-center gap-4">
+                <Link
+                  href="/dashboard"
+                  onClick={closeMenu}
+                  className="flex items-center gap-2 px-8 py-3 bg-white/10 text-white font-semibold text-base rounded-full active:brightness-90 transition-all"
+                >
+                  <LayoutDashboard size={20} />
+                  {t('dashboard')}
+                </Link>
+                <Link
+                  href="/member-card"
+                  onClick={closeMenu}
+                  className="flex items-center gap-2 px-8 py-3 bg-white/10 text-white font-semibold text-base rounded-full active:brightness-90 transition-all"
+                >
+                  <CreditCard size={20} />
+                  Member Card
+                </Link>
+                <button
+                  onClick={() => { closeMenu(); handleSignOut() }}
+                  className="flex items-center gap-2 text-white/50 hover:text-white/80 transition-colors text-sm"
+                >
+                  <LogOut size={16} />
+                  <span>{t('signOut')}</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-4">
+                <Link
+                  href="/auth/register"
+                  onClick={closeMenu}
+                  className="flex items-center gap-2 px-8 py-3 btn-primary text-base"
+                >
+                  {t('joinNow')}
+                  <ChevronRight size={18} strokeWidth={2.5} />
+                </Link>
+                <Link
+                  href="/auth/login"
+                  onClick={closeMenu}
+                  className="text-white/60 hover:text-white text-sm font-medium transition-colors duration-200"
+                >
+                  {t('login')}
+                </Link>
+              </div>
+            )}
+            <LanguageSwitcher />
+          </div>
         </div>
-        </div>{/* end my-auto wrapper */}
 
         {/* Decorative gradient orbs */}
         <div className="absolute top-1/4 -left-20 w-64 h-64 rounded-full bg-brand-primary/10 blur-3xl pointer-events-none" />

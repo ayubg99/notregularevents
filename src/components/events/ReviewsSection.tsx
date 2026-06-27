@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { Link } from '@/i18n/navigation'
 import { Star, LogIn } from 'lucide-react'
 import { addReview } from '@/app/actions/reviews'
 import type { ReviewRow } from '@/types/database'
@@ -136,7 +137,7 @@ export default function ReviewsSection({ targetId, targetType, initialReviews, i
         <div className="glass-card rounded-xl p-5 flex items-center gap-3">
           <LogIn size={18} className="text-white/40 flex-shrink-0" />
           <p className="text-white/60 text-sm">
-            <a href="/auth/login" className="text-brand-primary hover:underline font-medium">Log in</a>
+            <Link href="/auth/login" className="text-brand-primary hover:underline font-medium">Log in</Link>
             {' '}to leave a review.
           </p>
         </div>

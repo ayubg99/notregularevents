@@ -1,24 +1,22 @@
 'use client'
 
 import { useRef } from 'react'
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import type { EventRow } from '@/types/database'
 import EventCard from '@/components/events/EventCard'
 
 export function EventsCarousel({ events }: { events: EventRow[] }) {
+  const t        = useTranslations('events')
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scroll = (direction: 'left' | 'right') => {
     if (!scrollRef.current) return
-    scrollRef.current.scrollBy({
-      left:     direction === 'left' ? -340 : 340,
-      behavior: 'smooth',
-    })
+    scrollRef.current.scrollBy({ left: direction === 'left' ? -340 : 340, behavior: 'smooth' })
   }
 
   return (
     <div>
-      {/* Scroll track */}
       <div
         ref={scrollRef}
         className="events-carousel"
@@ -38,13 +36,7 @@ export function EventsCarousel({ events }: { events: EventRow[] }) {
         ))}
       </div>
 
-      {/* Bottom row: "See More" left, arrows right */}
-      <div style={{
-        display:        'flex',
-        justifyContent: 'space-between',
-        alignItems:     'center',
-        marginTop:      '20px',
-      }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px' }}>
         <Link
           href="/events"
           style={{
@@ -60,42 +52,12 @@ export function EventsCarousel({ events }: { events: EventRow[] }) {
             borderRadius:   '4px',
           }}
         >
-          See More Events →
+          {t('seeMore')} →
         </Link>
 
         <div style={{ display: 'flex', gap: '8px' }}>
-          <button
-            onClick={() => scroll('left')}
-            aria-label="Previous"
-            style={{
-              width:        '40px',
-              height:       '40px',
-              borderRadius: '50%',
-              border:       '1px solid var(--border-subtle)',
-              background:   'transparent',
-              color:        '#fff',
-              cursor:       'pointer',
-              fontSize:     '16px',
-            }}
-          >
-            ←
-          </button>
-          <button
-            onClick={() => scroll('right')}
-            aria-label="Next"
-            style={{
-              width:        '40px',
-              height:       '40px',
-              borderRadius: '50%',
-              border:       '1px solid var(--border-subtle)',
-              background:   'transparent',
-              color:        '#fff',
-              cursor:       'pointer',
-              fontSize:     '16px',
-            }}
-          >
-            →
-          </button>
+          <button onClick={() => scroll('left')} aria-label="Previous" style={{ width:'40px', height:'40px', borderRadius:'50%', border:'1px solid var(--border-subtle)', background:'transparent', color:'#fff', cursor:'pointer', fontSize:'16px' }}>←</button>
+          <button onClick={() => scroll('right')} aria-label="Next" style={{ width:'40px', height:'40px', borderRadius:'50%', border:'1px solid var(--border-subtle)', background:'transparent', color:'#fff', cursor:'pointer', fontSize:'16px' }}>→</button>
         </div>
       </div>
     </div>

@@ -3,9 +3,11 @@
 import { useState, useTransition } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Mail, ArrowRight, CheckCircle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { subscribeToNewsletter } from '@/app/actions/newsletter'
 
 export default function NewsletterSection() {
+  const t = useTranslations('newsletter')
   const [email,        setEmail]        = useState('')
   const [status,       setStatus]       = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
@@ -28,10 +30,8 @@ export default function NewsletterSection() {
   return (
     <section className="py-20 bg-[var(--bg-base)]">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-
         <AnimatePresence mode="wait">
           {status === 'success' ? (
-
             <motion.div
               key="success"
               initial={{ opacity: 0, scale: 0.92 }}
@@ -44,15 +44,13 @@ export default function NewsletterSection() {
                 <CheckCircle size={32} className="text-brand-success" />
               </div>
               <h3 className="font-heading text-2xl font-bold text-[var(--text-base)]">
-                You&apos;re in! 🎉
+                {t('successTitle')}
               </h3>
               <p className="text-[var(--text-muted)] max-w-sm">
-                Thanks for subscribing. You&apos;ll be the first to know about upcoming events and party announcements.
+                {t('successDesc')}
               </p>
             </motion.div>
-
           ) : (
-
             <motion.div
               key="form"
               initial={{ opacity: 0, y: 24 }}
@@ -61,41 +59,28 @@ export default function NewsletterSection() {
               transition={{ duration: 0.4, ease: 'easeOut' }}
             >
               <p className="text-brand-primary text-sm font-semibold uppercase tracking-widest mb-2">
-                Stay Updated
+                {t('label')}
               </p>
               <h2 className="font-display text-3xl md:text-4xl text-[var(--text-base)] mb-3">
-                Never Miss a Thing
+                {t('title')}
               </h2>
               <p className="text-[var(--text-muted)] mb-8 leading-relaxed">
-                Event drops, party announcements and exclusive member offers — straight to your inbox. No spam, ever.
+                {t('description')}
               </p>
 
-              <form
-                onSubmit={handleSubmit}
-                className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-              >
+              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                 <div className="relative flex-1">
-                  <Mail
-                    size={16}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none"
-                  />
+                  <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setStatus('idle') }}
-                    placeholder="your@email.com"
+                    placeholder={t('placeholder')}
                     disabled={isPending}
-                    className="
-                      w-full pl-11 pr-4 py-3.5 rounded-full text-sm
-                      border border-[var(--border-clr)] bg-[var(--bg-card)]
-                      text-[var(--text-base)] placeholder:text-[var(--text-muted)]
-                      focus:outline-none focus:border-brand-primary/60
-                      transition-all duration-200 disabled:opacity-50
-                    "
+                    className="w-full pl-11 pr-4 py-3.5 rounded-full text-sm border border-[var(--border-clr)] bg-[var(--bg-card)] text-[var(--text-base)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-brand-primary/60 transition-all duration-200 disabled:opacity-50"
                   />
                 </div>
-
                 <button
                   type="submit"
                   disabled={isPending}
@@ -104,7 +89,7 @@ export default function NewsletterSection() {
                   {isPending ? (
                     <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                   ) : (
-                    <>Subscribe <ArrowRight size={14} strokeWidth={2.5} /></>
+                    <>{t('subscribe')} <ArrowRight size={14} strokeWidth={2.5} /></>
                   )}
                 </button>
               </form>
@@ -113,10 +98,8 @@ export default function NewsletterSection() {
                 <p className="mt-3 text-sm text-red-400">{errorMessage}</p>
               )}
             </motion.div>
-
           )}
         </AnimatePresence>
-
       </div>
     </section>
   )

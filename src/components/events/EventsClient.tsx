@@ -2,16 +2,13 @@
 
 import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslations } from 'next-intl'
 import type { EventRow } from '@/types/database'
 import { EventsSectionHeader } from '@/components/events/EventsSectionHeader'
 import { EventsCarousel } from '@/components/events/EventsCarousel'
 
-// ─── City tabs ──────────────────────────────────────────────────
-
 const CITIES = ['All', 'Madrid', 'Marbella', 'Valencia'] as const
 type CityFilter = typeof CITIES[number]
-
-// ─── Data fetching ──────────────────────────────────────────────
 
 async function fetchEvents(): Promise<EventRow[]> {
   const res = await fetch('/api/events', { next: { revalidate: 60 } })
@@ -19,17 +16,11 @@ async function fetchEvents(): Promise<EventRow[]> {
   return res.json() as Promise<EventRow[]>
 }
 
-// ─── Skeleton ───────────────────────────────────────────────────
-
 function Skeleton() {
   return (
     <div style={{ display: 'flex', gap: '16px', overflowX: 'hidden' }}>
       {Array.from({ length: 4 }).map((_, i) => (
-        <div
-          key={i}
-          className="event-poster-card animate-pulse"
-          style={{ flexShrink: 0 }}
-        >
+        <div key={i} className="event-poster-card animate-pulse" style={{ flexShrink: 0 }}>
           <div className="poster-image bg-white/5" />
           <div className="p-4 flex flex-col gap-3">
             <div className="h-8 w-1/4 rounded bg-white/5" />
@@ -43,9 +34,8 @@ function Skeleton() {
   )
 }
 
-// ─── Main component ─────────────────────────────────────────────
-
 export default function EventsClient() {
+  const t = useTranslations('events')
   const [activeCity, setActiveCity] = useState<CityFilter>('All')
 
   const { data: events = [], isLoading, isError } = useQuery({
@@ -54,7 +44,6 @@ export default function EventsClient() {
     staleTime: 60_000,
   })
 
-  // Derive which city tabs actually have data
   const availableCities = useMemo(() => {
     const inData = new Set(events.map(e => e.city).filter(Boolean))
     return CITIES.filter(c => c === 'All' || inData.has(c))
@@ -65,23 +54,19 @@ export default function EventsClient() {
     return events.filter(e => e.city === activeCity)
   }, [events, activeCity])
 
-  function clearFilters() {
-    setActiveCity('All')
-  }
-
+  function clearFilters() { setActiveCity('All') }
   function handleCityChange(city: string) {
     setActiveCity(activeCity === city ? 'All' : city as CityFilter)
   }
 
   const hasFilters = activeCity !== 'All'
-
-  const cityTabs = availableCities.filter(c => c !== 'All')
+  const cityTabs   = availableCities.filter(c => c !== 'All')
 
   return (
     <div>
       <EventsSectionHeader
-        title="Upcoming Events"
-        tag="Madrid // 2026"
+        title={t('sectionTitle')}
+        tag={t('tag')}
         showTabs={cityTabs.length > 0}
         cities={cityTabs}
         activeCity={activeCity === 'All' ? undefined : activeCity}
@@ -89,29 +74,22 @@ export default function EventsClient() {
       />
 
       <div className="container-marketing" style={{ paddingBottom: '48px' }}>
-
-        {/* Grid */}
         {isLoading ? (
           <Skeleton />
         ) : isError ? (
           <div className="text-center py-20 rounded-2xl glass-card">
-            <p className="text-[var(--text-base)] text-lg font-medium">Failed to load events</p>
-            <p className="text-[var(--text-muted)] text-sm mt-2">Please refresh the page and try again.</p>
+            <p className="text-[var(--text-base)] text-lg font-medium">{t('failedToLoad')}</p>
+            <p className="text-[var(--text-muted)] text-sm mt-2">{t('failedToLoadSub')}</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20 rounded-2xl glass-card">
-            <p className="text-[var(--text-base)] text-lg font-medium">No events found</p>
+            <p className="text-[var(--text-base)] text-lg font-medium">{t('noEventsFound')}</p>
             <p className="text-[var(--text-muted)] text-sm mt-2">
-              {hasFilters
-                ? 'No events match your current filters.'
-                : 'Check back soon — events are being planned!'}
+              {hasFilters ? t('noEventsFilter') : t('noEventsDefault')}
             </p>
             {hasFilters && (
-              <button
-                onClick={clearFilters}
-                className="mt-4 px-5 py-2 btn-primary text-sm font-semibold transition-all"
-              >
-                Clear filters
+              <button onClick={clearFilters} className="mt-4 px-5 py-2 btn-primary text-sm font-semibold transition-all">
+                {t('clearFilters')}
               </button>
             )}
           </div>

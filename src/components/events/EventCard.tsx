@@ -1,6 +1,7 @@
 'use client'
 
-import Link from 'next/link'
+import { useTranslations, useLocale } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import type { EventRow } from '@/types/database'
 
 interface Props {
@@ -9,6 +10,9 @@ interface Props {
 }
 
 export default function EventCard({ event, className }: Props) {
+  const t      = useTranslations('events')
+  const locale = useLocale()
+
   const spotsLeft = event.capacity - event.tickets_sold
   const isSoldOut = spotsLeft <= 0
   const now = new Date()
@@ -22,13 +26,12 @@ export default function EventCard({ event, className }: Props) {
 
   const eventDate = new Date(event.date)
   const dayNumber = eventDate.getDate()
-  const monthYear = eventDate.toLocaleDateString('en', { month: 'short', year: 'numeric' })
+  const monthYear = eventDate.toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-GB', { month: 'short', year: 'numeric' })
 
   const hasVipTier = (event.ticket_tiers ?? []).some(t => /vip|table/i.test(t.name))
 
   return (
     <div className={`event-poster-card${className ? ` ${className}` : ''}`}>
-      {/* Poster — CSS background-image fills exact box regardless of source aspect ratio */}
       <Link href={`/events/${event.slug}`} style={{ display: 'block', flexShrink: 0 }}>
         <div
           className="poster-image"
@@ -58,7 +61,7 @@ export default function EventCard({ event, className }: Props) {
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
               }}>
-                Sold Out
+                {t('soldOut')}
               </span>
             </div>
           )}
@@ -66,7 +69,6 @@ export default function EventCard({ event, className }: Props) {
       </Link>
 
       <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-        {/* Date badge */}
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '10px' }}>
           <span style={{
             fontFamily:          'var(--font-jetbrains), monospace',
@@ -89,7 +91,6 @@ export default function EventCard({ event, className }: Props) {
           </span>
         </div>
 
-        {/* Title — 2 lines max, Anton distorted at card scale */}
         <Link
           href={`/events/${event.slug}`}
           style={{ textDecoration: 'none', color: '#fff', transition: 'color 0.2s' }}
@@ -112,7 +113,6 @@ export default function EventCard({ event, className }: Props) {
           </h3>
         </Link>
 
-        {/* Venue */}
         {event.location && (
           <p style={{
             fontFamily:    'var(--font-jetbrains), monospace',
@@ -125,10 +125,8 @@ export default function EventCard({ event, className }: Props) {
           </p>
         )}
 
-        {/* Pushes buttons to bottom */}
         <div style={{ flex: 1 }} />
 
-        {/* Primary CTA */}
         <Link
           href={`/events/${event.slug}`}
           style={{
@@ -155,10 +153,9 @@ export default function EventCard({ event, className }: Props) {
             e.currentTarget.style.color       = '#fff'
           }}
         >
-          {isSoldOut ? 'Sold Out' : isFree ? 'Register Free' : 'Tickets Available'}
+          {isSoldOut ? t('soldOut') : isFree ? t('registerFree') : t('ticketsAvailable')}
         </Link>
 
-        {/* VIP / table tier secondary CTA */}
         {!isSoldOut && hasVipTier && (
           <Link
             href={`/events/${event.slug}#vip`}
@@ -177,7 +174,7 @@ export default function EventCard({ event, className }: Props) {
             onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent-blue)' }}
             onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)' }}
           >
-            Reserve Tables →
+            {t('reserveTables')} →
           </Link>
         )}
       </div>

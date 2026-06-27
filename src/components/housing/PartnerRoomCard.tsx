@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import type { PartnerRoomRow } from '@/types/database'
 
 const ROOM_TYPE_LABELS: Record<string, string> = {

@@ -1,14 +1,16 @@
 'use client'
 
-import Link from 'next/link'
+import { useTranslations, useLocale } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 
 export function Hero({
   nextEvent,
-  city = 'Madrid',
 }: {
   nextEvent: Record<string, unknown> | null
-  city?: string
 }) {
+  const t      = useTranslations('hero')
+  const locale = useLocale()
+
   return (
     <section
       style={{
@@ -20,25 +22,23 @@ export function Hero({
         overflow:      'hidden',
       }}
     >
-      {/* Video background — swap /party-1.mp4 for /hero-loop.mp4 once a dedicated clip is ready */}
       <video
         autoPlay
         muted
         loop
         playsInline
         style={{
-          position:   'absolute',
-          inset:      0,
-          width:      '100%',
-          height:     '100%',
-          objectFit:  'cover',
-          zIndex:     -2,
+          position:  'absolute',
+          inset:     0,
+          width:     '100%',
+          height:    '100%',
+          objectFit: 'cover',
+          zIndex:    -2,
         }}
       >
         <source src="/party-2.mp4" type="video/mp4" />
       </video>
 
-      {/* Dark gradient overlay — lighter at top (navbar stays readable), near-opaque at bottom where text sits */}
       <div
         style={{
           position:   'absolute',
@@ -49,7 +49,6 @@ export function Hero({
       />
 
       <div className="container-marketing" style={{ paddingBottom: '60px' }}>
-        {/* City / year tag */}
         <p
           style={{
             fontFamily:    'var(--font-jetbrains), monospace',
@@ -61,10 +60,9 @@ export function Hero({
             marginBottom:  '12px',
           }}
         >
-          {city} / 2026
+          {t('tag')}
         </p>
 
-        {/* Two-line headline */}
         <h1
           style={{
             fontFamily:    'var(--font-anton), Anton, sans-serif',
@@ -75,9 +73,9 @@ export function Hero({
             textTransform: 'uppercase',
           }}
         >
-          Not Regular Events
+          {t('titleLine1')}
           <br />
-          <span style={{ color: 'var(--accent-blue)' }}>Is In Town</span>
+          <span style={{ color: 'var(--accent-blue)' }}>{t('titleLine2')}</span>
         </h1>
 
         <p
@@ -90,18 +88,15 @@ export function Hero({
             lineHeight: 1.6,
           }}
         >
-          Not Regular Events was born from our own experience as students in
-          Madrid. We create accessible, authentic events designed to connect
-          people — more than parties, we create experiences and new friendships.
+          {t('description')}
         </p>
 
-        {/* CTAs */}
         <div
           style={{
-            display:    'flex',
-            gap:        '12px',
-            marginTop:  '28px',
-            flexWrap:   'wrap',
+            display:   'flex',
+            gap:       '12px',
+            marginTop: '28px',
+            flexWrap:  'wrap',
           }}
         >
           <Link
@@ -117,7 +112,7 @@ export function Hero({
               borderRadius:   '4px',
             }}
           >
-            See Upcoming Events →
+            {t('ctaPrimary')} →
           </Link>
           <Link
             href="/community"
@@ -133,11 +128,10 @@ export function Hero({
               borderRadius:   '4px',
             }}
           >
-            Join Community
+            {t('ctaSecondary')}
           </Link>
         </div>
 
-        {/* LIVE "Next Up" event block — pulls from real event data */}
         {nextEvent && (
           <Link
             href={`/events/${nextEvent.slug}`}
@@ -156,7 +150,6 @@ export function Hero({
               WebkitBackdropFilter: 'blur(8px)',
             }}
           >
-            {/* Live pulse indicator */}
             <span
               style={{
                 width:        '8px',
@@ -180,12 +173,11 @@ export function Hero({
                   margin:        '0 0 4px',
                 }}
               >
-                Next Up —{' '}
-                {new Date(nextEvent.date as string).toLocaleDateString('en', {
-                  weekday: 'short',
-                  day:     'numeric',
-                  month:   'short',
-                })}
+                {t('nextUp')} —{' '}
+                {new Date(nextEvent.date as string).toLocaleDateString(
+                  locale === 'es' ? 'es-ES' : 'en-GB',
+                  { weekday: 'short', day: 'numeric', month: 'short' }
+                )}
               </p>
               <p
                 style={{
@@ -206,21 +198,20 @@ export function Hero({
 
             <span
               style={{
-                fontFamily:  'var(--font-jetbrains), monospace',
-                color:       'var(--text-secondary)',
-                fontSize:    '12px',
-                fontWeight:  600,
-                whiteSpace:  'nowrap',
-                flexShrink:  0,
+                fontFamily: 'var(--font-jetbrains), monospace',
+                color:      'var(--text-secondary)',
+                fontSize:   '12px',
+                fontWeight: 600,
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
               }}
             >
-              Tickets →
+              {t('tickets')} →
             </span>
           </Link>
         )}
       </div>
 
-      {/* Scroll indicator */}
       <div
         style={{
           position:      'absolute',

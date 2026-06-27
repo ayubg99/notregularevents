@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Anton, JetBrains_Mono } from 'next/font/google'
+import { getLocale } from 'next-intl/server'
 import Providers from './providers'
 import './globals.css'
 
@@ -39,7 +40,6 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type:        'website',
-    locale:      'en_US',
     siteName:    'Not Regular Events',
     title:       'Not Regular Events — Madrid',
     description: 'Not your regular events. Guestlist parties, club nights and the best nightlife experiences in Madrid. Join the community.',
@@ -53,12 +53,19 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  let locale = 'es'
+  try {
+    locale = await getLocale()
+  } catch {
+    // Non-localized route (admin, scanner, etc.) — use default
+  }
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`h-full scroll-smooth dark ${jetbrainsMono.variable} ${anton.variable}`}
     >
       <body className="min-h-full flex flex-col font-body antialiased">

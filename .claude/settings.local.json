@@ -29,7 +29,9 @@
       "Bash(git -C /home/ayubxx/notregularevents/erasmuslife log --oneline -3 -- scripts/seed-events.ts)",
       "Bash(git -C /home/ayubxx/notregularevents/erasmuslife stash)",
       "Bash(git -C /home/ayubxx/notregularevents/erasmuslife stash pop)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(supabase --version)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=800\")"
     ]
   }
 }

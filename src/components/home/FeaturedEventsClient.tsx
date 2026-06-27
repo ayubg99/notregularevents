@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import type { EventRow } from '@/types/database'
 import { EventsSectionHeader } from '@/components/events/EventsSectionHeader'
 import { EventsCarousel } from '@/components/events/EventsCarousel'
@@ -9,6 +10,7 @@ const CITIES = ['All', 'Madrid', 'Marbella', 'Valencia'] as const
 type CityFilter = typeof CITIES[number]
 
 export default function FeaturedEventsClient({ events }: { events: EventRow[] }) {
+  const t = useTranslations('events')
   const [activeCity, setActiveCity] = useState<CityFilter>('All')
 
   const availableCities = useMemo(() => {
@@ -28,8 +30,8 @@ export default function FeaturedEventsClient({ events }: { events: EventRow[] })
   return (
     <section style={{ background: 'var(--bg-base)' }}>
       <EventsSectionHeader
-        title="Upcoming Events"
-        tag="Madrid // 2026"
+        title={t('sectionTitle')}
+        tag={t('tag')}
         showTabs={availableCities.length > 0}
         cities={availableCities}
         activeCity={activeCity === 'All' ? undefined : activeCity}
@@ -38,18 +40,9 @@ export default function FeaturedEventsClient({ events }: { events: EventRow[] })
 
       <div className="container-marketing" style={{ paddingBottom: '48px' }}>
         {filtered.length === 0 ? (
-          <div style={{
-            textAlign:    'center',
-            padding:      '64px 0',
-            border:       '1px solid var(--border-clr)',
-            background:   'var(--bg-card)',
-            borderRadius: '16px',
-          }}>
+          <div style={{ textAlign:'center', padding:'64px 0', border:'1px solid var(--border-clr)', background:'var(--bg-card)', borderRadius:'16px' }}>
             <p style={{ color: 'var(--text-base)', fontSize: '18px', fontWeight: 500, margin: 0 }}>
-              No events live right now
-            </p>
-            <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '8px' }}>
-              New dates dropping soon.
+              {t('noEvents')}
             </p>
           </div>
         ) : (

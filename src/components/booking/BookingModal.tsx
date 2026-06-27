@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { Link } from '@/i18n/navigation'
 import { X, Loader2, Tag, Check, Minus, Plus, Zap, Users, Crown, User, LogIn, Lock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import type { TripRow, TripTier, EventTicketTier, TripExtra } from '@/types/database'
@@ -78,11 +79,11 @@ function MembershipBanner({
       <Crown size={15} className="text-brand-primary/50 flex-shrink-0 mt-0.5" />
       <p className="text-white/50 text-sm">
         Members save 10% —{' '}
-        <a href="/auth/login" className="text-brand-primary hover:underline font-medium">
+        <Link href="/auth/login" className="text-brand-primary hover:underline font-medium">
           <LogIn size={11} className="inline mb-0.5 mr-0.5" />Log in
-        </a>
+        </Link>
         {' '}or{' '}
-        <a href="/membership" target="_blank" rel="noopener noreferrer" className="text-brand-primary hover:underline font-medium">join</a>
+        <Link href="/membership" className="text-brand-primary hover:underline font-medium">join</Link>
         {' '}to get the discount
       </p>
     </div>
@@ -487,17 +488,17 @@ export default function BookingModal(props: Props) {
                   This event is free but exclusively for Not Regular Events members. Join to register.
                 </p>
               </div>
-              <a
+              <Link
                 href="/membership"
                 className="w-full block py-4 rounded-full font-bold text-sm text-center shadow-brand-sm"
                 style={{ background: 'linear-gradient(135deg, #FF6B00, #E91E8C)', color: '#1A1A0E' }}
               >
                 Join for €9.99/month →
-              </a>
+              </Link>
               {!isLoggedIn && (
                 <p className="text-white/40 text-xs">
                   Already a member?{' '}
-                  <a href="/auth/login" className="text-brand-primary hover:underline">Log in here</a>
+                  <Link href="/auth/login" className="text-brand-primary hover:underline">Log in here</Link>
                 </p>
               )}
             </div>
