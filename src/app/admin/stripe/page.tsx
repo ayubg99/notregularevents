@@ -15,6 +15,7 @@ export default function StripeConnectPage() {
   const [status, setStatus] = useState<StripeStatus | null>(null)
   const [loading, setLoading] = useState(true)
   const [connecting, setConnecting] = useState(false)
+  const [connectError, setConnectError] = useState<string | null>(null)
 
   useEffect(() => {
     void (async () => {
@@ -28,14 +29,18 @@ export default function StripeConnectPage() {
 
   const handleConnect = async () => {
     setConnecting(true)
+    setConnectError(null)
     try {
       const res = await fetch('/api/admin/stripe-connect', { method: 'POST' })
       const data = await res.json()
       if (data.onboardingUrl) {
         window.location.href = data.onboardingUrl
+      } else {
+        setConnectError(data.error ?? 'No onboarding URL returned — check server logs.')
+        setConnecting(false)
       }
     } catch (err) {
-      console.error(err)
+      setConnectError(err instanceof Error ? err.message : 'Network error')
       setConnecting(false)
     }
   }
@@ -85,6 +90,11 @@ export default function StripeConnectPage() {
           >
             {connecting ? 'Redirecting to Stripe...' : 'Connect Stripe Account →'}
           </button>
+          {connectError && (
+            <p style={{ color: '#FF6B6B', marginTop: '12px', fontSize: '13px' }}>
+              Error: {connectError}
+            </p>
+          )}
         </div>
       ) : (
         <div style={{

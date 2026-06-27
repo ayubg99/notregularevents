@@ -52,11 +52,10 @@ export async function POST() {
 
     await adminClient
       .from('platform_settings')
-      .update({
-        value: accountId,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('key', 'nre_stripe_account_id')
+      .upsert(
+        { key: 'nre_stripe_account_id', value: accountId, updated_at: new Date().toISOString() },
+        { onConflict: 'key' },
+      )
   }
 
   const accountLink = await stripe.accountLinks.create({
