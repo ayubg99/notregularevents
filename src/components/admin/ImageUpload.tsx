@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 interface Props {
   value:    string
   onChange: (url: string) => void
-  folder:   'events' | 'trips' | 'sponsors' | 'jobs'
+  folder:   'events' | 'trips' | 'sponsors' | 'jobs' | 'content'
 }
 
 export default function ImageUpload({ value, onChange, folder }: Props) {

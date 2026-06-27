@@ -1,4 +1,8 @@
+import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
+import { getPublicClient } from '@/lib/supabase/public'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title:       'About — Not Regular Events',
@@ -25,8 +29,30 @@ const PHOTO_GRADIENTS = [
   'from-brand-primary/20 to-purple-500/30',
 ]
 
+async function getSitePhotos() {
+  try {
+    const supabase = getPublicClient()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data } = await (supabase as any)
+      .from('site_settings')
+      .select('key, value')
+      .in('key', ['about_main_photo', 'about_community_photos'])
+    const map: Record<string, unknown> = {}
+    for (const row of (data ?? [])) map[row.key] = row.value
+    return {
+      mainPhoto:       typeof map.about_main_photo === 'string' ? map.about_main_photo : null,
+      communityPhotos: Array.isArray(map.about_community_photos) ? (map.about_community_photos as string[]) : [],
+    }
+  } catch {
+    return { mainPhoto: null, communityPhotos: [] }
+  }
+}
+
 export default async function AboutPage() {
-  const t = await getTranslations('about')
+  const [t, { mainPhoto, communityPhotos }] = await Promise.all([
+    getTranslations('about'),
+    getSitePhotos(),
+  ])
 
   const TEAM = [
     { name: 'Leadership',     role: t('roleLeadership'), nationality: '🇪🇸', emoji: '🌟' },
@@ -56,12 +82,18 @@ export default async function AboutPage() {
           </p>
         </div>
 
-        {/* Team photo placeholder */}
-        <div className="relative max-w-4xl mx-auto rounded-2xl aspect-video bg-gradient-to-br from-brand-primary/30 via-brand-primary/10 to-brand-accent/20 flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 opacity-30"
-            style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, var(--color-brand-primary) 0%, transparent 60%), radial-gradient(circle at 70% 40%, var(--color-brand-accent) 0%, transparent 50%)' }}
-          />
-          <p className="relative text-white/40 text-sm font-medium">{t('photoSoon')}</p>
+        {/* Main photo */}
+        <div className="relative max-w-4xl mx-auto rounded-2xl aspect-video overflow-hidden">
+          {mainPhoto ? (
+            <Image src={mainPhoto} alt="" fill className="object-cover" unoptimized />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-brand-primary/30 via-brand-primary/10 to-brand-accent/20 flex items-center justify-center">
+              <div className="absolute inset-0 opacity-30"
+                style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, var(--color-brand-primary) 0%, transparent 60%), radial-gradient(circle at 70% 40%, var(--color-brand-accent) 0%, transparent 50%)' }}
+              />
+              <p className="relative text-white/40 text-sm font-medium">{t('photoSoon')}</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -106,14 +138,21 @@ export default async function AboutPage() {
       <section className="max-w-4xl mx-auto px-4 pb-24">
         <h2 className="font-heading text-3xl font-bold text-white text-center mb-10">{t('communityHeading')}</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {PHOTO_GRADIENTS.map((gradient, i) => (
-            <div
-              key={i}
-              className={`aspect-square rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center`}
-            >
-              <span className="text-white/20 text-xs font-medium">{t('photoLabel', { n: i + 1 })}</span>
-            </div>
-          ))}
+          {PHOTO_GRADIENTS.map((gradient, i) => {
+            const url = communityPhotos[i]
+            return url ? (
+              <div key={i} className="relative aspect-square rounded-2xl overflow-hidden">
+                <Image src={url} alt="" fill className="object-cover" unoptimized />
+              </div>
+            ) : (
+              <div
+                key={i}
+                className={`aspect-square rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center`}
+              >
+                <span className="text-white/20 text-xs font-medium">{t('photoLabel', { n: i + 1 })}</span>
+              </div>
+            )
+          })}
         </div>
       </section>
 

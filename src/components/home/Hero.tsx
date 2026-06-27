@@ -5,8 +5,10 @@ import { Link } from '@/i18n/navigation'
 
 export function Hero({
   nextEvent,
+  videoSrc,
 }: {
   nextEvent: Record<string, unknown> | null
+  videoSrc?: string | null
 }) {
   const t      = useTranslations('hero')
   const locale = useLocale()
@@ -37,7 +39,7 @@ export function Hero({
           zIndex:    -2,
         }}
       >
-        <source src="/party-2.mp4" type="video/mp4" />
+        <source src={videoSrc ?? '/party-2.mp4'} type="video/mp4" />
       </video>
 
       <div

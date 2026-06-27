@@ -1,34 +1,38 @@
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
+import { getPublicClient } from '@/lib/supabase/public'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title:       'Community | Not Regular Events Madrid',
   description: 'Join the Not Regular Events community in Madrid. Connect with students and night owls, find flatmates, join WhatsApp groups and discover events.',
 }
 
-const GROUPS = [
-  {
-    icon:     '💬',
-    titleKey: 'studentCommunityTitle' as const,
-    descKey:  'studentCommunityDesc'  as const,
-    link:     '[STUDENT_COMMUNITY_WHATSAPP_LINK]',
-  },
-  {
-    icon:     '🎉',
-    titleKey: 'partyGroupTitle' as const,
-    descKey:  'partyGroupDesc'  as const,
-    link:     '[PARTY_GROUP_WHATSAPP_LINK]',
-  },
-  {
-    icon:     '🏠',
-    titleKey: 'housingGroupTitle' as const,
-    descKey:  'housingGroupDesc'  as const,
-    link:     '[HOUSING_WHATSAPP_LINK]',
-  },
+const GROUP_DEFS = [
+  { key: 'wg_student',  icon: '💬', titleKey: 'studentCommunityTitle' as const, descKey: 'studentCommunityDesc' as const },
+  { key: 'wg_party',   icon: '🎉', titleKey: 'partyGroupTitle'        as const, descKey: 'partyGroupDesc'        as const },
+  { key: 'wg_housing', icon: '🏠', titleKey: 'housingGroupTitle'      as const, descKey: 'housingGroupDesc'      as const },
 ]
 
+async function getWhatsappUrls(): Promise<Record<string, string>> {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data } = await (getPublicClient() as any)
+      .from('site_settings')
+      .select('key, value')
+      .eq('key', 'whatsapp_groups')
+      .maybeSingle()
+    return (data?.value as Record<string, string>) ?? {}
+  } catch {
+    return {}
+  }
+}
+
 export default async function CommunityPage() {
-  const t = await getTranslations('community')
+  const [t, urls] = await Promise.all([getTranslations('community'), getWhatsappUrls()])
+
+  const GROUPS = GROUP_DEFS.map(g => ({ ...g, link: urls[g.key] || '#' }))
 
   return (
     <div className="min-h-screen bg-brand-dark">

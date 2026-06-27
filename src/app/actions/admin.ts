@@ -583,5 +583,7 @@ export async function saveSiteSetting(key: string, value: unknown): Promise<{ su
 
   revalidatePath('/')
   revalidatePath('/admin/content')
+  revalidatePath('/about')
+  revalidatePath('/community')
   return { success: true }
 }

@@ -55,19 +55,28 @@ function EventsSkeleton() {
 
 export default async function HomePage() {
   const supabase = getPublicClient()
-  const { data: nextEvent } = await supabase
-    .from('events')
-    .select('*')
-    .eq('status', 'published')
-    .gte('date', new Date().toISOString())
-    .order('date', { ascending: true })
-    .limit(1)
-    .maybeSingle()
+  const [{ data: nextEvent }, { data: heroSetting }] = await Promise.all([
+    supabase
+      .from('events')
+      .select('*')
+      .eq('status', 'published')
+      .gte('date', new Date().toISOString())
+      .order('date', { ascending: true })
+      .limit(1)
+      .maybeSingle(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase as any)
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'hero_video_url')
+      .maybeSingle(),
+  ])
+  const heroVideoUrl = typeof heroSetting?.value === 'string' ? heroSetting.value : null
 
   return (
     <>
       {/* 1. Hero — video background + live "Next Up" event block */}
-      <Hero nextEvent={nextEvent} />
+      <Hero nextEvent={nextEvent} videoSrc={heroVideoUrl} />
 
       {/* 2. Events — streams from Supabase */}
       <Suspense fallback={<EventsSkeleton />}>
