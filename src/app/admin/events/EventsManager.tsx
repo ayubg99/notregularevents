@@ -13,6 +13,7 @@ import type { EventRow, EventInsert, EventCategory, EventStatus, EventTicketTier
 import { tierDefaults } from '@/types/database'
 
 const CATEGORIES: EventCategory[] = ['party', 'cultural', 'sport', 'networking', 'trip', 'other']
+const CITIES = ['Madrid', 'Marbella', 'Valencia']
 const STATUS_COLORS: Record<string, string> = {
   published: 'bg-green-500/15 text-green-400',
   draft:     'bg-white/10 text-white/40',
@@ -52,6 +53,7 @@ interface FormState {
   group_min_size:      string
   capacity:            string
   status:              EventStatus
+  city:                string
 }
 
 const defaultForm = (): FormState => ({
@@ -59,7 +61,7 @@ const defaultForm = (): FormState => ({
   date: '', location: '', image_url: '',
   price: '', price_early_bird: '', price_group: '',
   early_bird_deadline: '', early_bird_seats: '20', group_min_size: '4',
-  capacity: '100', status: 'draft',
+  capacity: '100', status: 'draft', city: 'Madrid',
 })
 
 interface Props { initialEvents: EventRow[] }
@@ -118,6 +120,7 @@ export default function EventsManager({ initialEvents }: Props) {
       group_min_size:      String(event.group_min_size ?? 4),
       capacity:            String(event.capacity),
       status:              event.status,
+      city:                event.city ?? 'Madrid',
     })
     setToast('')
     setModal('edit')
@@ -168,7 +171,7 @@ export default function EventsManager({ initialEvents }: Props) {
         early_bird_seats:    parseInt(form.early_bird_seats) || 20,
         group_min_size:      eventPricing !== 'paid' ? null : (groupEnabled ? (parseInt(form.group_min_size) || 4) : null),
         capacity:            parseInt(form.capacity) || 100,
-        city:                'Valencia',
+        city:                form.city,
         status:              form.status,
         gallery_images:      galleryImages.length ? galleryImages : null,
         ticket_tiers:        ticketTiers.filter(t => t.name.trim()).length ? ticketTiers.filter(t => t.name.trim()) : null,
@@ -382,9 +385,20 @@ export default function EventsManager({ initialEvents }: Props) {
                   <label className={labelClass}>Date & Time *</label>
                   <input type="datetime-local" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} required className={inputClass} />
                 </div>
-                <div>
-                  <label className={labelClass}>Location</label>
-                  <input type="text" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} className={inputClass} placeholder="Venue name or address" />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className={labelClass}>Location</label>
+                    <input type="text" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} className={inputClass} placeholder="Venue name or address" />
+                  </div>
+                  <div>
+                    <label className={labelClass}>City</label>
+                    <div className="relative">
+                      <select value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} className={`${inputClass} appearance-none pr-8 [&>option]:bg-brand-dark`}>
+                        {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                      <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" />
+                    </div>
+                  </div>
                 </div>
               </Section>
 
