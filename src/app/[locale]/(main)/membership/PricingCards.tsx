@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { Check, Loader2 } from 'lucide-react'
 import type { MembershipPlan } from '@/types/database'
@@ -18,68 +19,68 @@ interface PlanDef {
   featured: boolean
 }
 
-const PLANS: PlanDef[] = [
-  {
-    id:       'basic',
-    name:     'Monthly',
-    price:    9.99,
-    period:   'month',
-    badge:    null,
-    saving:   null,
-    perMonth: '€9.99/mo',
-    perks:    [
-      'Free entry to exclusive member events',
-      '10% off every event ticket',
-      'Free housing contact reveals',
-      'Member card & dashboard access',
-      'Weekly newsletter with exclusive deals',
-    ],
-    featured: false,
-  },
-  {
-    id:       'premium',
-    name:     'Semester',
-    price:    24.99,
-    period:   '6 months',
-    badge:    'Most Popular',
-    saving:   'Save 17%',
-    perMonth: '≈€4.17/mo',
-    perks:    [
-      'Everything in Monthly',
-      'Partner promo codes & discounts',
-    ],
-    featured: true,
-  },
-  {
-    id:       'vip',
-    name:     'Annual',
-    price:    39.99,
-    period:   'year',
-    badge:    'Best Value',
-    saving:   'Save 67%',
-    perMonth: '≈€3.33/mo',
-    perks:    [
-      'Everything in Semester',
-      'Free guest pass (1× per year)',
-      'Promoter program eligibility',
-      'Exclusive yearly member events',
-    ],
-    featured: false,
-  },
-]
-
-
 interface Props {
   currentPlan: MembershipPlan | null
   isLoggedIn:  boolean
 }
 
 export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
+  const t      = useTranslations('membership')
   const router = useRouter()
   const [pendingId,      setPendingId]      = useState<MembershipPlan | null>(null)
   const [error,          setError]          = useState('')
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [isPending, startTransition] = useTransition()
+
+  const PLANS: PlanDef[] = [
+    {
+      id:       'basic',
+      name:     t('planMonthly'),
+      price:    9.99,
+      period:   t('periodMonth'),
+      badge:    null,
+      saving:   null,
+      perMonth: '€9.99/mo',
+      perks:    [
+        t('perkMonthly1'),
+        t('perkMonthly2'),
+        t('perkMonthly3'),
+        t('perkMonthly4'),
+        t('perkMonthly5'),
+      ],
+      featured: false,
+    },
+    {
+      id:       'premium',
+      name:     t('planSemester'),
+      price:    24.99,
+      period:   t('period6Months'),
+      badge:    t('mostPopular'),
+      saving:   `${t('save')} 17%`,
+      perMonth: '≈€4.17/mo',
+      perks:    [
+        t('perkSemester1'),
+        t('perkSemester2'),
+      ],
+      featured: true,
+    },
+    {
+      id:       'vip',
+      name:     t('planAnnual'),
+      price:    39.99,
+      period:   t('periodYear'),
+      badge:    t('bestValue'),
+      saving:   `${t('save')} 67%`,
+      perMonth: '≈€3.33/mo',
+      perks:    [
+        t('perkAnnual1'),
+        t('perkAnnual2'),
+        t('perkAnnual3'),
+        t('perkAnnual4'),
+      ],
+      featured: false,
+    },
+  ]
 
   function handleSubscribe(planId: MembershipPlan) {
     if (!isLoggedIn) {
@@ -99,18 +100,18 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
         try {
           data = await res.json()
         } catch {
-          setError(`Server error (${res.status}). Please try again.`)
+          setError(t('errorServer', { status: res.status }))
           setPendingId(null)
           return
         }
         if (data.url) {
           router.push(data.url)
         } else {
-          setError(data.error ?? 'Something went wrong. Please try again.')
+          setError(data.error ?? t('errorServer', { status: res.status }))
           setPendingId(null)
         }
       } catch {
-        setError('Could not reach the server. Check your connection and try again.')
+        setError(t('errorNetwork'))
         setPendingId(null)
       }
     })
@@ -185,13 +186,13 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
                   textAlign:     'center',
                 }}>
                   <p style={{ color: '#FF6B00', margin: 0, fontSize: '12px', lineHeight: 1.4 }}>
-                    Upgrading will cancel your current <strong>{currentPlan}</strong> plan.
+                    {t('upgradeWarning', { plan: currentPlan })}
                   </p>
                 </div>
               )}
               {isCurrent ? (
                 <div className="w-full py-3 rounded-xl text-center text-sm font-semibold bg-green-500/15 border border-green-500/30 text-green-400">
-                  Current Plan ✓
+                  {t('currentPlanBadge')}
                 </div>
               ) : (
                 <button
@@ -204,11 +205,11 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
                   }`}
                 >
                   {isLoading ? (
-                    <><Loader2 size={14} className="animate-spin" /> Redirecting…</>
+                    <><Loader2 size={14} className="animate-spin" /> {t('redirecting')}</>
                   ) : isUpgrade ? (
-                    `Upgrade to ${plan.name} →`
+                    t('upgradeBtn', { name: plan.name })
                   ) : (
-                    `Get ${plan.name}`
+                    t('getBtn', { name: plan.name })
                   )}
                 </button>
               )}
@@ -297,12 +298,12 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
               margin:         '0 0 8px',
               letterSpacing:  '-0.5px',
             }}>
-              Unlock Your Membership
+              {t('loginTitle')}
             </h2>
 
             {/* Subtitle */}
             <p style={{ color: '#888', fontSize: '14px', margin: '0 0 32px', lineHeight: 1.6 }}>
-              Create a free account to get started with exclusive Not Regular Events benefits
+              {t('loginSubtitle')}
             </p>
 
             {/* CTA buttons */}
@@ -323,7 +324,7 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
                 letterSpacing:  '0.3px',
               }}
             >
-              Create Free Account →
+              {t('loginCreate')}
             </Link>
 
             <Link
@@ -342,11 +343,11 @@ export default function PricingCards({ currentPlan, isLoggedIn }: Props) {
                 letterSpacing:  '0.3px',
               }}
             >
-              Already have an account? Login
+              {t('loginHaveAccount')}
             </Link>
 
             <p style={{ color: 'rgba(255,107,0,0.4)', fontSize: '12px', marginTop: '20px' }}>
-              Free to join • Cancel anytime
+              {t('loginFree')}
             </p>
           </div>
         </div>

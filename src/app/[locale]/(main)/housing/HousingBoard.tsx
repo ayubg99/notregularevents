@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
 import type { HousingListingRow, HousingType, HousingRoomType, HousingGenderPref } from '@/types/database'
 import ListingCard from '@/components/housing/ListingCard'
@@ -11,25 +12,13 @@ const NEIGHBORHOODS = [
   'Campanar', 'Mestalla', 'Patraix', 'Algirós', 'Quatre Carreres',
 ]
 
-const ROOM_TYPES = [
-  { value: 'private_room',   label: 'Private Room'   },
-  { value: 'shared_room',    label: 'Shared Room'    },
-  { value: 'studio',         label: 'Studio'         },
-  { value: 'full_apartment', label: 'Full Apartment' },
-]
-
-const GENDER_PREFS = [
-  { value: 'male',   label: 'Male only'   },
-  { value: 'female', label: 'Female only' },
-  { value: 'mixed',  label: 'Mixed'       },
-]
-
 interface Props {
   initialListings: HousingListingRow[]
   isLoggedIn:      boolean
 }
 
 export default function HousingBoard({ initialListings, isLoggedIn }: Props) {
+  const t = useTranslations('housing')
   const [activeTab,    setActiveTab]    = useState<HousingType>('room_available')
   const [neighborhood, setNeighborhood] = useState('')
   const [maxPrice,     setMaxPrice]     = useState(1000)
@@ -96,7 +85,7 @@ export default function HousingBoard({ initialListings, isLoggedIn }: Props) {
                 fontSize: '14px',
               }}
             >
-              {tab === 'room_available' ? '🏠 Rooms Available' : '👤 Looking for Room'}
+              {tab === 'room_available' ? t('tabRoomsAvailable') : t('tabLookingForRoom')}
             </button>
           ))}
         </div>
@@ -116,7 +105,7 @@ export default function HousingBoard({ initialListings, isLoggedIn }: Props) {
               whiteSpace: 'nowrap',
             }}
           >
-            + Post a Room
+            {t('postRoomBtn')}
           </a>
           <a
             href={isLoggedIn ? '/housing/post?type=looking_for_room' : '/auth/login?redirect=/housing/post?type=looking_for_room'}
@@ -132,7 +121,7 @@ export default function HousingBoard({ initialListings, isLoggedIn }: Props) {
               whiteSpace: 'nowrap',
             }}
           >
-            + Looking for Room
+            {t('postLookingBtn')}
           </a>
         </div>
       </div>
@@ -149,20 +138,20 @@ export default function HousingBoard({ initialListings, isLoggedIn }: Props) {
         marginBottom: '24px',
       }}>
         <div>
-          <label className="block text-xs text-white/50 mb-1.5">Neighborhood</label>
+          <label className="block text-xs text-white/50 mb-1.5">{t('neighborhood')}</label>
           <select
             value={neighborhood}
             onChange={e => setNeighborhood(e.target.value)}
             className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white appearance-none focus:outline-none focus:border-brand-primary/50"
           >
-            <option value="">All areas</option>
+            <option value="">{t('allAreas')}</option>
             {NEIGHBORHOODS.map(n => <option key={n} value={n}>{n}</option>)}
           </select>
         </div>
 
         <div>
           <label className="block text-xs text-white/50 mb-1.5">
-            Max price: {maxPrice === 1000 ? 'Any' : `€${maxPrice}/mo`}
+            {maxPrice === 1000 ? t('maxPriceAny') : t('maxPriceValue', { price: maxPrice })}
           </label>
           <input
             type="range"
@@ -176,27 +165,32 @@ export default function HousingBoard({ initialListings, isLoggedIn }: Props) {
         </div>
 
         <div>
-          <label className="block text-xs text-white/50 mb-1.5">Room type</label>
+          <label className="block text-xs text-white/50 mb-1.5">{t('roomTypeLabel')}</label>
           <select
             value={roomType}
             onChange={e => setRoomType(e.target.value)}
             disabled={activeTab === 'looking_for_room'}
             className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white appearance-none focus:outline-none focus:border-brand-primary/50 disabled:opacity-40"
           >
-            <option value="">All types</option>
-            {ROOM_TYPES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+            <option value="">{t('allTypes')}</option>
+            <option value="private_room">{t('privateRoom')}</option>
+            <option value="shared_room">{t('sharedRoom')}</option>
+            <option value="studio">{t('studio')}</option>
+            <option value="full_apartment">{t('fullApartment')}</option>
           </select>
         </div>
 
         <div>
-          <label className="block text-xs text-white/50 mb-1.5">Gender pref.</label>
+          <label className="block text-xs text-white/50 mb-1.5">{t('genderPref')}</label>
           <select
             value={genderPref}
             onChange={e => setGenderPref(e.target.value)}
             className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white appearance-none focus:outline-none focus:border-brand-primary/50"
           >
-            <option value="">Any</option>
-            {GENDER_PREFS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
+            <option value="">{t('any')}</option>
+            <option value="male">{t('maleOnly')}</option>
+            <option value="female">{t('femaleOnly')}</option>
+            <option value="mixed">{t('mixed')}</option>
           </select>
         </div>
       </div>
@@ -204,13 +198,13 @@ export default function HousingBoard({ initialListings, isLoggedIn }: Props) {
       {/* Results */}
       {listings.length === 0 ? (
         <div className="text-center py-20 text-white/40">
-          <p className="text-lg font-medium text-white/60 mb-2">No listings yet</p>
-          <p className="text-sm mb-6">Be the first to post in this category</p>
+          <p className="text-lg font-medium text-white/60 mb-2">{t('noVerifiedRooms')}</p>
+          <p className="text-sm mb-6">{t('noVerifiedRoomsHint')}</p>
           <Link
             href={`/housing/post?type=${activeTab}`}
             className="btn-primary px-6 py-3 rounded-full text-sm font-semibold"
           >
-            Post a listing
+            {t('postRoomBtn')}
           </Link>
         </div>
       ) : (

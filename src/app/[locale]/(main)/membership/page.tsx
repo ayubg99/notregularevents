@@ -13,30 +13,30 @@ export const metadata = {
   description: 'The Not Regular Events membership. Discounts, exclusive events and the best nightlife experiences in Madrid.',
 }
 
-const BENEFITS = [
-  { icon: '🎟️', title: '10% Off All Events',                  desc: 'Save on every event ticket.'                              },
-  { icon: '⚡', title: 'Priority Access Before Public Release', desc: 'Get access to drops before anyone else.'                 },
-  { icon: '🎉', title: 'Free Exclusive Member Events',          desc: 'Access to events only available to members.'             },
-  { icon: '💬', title: 'Private Community WhatsApp Groups',     desc: 'Curated groups for Not Regular Events members in Madrid.' },
-  { icon: '🏠', title: 'Housing Contact Details',              desc: 'See student contacts directly — no middleman.'            },
-  { icon: '🎁', title: 'Partner Discounts in Madrid',          desc: 'Exclusive deals with our partner businesses.'             },
-]
-
-const TRUST = [
-  { icon: <Zap size={16} />,         label: 'Instant activation'   },
-  { icon: <CheckCircle size={16} />, label: 'Cancel anytime'       },
-  { icon: <ShieldCheck size={16} />, label: 'Students & night owls' },
-]
-
-const PLAN_LABELS: Record<MembershipPlan, string> = {
-  basic:    'Monthly',
-  premium:  'Semester',
-  vip:      'Annual',
-  employer: 'Employer',
-}
-
 export default async function MembershipPage() {
   const t        = await getTranslations('membership')
+
+  const BENEFITS = [
+    { icon: '🎟️', title: t('benefit1Title'), desc: t('benefit1Desc') },
+    { icon: '⚡',  title: t('benefit2Title'), desc: t('benefit2Desc') },
+    { icon: '🎉', title: t('benefit3Title'), desc: t('benefit3Desc') },
+    { icon: '💬', title: t('benefit4Title'), desc: t('benefit4Desc') },
+    { icon: '🏠', title: t('benefit5Title'), desc: t('benefit5Desc') },
+    { icon: '🎁', title: t('benefit6Title'), desc: t('benefit6Desc') },
+  ]
+
+  const TRUST = [
+    { icon: <Zap size={16} />,         label: t('trustInstant') },
+    { icon: <CheckCircle size={16} />, label: t('trustCancel')  },
+    { icon: <ShieldCheck size={16} />, label: t('trustFor')     },
+  ]
+
+  const PLAN_LABELS: Record<MembershipPlan, string> = {
+    basic:    t('planMonthly'),
+    premium:  t('planSemester'),
+    vip:      t('planAnnual'),
+    employer: 'Employer',
+  }
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -65,7 +65,7 @@ export default async function MembershipPage() {
             Not Regular Events<br />Membership
           </h1>
           <p className="text-white/60 text-lg max-w-xl mx-auto">
-            Get more from every night out in Madrid. Discounts, exclusive events and the full Not Regular Events experience.
+            {t('pageSubtitle')}
           </p>
         </div>
       </section>
@@ -94,9 +94,11 @@ export default async function MembershipPage() {
           <div className="max-w-2xl mx-auto mb-8 flex items-center gap-3 rounded-2xl bg-green-500/10 border border-green-500/30 px-5 py-4">
             <CheckCircle size={20} className="text-green-400 flex-shrink-0" />
             <p className="text-green-300 text-sm font-medium">
-              You&apos;re currently on the <span className="font-bold">{PLAN_LABELS[currentPlan]}</span> plan.
-              Manage your subscription in your{' '}
-              <Link href="/dashboard" className="underline hover:text-green-200 transition-colors">dashboard</Link>.
+              {t.rich('currentPlanMsg', {
+                plan: PLAN_LABELS[currentPlan],
+                b:    (chunks) => <span className="font-bold">{chunks}</span>,
+                link: (chunks) => <Link href="/dashboard" className="underline hover:text-green-200 transition-colors">{chunks}</Link>,
+              })}
             </p>
           </div>
         )}
@@ -117,8 +119,8 @@ export default async function MembershipPage() {
       {sponsors.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 pb-24">
           <div className="text-center mb-10">
-            <h2 className="font-heading text-3xl font-bold text-white mb-2">Member Discounts</h2>
-            <p className="text-white/50 text-sm">Exclusive deals with our partners</p>
+            <h2 className="font-heading text-3xl font-bold text-white mb-2">{t('memberDiscountsTitle')}</h2>
+            <p className="text-white/50 text-sm">{t('memberDiscountsSubtitle')}</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {sponsors.map(sponsor => (
@@ -136,12 +138,12 @@ export default async function MembershipPage() {
                 {sponsor.discount_code && (
                   (currentPlan === 'premium' || currentPlan === 'vip') ? (
                     <div className="w-full mt-1 rounded-lg p-2" style={{ background:'rgba(255,255,255,0.04)' }}>
-                      <p className="text-white/30 text-[10px] uppercase tracking-wider mb-1">Your code</p>
+                      <p className="text-white/30 text-[10px] uppercase tracking-wider mb-1">{t('yourCode')}</p>
                       <p className="font-mono font-bold text-sm" style={{ color:'#FF6B00' }}>{sponsor.discount_code}</p>
                     </div>
                   ) : (
                     <div className="w-full mt-1 rounded-lg p-2 text-center" style={{ background:'rgba(255,255,255,0.03)' }}>
-                      <p className="text-white/20 text-xs">🔒 Semester+ only</p>
+                      <p className="text-white/20 text-xs">{t('semesterOnly')}</p>
                     </div>
                   )
                 )}

@@ -1,12 +1,8 @@
+'use client'
+
+import { useTranslations, useLocale } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import type { PartnerRoomRow } from '@/types/database'
-
-const ROOM_TYPE_LABELS: Record<string, string> = {
-  private_room:    'Private Room',
-  shared_room:     'Shared Room',
-  studio:          'Studio',
-  full_apartment:  'Full Apartment',
-}
 
 const AMENITY_ICONS: Record<string, string> = {
   wifi:              '📶 WiFi',
@@ -23,8 +19,17 @@ const AMENITY_ICONS: Record<string, string> = {
 }
 
 export default function PartnerRoomCard({ room }: { room: PartnerRoomRow }) {
-  const photo      = room.photos?.[0] ?? null
+  const t            = useTranslations('housing')
+  const locale       = useLocale()
+  const photo        = room.photos?.[0] ?? null
   const topAmenities = room.amenities.slice(0, 3)
+
+  const ROOM_TYPE_LABELS: Record<string, string> = {
+    private_room:   t('privateRoom'),
+    shared_room:    t('sharedRoom'),
+    studio:         t('studio'),
+    full_apartment: t('fullApartment'),
+  }
 
   return (
     <Link
@@ -69,7 +74,7 @@ export default function PartnerRoomCard({ room }: { room: PartnerRoomRow }) {
           </span>
           {room.bills_included && (
             <span className="text-xs text-green-400 bg-green-400/10 border border-green-400/20 px-2 py-0.5 rounded-full">
-              Bills included
+              {t('billsIncluded')}
             </span>
           )}
         </div>
@@ -77,10 +82,11 @@ export default function PartnerRoomCard({ room }: { room: PartnerRoomRow }) {
         {/* Available from */}
         {room.available_from && (
           <p className="text-white/50 text-xs mb-3">
-            Available from{' '}
-            {new Date(room.available_from).toLocaleDateString('en-GB', {
-              day: 'numeric', month: 'short', year: 'numeric',
-            })}
+            {t('availableFrom')}{' '}
+            {new Date(room.available_from).toLocaleDateString(
+              locale === 'es' ? 'es-ES' : 'en-GB',
+              { day: 'numeric', month: 'short', year: 'numeric' }
+            )}
           </p>
         )}
 
@@ -98,22 +104,21 @@ export default function PartnerRoomCard({ room }: { room: PartnerRoomRow }) {
         {/* Pricing breakdown */}
         <div className="border-t border-white/10 pt-3 mb-4 space-y-1">
           <div className="flex justify-between text-sm">
-            <span className="text-white/50">Monthly rent</span>
+            <span className="text-white/50">{t('monthlyRent')}</span>
             <span className="text-white font-medium">€{room.monthly_rent}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-white/50">Deposit</span>
+            <span className="text-white/50">{t('deposit')}</span>
             <span className="text-white font-medium">€{room.deposit_amount}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-white/50">Platform fee</span>
-            <span className="text-brand-accent font-medium">€{room.platform_fee} once</span>
+            <span className="text-white/50">{t('platformFee')}</span>
+            <span className="text-brand-accent font-medium">€{room.platform_fee} {t('once')}</span>
           </div>
         </div>
 
-        {/* CTA */}
         <div className="btn-primary w-full text-center py-2.5 rounded-xl text-sm font-semibold">
-          See Details
+          {t('seeDetails')}
         </div>
       </div>
     </Link>

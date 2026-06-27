@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslations, useLocale } from 'next-intl'
 import type { HousingListingRow } from '@/types/database'
 
 const NATIONALITY_FLAGS: Record<string, string> = {
@@ -8,12 +11,6 @@ const NATIONALITY_FLAGS: Record<string, string> = {
   Japanese: '🇯🇵', Korean: '🇰🇷', Indian: '🇮🇳', Australian: '🇦🇺',
 }
 
-const ROOM_TYPE_LABELS: Record<string, string> = {
-  private_room:   'Private Room',
-  shared_room:    'Shared Room',
-  studio:         'Studio',
-  full_apartment: 'Full Apartment',
-}
 
 const AMENITY_ICONS: Record<string, string> = {
   wifi:             '📶 WiFi',
@@ -32,9 +29,18 @@ interface Props {
 }
 
 export default function ListingCard({ listing }: Props) {
+  const t            = useTranslations('housing')
+  const locale       = useLocale()
   const isRoom       = listing.type === 'room_available'
   const photo        = listing.photos?.[0] ?? null
   const topAmenities = listing.amenities.slice(0, 3)
+
+  const ROOM_TYPE_LABELS: Record<string, string> = {
+    private_room:   t('privateRoom'),
+    shared_room:    t('sharedRoom'),
+    studio:         t('studio'),
+    full_apartment: t('fullApartment'),
+  }
 
   return (
     <a
@@ -68,7 +74,7 @@ export default function ListingCard({ listing }: Props) {
               ? 'bg-teal-400/90 text-brand-dark'
               : 'bg-orange-400/90 text-brand-dark'
           }`}>
-            {isRoom ? '🏠 Room Available' : '👤 Looking for Room'}
+            {isRoom ? t('roomAvailableBadge') : t('lookingForRoomBadge')}
           </span>
 
           {/* Price badge */}
@@ -100,10 +106,11 @@ export default function ListingCard({ listing }: Props) {
           {/* Available from */}
           {listing.available_from && (
             <p className="text-white/50 text-xs mb-3">
-              Available from{' '}
-              {new Date(listing.available_from).toLocaleDateString('en-GB', {
-                day: 'numeric', month: 'short', year: 'numeric',
-              })}
+              {t('availableFrom')}{' '}
+              {new Date(listing.available_from).toLocaleDateString(
+                locale === 'es' ? 'es-ES' : 'en-GB',
+                { day: 'numeric', month: 'short', year: 'numeric' }
+              )}
             </p>
           )}
 
@@ -134,9 +141,8 @@ export default function ListingCard({ listing }: Props) {
             </div>
           )}
 
-          {/* View Details — visual indicator */}
           <div className="btn-primary block py-2.5 text-sm font-bold text-center rounded">
-            See Details
+            {t('seeDetails')}
           </div>
         </div>
       </div>

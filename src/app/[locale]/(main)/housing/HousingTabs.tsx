@@ -1,28 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import PartnerRoomCard from '@/components/housing/PartnerRoomCard'
 import HousingBoard from './HousingBoard'
 import type { PartnerRoomRow, HousingListingRow } from '@/types/database'
 
-const TABS = [
-  { id: 'partner', label: '⭐ Verified Rooms',   description: 'Verified by Not Regular Events' },
-  { id: 'student', label: '👥 Student Listings', description: 'Posted by students'        },
-] as const
-
-type TabId = typeof TABS[number]['id']
-
 const NEIGHBORHOODS = [
   'Ruzafa', 'El Carmen', 'Benimaclet', 'Malvarrosa',
   'Campanar', 'Mestalla', 'Patraix', 'Algirós', 'Quatre Carreres', 'Gran Via', 'Extramurs',
-]
-
-const ROOM_TYPES = [
-  { value: 'private_room',   label: 'Private Room'   },
-  { value: 'shared_room',    label: 'Shared Room'    },
-  { value: 'studio',         label: 'Studio'         },
-  { value: 'full_apartment', label: 'Full Apartment' },
 ]
 
 interface Props {
@@ -32,11 +19,26 @@ interface Props {
   isLoggedIn:      boolean
 }
 
+type TabId = 'partner' | 'student'
+
 export default function HousingTabs({ partnerRooms, initialListings, hasMembership, isLoggedIn }: Props) {
+  const t = useTranslations('housing')
   const [activeTab,  setActiveTab]  = useState<TabId>('partner')
   const [hood,       setHood]       = useState('')
   const [maxPrice,   setMaxPrice]   = useState(2000)
   const [roomType,   setRoomType]   = useState('')
+
+  const TABS = [
+    { id: 'partner' as const, label: t('tabVerified'),  description: t('tabVerifiedDesc') },
+    { id: 'student' as const, label: t('tabStudents'),  description: t('tabStudentsDesc') },
+  ]
+
+  const ROOM_TYPES = [
+    { value: 'private_room',   label: t('privateRoom')    },
+    { value: 'shared_room',    label: t('sharedRoom')     },
+    { value: 'studio',         label: t('studio')         },
+    { value: 'full_apartment', label: t('fullApartment')  },
+  ]
 
   const filtered = partnerRooms.filter(r =>
     (!hood     || r.neighborhood === hood) &&
@@ -74,20 +76,20 @@ export default function HousingTabs({ partnerRooms, initialListings, hasMembersh
           {/* Filter bar */}
           <div className="glass-card rounded-2xl p-5 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs text-white/50 mb-1.5">Neighborhood</label>
+              <label className="block text-xs text-white/50 mb-1.5">{t('neighborhood')}</label>
               <select
                 value={hood}
                 onChange={e => setHood(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white appearance-none focus:outline-none focus:border-brand-primary/50"
               >
-                <option value="">All areas</option>
+                <option value="">{t('allAreas')}</option>
                 {NEIGHBORHOODS.map(n => <option key={n} value={n}>{n}</option>)}
               </select>
             </div>
 
             <div>
               <label className="block text-xs text-white/50 mb-1.5">
-                Max rent: {maxPrice >= 2000 ? 'Any' : `€${maxPrice}/mo`}
+                {maxPrice >= 2000 ? t('maxRentAny') : t('maxRentValue', { price: maxPrice })}
               </label>
               <input
                 type="range"
@@ -101,13 +103,13 @@ export default function HousingTabs({ partnerRooms, initialListings, hasMembersh
             </div>
 
             <div>
-              <label className="block text-xs text-white/50 mb-1.5">Room type</label>
+              <label className="block text-xs text-white/50 mb-1.5">{t('roomTypeLabel')}</label>
               <select
                 value={roomType}
                 onChange={e => setRoomType(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white appearance-none focus:outline-none focus:border-brand-primary/50"
               >
-                <option value="">All types</option>
+                <option value="">{t('allTypes')}</option>
                 {ROOM_TYPES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
               </select>
             </div>
@@ -116,8 +118,8 @@ export default function HousingTabs({ partnerRooms, initialListings, hasMembersh
           {/* Rooms grid */}
           {filtered.length === 0 ? (
             <div className="text-center py-20 text-white/40">
-              <p className="text-lg font-medium text-white/60 mb-2">No verified rooms available right now</p>
-              <p className="text-sm">Try adjusting your filters or check back soon</p>
+              <p className="text-lg font-medium text-white/60 mb-2">{t('noVerifiedRooms')}</p>
+              <p className="text-sm">{t('noVerifiedRoomsHint')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -137,11 +139,11 @@ export default function HousingTabs({ partnerRooms, initialListings, hasMembersh
             <div className="flex items-center gap-4 bg-brand-accent/10 border border-brand-accent/30 rounded-2xl p-4 mb-6">
               <span className="text-2xl flex-shrink-0">👑</span>
               <div className="flex-1">
-                <p className="text-brand-accent font-semibold text-sm mb-0.5">Students see contact details</p>
+                <p className="text-brand-accent font-semibold text-sm mb-0.5">{t('membershipBannerTitle')}</p>
                 <p className="text-white/50 text-xs">
-                  Join membership to see WhatsApp and email contacts.{' '}
+                  {t('membershipBannerDesc')}{' '}
                   <Link href="/membership" className="text-brand-accent hover:underline">
-                    Join now →
+                    {t('membershipBannerCta')}
                   </Link>
                 </p>
               </div>
