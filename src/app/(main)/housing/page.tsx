@@ -48,28 +48,6 @@ export default async function HousingPage() {
       <PageHeader tag="Housing" title="Find Your Space" />
 
       <div className="container-marketing mt-10">
-        {/* WhatsApp community card */}
-        <div style={{
-          background:    'var(--bg-card)',
-          border:        '1px solid var(--border-subtle)',
-          padding:       '32px',
-          marginBottom:  '40px',
-        }}>
-          <p style={{ color: 'var(--accent-blue)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>
-            WhatsApp Group
-          </p>
-          <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 16, maxWidth: 600 }}>
-            Haven&apos;t found a room in Madrid yet? Join this group! Here we share flat listings, available rooms and connect with other students looking together.
-          </p>
-          {/* TODO: replace '#' with actual WhatsApp group URL */}
-          <a
-            href="#"
-            style={{ display: 'inline-block', background: 'var(--accent-blue)', color: '#fff', padding: '12px 24px', fontWeight: 700, fontSize: 13, textDecoration: 'none', borderRadius: 4 }}
-          >
-            Join WhatsApp Group →
-          </a>
-        </div>
-
         <HousingTabs
           partnerRooms={partnerRooms ?? []}
           initialListings={initialListings ?? []}
